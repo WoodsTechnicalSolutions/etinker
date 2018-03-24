@@ -50,7 +50,7 @@ all: toolchain
 
 # embedded toolchains (GCC, GDB, and LIBC) are built using crosstool-NG
 
-ET_TOOLCHAIN_TARGETS_FINAL := \
+ET_TOOLCHAIN_TARGETS_FINAL ?= \
 	$(ET_TOOLCHAIN_DIR)/bin/$(ET_CROSS_TUPLE)-gcc \
 	$(ET_TOOLCHAIN_DIR)/bin/$(ET_CROSS_TUPLE)-gdb
 ET_TOOLCHAIN_GENERATOR_DIR := $(ET_DIR)/toolchain/generator
