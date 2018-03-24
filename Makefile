@@ -99,3 +99,13 @@ $(ET_TOOLCHAIN_GENERATOR):
 		printf "***** crosstool-NG 'ct-ng' build FAILED! *****\n"; \
 		exit 2; \
 	fi
+
+.PHONY: clean
+clean:
+	@$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/src $(ET_TOOLCHAIN_BUILD_DIR)/$(ET_CROSS_TUPLE)
+
+.PHONY: purge
+purge:
+	@$(RM) -r $(ET_TOOLCHAIN_DIR)
+	@$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)
+	@$(RM) -r $(ET_TOOLCHAIN_GENERATOR_DIR)
