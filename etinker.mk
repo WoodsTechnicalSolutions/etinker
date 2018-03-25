@@ -3,7 +3,7 @@
 #
 # Copyright (C) 2018 Derald D. Woods
 #
-# This file is part of the Embedded Tinkerer Platform, and is made
+# This file is part of the Embedded Tinkerer Sandbox, and is made
 # available under the terms of the GNU General Public License version 3.
 #
 
