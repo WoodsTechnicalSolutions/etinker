@@ -12,16 +12,6 @@ include etinker.mk
 .PHONY: all
 all: toolchain
 
-# embedded toolchains (GCC, GDB, and LIBC) are built using crosstool-NG
-
-ET_TOOLCHAIN_TARGETS_FINAL ?= \
-	$(ET_TOOLCHAIN_DIR)/bin/$(ET_CROSS_TUPLE)-gcc \
-	$(ET_TOOLCHAIN_DIR)/bin/$(ET_CROSS_TUPLE)-gdb
-ET_TOOLCHAIN_GENERATOR_DIR := $(ET_DIR)/toolchain/generator
-ET_TOOLCHAIN_GENERATOR := $(ET_TOOLCHAIN_GENERATOR_DIR)/ct-ng
-ET_TOOLCHAIN_CONFIG := $(ET_CONFIG_DIR)/crosstool-ng/config
-ET_TOOLCHAIN_BUILD_CONFIG := $(ET_TOOLCHAIN_BUILD_DIR)/.config
-
 .PHONY: toolchain
 toolchain: $(ET_TOOLCHAIN_TARGETS_FINAL)
 $(ET_TOOLCHAIN_TARGETS_FINAL):
@@ -35,7 +25,7 @@ toolchain-%: $(ET_TOOLCHAIN_BUILD_CONFIG)
 .PHONY: toolchain-config
 toolchain-config: $(ET_TOOLCHAIN_BUILD_CONFIG)
 $(ET_TOOLCHAIN_BUILD_CONFIG): $(ET_TOOLCHAIN_CONFIG)
-	@mkdir -p $(ET_TARBALLS_DIR)
+	@mkdir -p $(ET_TOOLCHAIN_TARBALLS_DIR)
 	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)
 	@cat $< > $@
 	@$(MAKE) toolchain-generator
@@ -66,13 +56,11 @@ $(ET_TOOLCHAIN_GENERATOR):
 
 .PHONY: clean
 clean:
-	@$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/src $(ET_TOOLCHAIN_BUILD_DIR)/$(ET_CROSS_TUPLE)
+	$(call toolchain-clean)
 
 .PHONY: purge
 purge:
-	@$(RM) -r $(ET_TOOLCHAIN_DIR)
-	@$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)
-	@$(RM) -r $(ET_TOOLCHAIN_GENERATOR_DIR)
+	$(call toolchain-purge)
 
 .PHONY: build-essential
 build-essential:

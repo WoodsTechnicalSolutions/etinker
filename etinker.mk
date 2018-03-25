@@ -39,8 +39,30 @@ export ET_CROSS_COMPILE := $(ET_BOARD_CROSS_TUPLE)-
 export ET_PATCH_DIR := $(ET_DIR)/patches
 export ET_SOFTWARE_DIR := $(ET_DIR)/software
 export ET_TARBALLS_DIR := $(ET_DIR)/tarballs
-export ET_CONFIG_DIR := $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config
+
+# all configuration files for a given board are stored here
+export ET_CONFIG_DIR ?= $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config
+
+# embedded toolchains (GCC, GDB, and LIBC) are built using crosstool-NG
 export ET_TOOLCHAIN_DIR := $(ET_DIR)/toolchain/$(ET_CROSS_TUPLE)
 export ET_TOOLCHAIN_BUILD_DIR := $(ET_DIR)/toolchain/build/$(ET_CROSS_TUPLE)
+export ET_TOOLCHAIN_TARBALLS_DIR := $(ET_TARBALLS_DIR)/toolchain
+export ET_TOOLCHAIN_GENERATOR_DIR := $(ET_DIR)/toolchain/generator
+export ET_TOOLCHAIN_GENERATOR := $(ET_TOOLCHAIN_GENERATOR_DIR)/ct-ng
+export ET_TOOLCHAIN_CONFIG := $(ET_CONFIG_DIR)/crosstool-ng/config
+export ET_TOOLCHAIN_BUILD_CONFIG := $(ET_TOOLCHAIN_BUILD_DIR)/.config
+export ET_TOOLCHAIN_TARGETS_FINAL ?= \
+	$(ET_TOOLCHAIN_DIR)/bin/$(ET_CROSS_TUPLE)-gcc \
+	$(ET_TOOLCHAIN_DIR)/bin/$(ET_CROSS_TUPLE)-gdb
+define toolchain-clean
+	@$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/src
+	@$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/$(ET_CROSS_TUPLE)
+endef
+define toolchain-clean
+	@$(RM) -r $(ET_TOOLCHAIN_DIR)
+	@$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)
+	@$(RM) -r $(ET_TOOLCHAIN_GENERATOR_DIR)
+endef
 
+# allow users to find cross-compiler
 export PATH := $(ET_TOOLCHAIN_DIR)/bin:$(PATH)
