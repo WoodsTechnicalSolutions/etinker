@@ -34,7 +34,7 @@ export ET_ARCH := $(ET_BOARD_ARCH)
 export ET_VENDOR := $(ET_BOARD_VENDOR)
 export ET_ABI := $(ET_BOARD_ABI)
 export ET_CROSS_TUPLE := $(ET_BOARD_CROSS_TUPLE)
-export ET_CROSS_COMPILE := $(ET_BOARD_CROSS_COMPILE)
+export ET_CROSS_COMPILE := $(ET_BOARD_CROSS_TUPLE)-
 
 export ET_PATCH_DIR := $(ET_DIR)/patches
 export ET_SOFTWARE_DIR := $(ET_DIR)/software
