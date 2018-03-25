@@ -1,0 +1,46 @@
+#
+# This is the GNU Make include for 'etinker'.
+#
+# Copyright (C) 2018 Derald D. Woods
+#
+# This file is part of the Embedded Tinkerer Platform, and is made
+# available under the terms of the GNU General Public License version 3.
+#
+
+ET_HOST_OS_ID ?= Ubuntu
+ET_HOST_OS_CODENAME ?= bionic
+ET_HOST_OS_RELEASE ?= 18.04
+ET_HOST_OS_MESSAGE := [ 'etinker' requires $(ET_HOST_OS_ID) $(ET_HOST_OS_CODENAME) $(ET_HOST_OS_RELEASE) ] ***
+ifneq ($(shell lsb_release -i|cut -d : -f 2|tr -d '\t'),$(ET_HOST_OS_ID))
+$(error $(ET_HOST_OS_MESSAGE))
+endif
+ifneq ($(shell lsb_release -c|cut -d : -f 2|tr -d '\t'),$(ET_HOST_OS_CODENAME))
+$(error $(ET_HOST_OS_MESSAGE))
+endif
+ifneq ($(shell lsb_release -r|cut -d : -f 2|tr -d '\t'),$(ET_HOST_OS_RELEASE))
+$(error $(ET_HOST_OS_MESSAGE))
+endif
+
+# export 'etinker' items that get used in other make and shell contexts
+
+export ET_BOARD ?= arm-bare-metal
+
+export ET_DIR ?= $(shell readlink -e $(CURDIR))
+
+# pull in board specific information
+include $(ET_DIR)/boards/$(ET_BOARD)/etinker.mk
+
+export ET_ARCH := $(ET_BOARD_ARCH)
+export ET_VENDOR := $(ET_BOARD_VENDOR)
+export ET_ABI := $(ET_BOARD_ABI)
+export ET_CROSS_TUPLE := $(ET_BOARD_CROSS_TUPLE)
+export ET_CROSS_COMPILE := $(ET_BOARD_CROSS_COMPILE)
+
+export ET_PATCH_DIR := $(ET_DIR)/patches
+export ET_SOFTWARE_DIR := $(ET_DIR)/software
+export ET_TARBALLS_DIR := $(ET_DIR)/tarballs
+export ET_CONFIG_DIR := $(ET_DIR)/boards/$(ET_BOARD)/config
+export ET_TOOLCHAIN_DIR := $(ET_DIR)/toolchain/$(ET_CROSS_TUPLE)
+export ET_TOOLCHAIN_BUILD_DIR := $(ET_DIR)/toolchain/build/$(ET_CROSS_TUPLE)
+
+export PATH := $(ET_TOOLCHAIN_DIR)/bin:$(PATH)
