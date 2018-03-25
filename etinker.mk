@@ -39,7 +39,7 @@ export ET_CROSS_COMPILE := $(ET_BOARD_CROSS_COMPILE)
 export ET_PATCH_DIR := $(ET_DIR)/patches
 export ET_SOFTWARE_DIR := $(ET_DIR)/software
 export ET_TARBALLS_DIR := $(ET_DIR)/tarballs
-export ET_CONFIG_DIR := $(ET_DIR)/boards/$(ET_BOARD)/config
+export ET_CONFIG_DIR := $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config
 export ET_TOOLCHAIN_DIR := $(ET_DIR)/toolchain/$(ET_CROSS_TUPLE)
 export ET_TOOLCHAIN_BUILD_DIR := $(ET_DIR)/toolchain/build/$(ET_CROSS_TUPLE)
 

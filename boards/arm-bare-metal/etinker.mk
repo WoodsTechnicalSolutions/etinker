@@ -18,6 +18,8 @@
 # licensed Public Domain.
 #
 
+ET_BOARD_TYPE := $(ET_BOARD)
+
 ET_BOARD_ARCH ?= arm
 ET_BOARD_VENDOR ?= none
 ET_BOARD_ABI ?= eabi
