@@ -25,6 +25,7 @@ toolchain-%: $(ET_TOOLCHAIN_BUILD_CONFIG)
 .PHONY: toolchain-config
 toolchain-config: $(ET_TOOLCHAIN_BUILD_CONFIG)
 $(ET_TOOLCHAIN_BUILD_CONFIG): $(ET_TOOLCHAIN_CONFIG)
+	@$(MAKE) software-$(ET_TOOLCHAIN_TREE)
 	@mkdir -p $(ET_TOOLCHAIN_TARBALLS_DIR)
 	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)
 	@cat $< > $@
@@ -61,6 +62,9 @@ clean:
 .PHONY: purge
 purge:
 	$(call toolchain-purge)
+
+software-%:
+	$(call software-check)
 
 .PHONY: build-essential
 build-essential:
