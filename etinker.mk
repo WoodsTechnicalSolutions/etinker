@@ -76,6 +76,11 @@ define toolchain-clean
 	@$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)
 	@$(RM) -r $(ET_TOOLCHAIN_GENERATOR_DIR)
 endef
+export ET_TOOLCHAIN_VERSION := $(shell cd $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE)/ 2>/dev/null && git describe --tags 2>/dev/null)
 
 # allow users to find cross-compiler
 export PATH := $(ET_TOOLCHAIN_DIR)/bin:$(PATH)
+
+define etinker-version
+	@printf "ET_TOOLCHAIN_VERSION: $(ET_TOOLCHAIN_VERSION)\n"
+endef
