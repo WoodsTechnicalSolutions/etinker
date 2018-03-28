@@ -12,6 +12,10 @@ include etinker.mk
 .PHONY: all
 all: toolchain
 
+.PHONY: info
+info:
+	$(call etinker-info)
+
 .PHONY: version
 version:
 	$(call etinker-version)
