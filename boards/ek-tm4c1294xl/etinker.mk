@@ -18,7 +18,7 @@
 # licensed Public Domain.
 #
 
-ET_BOARD_TYPE := ek-tm4c123gxl # use ek-tm4c123gxl's toolchain
+ET_BOARD_TYPE := ek-tm4c123gxl
 
 ET_BOARD_MCU := tm4c1294ncpdt
 
