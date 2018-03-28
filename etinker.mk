@@ -57,6 +57,7 @@ endef
 
 # embedded toolchains (GCC, GDB, and LIBC) are built using crosstool-NG
 export ET_TOOLCHAIN_TREE := crosstool-ng
+export ET_TOOLCHAIN_VERSION := $(shell cd $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE)/ 2>/dev/null && git describe --tags 2>/dev/null)
 export ET_TOOLCHAIN_DIR := $(ET_DIR)/toolchain/$(ET_CROSS_TUPLE)
 export ET_TOOLCHAIN_BUILD_DIR := $(ET_DIR)/toolchain/build/$(ET_CROSS_TUPLE)
 export ET_TOOLCHAIN_TARBALLS_DIR := $(ET_TARBALLS_DIR)/toolchain
@@ -76,7 +77,6 @@ define toolchain-clean
 	@$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)
 	@$(RM) -r $(ET_TOOLCHAIN_GENERATOR_DIR)
 endef
-export ET_TOOLCHAIN_VERSION := $(shell cd $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE)/ 2>/dev/null && git describe --tags 2>/dev/null)
 
 # allow users to find cross-compiler
 export PATH := $(ET_TOOLCHAIN_DIR)/bin:$(PATH)
