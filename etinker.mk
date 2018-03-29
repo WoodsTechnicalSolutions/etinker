@@ -72,7 +72,7 @@ define toolchain-clean
 	@$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/src
 	@$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/$(ET_CROSS_TUPLE)
 endef
-define toolchain-clean
+define toolchain-purge
 	@$(RM) -r $(ET_TOOLCHAIN_DIR)
 	@$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)
 	@$(RM) -r $(ET_TOOLCHAIN_GENERATOR_DIR)
