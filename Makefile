@@ -23,9 +23,11 @@ version:
 .PHONY: toolchain
 toolchain: $(ET_TOOLCHAIN_TARGETS_FINAL)
 $(ET_TOOLCHAIN_TARGETS_FINAL):
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) $(ET_TOOLCHAIN_VERSION) *****\n\n"
 	$(MAKE) toolchain-build
 
 toolchain-%: $(ET_TOOLCHAIN_BUILD_CONFIG)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make $@ *****\n\n"
 	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)
 	@(cd $(ET_TOOLCHAIN_BUILD_DIR) && CT_ARCH=$(ET_ARCH) $(ET_TOOLCHAIN_GENERATOR) $(*F))
 	@tail -n +5 $< > $(ET_TOOLCHAIN_CONFIG)
@@ -33,6 +35,7 @@ toolchain-%: $(ET_TOOLCHAIN_BUILD_CONFIG)
 .PHONY: toolchain-config
 toolchain-config: $(ET_TOOLCHAIN_BUILD_CONFIG)
 $(ET_TOOLCHAIN_BUILD_CONFIG): $(ET_TOOLCHAIN_CONFIG)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make toolchain-config *****\n\n"
 	@$(MAKE) software-$(ET_TOOLCHAIN_TREE)
 	@mkdir -p $(ET_TOOLCHAIN_TARBALLS_DIR)
 	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)
@@ -43,6 +46,7 @@ $(ET_TOOLCHAIN_BUILD_CONFIG): $(ET_TOOLCHAIN_CONFIG)
 .PHONY: toolchain-generator
 toolchain-generator: $(ET_TOOLCHAIN_GENERATOR)
 $(ET_TOOLCHAIN_GENERATOR):
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make toolchain-generator *****\n\n"
 	@if ! [ -d $(ET_TOOLCHAIN_GENERATOR_DIR) ]; then \
 		mkdir -p $(ET_DIR)/toolchain; \
 		cp -a $(ET_SOFTWARE_DIR)/crosstool-ng $(ET_TOOLCHAIN_GENERATOR_DIR); \
@@ -65,11 +69,11 @@ $(ET_TOOLCHAIN_GENERATOR):
 
 .PHONY: clean
 clean:
-	$(call toolchain-clean)
+	$(call toolchain-$@)
 
 .PHONY: purge
 purge:
-	$(call toolchain-purge)
+	$(call toolchain-$@)
 
 software-%:
 	$(call software-check)
