@@ -21,15 +21,23 @@ export ET_TOOLCHAIN_TARGETS_FINAL += \
 	$(ET_TOOLCHAIN_DIR)/bin/$(ET_CROSS_TUPLE)-gcc \
 	$(ET_TOOLCHAIN_DIR)/bin/$(ET_CROSS_TUPLE)-gdb
 
+define toolchain-targets
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) $(ET_TOOLCHAIN_VERSION) *****\n"
+	$(MAKE) toolchain-menuconfig
+	$(MAKE) toolchain-build
+endef
+
 define toolchain-build
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make $@ *****\n\n"
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] toolchain 'ct-ng $(*F)' *****\n\n"
 	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)
 	@(cd $(ET_TOOLCHAIN_BUILD_DIR) && CT_ARCH=$(ET_ARCH) $(ET_TOOLCHAIN_GENERATOR) $(*F))
-	@tail -n +5 $(ET_TOOLCHAIN_BUILD_CONFIG) > $(ET_TOOLCHAIN_CONFIG)
+	@if ! [ -n "$(shell printf "%s" $(*F) | grep clean)" ]; then \
+		cat $(ET_TOOLCHAIN_BUILD_CONFIG) > $(ET_TOOLCHAIN_CONFIG); \
+	fi
 endef
 
 define toolchain-config
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make toolchain-config *****\n"
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make toolchain-config *****\n\n"
 	@$(MAKE) software-$(ET_TOOLCHAIN_TREE)
 	@mkdir -p $(ET_TOOLCHAIN_TARBALLS_DIR)
 	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)
@@ -62,13 +70,13 @@ endef
 
 define toolchain-clean
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make toolchain-clean *****\n\n"
-	@$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/src
-	@$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/$(ET_CROSS_TUPLE)
+	$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/src
+	$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/$(ET_CROSS_TUPLE)
 endef
 
 define toolchain-purge
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make toolchain-purge *****\n\n"
-	@$(RM) -r $(ET_TOOLCHAIN_DIR)
-	@$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)
-	@$(RM) -r $(ET_TOOLCHAIN_GENERATOR_DIR)
+	$(RM) -r $(ET_TOOLCHAIN_DIR)
+	$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)
+	$(RM) -r $(ET_TOOLCHAIN_GENERATOR_DIR)
 endef

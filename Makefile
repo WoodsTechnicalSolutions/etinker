@@ -23,9 +23,7 @@ version:
 .PHONY: toolchain
 toolchain: $(ET_TOOLCHAIN_TARGETS_FINAL)
 $(ET_TOOLCHAIN_TARGETS_FINAL):
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) $(ET_TOOLCHAIN_VERSION) *****\n"
-	$(MAKE) toolchain-menuconfig
-	$(MAKE) toolchain-build
+	$(call toolchain-targets)
 
 toolchain-%: $(ET_TOOLCHAIN_BUILD_CONFIG)
 	$(call toolchain-build)
