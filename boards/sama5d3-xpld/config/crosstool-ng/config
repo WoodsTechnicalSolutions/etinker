@@ -1,3 +1,11 @@
+#
+# Automatically generated file; DO NOT EDIT.
+# crosstool-NG crosstool-ng-1.23.0-319-gaca85cbb Configuration
+#
+CT_CONFIGURE_has_static_link=y
+CT_CONFIGURE_has_wget=y
+CT_CONFIGURE_has_curl=y
+CT_CONFIGURE_has_stat_flavor_GNU=y
 CT_CONFIGURE_has_make_3_81_or_newer=y
 CT_CONFIGURE_has_libtool_2_4_or_newer=y
 CT_CONFIGURE_has_libtoolize_2_4_or_newer=y
