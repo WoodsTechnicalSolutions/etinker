@@ -44,22 +44,11 @@ export ET_TARBALLS_DIR := $(ET_DIR)/tarballs
 export ET_CONFIG_DIR ?= $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config
 
 # pull in etinker component information
+include $(ET_DIR)/software.mk
 include $(ET_DIR)/toolchain.mk
 ifdef ET_BOARD_KERNEL_TREE
 include $(ET_DIR)/kernel.mk
 endif
-
-# check for existence of a source tree
-define software-check
-	@if ! [ -d $(ET_SOFTWARE_DIR)/$(*F) ]; then \
-		printf "\n"; \
-		printf "*****  MISSING $(ET_SOFTWARE_DIR)/$(*F) DIRECTORY  *****\n"; \
-		printf "===>  PLEASE ADD $(ET_SOFTWARE_DIR)/$(*F) SOFTWARE  <===\n"; \
-		printf "\n"; \
-		exit 2; \
-	fi
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] USING $(ET_SOFTWARE_DIR)/$(*F) *****\n\n"
-endef
 
 # allow users to find cross-compiler
 export PATH := $(ET_TOOLCHAIN_DIR)/bin:$(PATH)
