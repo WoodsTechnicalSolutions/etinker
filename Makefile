@@ -41,7 +41,7 @@ $(ET_TOOLCHAIN_BUILD_CONFIG): $(ET_TOOLCHAIN_CONFIG)
 	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)
 	@cat $< > $@
 	@$(MAKE) toolchain-generator
-	@$(MAKE) toolchain-oldconfig
+	@$(MAKE) toolchain-menuconfig
 
 .PHONY: toolchain-generator
 toolchain-generator: $(ET_TOOLCHAIN_GENERATOR)
@@ -49,7 +49,7 @@ $(ET_TOOLCHAIN_GENERATOR):
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make toolchain-generator *****\n\n"
 	@if ! [ -d $(ET_TOOLCHAIN_GENERATOR_DIR) ]; then \
 		mkdir -p $(ET_DIR)/toolchain; \
-		cp -a $(ET_SOFTWARE_DIR)/crosstool-ng $(ET_TOOLCHAIN_GENERATOR_DIR); \
+		cp -a $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE) $(ET_TOOLCHAIN_GENERATOR_DIR); \
 	fi
 	@(cd $(ET_TOOLCHAIN_GENERATOR_DIR); \
 		if ! [ -f .patched ]; then \
