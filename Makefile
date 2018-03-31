@@ -24,6 +24,7 @@ version:
 toolchain: $(ET_TOOLCHAIN_TARGETS_FINAL)
 $(ET_TOOLCHAIN_TARGETS_FINAL):
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) $(ET_TOOLCHAIN_VERSION) *****\n\n"
+	$(MAKE) toolchain-menuconfig
 	$(MAKE) toolchain-build
 
 toolchain-%: $(ET_TOOLCHAIN_BUILD_CONFIG)

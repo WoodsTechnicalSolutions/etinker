@@ -27,7 +27,6 @@ define toolchain-config
 	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)
 	@cat $(ET_TOOLCHAIN_CONFIG) > $(ET_TOOLCHAIN_BUILD_CONFIG)
 	@$(MAKE) toolchain-generator
-	@$(MAKE) toolchain-menuconfig
 endef
 
 define toolchain-build
