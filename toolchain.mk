@@ -21,7 +21,15 @@ export ET_TOOLCHAIN_TARGETS_FINAL += \
 	$(ET_TOOLCHAIN_DIR)/bin/$(ET_CROSS_TUPLE)-gcc \
 	$(ET_TOOLCHAIN_DIR)/bin/$(ET_CROSS_TUPLE)-gdb
 
+define toolchain-build
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make $@ *****\n\n"
+	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)
+	@(cd $(ET_TOOLCHAIN_BUILD_DIR) && CT_ARCH=$(ET_ARCH) $(ET_TOOLCHAIN_GENERATOR) $(*F))
+	@tail -n +5 $(ET_TOOLCHAIN_BUILD_CONFIG) > $(ET_TOOLCHAIN_CONFIG)
+endef
+
 define toolchain-config
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make toolchain-config *****\n"
 	@$(MAKE) software-$(ET_TOOLCHAIN_TREE)
 	@mkdir -p $(ET_TOOLCHAIN_TARBALLS_DIR)
 	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)
@@ -29,13 +37,8 @@ define toolchain-config
 	@$(MAKE) toolchain-generator
 endef
 
-define toolchain-build
-	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)
-	@(cd $(ET_TOOLCHAIN_BUILD_DIR) && CT_ARCH=$(ET_ARCH) $(ET_TOOLCHAIN_GENERATOR) $(*F))
-	@tail -n +5 $(ET_TOOLCHAIN_BUILD_CONFIG) > $(ET_TOOLCHAIN_CONFIG)
-endef
-
 define toolchain-generator
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make toolchain-generator *****\n\n"
 	@if ! [ -d $(ET_TOOLCHAIN_GENERATOR_DIR) ]; then \
 		mkdir -p $(ET_DIR)/toolchain; \
 		cp -a $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE) $(ET_TOOLCHAIN_GENERATOR_DIR); \
