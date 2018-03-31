@@ -45,6 +45,9 @@ export ET_CONFIG_DIR ?= $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config
 
 # pull in etinker component information
 include $(ET_DIR)/toolchain.mk
+ifdef ET_BOARD_KERNEL_TREE
+include $(ET_DIR)/kernel.mk
+endif
 
 # check for existence of a source tree
 define software-check
@@ -89,5 +92,6 @@ define etinker-info
 	@printf "ET_TOOLCHAIN_CONFIG: $(ET_TOOLCHAIN_CONFIG)\n"
 	@printf "ET_TOOLCHAIN_BUILD_CONFIG: $(ET_TOOLCHAIN_BUILD_CONFIG)\n"
 	@printf "ET_TOOLCHAIN_TARGETS_FINAL: $(ET_TOOLCHAIN_TARGETS_FINAL)\n"
+	$(call kernel-info)
 	@printf "PATH: $(PATH)\n"
 endef
