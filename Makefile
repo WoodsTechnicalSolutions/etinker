@@ -38,13 +38,32 @@ toolchain-generator: $(ET_TOOLCHAIN_GENERATOR)
 $(ET_TOOLCHAIN_GENERATOR):
 	$(call toolchain-generator)
 
+.PHONY: kernel
+kernel: $(ET_KERNEL_TARGET_FINAL)
+$(ET_KERNEL_TARGET_FINAL):
+	$(call kernel-targets)
+
+kernel-%: $(ET_KERNEL_BUILD_CONFIG)
+	$(call kernel-build)
+
+.PHONY: kernel-config
+kernel-config: $(ET_KERNEL_BUILD_CONFIG)
+$(ET_KERNEL_BUILD_CONFIG): $(ET_TOOLCHAIN_TARGETS_FINAL) $(ET_KERNEL_CONFIG)
+	$(call kernel-config)
+
+.PHONY: kernel-info
+kernel-info:
+	$(call kernel-info)
+
 .PHONY: clean
 clean:
 	$(call toolchain-$@)
+	$(call kernel-$@)
 
 .PHONY: purge
 purge:
 	$(call toolchain-$@)
+	$(call kernel-$@)
 
 software-%:
 	$(call software-check)

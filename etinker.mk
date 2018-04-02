@@ -27,6 +27,8 @@ export ET_BOARD ?= arm-bare-metal
 
 export ET_DIR ?= $(shell readlink -e $(CURDIR))
 
+export ET_CPUS := $(shell nproc --all | tr -d \\n)
+
 # pull in board specific information
 include $(ET_DIR)/boards/$(ET_BOARD)/etinker.mk
 
@@ -35,6 +37,7 @@ export ET_VENDOR := $(ET_BOARD_VENDOR)
 export ET_ABI := $(ET_BOARD_ABI)
 export ET_CROSS_TUPLE := $(ET_BOARD_CROSS_TUPLE)
 export ET_CROSS_COMPILE := $(ET_BOARD_CROSS_TUPLE)-
+export ET_CROSS_PARAMS := ARCH=$(ET_ARCH) CROSS_COMPILE=$(ET_CROSS_COMPILE)
 
 export ET_PATCH_DIR := $(ET_DIR)/patches
 export ET_SOFTWARE_DIR := $(ET_DIR)/software
@@ -55,6 +58,9 @@ export PATH := $(ET_TOOLCHAIN_DIR)/bin:$(PATH)
 
 define etinker-version
 	@printf "ET_TOOLCHAIN_VERSION: $(ET_TOOLCHAIN_VERSION)\n"
+	@if [ -n "$(ET_BOARD_KERNEL_TREE)" ]; then \
+		printf "ET_KERNEL_VERSION: $(ET_KERNEL_VERSION)\n"; \
+	fi
 endef
 
 define etinker-info
