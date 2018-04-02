@@ -31,6 +31,8 @@ ET_BOARD_TOOLCHAIN_TREE ?= crosstool-ng
 
 ET_BOARD_KERNEL_DT ?= at91-sama5d3_xplained
 
+ET_BOARD_KERNEL_LOADADDR ?= 0x22000000
+
 # GCC and GDB are always added in the top-level etinker.mk
 ET_TOOLCHAIN_TARGETS_FINAL := \
 	$(ET_DIR)/toolchain/$(ET_BOARD_CROSS_TUPLE)/bin/$(ET_BOARD_CROSS_TUPLE)-g++ \
