@@ -38,6 +38,10 @@ toolchain-generator: $(ET_TOOLCHAIN_GENERATOR)
 $(ET_TOOLCHAIN_GENERATOR):
 	$(call toolchain-generator)
 
+.PHONY: toolchain-info
+toolchain-info:
+	$(call toolchain-info)
+
 .PHONY: kernel
 kernel: $(ET_KERNEL_TARGET_FINAL)
 $(ET_KERNEL_TARGET_FINAL):
