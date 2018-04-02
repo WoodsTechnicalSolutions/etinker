@@ -10,7 +10,7 @@
 include etinker.mk
 
 .PHONY: all
-all: toolchain
+all: toolchain kernel
 
 .PHONY: info
 info:
