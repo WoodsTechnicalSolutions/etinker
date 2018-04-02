@@ -21,8 +21,8 @@ version:
 	$(call etinker-version)
 
 .PHONY: toolchain
-toolchain: $(ET_TOOLCHAIN_TARGETS_FINAL)
-$(ET_TOOLCHAIN_TARGETS_FINAL):
+toolchain: $(ET_TOOLCHAIN_TARGET_FINAL)
+$(ET_TOOLCHAIN_TARGET_FINAL):
 	$(call toolchain-targets)
 
 toolchain-%: $(ET_TOOLCHAIN_BUILD_CONFIG)
@@ -52,7 +52,7 @@ kernel-%: $(ET_KERNEL_BUILD_CONFIG)
 
 .PHONY: kernel-config
 kernel-config: $(ET_KERNEL_BUILD_CONFIG)
-$(ET_KERNEL_BUILD_CONFIG): $(ET_TOOLCHAIN_TARGETS_FINAL) $(ET_KERNEL_CONFIG)
+$(ET_KERNEL_BUILD_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL) $(ET_KERNEL_CONFIG)
 	$(call kernel-config)
 
 .PHONY: kernel-info

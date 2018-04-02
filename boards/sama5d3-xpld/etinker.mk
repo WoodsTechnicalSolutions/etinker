@@ -33,11 +33,8 @@ ET_BOARD_KERNEL_DT ?= at91-sama5d3_xplained
 
 ET_BOARD_KERNEL_LOADADDR ?= 0x22000000
 
-# GCC and GDB are always added in the top-level etinker.mk
-ET_TOOLCHAIN_TARGETS_FINAL := \
-	$(ET_DIR)/toolchain/$(ET_BOARD_CROSS_TUPLE)/bin/$(ET_BOARD_CROSS_TUPLE)-g++ \
-	$(ET_DIR)/toolchain/$(ET_BOARD_CROSS_TUPLE)/$(ET_BOARD_CROSS_TUPLE)/debug-root/usr/bin/gdbserver \
-	$(ET_DIR)/toolchain/$(ET_BOARD_CROSS_TUPLE)/$(ET_BOARD_CROSS_TUPLE)/debug-root/usr/bin/ltrace \
+# final item built for the configured toolchain
+ET_TOOLCHAIN_TARGET_FINAL := \
 	$(ET_DIR)/toolchain/$(ET_BOARD_CROSS_TUPLE)/$(ET_BOARD_CROSS_TUPLE)/debug-root/usr/bin/strace
 
 export CT_KERNEL = linux
