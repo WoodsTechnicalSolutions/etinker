@@ -23,6 +23,15 @@ define toolchain-targets
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) $(ET_TOOLCHAIN_VERSION) *****\n"
 	$(MAKE) toolchain-menuconfig
 	$(MAKE) toolchain-build
+	@if ! [ -f $@ ]; then \
+		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) build FAILED! *****\n"; \
+		exit 2; \
+	fi
+	@if ! [ -d $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot.cache ]; then \
+		if [ -d $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot ]; then \
+			cp -a $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot.cache; \
+		fi; \
+	fi
 endef
 
 define toolchain-build
@@ -61,7 +70,7 @@ define toolchain-generator
 		sed -i s,-dirty,, Makefile; \
 		$(MAKE))
 	@if ! [ -f $(ET_TOOLCHAIN_GENERATOR) ]; then \
-		printf "***** crosstool-NG 'ct-ng' build FAILED! *****\n"; \
+		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) 'ct-ng' build FAILED! *****\n"; \
 		exit 2; \
 	fi
 endef
