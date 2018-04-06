@@ -55,7 +55,7 @@ export CT_LINUX_CUSTOM_LOCATION := ${ET_KERNEL_SOFTWARE_DIR}
 
 define kernel-targets
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) *****\n\n"
-	$(MAKE) -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
+	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
 		$(ET_CROSS_PARAMS) \
 		zImage \
 		LOADADDR=$(ET_KERNEL_LOADADDR) \
@@ -68,7 +68,7 @@ define kernel-targets
 		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) zImage FAILED! *****\n"; \
 		exit 2; \
 	fi
-	$(MAKE) -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
+	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
 		$(ET_CROSS_PARAMS) \
 		uImage \
 		LOADADDR=$(ET_KERNEL_LOADADDR) \
@@ -80,7 +80,7 @@ define kernel-targets
 		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) uImage FAILED! *****\n"; \
 		exit 2; \
 	fi
-	$(MAKE) -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
+	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
 		$(ET_CROSS_PARAMS) \
 		$(ET_KERNEL_DT).dtb \
 		LOCALVERSION=$(ET_KERNEL_LOCALVERSION)
@@ -91,12 +91,12 @@ define kernel-targets
 		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) $(ET_KERNEL_DT).dtb FAILED! *****\n"; \
 		exit 2; \
 	fi
-	$(MAKE) -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
+	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
 		$(ET_CROSS_PARAMS) \
 		modules \
 		LOCALVERSION=$(ET_KERNEL_LOCALVERSION)
 	@$(RM) -r $(ET_KERNEL_DIR)/lib/modules
-	$(MAKE) -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
+	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
 		$(ET_CROSS_PARAMS) \
 		modules_install \
 		LOCALVERSION=$(ET_KERNEL_LOCALVERSION) \
@@ -104,7 +104,7 @@ define kernel-targets
 	@if [ -d $(ET_KERNEL_DIR)/lib/modules ]; then \
 		find $(ET_KERNEL_DIR)/lib/modules -type l -exec rm -f {} \; ; \
 	fi
-	$(MAKE) -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
+	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
 		$(ET_CROSS_PARAMS) \
 		headers_install \
 		LOCALVERSION=$(ET_KERNEL_LOCALVERSION) \
@@ -114,7 +114,7 @@ endef
 define kernel-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] kernel 'make $1' *****\n\n"
 	@mkdir -p $(ET_KERNEL_DIR)/boot
-	$(MAKE) -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
+	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
 		$(ET_CROSS_PARAMS) \
 		$1 \
 		LOADADDR=$(ET_KERNEL_LOADADDR) \
@@ -157,6 +157,10 @@ define kernel-build
 		if [ -d $(ET_KERNEL_DIR)/lib/modules ]; then \
 			find $(ET_KERNEL_DIR)/lib/modules -type l -exec rm -f {} \; ; \
 		fi; \
+		;; \
+	*clean) \
+		$(RM) $(ET_KERNEL_DIR)/boot/*; \
+		$(RM) -r $(ET_KERNEL_DIR)/lib/modules/*; \
 		;; \
 	*) \
 		;; \
