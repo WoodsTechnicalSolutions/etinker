@@ -9,14 +9,14 @@
 
 # check for existence of a source tree
 define software-check
-	@if ! [ -d $(ET_SOFTWARE_DIR)/$(*F) ]; then \
+	@if ! [ -d $(ET_SOFTWARE_DIR)/$1 ]; then \
 		printf "\n"; \
-		printf "*****  MISSING $(ET_SOFTWARE_DIR)/$(*F) DIRECTORY  *****\n"; \
-		printf "===>  PLEASE ADD $(ET_SOFTWARE_DIR)/$(*F) SOFTWARE  <===\n"; \
+		printf "*****  MISSING $(ET_SOFTWARE_DIR)/$1 DIRECTORY  *****\n"; \
+		printf "===>  PLEASE ADD $(ET_SOFTWARE_DIR)/$1 SOFTWARE  <===\n"; \
 		printf "\n"; \
 		exit 2; \
 	fi
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] USING $(ET_SOFTWARE_DIR)/$(*F) *****\n\n"
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] USING $(ET_SOFTWARE_DIR)/$1 *****\n\n"
 endef
 
 # install typical host OS development packages

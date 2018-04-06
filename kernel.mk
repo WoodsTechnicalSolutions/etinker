@@ -43,6 +43,7 @@ export ET_KERNEL_SYSMAP := $(ET_KERNEL_DIR)/boot/System.map
 export ET_KERNEL_DTB := $(ET_KERNEL_DIR)/boot/$(ET_KERNEL_DT).dtb
 export ET_KERNEL_UIMAGE := $(ET_KERNEL_DIR)/boot/uImage
 export ET_KERNEL_ZIMAGE := $(ET_KERNEL_DIR)/boot/zImage
+export ET_KERNEL_CONFIGURED := $(ET_KERNEL_BUILD_DIR)/configured
 export ET_KERNEL_BUILD_CONFIG := $(ET_KERNEL_BUILD_DIR)/.config
 export ET_KERNEL_BUILD_SYSMAP := $(ET_KERNEL_BUILD_DIR)/System.map
 export ET_KERNEL_BUILD_DTB := $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$(ET_KERNEL_DT).dtb
@@ -53,7 +54,7 @@ export ET_KERNEL_TARGET_FINAL += $(ET_KERNEL_DTB)
 export CT_LINUX_CUSTOM_LOCATION := ${ET_KERNEL_SOFTWARE_DIR}
 
 define kernel-targets
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) *****\n"
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) *****\n\n"
 	$(MAKE) -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
 		$(ET_CROSS_PARAMS) \
 		zImage \
@@ -111,16 +112,16 @@ define kernel-targets
 endef
 
 define kernel-build
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] kernel 'make $(*F)' *****\n\n"
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] kernel 'make $1' *****\n\n"
 	@mkdir -p $(ET_KERNEL_DIR)/boot
 	$(MAKE) -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
 		$(ET_CROSS_PARAMS) \
-		$(*F) \
+		$1 \
 		LOADADDR=$(ET_KERNEL_LOADADDR) \
 		LOCALVERSION=$(ET_KERNEL_LOCALVERSION) \
 		INSTALL_MOD_PATH=$(ET_KERNEL_DIR) \
 		INSTALL_HDR_PATH=$(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot/usr/include
-	@case "$(*F)" in \
+	@case "$1" in \
 	zImage) \
 		if [ -f $(ET_KERNEL_BUILD_ZIMAGE) ]; then \
 			$(RM) $(ET_KERNEL_DIR)/boot/zImage \
@@ -160,14 +161,16 @@ define kernel-build
 	*) \
 		;; \
 	esac
-	@if ! [ -n "$(shell printf "%s" $(*F) | grep clean)" ]; then \
-		cat $(ET_KERNEL_BUILD_CONFIG) > $(ET_KERNEL_CONFIG); \
+	@if [ -n "$(shell printf "%s" $1 | grep config)" ]; then \
+		if [ -n "$(shell diff -q $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG))" ]; then \
+			cat $(ET_KERNEL_BUILD_CONFIG) > $(ET_KERNEL_CONFIG); \
+		fi; \
 	fi
 endef
 
 define kernel-config
+	$(call software-check,$(ET_KERNEL_TREE))
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make kernel-config *****\n\n"
-	$(MAKE) software-$(ET_KERNEL_TREE)
 	@mkdir -p $(ET_KERNEL_DIR)/boot
 	@mkdir -p $(ET_KERNEL_DIR)/lib/modules
 	@mkdir -p $(ET_KERNEL_BUILD_BOOT_DIR)

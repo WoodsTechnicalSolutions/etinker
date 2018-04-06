@@ -22,16 +22,18 @@ version:
 
 .PHONY: toolchain
 toolchain: $(ET_TOOLCHAIN_TARGET_FINAL)
-$(ET_TOOLCHAIN_TARGET_FINAL):
+$(ET_TOOLCHAIN_TARGET_FINAL): $(ET_TOOLCHAIN_CONFIGURED)
 	$(call toolchain-targets)
 
 toolchain-%: $(ET_TOOLCHAIN_BUILD_CONFIG)
-	$(call toolchain-build)
+	$(call toolchain-build,$(*F))
 
 .PHONY: toolchain-config
 toolchain-config: $(ET_TOOLCHAIN_BUILD_CONFIG)
-$(ET_TOOLCHAIN_BUILD_CONFIG): $(ET_TOOLCHAIN_CONFIG)
+$(ET_TOOLCHAIN_BUILD_CONFIG) $(ET_TOOLCHAIN_CONFIGURED): $(ET_TOOLCHAIN_GENERATOR) $(ET_TOOLCHAIN_CONFIG)
 	$(call toolchain-config)
+	$(call toolchain-build,menuconfig)
+	@touch $(ET_TOOLCHAIN_CONFIGURED)
 
 .PHONY: toolchain-generator
 toolchain-generator: $(ET_TOOLCHAIN_GENERATOR)
@@ -44,16 +46,17 @@ toolchain-info:
 
 .PHONY: kernel
 kernel: $(ET_KERNEL_TARGET_FINAL)
-$(ET_KERNEL_TARGET_FINAL):
+$(ET_KERNEL_TARGET_FINAL): $(ET_KERNEL_CONFIGURED)
 	$(call kernel-targets)
 
 kernel-%: $(ET_KERNEL_BUILD_CONFIG)
-	$(call kernel-build)
+	$(call kernel-build,$(*F))
 
 .PHONY: kernel-config
 kernel-config: $(ET_KERNEL_BUILD_CONFIG)
-$(ET_KERNEL_BUILD_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL) $(ET_KERNEL_CONFIG)
+$(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIGURED): $(ET_TOOLCHAIN_TARGET_FINAL) $(ET_KERNEL_CONFIG)
 	$(call kernel-config)
+	@touch $(ET_KERNEL_CONFIGURED)
 
 .PHONY: kernel-info
 kernel-info:
@@ -68,9 +71,6 @@ clean:
 purge:
 	$(call toolchain-$@)
 	$(call kernel-$@)
-
-software-%:
-	$(call software-check)
 
 .PHONY: software-development
 software-development:

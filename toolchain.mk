@@ -17,13 +17,13 @@ export ET_TOOLCHAIN_GENERATOR_DIR := $(ET_DIR)/toolchain/generator
 export ET_TOOLCHAIN_GENERATOR := $(ET_TOOLCHAIN_GENERATOR_DIR)/ct-ng
 export ET_TOOLCHAIN_CONFIG := $(ET_CONFIG_DIR)/$(ET_TOOLCHAIN_TREE)/config
 export ET_TOOLCHAIN_BUILD_CONFIG := $(ET_TOOLCHAIN_BUILD_DIR)/.config
+export ET_TOOLCHAIN_CONFIGURED := $(ET_TOOLCHAIN_BUILD_DIR)/configured
 export ET_TOOLCHAIN_TARGET_FINAL ?= $(ET_TOOLCHAIN_DIR)/bin/$(ET_CROSS_TUPLE)-gdb
 
 define toolchain-targets
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) $(ET_TOOLCHAIN_VERSION) *****\n"
-	$(MAKE) toolchain-menuconfig
-	$(MAKE) toolchain-build
-	@if ! [ -f $@ ]; then \
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) $(ET_TOOLCHAIN_VERSION) *****\n\n"
+	$(call toolchain-build,build)
+	@if ! [ -f $(ET_TOOLCHAIN_TARGET_FINAL) ]; then \
 		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) build FAILED! *****\n"; \
 		exit 2; \
 	fi
@@ -35,24 +35,25 @@ define toolchain-targets
 endef
 
 define toolchain-build
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] toolchain 'ct-ng $(*F)' *****\n\n"
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] toolchain 'ct-ng $1' *****\n\n"
 	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)
-	@(cd $(ET_TOOLCHAIN_BUILD_DIR) && CT_ARCH=$(ET_ARCH) $(ET_TOOLCHAIN_GENERATOR) $(*F))
-	@if ! [ -n "$(shell printf "%s" $(*F) | grep clean)" ]; then \
-		cat $(ET_TOOLCHAIN_BUILD_CONFIG) > $(ET_TOOLCHAIN_CONFIG); \
+	@(cd $(ET_TOOLCHAIN_BUILD_DIR) && CT_ARCH=$(ET_ARCH) $(ET_TOOLCHAIN_GENERATOR) $1)
+	@if [ -n "$(shell printf "%s" $1 | grep config)" ]; then \
+		if [ -n "$(shell diff -q $(ET_TOOLCHAIN_BUILD_CONFIG) $(ET_TOOLCHAIN_CONFIG))" ]; then \
+			cat $(ET_TOOLCHAIN_BUILD_CONFIG) > $(ET_TOOLCHAIN_CONFIG); \
+		fi; \
 	fi
 endef
 
 define toolchain-config
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make toolchain-config *****\n\n"
-	@$(MAKE) software-$(ET_TOOLCHAIN_TREE)
 	@mkdir -p $(ET_TOOLCHAIN_TARBALLS_DIR)
 	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)
 	@cat $(ET_TOOLCHAIN_CONFIG) > $(ET_TOOLCHAIN_BUILD_CONFIG)
-	@$(MAKE) toolchain-generator
 endef
 
 define toolchain-generator
+	$(call software-check,$(ET_TOOLCHAIN_TREE))
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make toolchain-generator *****\n\n"
 	@if ! [ -d $(ET_TOOLCHAIN_GENERATOR_DIR) ]; then \
 		mkdir -p $(ET_DIR)/toolchain; \
