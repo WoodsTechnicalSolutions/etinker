@@ -166,7 +166,7 @@ define kernel-build
 		;; \
 	esac
 	@if [ -n "$(shell printf "%s" $1 | grep config)" ]; then \
-		if [ -n "$(shell diff -q $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG))" ]; then \
+		if [ -n "$(shell diff -q $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG) 2> /dev/null)" ]; then \
 			cat $(ET_KERNEL_BUILD_CONFIG) > $(ET_KERNEL_CONFIG); \
 		fi; \
 	fi

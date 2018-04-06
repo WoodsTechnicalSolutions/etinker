@@ -39,7 +39,7 @@ define toolchain-build
 	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)
 	@(cd $(ET_TOOLCHAIN_BUILD_DIR) && CT_ARCH=$(ET_ARCH) $(ET_TOOLCHAIN_GENERATOR) $1)
 	@if [ -n "$(shell printf "%s" $1 | grep config)" ]; then \
-		if [ -n "$(shell diff -q $(ET_TOOLCHAIN_BUILD_CONFIG) $(ET_TOOLCHAIN_CONFIG))" ]; then \
+		if [ -n "$(shell diff -q $(ET_TOOLCHAIN_BUILD_CONFIG) $(ET_TOOLCHAIN_CONFIG) 2> /dev/null)" ]; then \
 			cat $(ET_TOOLCHAIN_BUILD_CONFIG) > $(ET_TOOLCHAIN_CONFIG); \
 		fi; \
 	fi
