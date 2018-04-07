@@ -86,7 +86,9 @@ define toolchain-purge
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make toolchain-purge *****\n\n"
 	$(RM) -r $(ET_TOOLCHAIN_DIR)
 	$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)
-	$(RM) -r $(ET_TOOLCHAIN_GENERATOR_DIR)
+	@if [ -n "$(ET_PURGE_ALL)" ]; then \
+		$(RM) -r $(ET_TOOLCHAIN_GENERATOR_DIR); \
+	fi
 endef
 
 define toolchain-info
