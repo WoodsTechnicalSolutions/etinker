@@ -113,6 +113,9 @@ define kernel-targets
 		headers_install \
 		LOCALVERSION=$(ET_KERNEL_LOCALVERSION) \
 		INSTALL_HDR_PATH=$(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot/usr/include
+	@if [ -n "$(shell diff -q $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG) 2> /dev/null)" ]; then \
+		cat $(ET_KERNEL_BUILD_CONFIG) > $(ET_KERNEL_CONFIG); \
+	fi
 endef
 
 define kernel-build
