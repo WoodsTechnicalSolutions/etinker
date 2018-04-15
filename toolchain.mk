@@ -9,12 +9,13 @@
 
 # embedded toolchain (GCC, GDB, and LIBC) is built using crosstool-NG
 export ET_TOOLCHAIN_TREE := $(ET_BOARD_TOOLCHAIN_TREE)
-export ET_TOOLCHAIN_VERSION := $(shell cd $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE)/ 2>/dev/null && git describe --tags 2>/dev/null)
+toolchain_version = $(shell cd $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE)/ 2>/dev/null && git describe --tags 2>/dev/null)
+export ET_TOOLCHAIN_VERSION := $(shell printf "%s" $(toolchain_version) | sed s,crosstool-ng-,,)
 export ET_TOOLCHAIN_DIR := $(ET_DIR)/toolchain/$(ET_CROSS_TUPLE)
 export ET_TOOLCHAIN_BUILD_DIR := $(ET_DIR)/toolchain/build/$(ET_CROSS_TUPLE)
 export ET_TOOLCHAIN_TARBALLS_DIR := $(ET_TARBALLS_DIR)/toolchain
 export ET_TOOLCHAIN_GENERATOR_DIR := $(ET_DIR)/toolchain/generator
-export ET_TOOLCHAIN_GENERATOR := $(ET_TOOLCHAIN_GENERATOR_DIR)/ct-ng
+export ET_TOOLCHAIN_GENERATOR := $(ET_TOOLCHAIN_GENERATOR_DIR)/bin/ct-ng
 export ET_TOOLCHAIN_CONFIG := $(ET_CONFIG_DIR)/$(ET_TOOLCHAIN_TREE)/config
 export ET_TOOLCHAIN_BUILD_CONFIG := $(ET_TOOLCHAIN_BUILD_DIR)/.config
 export ET_TOOLCHAIN_CONFIGURED := $(ET_TOOLCHAIN_BUILD_DIR)/configured
@@ -39,6 +40,13 @@ define toolchain-build
 	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)
 	@(cd $(ET_TOOLCHAIN_BUILD_DIR) && CT_ARCH=$(ET_ARCH) $(ET_TOOLCHAIN_GENERATOR) $1)
 	@if [ -n "$(shell printf "%s" $1 | grep config)" ]; then \
+		if [ -n "$(ET_BOARD_KERNEL_TREE)" ]; then \
+			if [ -n "$(shell grep -e "CT_LINUX_CUSTOM_LOCATION=\"\"" $(ET_TOOLCHAIN_BUILD_CONFIG))" ]; then \
+				sed -i \
+					s,CT_LINUX_CUSTOM_LOCATION=\"\",CT_LINUX_CUSTOM_LOCATION=\"$$\{ET_KERNEL_SOFTWARE_DIR\}\", \
+					$(ET_TOOLCHAIN_BUILD_CONFIG); \
+			fi; \
+		fi; \
 		if [ -n "$(shell diff -q $(ET_TOOLCHAIN_BUILD_CONFIG) $(ET_TOOLCHAIN_CONFIG) 2> /dev/null)" ]; then \
 			cat $(ET_TOOLCHAIN_BUILD_CONFIG) > $(ET_TOOLCHAIN_CONFIG); \
 		fi; \
@@ -55,21 +63,12 @@ endef
 define toolchain-generator
 	$(call software-check,$(ET_TOOLCHAIN_TREE))
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make toolchain-generator *****\n\n"
-	@if ! [ -d $(ET_TOOLCHAIN_GENERATOR_DIR) ]; then \
-		mkdir -p $(ET_DIR)/toolchain; \
-		cp -a $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE) $(ET_TOOLCHAIN_GENERATOR_DIR); \
-	fi
-	@(cd $(ET_TOOLCHAIN_GENERATOR_DIR); \
-		if ! [ -f .patched ]; then \
-			for f in $(shell ls $(ET_PATCH_DIR)/crosstool-ng/*.patch); do \
-				patch -p1 < $$f; \
-			done; \
-			touch .patched; \
-		fi; \
+	@(cd $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE); \
+		$(MAKE) distclean; \
 		./bootstrap; \
-		./configure --enable-local; \
-		sed -i s,-dirty,, Makefile; \
-		$(MAKE))
+		./configure --prefix=$(ET_DIR)/toolchain/generator; \
+		$(MAKE); \
+		$(MAKE) install)
 	@if ! [ -f $(ET_TOOLCHAIN_GENERATOR) ]; then \
 		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) 'ct-ng' build FAILED! *****\n"; \
 		exit 2; \

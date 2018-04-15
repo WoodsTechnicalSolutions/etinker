@@ -32,7 +32,6 @@ toolchain-%: $(ET_TOOLCHAIN_BUILD_CONFIG)
 toolchain-config: $(ET_TOOLCHAIN_BUILD_CONFIG)
 $(ET_TOOLCHAIN_BUILD_CONFIG) $(ET_TOOLCHAIN_CONFIGURED): $(ET_TOOLCHAIN_GENERATOR) $(ET_TOOLCHAIN_CONFIG)
 	$(call toolchain-config)
-	$(call toolchain-build,menuconfig)
 	@touch $(ET_TOOLCHAIN_CONFIGURED)
 
 .PHONY: toolchain-generator
@@ -42,7 +41,11 @@ $(ET_TOOLCHAIN_GENERATOR):
 
 .PHONY: toolchain-info
 toolchain-info:
-	$(call toolchain-info)
+	$(call $@)
+
+.PHONY: toolchain-purge
+toolchain-purge:
+	$(call $@)
 
 .PHONY: kernel
 kernel: $(ET_KERNEL_TARGET_FINAL)
@@ -60,7 +63,11 @@ $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIGURED): $(ET_TOOLCHAIN_TARGET_FINAL) 
 
 .PHONY: kernel-info
 kernel-info:
-	$(call kernel-info)
+	$(call $@)
+
+.PHONY: kernel-purge
+kernel-purge:
+	$(call $@)
 
 .PHONY: clean
 clean:
@@ -74,4 +81,4 @@ purge:
 
 .PHONY: software-development
 software-development:
-	$(call software-development)
+	$(call $@)

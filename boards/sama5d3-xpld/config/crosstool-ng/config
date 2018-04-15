@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# crosstool-NG crosstool-ng-1.23.0-319-gaca85cbb Configuration
+# crosstool-NG 1.23.0-360-g5472517b Configuration
 #
 CT_CONFIGURE_has_static_link=y
 CT_CONFIGURE_has_wget=y
@@ -9,9 +9,7 @@ CT_CONFIGURE_has_stat_flavor_GNU=y
 CT_CONFIGURE_has_make_3_81_or_newer=y
 CT_CONFIGURE_has_libtool_2_4_or_newer=y
 CT_CONFIGURE_has_libtoolize_2_4_or_newer=y
-CT_CONFIGURE_has_autoconf_2_63_or_newer=y
-CT_CONFIGURE_has_autoreconf_2_63_or_newer=y
-CT_CONFIGURE_has_automake_1_15_or_newer=y
+CT_CONFIGURE_has_autoreconf_2_65_or_newer=y
 CT_CONFIGURE_has_gnu_m4_1_4_12_or_newer=y
 CT_CONFIGURE_has_cvs=y
 CT_CONFIGURE_has_svn=y
@@ -250,6 +248,7 @@ CT_LINUX_PKG_NAME="linux"
 CT_LINUX_SRC_CUSTOM=y
 CT_LINUX_CUSTOM_LOCATION="${ET_KERNEL_SOFTWARE_DIR}"
 # CT_LINUX_VERY_NEW is not set
+# CT_LINUX_V_4_16 is not set
 # CT_LINUX_V_4_15 is not set
 CT_LINUX_V_4_14=y
 # CT_LINUX_V_4_13 is not set
@@ -265,7 +264,7 @@ CT_LINUX_V_4_14=y
 # CT_LINUX_V_3_10 is not set
 # CT_LINUX_V_3_4 is not set
 # CT_LINUX_V_3_2 is not set
-CT_LINUX_VERSION="4.14.15"
+CT_LINUX_VERSION="4.14.33"
 CT_LINUX_MIRRORS="$(CT_Mirrors kernel.org linux ${CT_LINUX_VERSION})"
 CT_LINUX_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
 CT_LINUX_ARCHIVE_DIRNAME="@{pkg_name}-@{version}"
@@ -407,7 +406,7 @@ CT_GLIBC_FORCE_UNWIND=y
 # CT_GLIBC_KERNEL_VERSION_NONE is not set
 CT_GLIBC_KERNEL_VERSION_AS_HEADERS=y
 # CT_GLIBC_KERNEL_VERSION_CHOSEN is not set
-CT_GLIBC_MIN_KERNEL="4.14.15"
+CT_GLIBC_MIN_KERNEL="4.14.33"
 CT_LIBC_SUPPORT_THREADS_ANY=y
 CT_LIBC_SUPPORT_THREADS_NATIVE=y
 
@@ -583,14 +582,16 @@ CT_STRACE_PKG_NAME="strace"
 CT_STRACE_SRC_RELEASE=y
 # CT_STRACE_SRC_DEVEL is not set
 # CT_STRACE_SRC_CUSTOM is not set
-CT_STRACE_V_4_20=y
+CT_STRACE_V_4_22=y
+# CT_STRACE_V_4_21 is not set
+# CT_STRACE_V_4_20 is not set
 # CT_STRACE_V_4_19 is not set
 # CT_STRACE_V_4_18 is not set
 # CT_STRACE_V_4_17 is not set
 # CT_STRACE_V_4_16 is not set
 # CT_STRACE_V_4_15 is not set
-CT_STRACE_VERSION="4.20"
-CT_STRACE_MIRRORS="http://downloads.sourceforge.net/project/strace/strace/${CT_STRACE_VERSION}"
+CT_STRACE_VERSION="4.22"
+CT_STRACE_MIRRORS="https://strace.io/files/${CT_STRACE_VERSION}"
 CT_STRACE_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
 CT_STRACE_ARCHIVE_DIRNAME="@{pkg_name}-@{version}"
 CT_STRACE_ARCHIVE_FORMATS=".tar.xz"
@@ -655,11 +656,12 @@ CT_ISL_PKG_NAME="isl"
 CT_ISL_SRC_RELEASE=y
 # CT_ISL_SRC_DEVEL is not set
 # CT_ISL_SRC_CUSTOM is not set
-CT_ISL_V_0_18=y
+CT_ISL_V_0_19=y
+# CT_ISL_V_0_18 is not set
 # CT_ISL_V_0_17_1 is not set
 # CT_ISL_V_0_16_1 is not set
 # CT_ISL_V_0_15 is not set
-CT_ISL_VERSION="0.18"
+CT_ISL_VERSION="0.19"
 CT_ISL_MIRRORS="http://isl.gforge.inria.fr"
 CT_ISL_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
 CT_ISL_ARCHIVE_DIRNAME="@{pkg_name}-@{version}"
@@ -728,16 +730,16 @@ CT_MPFR_PKG_NAME="mpfr"
 CT_MPFR_SRC_RELEASE=y
 # CT_MPFR_SRC_DEVEL is not set
 # CT_MPFR_SRC_CUSTOM is not set
-CT_MPFR_V_4_0_0=y
+CT_MPFR_V_4_0_1=y
 # CT_MPFR_V_3_1_6 is not set
-CT_MPFR_VERSION="4.0.0"
+CT_MPFR_VERSION="4.0.1"
 CT_MPFR_MIRRORS="http://www.mpfr.org/mpfr-${CT_MPFR_VERSION} $(CT_Mirrors GNU mpfr)"
 CT_MPFR_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
 CT_MPFR_ARCHIVE_DIRNAME="@{pkg_name}-@{version}"
 CT_MPFR_ARCHIVE_FORMATS=".tar.xz .tar.bz2 .tar.gz .zip"
 CT_MPFR_SIGNATURE_FORMAT="packed/.asc"
+CT_MPFR_later_than_4_0_0=y
 CT_MPFR_4_0_0_or_later=y
-CT_MPFR_4_0_0_or_older=y
 CT_MPFR_later_than_3_0_0=y
 CT_MPFR_3_0_0_or_later=y
 CT_MPFR_REQUIRE_3_0_0_or_later=y
