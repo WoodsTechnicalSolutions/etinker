@@ -20,20 +20,27 @@ export ET_KERNEL_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_BOARD_KERNEL_TREE)
 ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v | cut -d '-' -f 1)
 ET_KERNEL_LOCALVERSION := -$(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | cut -d '-' -f 2-5)
 ifeq ($(ET_KERNEL_LOCALVERSION),-)
+# empty local version
 ET_KERNEL_LOCALVERSION :=
 endif
 ifeq ($(ET_KERNEL_VERSION),next)
+# linux-next
 kversion := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && make kernelversion | tr -d \\n)
 klocalversion := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null)
 ET_KERNEL_VERSION := $(kversion)-$(klocalversion)
 ET_KERNEL_LOCALVERSION :=
 endif
 ifeq ($(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,[0-9],,),-rc)
+# RC version (i.e. v4.14-rc1)
 ET_KERNEL_VERSION := $(ET_KERNEL_VERSION).0$(ET_KERNEL_LOCALVERSION)
 ET_KERNEL_LOCALVERSION :=
 endif
 ifeq ($(ET_KERNEL_LOCALVERSION),-v$(ET_KERNEL_VERSION))
+# exact tag in series (i.e. v4.14.1)
+ifeq ($(shell printf "%s" $(ET_KERNEL_VERSION)|cut -d '.' -f 3),)
+# first in release series (i.e. v4.14)
 ET_KERNEL_VERSION := $(ET_KERNEL_VERSION).0
+endif
 ET_KERNEL_LOCALVERSION :=
 endif
 export ET_KERNEL_VERSION
