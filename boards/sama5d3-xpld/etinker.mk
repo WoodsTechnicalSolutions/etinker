@@ -26,12 +26,16 @@ ET_BOARD_OS ?= linux
 ET_BOARD_ABI ?= gnueabihf
 ET_BOARD_CROSS_TUPLE := $(ET_BOARD_ARCH)-$(ET_BOARD_VENDOR)-$(ET_BOARD_OS)-$(ET_BOARD_ABI)
 
-ET_BOARD_KERNEL_TREE ?= linux
 ET_BOARD_TOOLCHAIN_TREE ?= crosstool-ng
+ET_BOARD_KERNEL_TREE ?= linux
+ET_BOARD_BOOTLOADER_TREE ?= u-boot
 
 ET_BOARD_KERNEL_DT ?= at91-sama5d3_xplained
 
 ET_BOARD_KERNEL_LOADADDR ?= 0x22000000
+
+ET_BOARD_BOOTLOADER_SPL_BINARY := boot.bin
+ET_BOARD_BOOTLOADER_DEFCONFIG := sama5d3_xplained_mmc_defconfig 
 
 # final item built for the configured toolchain
 ET_TOOLCHAIN_TARGET_FINAL := \
