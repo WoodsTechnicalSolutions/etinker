@@ -10,7 +10,7 @@
 include etinker.mk
 
 .PHONY: all
-all: toolchain kernel
+all: toolchain kernel bootloader
 
 .PHONY: info
 info:
@@ -69,15 +69,42 @@ kernel-info:
 kernel-purge:
 	$(call $@)
 
+.PHONY: bootloader
+bootloader: $(ET_BOOTLOADER_TARGET_FINAL)
+$(ET_BOOTLOADER_TARGET_FINAL): $(ET_BOOTLOADER_CONFIGURED)
+	$(call bootloader-targets)
+
+bootloader-%: $(ET_BOOTLOADER_BUILD_CONFIG)
+	$(call bootloader-build,$(*F))
+
+.PHONY: bootloader-config
+bootloader-config: $(ET_BOOTLOADER_BUILD_CONFIG)
+$(ET_BOOTLOADER_BUILD_CONFIG) $(ET_BOOTLOADER_CONFIGURED): $(ET_BOOTLOADER_CONFIG)
+	$(call bootloader-config)
+	@touch $(ET_BOOTLOADER_CONFIGURED)
+
+$(ET_BOOTLOADER_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL) 
+	$(call bootloader-build,$(ET_BOOTLOADER_DEFCONFIG))
+
+.PHONY: bootloader-info
+bootloader-info:
+	$(call $@)
+
+.PHONY: bootloader-purge
+bootloader-purge:
+	$(call $@)
+
 .PHONY: clean
 clean:
 	$(call toolchain-$@)
 	$(call kernel-$@)
+	$(call bootloader-$@)
 
 .PHONY: purge
 purge:
 	$(call toolchain-$@)
 	$(call kernel-$@)
+	$(call bootloader-$@)
 
 .PHONY: software-development
 software-development:

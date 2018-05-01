@@ -52,6 +52,9 @@ include $(ET_DIR)/toolchain.mk
 ifdef ET_BOARD_KERNEL_TREE
 include $(ET_DIR)/kernel.mk
 endif
+ifdef ET_BOARD_BOOTLOADER_TREE
+include $(ET_DIR)/bootloader.mk
+endif
 
 # allow users to find cross-compiler
 export PATH := $(ET_TOOLCHAIN_DIR)/bin:$(PATH)
