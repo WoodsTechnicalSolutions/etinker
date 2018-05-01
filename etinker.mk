@@ -82,5 +82,6 @@ define etinker-info
 	@printf "ET_CONFIG_DIR: $(ET_CONFIG_DIR)\n"
 	$(call toolchain-info)
 	$(call kernel-info)
+	$(call bootloader-info)
 	@printf "PATH: $(PATH)\n"
 endef
