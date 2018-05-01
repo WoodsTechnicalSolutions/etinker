@@ -33,9 +33,10 @@ ET_BOARD_BOOTLOADER_TREE ?= u-boot
 ET_BOARD_KERNEL_DT ?= at91-sama5d3_xplained
 
 ET_BOARD_KERNEL_LOADADDR ?= 0x22000000
+ET_BOARD_KERNEL_DEFCONFIG ?= sama5_defconfig
 
-ET_BOARD_BOOTLOADER_SPL_BINARY := boot.bin
-ET_BOARD_BOOTLOADER_DEFCONFIG := sama5d3_xplained_mmc_defconfig 
+ET_BOARD_BOOTLOADER_SPL_BINARY ?= boot.bin
+ET_BOARD_BOOTLOADER_DEFCONFIG ?= sama5d3_xplained_mmc_defconfig
 
 # final item built for the configured toolchain
 ET_TOOLCHAIN_TARGET_FINAL := \
