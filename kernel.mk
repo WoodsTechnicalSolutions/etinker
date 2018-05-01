@@ -15,6 +15,7 @@ endif
 export ET_KERNEL_TREE := $(ET_BOARD_KERNEL_TREE)
 export ET_KERNEL_DT := $(ET_BOARD_KERNEL_DT)
 export ET_KERNEL_LOADADDR := $(ET_BOARD_KERNEL_LOADADDR)
+export ET_KERNEL_DEFCONFIG := $(ET_BOARD_KERNEL_DEFCONFIG)
 export ET_KERNEL_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_BOARD_KERNEL_TREE)
 # [start] kernel version magic
 ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v | cut -d '-' -f 1)
@@ -126,7 +127,7 @@ define kernel-targets
 endef
 
 define kernel-build
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] kernel 'make $1' *****\n\n"
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-build 'make $1' *****\n\n"
 	@mkdir -p $(ET_KERNEL_DIR)/boot
 	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
 		$(ET_CROSS_PARAMS) \
@@ -180,7 +181,8 @@ define kernel-build
 		;; \
 	esac
 	@if [ -n "$(shell printf "%s" $1 | grep config)" ]; then \
-		if [ -n "$(shell diff -q $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG) 2> /dev/null)" ]; then \
+		if [ -n "$(shell diff -q $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG) 2> /dev/null)" ] || \
+		   [ -n "$(shell printf "%s" $1 | grep defconfig)" ]; then \
 			cat $(ET_KERNEL_BUILD_CONFIG) > $(ET_KERNEL_CONFIG); \
 		fi; \
 	fi
@@ -188,21 +190,26 @@ endef
 
 define kernel-config
 	$(call software-check,$(ET_KERNEL_TREE))
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make kernel-config *****\n\n"
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-config *****\n\n"
 	@mkdir -p $(ET_KERNEL_DIR)/boot
 	@mkdir -p $(ET_KERNEL_DIR)/lib/modules
 	@mkdir -p $(ET_KERNEL_BUILD_BOOT_DIR)
+	@if ! [ -f $(ET_KERNEL_CONFIG) ]; then \
+		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-config build FAILED! *****\n\n"; \
+		exit 2; \
+	fi
 	@cat $(ET_KERNEL_CONFIG) > $(ET_KERNEL_BUILD_CONFIG)
 endef
 
 define kernel-clean
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make kernel-clean *****\n\n"
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-clean *****\n\n"
 	$(RM) $(ET_KERNEL_DIR)/boot/*
 	$(RM) -r $(ET_KERNEL_DIR)/lib/modules/*
 endef
 
 define kernel-purge
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make kernel-purge *****\n\n"
+	$(call kernel-clean)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-purge *****\n\n"
 	$(RM) -r $(ET_KERNEL_BUILD_DIR)
 endef
 
