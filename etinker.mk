@@ -64,6 +64,9 @@ define etinker-version
 	@if [ -n "$(ET_BOARD_KERNEL_TREE)" ]; then \
 		printf "ET_KERNEL_VERSION: $(ET_KERNEL_VERSION)\n"; \
 	fi
+	@if [ -n "$(ET_BOARD_BOOTLOADER_TREE)" ]; then \
+		printf "ET_BOOTLOADER_VERSION: $(ET_BOOTLOADER_VERSION)\n"; \
+	fi
 endef
 
 define etinker-info
