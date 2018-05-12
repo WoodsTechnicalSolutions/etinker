@@ -181,9 +181,17 @@ define kernel-build
 		;; \
 	esac
 	@if [ -n "$(shell printf "%s" $1 | grep config)" ]; then \
-		if [ -n "$(shell diff -q $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG) 2> /dev/null)" ] || \
-		   [ -n "$(shell printf "%s" $1 | grep defconfig)" ]; then \
-			cat $(ET_KERNEL_BUILD_CONFIG) > $(ET_KERNEL_CONFIG); \
+		if [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
+			if [ -f $(ET_KERNEL_CONFIG) ]; then \
+				if [ -n "$(shell diff -q $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG) 2> /dev/null)" ]; then \
+					cat $(ET_KERNEL_BUILD_CONFIG) > $(ET_KERNEL_CONFIG); \
+				fi; \
+			else \
+				cat $(ET_KERNEL_BUILD_CONFIG) > $(ET_KERNEL_CONFIG); \
+			fi; \
+		else \
+			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) .config MISSING! *****\n"; \
+			exit 2; \
 		fi; \
 	fi
 endef
