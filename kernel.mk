@@ -47,7 +47,7 @@ endif
 export ET_KERNEL_VERSION
 export ET_KERNEL_LOCALVERSION
 # [end] kernel version magic
-export ET_KERNEL_DIR := $(ET_DIR)/kernel/$(ET_BOARD_TYPE)/$(ET_CROSS_TUPLE)
+export ET_KERNEL_DIR := $(ET_DIR)/kernel/$(ET_BOARD)/$(ET_CROSS_TUPLE)
 export ET_KERNEL_BUILD_DIR := $(ET_DIR)/kernel/build/$(ET_BOARD_TYPE)/$(ET_CROSS_TUPLE)
 export ET_KERNEL_BUILD_BOOT_DIR := $(ET_KERNEL_BUILD_DIR)/arch/$(ET_ARCH)/boot
 export ET_KERNEL_CONFIG := $(ET_CONFIG_DIR)/$(ET_KERNEL_TREE)/config
