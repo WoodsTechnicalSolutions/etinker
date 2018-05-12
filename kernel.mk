@@ -65,6 +65,12 @@ export ET_KERNEL_TARGET_FINAL += $(ET_KERNEL_DTB)
 
 export CT_LINUX_CUSTOM_LOCATION := ${ET_KERNEL_SOFTWARE_DIR}
 
+define kernel-depends
+	@mkdir -p $(ET_KERNEL_DIR)/boot
+	@mkdir -p $(ET_KERNEL_DIR)/lib/modules
+	@mkdir -p $(ET_KERNEL_BUILD_BOOT_DIR)
+endef
+
 define kernel-targets
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) *****\n\n"
 	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
@@ -128,7 +134,6 @@ endef
 
 define kernel-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-build 'make $1' *****\n\n"
-	@mkdir -p $(ET_KERNEL_DIR)/boot
 	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
 		$(ET_CROSS_PARAMS) \
 		$1 \
@@ -199,9 +204,7 @@ endef
 define kernel-config
 	$(call software-check,$(ET_KERNEL_TREE))
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-config *****\n\n"
-	@mkdir -p $(ET_KERNEL_DIR)/boot
-	@mkdir -p $(ET_KERNEL_DIR)/lib/modules
-	@mkdir -p $(ET_KERNEL_BUILD_BOOT_DIR)
+	$(call kernel-depends)
 	@if ! [ -f $(ET_KERNEL_CONFIG) ]; then \
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-config build FAILED! *****\n\n"; \
 		exit 2; \

@@ -21,6 +21,11 @@ export ET_TOOLCHAIN_BUILD_CONFIG := $(ET_TOOLCHAIN_BUILD_DIR)/.config
 export ET_TOOLCHAIN_CONFIGURED := $(ET_TOOLCHAIN_BUILD_DIR)/configured
 export ET_TOOLCHAIN_TARGET_FINAL ?= $(ET_TOOLCHAIN_DIR)/bin/$(ET_CROSS_TUPLE)-gdb
 
+define toolchain-depends
+	@mkdir -p $(ET_TOOLCHAIN_TARBALLS_DIR)
+	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)
+endef
+
 define toolchain-targets
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) $(ET_TOOLCHAIN_VERSION) *****\n\n"
 	$(call toolchain-build,build)
@@ -37,7 +42,6 @@ endef
 
 define toolchain-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] toolchain 'ct-ng $1' *****\n\n"
-	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)
 	@(cd $(ET_TOOLCHAIN_BUILD_DIR) && CT_ARCH=$(ET_ARCH) $(ET_TOOLCHAIN_GENERATOR) $1)
 	@if [ -n "$(shell printf "%s" $1 | grep config)" ]; then \
 		if [ -n "$(ET_BOARD_KERNEL_TREE)" ]; then \
@@ -55,8 +59,7 @@ endef
 
 define toolchain-config
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make toolchain-config *****\n\n"
-	@mkdir -p $(ET_TOOLCHAIN_TARBALLS_DIR)
-	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)
+	$(call toolchain-depends)
 	@cat $(ET_TOOLCHAIN_CONFIG) > $(ET_TOOLCHAIN_BUILD_CONFIG)
 endef
 
