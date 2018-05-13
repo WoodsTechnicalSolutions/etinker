@@ -16,7 +16,7 @@ export ET_KERNEL_TREE := $(ET_BOARD_KERNEL_TREE)
 export ET_KERNEL_DT := $(ET_BOARD_KERNEL_DT)
 export ET_KERNEL_LOADADDR := $(ET_BOARD_KERNEL_LOADADDR)
 export ET_KERNEL_DEFCONFIG := $(ET_BOARD_KERNEL_DEFCONFIG)
-export ET_KERNEL_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_BOARD_KERNEL_TREE)
+export ET_KERNEL_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_KERNEL_TREE)
 # [start] kernel version magic
 ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v | cut -d '-' -f 1)
 ET_KERNEL_LOCALVERSION := -$(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | cut -d '-' -f 2-5)
@@ -47,20 +47,20 @@ endif
 export ET_KERNEL_VERSION
 export ET_KERNEL_LOCALVERSION
 # [end] kernel version magic
-export ET_KERNEL_DIR := $(ET_DIR)/kernel/$(ET_BOARD)/$(ET_CROSS_TUPLE)
 export ET_KERNEL_BUILD_DIR := $(ET_DIR)/kernel/build/$(ET_BOARD_TYPE)/$(ET_CROSS_TUPLE)
 export ET_KERNEL_BUILD_BOOT_DIR := $(ET_KERNEL_BUILD_DIR)/arch/$(ET_ARCH)/boot
-export ET_KERNEL_CONFIG := $(ET_CONFIG_DIR)/$(ET_KERNEL_TREE)/config
-export ET_KERNEL_SYSMAP := $(ET_KERNEL_DIR)/boot/System.map
-export ET_KERNEL_DTB := $(ET_KERNEL_DIR)/boot/$(ET_KERNEL_DT).dtb
-export ET_KERNEL_UIMAGE := $(ET_KERNEL_DIR)/boot/uImage
-export ET_KERNEL_ZIMAGE := $(ET_KERNEL_DIR)/boot/zImage
-export ET_KERNEL_CONFIGURED := $(ET_KERNEL_BUILD_DIR)/configured
 export ET_KERNEL_BUILD_CONFIG := $(ET_KERNEL_BUILD_DIR)/.config
 export ET_KERNEL_BUILD_SYSMAP := $(ET_KERNEL_BUILD_DIR)/System.map
 export ET_KERNEL_BUILD_DTB := $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$(ET_KERNEL_DT).dtb
 export ET_KERNEL_BUILD_UIMAGE := $(ET_KERNEL_BUILD_BOOT_DIR)/uImage
 export ET_KERNEL_BUILD_ZIMAGE := $(ET_KERNEL_BUILD_BOOT_DIR)/zImage
+export ET_KERNEL_CONFIGURED := $(ET_KERNEL_BUILD_DIR)/configured
+export ET_KERNEL_DIR := $(ET_DIR)/kernel/$(ET_BOARD)/$(ET_CROSS_TUPLE)
+export ET_KERNEL_CONFIG := $(ET_CONFIG_DIR)/$(ET_KERNEL_TREE)/config
+export ET_KERNEL_SYSMAP := $(ET_KERNEL_DIR)/boot/System.map
+export ET_KERNEL_DTB := $(ET_KERNEL_DIR)/boot/$(ET_KERNEL_DT).dtb
+export ET_KERNEL_UIMAGE := $(ET_KERNEL_DIR)/boot/uImage
+export ET_KERNEL_ZIMAGE := $(ET_KERNEL_DIR)/boot/zImage
 export ET_KERNEL_TARGET_FINAL += $(ET_KERNEL_DTB)
 
 export CT_LINUX_CUSTOM_LOCATION := ${ET_KERNEL_SOFTWARE_DIR}
@@ -180,6 +180,7 @@ define kernel-info
 	@printf "ET_KERNEL_TREE: $(ET_KERNEL_TREE)\n"
 	@printf "ET_KERNEL_VERSION: $(ET_KERNEL_VERSION)\n"
 	@printf "ET_KERNEL_LOCALVERSION: $(ET_KERNEL_LOCALVERSION)\n"
+	@printf "ET_KERNEL_SOFTWARE_DIR: $(ET_KERNEL_SOFTWARE_DIR)\n"
 	@printf "ET_KERNEL_DT: $(ET_KERNEL_DT)\n"
 	@printf "ET_KERNEL_DTB: $(ET_KERNEL_DTB)\n"
 	@printf "ET_KERNEL_SYSMAP: $(ET_KERNEL_SYSMAP)\n"
@@ -193,6 +194,5 @@ define kernel-info
 	@printf "ET_KERNEL_BUILD_ZIMAGE: $(ET_KERNEL_BUILD_ZIMAGE)\n"
 	@printf "ET_KERNEL_DIR: $(ET_KERNEL_DIR)\n"
 	@printf "ET_KERNEL_BUILD_DIR: $(ET_KERNEL_BUILD_DIR)\n"
-	@printf "ET_KERNEL_SOFTWARE_DIR: $(ET_KERNEL_SOFTWARE_DIR)\n"
 	@printf "ET_KERNEL_TARGET_FINAL: $(ET_KERNEL_TARGET_FINAL)\n"
 endef
