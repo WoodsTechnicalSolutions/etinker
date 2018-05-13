@@ -44,15 +44,17 @@ define toolchain-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] toolchain 'ct-ng $1' *****\n\n"
 	@(cd $(ET_TOOLCHAIN_BUILD_DIR) && CT_ARCH=$(ET_ARCH) $(ET_TOOLCHAIN_GENERATOR) $1)
 	@if [ -n "$(shell printf "%s" $1 | grep config)" ]; then \
-		if [ -n "$(ET_BOARD_KERNEL_TREE)" ]; then \
-			if [ -n "$(shell grep -e "CT_LINUX_CUSTOM_LOCATION=\"\"" $(ET_TOOLCHAIN_BUILD_CONFIG))" ]; then \
-				sed -i \
-					s,CT_LINUX_CUSTOM_LOCATION=\"\",CT_LINUX_CUSTOM_LOCATION=\"$$\{ET_KERNEL_SOFTWARE_DIR\}\", \
-					$(ET_TOOLCHAIN_BUILD_CONFIG); \
+		if [ -f $(ET_TOOLCHAIN_BUILD_CONFIG) ]; then \
+			if [ -f $(ET_TOOLCHAIN_CONFIG) ]; then \
+				if [ -n "$(shell diff -q $(ET_TOOLCHAIN_BUILD_CONFIG) $(ET_TOOLCHAIN_CONFIG) 2> /dev/null)" ]; then \
+					cat $(ET_TOOLCHAIN_BUILD_CONFIG) > $(ET_TOOLCHAIN_CONFIG); \
+				fi; \
+			else \
+				cat $(ET_TOOLCHAIN_BUILD_CONFIG) > $(ET_TOOLCHAIN_CONFIG); \
 			fi; \
-		fi; \
-		if [ -n "$(shell diff -q $(ET_TOOLCHAIN_BUILD_CONFIG) $(ET_TOOLCHAIN_CONFIG) 2> /dev/null)" ]; then \
-			cat $(ET_TOOLCHAIN_BUILD_CONFIG) > $(ET_TOOLCHAIN_CONFIG); \
+		else \
+			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) $(ET_TOOLCHAIN_VERSION) .config MISSING! *****\n"; \
+			exit 2; \
 		fi; \
 	fi
 endef
