@@ -73,60 +73,12 @@ endef
 
 define kernel-targets
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) *****\n\n"
-	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
-		$(ET_CROSS_PARAMS) \
-		zImage \
-		LOADADDR=$(ET_KERNEL_LOADADDR) \
-		LOCALVERSION=$(ET_KERNEL_LOCALVERSION)
-	@if [ -f $(ET_KERNEL_BUILD_ZIMAGE) ]; then \
-		$(RM) $(ET_KERNEL_ZIMAGE) $(ET_KERNEL_SYSMAP); \
-	        cp -av $(ET_KERNEL_BUILD_ZIMAGE) $(ET_KERNEL_BUILD_SYSMAP) \
-			$(ET_KERNEL_DIR)/boot/; \
-	else \
-		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) zImage FAILED! *****\n"; \
-		exit 2; \
-	fi
-	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
-		$(ET_CROSS_PARAMS) \
-		uImage \
-		LOADADDR=$(ET_KERNEL_LOADADDR) \
-		LOCALVERSION=$(ET_KERNEL_LOCALVERSION)
-	@if [ -f $(ET_KERNEL_BUILD_UIMAGE) ]; then \
-		$(RM) $(ET_KERNEL_UIMAGE); \
-	        cp -av $(ET_KERNEL_BUILD_UIMAGE) $(ET_KERNEL_DIR)/boot/; \
-	else \
-		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) uImage FAILED! *****\n"; \
-		exit 2; \
-	fi
-	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
-		$(ET_CROSS_PARAMS) \
-		$(ET_KERNEL_DT).dtb \
-		LOCALVERSION=$(ET_KERNEL_LOCALVERSION)
-	@if [ -f $(ET_KERNEL_BUILD_DTB) ]; then \
-		$(RM) $(ET_KERNEL_DTB); \
-		cp -av $(ET_KERNEL_BUILD_DTB) $(ET_KERNEL_DIR)/boot/; \
-	else \
-		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) $(ET_KERNEL_DT).dtb FAILED! *****\n"; \
-		exit 2; \
-	fi
-	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
-		$(ET_CROSS_PARAMS) \
-		modules \
-		LOCALVERSION=$(ET_KERNEL_LOCALVERSION)
-	@$(RM) -r $(ET_KERNEL_DIR)/lib/modules
-	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
-		$(ET_CROSS_PARAMS) \
-		modules_install \
-		LOCALVERSION=$(ET_KERNEL_LOCALVERSION) \
-		INSTALL_MOD_PATH=$(ET_KERNEL_DIR)
-	@if [ -d $(ET_KERNEL_DIR)/lib/modules ]; then \
-		find $(ET_KERNEL_DIR)/lib/modules -type l -exec rm -f {} \; ; \
-	fi
-	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
-		$(ET_CROSS_PARAMS) \
-		headers_install \
-		LOCALVERSION=$(ET_KERNEL_LOCALVERSION) \
-		INSTALL_HDR_PATH=$(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot/usr/include
+	$(call kernel-build,zImage)
+	$(call kernel-build,uImage)
+	$(call kernel-build,$(ET_KERNEL_DT).dtb)
+	$(call kernel-build,modules)
+	$(call kernel-build,modules_install)
+	$(call kernel-build,headers_install)
 	@if [ -n "$(shell diff -q $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG) 2> /dev/null)" ]; then \
 		cat $(ET_KERNEL_BUILD_CONFIG) > $(ET_KERNEL_CONFIG); \
 	fi
