@@ -54,7 +54,6 @@ export ET_KERNEL_BUILD_SYSMAP := $(ET_KERNEL_BUILD_DIR)/System.map
 export ET_KERNEL_BUILD_DTB := $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$(ET_KERNEL_DT).dtb
 export ET_KERNEL_BUILD_UIMAGE := $(ET_KERNEL_BUILD_BOOT_DIR)/uImage
 export ET_KERNEL_BUILD_ZIMAGE := $(ET_KERNEL_BUILD_BOOT_DIR)/zImage
-export ET_KERNEL_CONFIGURED := $(ET_KERNEL_BUILD_DIR)/configured
 export ET_KERNEL_DIR := $(ET_DIR)/kernel/$(ET_BOARD)/$(ET_CROSS_TUPLE)
 export ET_KERNEL_CONFIG := $(ET_CONFIG_DIR)/$(ET_KERNEL_TREE)/config
 export ET_KERNEL_SYSMAP := $(ET_KERNEL_DIR)/boot/System.map
@@ -135,10 +134,7 @@ define kernel-build
 		$(RM) $(ET_KERNEL_DIR)/boot/*; \
 		$(RM) -r $(ET_KERNEL_DIR)/lib/modules/*; \
 		;; \
-	*) \
-		;; \
-	esac
-	@if [ -n "$(shell printf "%s" $1 | grep config)" ]; then \
+	*config) \
 		if [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
 			if [ -f $(ET_KERNEL_CONFIG) ]; then \
 				if [ -n "$(shell diff -q $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG) 2> /dev/null)" ]; then \
@@ -151,7 +147,10 @@ define kernel-build
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) .config MISSING! *****\n"; \
 			exit 2; \
 		fi; \
-	fi
+		;; \
+	*) \
+		;; \
+	esac
 endef
 
 define kernel-config

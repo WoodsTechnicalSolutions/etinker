@@ -19,7 +19,6 @@ export ET_TOOLCHAIN_GENERATOR_DIR := $(ET_DIR)/toolchain/generator
 export ET_TOOLCHAIN_GENERATOR := $(ET_TOOLCHAIN_GENERATOR_DIR)/bin/ct-ng
 export ET_TOOLCHAIN_CONFIG := $(ET_CONFIG_DIR)/$(ET_TOOLCHAIN_TREE)/config
 export ET_TOOLCHAIN_BUILD_CONFIG := $(ET_TOOLCHAIN_BUILD_DIR)/.config
-export ET_TOOLCHAIN_CONFIGURED := $(ET_TOOLCHAIN_BUILD_DIR)/configured
 export ET_TOOLCHAIN_TARGET_FINAL ?= $(ET_TOOLCHAIN_DIR)/bin/$(ET_CROSS_TUPLE)-gdb
 
 define toolchain-depends
@@ -42,7 +41,7 @@ define toolchain-targets
 endef
 
 define toolchain-build
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] toolchain 'ct-ng $1' *****\n\n"
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain 'ct-ng $1' *****\n\n"
 	$(call toolchain-depends)
 	@(cd $(ET_TOOLCHAIN_BUILD_DIR) && CT_ARCH=$(ET_ARCH) $(ET_TOOLCHAIN_GENERATOR) $1)
 	@if [ -n "$(shell printf "%s" $1 | grep config)" ]; then \
@@ -62,14 +61,18 @@ define toolchain-build
 endef
 
 define toolchain-config
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make toolchain-config *****\n\n"
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-config *****\n\n"
 	$(call toolchain-depends)
+	@if ! [ -f $(ET_TOOLCHAIN_CONFIG) ]; then \
+		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-config FAILED! *****\n"; \
+		exit 2; \
+	fi
 	@cat $(ET_TOOLCHAIN_CONFIG) > $(ET_TOOLCHAIN_BUILD_CONFIG)
 endef
 
 define toolchain-generator
 	$(call software-check,$(ET_TOOLCHAIN_TREE))
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make toolchain-generator *****\n\n"
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-generator *****\n\n"
 	@(cd $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE); \
 		$(MAKE) distclean; \
 		./bootstrap; \
@@ -77,19 +80,19 @@ define toolchain-generator
 		$(MAKE); \
 		$(MAKE) install)
 	@if ! [ -f $(ET_TOOLCHAIN_GENERATOR) ]; then \
-		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) 'ct-ng' build FAILED! *****\n"; \
+		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-generator FAILED! *****\n"; \
 		exit 2; \
 	fi
 endef
 
 define toolchain-clean
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make toolchain-clean *****\n\n"
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-clean *****\n\n"
 	$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/src
 	$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/$(ET_CROSS_TUPLE)
 endef
 
 define toolchain-purge
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make toolchain-purge *****\n\n"
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-purge *****\n\n"
 	$(RM) -r $(ET_TOOLCHAIN_DIR)
 	$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)
 	@if [ -n "$(ET_PURGE_ALL)" ]; then \
