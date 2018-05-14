@@ -51,6 +51,7 @@ endef
 
 define bootloader-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-build 'make $1' *****\n\n"
+	$(call bootloader-depends)
 	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_BOOTLOADER_SOFTWARE_DIR) O=$(ET_BOOTLOADER_BUILD_DIR) \
 		$(ET_CROSS_PARAMS) $1
 	@if [ -n "$1" ]; then \
