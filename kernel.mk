@@ -72,6 +72,9 @@ endef
 
 define kernel-targets
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) *****\n\n"
+	@if ! [ -f $(ET_KERNEL_BUILD_CONFIG) ] && [ -f $(ET_KERNEL_CONFIG) ]; then \
+		cat $(ET_KERNEL_CONFIG) > $(ET_KERNEL_BUILD_CONFIG); \
+	fi
 	$(call kernel-build,zImage)
 	$(call kernel-build,uImage)
 	$(call kernel-build,$(ET_KERNEL_DT).dtb)
