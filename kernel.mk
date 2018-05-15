@@ -140,13 +140,7 @@ define kernel-build
 		;; \
 	*config) \
 		if [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
-			if [ -f $(ET_KERNEL_CONFIG) ]; then \
-				if [ -n "$(shell diff -q $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG) 2> /dev/null)" ]; then \
-					cat $(ET_KERNEL_BUILD_CONFIG) > $(ET_KERNEL_CONFIG); \
-				fi; \
-			else \
-				cat $(ET_KERNEL_BUILD_CONFIG) > $(ET_KERNEL_CONFIG); \
-			fi; \
+			cat $(ET_KERNEL_BUILD_CONFIG) > $(ET_KERNEL_CONFIG); \
 		else \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) .config MISSING! *****\n"; \
 			exit 2; \

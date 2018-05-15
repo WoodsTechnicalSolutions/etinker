@@ -60,13 +60,7 @@ define bootloader-build
 	@if [ -n "$1" ]; then \
 		if [ -n "$(shell printf "%s" $1 | grep config)" ]; then \
 			if [ -f $(ET_BOOTLOADER_BUILD_CONFIG) ]; then \
-				if [ -f $(ET_BOOTLOADER_CONFIG) ]; then \
-					if [ -n "$(shell diff -q $(ET_BOOTLOADER_BUILD_CONFIG) $(ET_BOOTLOADER_CONFIG) 2> /dev/null)" ]; then \
-						cat $(ET_BOOTLOADER_BUILD_CONFIG) > $(ET_BOOTLOADER_CONFIG); \
-					fi; \
-				else \
-					cat $(ET_BOOTLOADER_BUILD_CONFIG) > $(ET_BOOTLOADER_CONFIG); \
-				fi; \
+				cat $(ET_BOOTLOADER_BUILD_CONFIG) > $(ET_BOOTLOADER_CONFIG); \
 			else \
 				printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_TREE) $(ET_BOOTLOADER_VERSION) .config MISSING! *****\n"; \
 				exit 2; \
