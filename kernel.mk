@@ -33,8 +33,15 @@ ET_KERNEL_LOCALVERSION :=
 endif
 ifeq ($(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,[0-9].*,,),-rc)
 # RC version (i.e. v4.14-rc1)
-ET_KERNEL_VERSION := $(ET_KERNEL_VERSION).0$(ET_KERNEL_LOCALVERSION)
+rcversion := $(shell printf "%s" $(ET_KERNEL_LOCALVERSION) | cut -d '-' -f 2)
+ET_KERNEL_VERSION := $(ET_KERNEL_VERSION).0-$(rcversion)
+rclocalversion := -$(shell printf "%s" $(ET_KERNEL_LOCALVERSION) | cut -d '-' -f 3-5)
+ifeq ($(ET_KERNEL_LOCALVERSION),-$(rcversion)$(rclocalversion))
+ET_KERNEL_LOCALVERSION := $(rclocalversion)
+endif
+ifeq ($(ET_KERNEL_LOCALVERSION),-$(rcversion))
 ET_KERNEL_LOCALVERSION :=
+endif
 endif
 ifeq ($(ET_KERNEL_LOCALVERSION),-v$(ET_KERNEL_VERSION))
 # exact tag in series (i.e. v4.14.1)
