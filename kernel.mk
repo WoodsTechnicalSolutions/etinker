@@ -31,7 +31,7 @@ klocalversion := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describ
 ET_KERNEL_VERSION := $(kversion)-$(klocalversion)
 ET_KERNEL_LOCALVERSION :=
 endif
-ifeq ($(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,[0-9],,),-rc)
+ifeq ($(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,[0-9].*,,),-rc)
 # RC version (i.e. v4.14-rc1)
 ET_KERNEL_VERSION := $(ET_KERNEL_VERSION).0$(ET_KERNEL_LOCALVERSION)
 ET_KERNEL_LOCALVERSION :=
