@@ -80,8 +80,13 @@ endef
 define kernel-targets
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) *****\n\n"
 	$(call kernel-depends)
-	@if ! [ -f $(ET_KERNEL_BUILD_CONFIG) ] && [ -f $(ET_KERNEL_CONFIG) ]; then \
-		cat $(ET_KERNEL_CONFIG) > $(ET_KERNEL_BUILD_CONFIG); \
+	@if ! [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
+		if [ -f $(ET_KERNEL_CONFIG) ]; then \
+			cat $(ET_KERNEL_CONFIG) > $(ET_KERNEL_BUILD_CONFIG); \
+		else \
+			$(MAKE) --no-print-directory -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
+				$(ET_CROSS_PARAMS) $(ET_BOARD_KERNEL_DEFCONFIG); \
+		fi; \
 	fi
 	$(call kernel-build,zImage)
 	$(call kernel-build,uImage)

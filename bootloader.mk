@@ -43,8 +43,13 @@ endef
 define bootloader-targets
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_TREE) $(ET_BOOTLOADER_VERSION) *****\n\n"
 	$(call bootloader-depends)
-	@if ! [ -f $(ET_BOOTLOADER_BUILD_CONFIG) ] && [ -f $(ET_BOOTLOADER_CONFIG) ]; then \
-		cat $(ET_BOOTLOADER_CONFIG) > $(ET_BOOTLOADER_BUILD_CONFIG); \
+	@if ! [ -f $(ET_BOOTLOADER_BUILD_CONFIG) ]; then \
+		if [ -f $(ET_BOOTLOADER_CONFIG) ]; then \
+			cat $(ET_BOOTLOADER_CONFIG) > $(ET_BOOTLOADER_BUILD_CONFIG); \
+		else \
+			$(MAKE) --no-print-directory -C $(ET_BOOTLOADER_SOFTWARE_DIR) O=$(ET_BOOTLOADER_BUILD_DIR) \
+				$(ET_CROSS_PARAMS) $(ET_BOARD_BOOTLOADER_DEFCONFIG); \
+		fi; \
 	fi
 	$(call bootloader-build)
 	@if [ -n "$(shell diff -q $(ET_BOOTLOADER_BUILD_CONFIG) $(ET_BOOTLOADER_CONFIG) 2> /dev/null)" ]; then \
