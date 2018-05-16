@@ -59,6 +59,10 @@ define toolchain-build
 			exit 2; \
 		fi; \
 	fi
+	@if [ -n "$(shell printf "%s" $1 | grep clean)" ]; then \
+		$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/src; \
+		$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/$(ET_CROSS_TUPLE); \
+	fi
 endef
 
 define toolchain-config

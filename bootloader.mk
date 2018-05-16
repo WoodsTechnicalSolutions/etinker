@@ -71,6 +71,10 @@ define bootloader-build
 				exit 2; \
 			fi; \
 		fi; \
+		if [ -n "$(shell printf "%s" $1 | grep clean)" ]; then \
+			$(RM) $(ET_BOOTLOADER_DIR)/boot/boot*; \
+			$(RM) $(ET_BOOTLOADER_DIR)/boot/u-boot*; \
+		fi; \
 	else \
 		if ! [ -f $(ET_BOOTLOADER_BUILD_SPL) ]; then \
 			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make bootloader $(ET_BOOTLOADER_BUILD_SPL) build FAILED! *****\n\n"; \
