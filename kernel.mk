@@ -93,7 +93,6 @@ define kernel-targets
 	$(call kernel-build,$(ET_KERNEL_DT).dtb)
 	$(call kernel-build,modules)
 	$(call kernel-build,modules_install)
-	$(call kernel-build,headers_install)
 	@if [ -n "$(shell diff -q $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG) 2> /dev/null)" ]; then \
 		cat $(ET_KERNEL_BUILD_CONFIG) > $(ET_KERNEL_CONFIG); \
 	fi
@@ -108,7 +107,7 @@ define kernel-build
 		LOADADDR=$(ET_KERNEL_LOADADDR) \
 		LOCALVERSION=$(ET_KERNEL_LOCALVERSION) \
 		INSTALL_MOD_PATH=$(ET_KERNEL_DIR) \
-		INSTALL_HDR_PATH=$(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot/usr/include
+		INSTALL_HDR_PATH=$(ET_SYSROOT_DIR)/usr/include
 	@case "$1" in \
 	zImage) \
 		if [ -f $(ET_KERNEL_BUILD_ZIMAGE) ]; then \
