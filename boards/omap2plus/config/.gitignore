@@ -1,0 +1,12 @@
+/crosstool-ng-am3517-evm-*
+/crosstool-ng-omap3-beagle-*
+/crosstool-ng-omap3-beagle-xm-*
+/crosstool-ng-omap3-evm-*
+/linux-am3517-evm-*
+/linux-omap3-beagle-*
+/linux-omap3-beagle-xm-*
+/linux-omap3-evm-*
+/u-boot-am3517-evm-*
+/u-boot-omap3-beagle-*
+/u-boot-omap3-beagle-xm-*
+/u-boot-omap3-evm-*
