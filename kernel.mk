@@ -71,6 +71,11 @@ export ET_KERNEL_TARGET_FINAL += $(ET_KERNEL_DTB)
 
 export CT_LINUX_CUSTOM_LOCATION := ${ET_KERNEL_SOFTWARE_DIR}
 
+define kernel-version
+	@printf "ET_KERNEL_VERSION: $(ET_KERNEL_VERSION)\n"
+	@printf "ET_KERNEL_LOCALVERSION: $(ET_KERNEL_LOCALVERSION)\n"
+endef
+
 define kernel-depends
 	@mkdir -p $(ET_KERNEL_DIR)/boot
 	@mkdir -p $(ET_KERNEL_DIR)/lib/modules

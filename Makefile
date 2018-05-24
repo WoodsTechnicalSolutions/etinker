@@ -18,7 +18,9 @@ info:
 
 .PHONY: version
 version:
-	$(call etinker-version)
+	$(call toolchain-version)
+	$(call kernel-version)
+	$(call bootloader-version)
 
 .PHONY: toolchain
 toolchain: $(ET_TOOLCHAIN_TARGET_FINAL)
@@ -46,6 +48,10 @@ toolchain-info:
 toolchain-purge:
 	$(call $@)
 
+.PHONY: toolchain-version
+toolchain-version:
+	$(call $@)
+
 .PHONY: kernel
 kernel: $(ET_KERNEL_TARGET_FINAL)
 $(ET_KERNEL_TARGET_FINAL):
@@ -70,6 +76,10 @@ kernel-info:
 kernel-purge:
 	$(call $@)
 
+.PHONY: kernel-version
+kernel-version:
+	$(call $@)
+
 .PHONY: bootloader
 bootloader: $(ET_BOOTLOADER_TARGET_FINAL)
 $(ET_BOOTLOADER_TARGET_FINAL):
@@ -92,6 +102,10 @@ bootloader-info:
 
 .PHONY: bootloader-purge
 bootloader-purge:
+	$(call $@)
+
+.PHONY: bootloader-version
+bootloader-version:
 	$(call $@)
 
 .PHONY: clean

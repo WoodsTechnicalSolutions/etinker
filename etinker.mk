@@ -61,17 +61,6 @@ endif
 # allow users to find cross-compiler
 export PATH := $(ET_TOOLCHAIN_DIR)/bin:$(PATH)
 
-define etinker-version
-	@printf "ET_TOOLCHAIN_VERSION: $(ET_TOOLCHAIN_VERSION)\n"
-	@if [ -n "$(ET_BOARD_KERNEL_TREE)" ]; then \
-		printf "ET_KERNEL_VERSION: $(ET_KERNEL_VERSION)\n"; \
-		printf "ET_KERNEL_LOCALVERSION: $(ET_KERNEL_LOCALVERSION)\n"; \
-	fi
-	@if [ -n "$(ET_BOARD_BOOTLOADER_TREE)" ]; then \
-		printf "ET_BOOTLOADER_VERSION: $(ET_BOOTLOADER_VERSION)\n"; \
-	fi
-endef
-
 define etinker-info
 	@printf "ET_BOARD: $(ET_BOARD)\n"
 	@printf "ET_ARCH: $(ET_ARCH)\n"
