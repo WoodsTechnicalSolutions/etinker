@@ -60,23 +60,3 @@ endif
 
 # allow users to find cross-compiler
 export PATH := $(ET_TOOLCHAIN_DIR)/bin:$(PATH)
-
-define etinker-info
-	@printf "ET_BOARD: $(ET_BOARD)\n"
-	@printf "ET_ARCH: $(ET_ARCH)\n"
-	@printf "ET_VENDOR: $(ET_VENDOR)\n"
-	@printf "ET_ABI: $(ET_ABI)\n"
-	@printf "ET_CROSS_TUPLE: $(ET_CROSS_TUPLE)\n"
-	@printf "ET_HOST_OS_ID: $(ET_HOST_OS_ID)\n"
-	@printf "ET_HOST_OS_CODENAME: $(ET_HOST_OS_CODENAME)\n"
-	@printf "ET_HOST_OS_RELEASE: $(ET_HOST_OS_RELEASE)\n"
-	@printf "ET_DIR: $(ET_DIR)\n"
-	@printf "ET_PATCH_DIR: $(ET_PATCH_DIR)\n"
-	@printf "ET_SOFTWARE_DIR: $(ET_SOFTWARE_DIR)\n"
-	@printf "ET_TARBALLS_DIR: $(ET_TARBALLS_DIR)\n"
-	@printf "ET_CONFIG_DIR: $(ET_CONFIG_DIR)\n"
-	$(call toolchain-info)
-	$(call kernel-info)
-	$(call bootloader-info)
-	@printf "PATH: $(PATH)\n"
-endef
