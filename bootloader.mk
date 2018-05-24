@@ -67,7 +67,7 @@ define bootloader-build
 			if [ -f $(ET_BOOTLOADER_BUILD_CONFIG) ]; then \
 				cat $(ET_BOOTLOADER_BUILD_CONFIG) > $(ET_BOOTLOADER_CONFIG); \
 			else \
-				printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_TREE) $(ET_BOOTLOADER_VERSION) .config MISSING! *****\n"; \
+				printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_TREE) .config MISSING! *****\n"; \
 				exit 2; \
 			fi; \
 		fi; \
@@ -77,11 +77,11 @@ define bootloader-build
 		fi; \
 	else \
 		if ! [ -f $(ET_BOOTLOADER_BUILD_SPL) ]; then \
-			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make bootloader $(ET_BOOTLOADER_BUILD_SPL) build FAILED! *****\n\n"; \
+			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_BUILD_SPL) build FAILED! *****\n\n"; \
 			exit 2; \
 		fi; \
 		if ! [ -f $(ET_BOOTLOADER_BUILD_IMAGE) ]; then \
-			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] make bootloader $(ET_BOOTLOADER_BUILD_IMAGE) build FAILED! *****\n\n"; \
+			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_BUILD_IMAGE) build FAILED! *****\n\n"; \
 			exit 2; \
 		fi; \
 		$(RM) $(ET_BOOTLOADER_DIR)/boot/u-boot*; \
@@ -96,7 +96,7 @@ define bootloader-config
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-config *****\n\n"
 	$(call bootloader-depends)
 	@if ! [ -f $(ET_BOOTLOADER_CONFIG) ]; then \
-		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-config build FAILED! *****\n\n"; \
+		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-config FAILED! *****\n\n"; \
 		exit 2; \
 	fi
 	@cat $(ET_BOOTLOADER_CONFIG) > $(ET_BOOTLOADER_BUILD_CONFIG)

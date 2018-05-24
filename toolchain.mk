@@ -55,7 +55,7 @@ define toolchain-build
 		if [ -f $(ET_TOOLCHAIN_BUILD_CONFIG) ]; then \
 			cat $(ET_TOOLCHAIN_BUILD_CONFIG) > $(ET_TOOLCHAIN_CONFIG); \
 		else \
-			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) $(ET_TOOLCHAIN_VERSION) .config MISSING! *****\n"; \
+			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) .config MISSING! *****\n"; \
 			exit 2; \
 		fi; \
 	fi

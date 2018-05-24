@@ -78,7 +78,7 @@ define kernel-depends
 endef
 
 define kernel-targets
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) *****\n\n"
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION)$(ET_KERNEL_LOCALVERSION) *****\n\n"
 	$(call kernel-depends)
 	@if ! [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
 		if [ -f $(ET_KERNEL_CONFIG) ]; then \
@@ -117,7 +117,7 @@ define kernel-build
 				$(ET_KERNEL_BUILD_SYSMAP) \
 				$(ET_KERNEL_DIR)/boot/; \
 		else \
-			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) zImage FAILED! *****\n"; \
+			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) zImage FAILED! *****\n"; \
 			exit 2; \
 		fi; \
 		;; \
@@ -127,7 +127,7 @@ define kernel-build
 		        cp -av $(ET_KERNEL_BUILD_UIMAGE) \
 				$(ET_KERNEL_DIR)/boot/; \
 		else \
-			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) uImage FAILED! *****\n"; \
+			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) uImage FAILED! *****\n"; \
 			exit 2; \
 		fi; \
 		;; \
@@ -136,7 +136,7 @@ define kernel-build
 			$(RM) $(ET_KERNEL_DIR)/boot/$(ET_KERNEL_DT).dtb; \
 			cp -av $(ET_KERNEL_BUILD_DTB) $(ET_KERNEL_DIR)/boot/; \
 		else \
-			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) $(ET_KERNEL_DT).dtb FAILED! *****\n"; \
+			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_DT).dtb FAILED! *****\n"; \
 			exit 2; \
 		fi; \
 		;; \
@@ -153,7 +153,7 @@ define kernel-build
 		if [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
 			cat $(ET_KERNEL_BUILD_CONFIG) > $(ET_KERNEL_CONFIG); \
 		else \
-			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION) .config MISSING! *****\n"; \
+			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) .config MISSING! *****\n"; \
 			exit 2; \
 		fi; \
 		;; \
