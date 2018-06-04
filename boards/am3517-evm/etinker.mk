@@ -25,6 +25,10 @@ include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/etinker.mk
 ET_BOARD_TOOLCHAIN_TREE ?= crosstool-ng
 ET_BOARD_KERNEL_TREE ?= linux
 ET_BOARD_BOOTLOADER_TREE ?= u-boot-$(ET_BOARD)
+ET_BOARD_ROOTFS_TREE ?= buildroot
+
+ET_BOARD_HOSTNAME ?= $(ET_BOARD)
+ET_BOARD_GETTY_PORT ?= ttyS2
 
 ET_BOARD_KERNEL_DT ?= am3517-evm
 

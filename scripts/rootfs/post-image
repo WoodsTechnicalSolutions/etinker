@@ -1,0 +1,11 @@
+#!/bin/bash
+
+TARGET=$1/../target
+
+printf "\n***** [${ET_BOARD}][${ET_BOARD_TYPE}] post-image script *****\n\n"
+
+if [ -d "${TARGET}-bare" ]; then
+	rm -rf ${TARGET}
+	mv ${TARGET}-bare ${TARGET}
+	rm -rf ${TARGET}/target
+fi
