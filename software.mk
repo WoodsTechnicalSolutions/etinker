@@ -49,6 +49,7 @@ define software-development
 			flip \
 			gawk \
 			gcc-7-doc \
+			g++-multilib \
 			gcc-multilib \
 			gettext \
 			git-core \

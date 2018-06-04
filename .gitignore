@@ -1,5 +1,6 @@
 /bootloader
 /kernel
+/rootfs
 /software
 /tarballs
 /toolchain

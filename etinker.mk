@@ -42,6 +42,7 @@ export ET_CROSS_PARAMS := ARCH=$(ET_ARCH) CROSS_COMPILE=$(ET_CROSS_COMPILE)
 export ET_PATCH_DIR := $(ET_DIR)/patches
 export ET_SOFTWARE_DIR := $(ET_DIR)/software
 export ET_TARBALLS_DIR := $(ET_DIR)/tarballs
+export ET_SCRIPTS_DIR := $(ET_DIR)/scripts
 
 export ET_SYSROOT_DIR ?= $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot
 
@@ -56,6 +57,9 @@ include $(ET_DIR)/kernel.mk
 endif
 ifdef ET_BOARD_BOOTLOADER_TREE
 include $(ET_DIR)/bootloader.mk
+endif
+ifdef ET_BOARD_ROOTFS_TREE
+include $(ET_DIR)/rootfs.mk
 endif
 
 # allow users to find cross-compiler

@@ -17,6 +17,7 @@ version:
 	$(call toolchain-version)
 	$(call kernel-version)
 	$(call bootloader-version)
+	$(call rootfs-version)
 
 .PHONY: toolchain
 toolchain: $(ET_TOOLCHAIN_TARGET_FINAL)
@@ -104,17 +105,47 @@ bootloader-purge:
 bootloader-version:
 	$(call $@)
 
+.PHONY: rootfs
+rootfs: $(ET_ROOTFS_TARGET_FINAL)
+$(ET_ROOTFS_TARGET_FINAL):
+	$(call rootfs-targets)
+
+rootfs-%: $(ET_ROOTFS_BUILD_CONFIG)
+	$(call rootfs-build,$(*F))
+
+.PHONY: rootfs-config
+rootfs-config: $(ET_ROOTFS_BUILD_CONFIG)
+$(ET_ROOTFS_BUILD_CONFIG): $(ET_ROOTFS_CONFIG)
+	$(call rootfs-config)
+
+$(ET_ROOTFS_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL)
+	$(call rootfs-build,$(ET_ROOTFS_DEFCONFIG))
+
+.PHONY: rootfs-info
+rootfs-info:
+	$(call $@)
+
+.PHONY: rootfs-purge
+rootfs-purge:
+	$(call $@)
+
+.PHONY: rootfs-version
+rootfs-version:
+	$(call $@)
+
 .PHONY: clean
 clean:
 	$(call toolchain-$@)
 	$(call kernel-$@)
 	$(call bootloader-$@)
+	$(call rootfs-$@)
 
 .PHONY: purge
 purge:
 	$(call toolchain-$@)
 	$(call kernel-$@)
 	$(call bootloader-$@)
+	$(call rootfs-$@)
 
 .PHONY: software-development
 software-development:
@@ -138,4 +169,5 @@ info:
 	$(call toolchain-info)
 	$(call kernel-info)
 	$(call bootloader-info)
+	$(call rootfs-info)
 	@printf "PATH: $(PATH)\n"
