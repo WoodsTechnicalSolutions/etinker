@@ -10,7 +10,7 @@
 include etinker.mk
 
 .PHONY: all
-all: toolchain kernel bootloader
+all: toolchain kernel bootloader rootfs
 
 .PHONY: version
 version:
