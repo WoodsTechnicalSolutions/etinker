@@ -54,7 +54,9 @@ endef
 define toolchain-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain 'ct-ng $1' *****\n\n"
 	$(call toolchain-depends)
-	@(cd $(ET_TOOLCHAIN_BUILD_DIR) && CT_ARCH=$(ET_ARCH) $(ET_TOOLCHAIN_GENERATOR) $1)
+	@if ! [ -n "$(shell printf "%s" $1 | grep clean)" ]; then \
+		(cd $(ET_TOOLCHAIN_BUILD_DIR) && CT_ARCH=$(ET_ARCH) $(ET_TOOLCHAIN_GENERATOR) $1); \
+	fi
 	@if [ -n "$(shell printf "%s" $1 | grep config)" ]; then \
 		if [ -f $(ET_TOOLCHAIN_BUILD_CONFIG) ]; then \
 			cat $(ET_TOOLCHAIN_BUILD_CONFIG) > $(ET_TOOLCHAIN_CONFIG); \
