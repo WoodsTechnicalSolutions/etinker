@@ -17,6 +17,7 @@ export ET_KERNEL_DT := $(ET_BOARD_KERNEL_DT)
 export ET_KERNEL_LOADADDR := $(ET_BOARD_KERNEL_LOADADDR)
 export ET_KERNEL_DEFCONFIG := $(ET_BOARD_KERNEL_DEFCONFIG)
 export ET_KERNEL_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_KERNEL_TREE)
+export ET_KERNEL_HEADERS_DIR ?= $(ET_SYSROOT_DIR)/usr/include
 # [start] kernel version magic
 ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v | cut -d '-' -f 1)
 ET_KERNEL_LOCALVERSION := -$(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | cut -d '-' -f 2-5)
@@ -112,7 +113,7 @@ define kernel-build
 		LOADADDR=$(ET_KERNEL_LOADADDR) \
 		LOCALVERSION=$(ET_KERNEL_LOCALVERSION) \
 		INSTALL_MOD_PATH=$(ET_KERNEL_DIR) \
-		INSTALL_HDR_PATH=$(ET_SYSROOT_DIR)/usr/include
+		INSTALL_HDR_PATH=$(ET_KERNEL_HEADERS_DIR)
 	@case "$1" in \
 	zImage) \
 		if [ -f $(ET_KERNEL_BUILD_ZIMAGE) ]; then \
