@@ -10,13 +10,16 @@ cp -a ${TARGET} ${TARGET}-bare
 # Update target file system
 rsync -av ${ET_DIR}/common/rootfs/* ${TARGET}/ 2>/dev/null
 if [ -d ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/debug-root ]; then
-rsync -av ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/debug-root/* ${TARGET}/ 2>/dev/null
+	rsync -av ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/debug-root/* ${TARGET}/ 2>/dev/null
 fi
 if [ -d ${ET_KERNEL_DIR}/boot ]; then
-rsync -av ${ET_KERNEL_DIR}/* ${TARGET}/ 2>/dev/null
+	rsync -av ${ET_KERNEL_DIR}/* ${TARGET}/ 2>/dev/null
 fi
 if [ -d ${ET_BOOTLOADER_DIR}/boot ]; then
-rsync -av ${ET_BOOTLOADER_DIR}/* ${TARGET}/ 2>/dev/null
+	rsync -av ${ET_BOOTLOADER_DIR}/* ${TARGET}/ 2>/dev/null
+fi
+if [ -d ${ET_OVERLAY_DIR} ]; then
+	rsync -av ${ET_OVERLAY_DIR}/* ${TARGET}/ 2>/dev/null
 fi
 printf "\n%s\n\n" "`cat ${TARGET}/etc/issue`" > ${TARGET}/etc/issue
 

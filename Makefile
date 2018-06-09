@@ -7,10 +7,14 @@
 # available under the terms of the GNU General Public License version 3.
 #
 
+.PHONY: all
+all:
+	$(error USAGE: 'ET_BOARD=<board> make sandbox' ***)
+
 include etinker.mk
 
-.PHONY: all
-all: toolchain kernel bootloader rootfs
+.PHONY: sandbox
+sandbox: toolchain kernel bootloader rootfs overlay
 
 .PHONY: version
 version:
@@ -18,6 +22,7 @@ version:
 	$(call kernel-version)
 	$(call bootloader-version)
 	$(call rootfs-version)
+	$(call overlay-version)
 
 .PHONY: toolchain
 toolchain: $(ET_TOOLCHAIN_TARGET_FINAL)
@@ -125,6 +130,10 @@ $(ET_ROOTFS_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL)
 rootfs-info:
 	$(call $@)
 
+.PHONY: rootfs-clean
+rootfs-clean:
+	$(call $@)
+
 .PHONY: rootfs-purge
 rootfs-purge:
 	$(call $@)
@@ -139,6 +148,7 @@ clean:
 	$(call kernel-$@)
 	$(call bootloader-$@)
 	$(call rootfs-$@)
+	$(call overlay-$@)
 
 .PHONY: purge
 purge:
@@ -146,6 +156,7 @@ purge:
 	$(call kernel-$@)
 	$(call bootloader-$@)
 	$(call rootfs-$@)
+	$(call overlay-$@)
 
 .PHONY: software-development
 software-development:
@@ -170,4 +181,5 @@ info:
 	$(call kernel-info)
 	$(call bootloader-info)
 	$(call rootfs-info)
+	$(call overlay-info)
 	@printf "PATH: $(PATH)\n"

@@ -34,6 +34,7 @@ include $(ET_DIR)/boards/$(ET_BOARD)/etinker.mk
 
 export ET_ARCH := $(ET_BOARD_ARCH)
 export ET_VENDOR := $(ET_BOARD_VENDOR)
+export ET_OS := $(ET_BOARD_OS)
 export ET_ABI := $(ET_BOARD_ABI)
 export ET_CROSS_TUPLE := $(ET_BOARD_CROSS_TUPLE)
 export ET_CROSS_COMPILE := $(ET_BOARD_CROSS_TUPLE)-
@@ -60,6 +61,7 @@ include $(ET_DIR)/bootloader.mk
 endif
 ifdef ET_BOARD_ROOTFS_TREE
 include $(ET_DIR)/rootfs.mk
+include $(ET_DIR)/overlay.mk
 endif
 
 # allow users to find cross-compiler
