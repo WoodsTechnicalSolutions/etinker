@@ -18,9 +18,9 @@
 # licensed Public Domain.
 #
 
-ET_BOARD_TYPE := ek-tm4c123gxl
+export ET_BOARD_TYPE := ek-tm4c123gxl
 
-ET_BOARD_MCU := tm4c123gh6pm
+export ET_BOARD_MCU := tm4c123gh6pm
 
 ET_BOARD_ARCH ?= arm
 ET_BOARD_VENDOR ?= none

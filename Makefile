@@ -165,8 +165,15 @@ software-development:
 .PHONY: info
 info:
 	@printf "ET_BOARD: $(ET_BOARD)\n"
+	@printf "ET_BOARD_TYPE: $(ET_BOARD_TYPE)\n"
+	@if [ -n "$(ET_BOARD_MCU)" ]; then \
+		printf "ET_BOARD_MCU: $(ET_BOARD_MCU)\n"; \
+	fi
 	@printf "ET_ARCH: $(ET_ARCH)\n"
 	@printf "ET_VENDOR: $(ET_VENDOR)\n"
+	@if [ -n "$(ET_OS)" ]; then \
+		printf "ET_OS: $(ET_OS)\n"; \
+	fi
 	@printf "ET_ABI: $(ET_ABI)\n"
 	@printf "ET_CROSS_TUPLE: $(ET_CROSS_TUPLE)\n"
 	@printf "ET_HOST_OS_ID: $(ET_HOST_OS_ID)\n"
