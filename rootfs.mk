@@ -118,6 +118,7 @@ define rootfs-purge
 endef
 
 define rootfs-info
+	@printf "========================================================================\n"
 	@printf "ET_ROOTFS_TREE: $(ET_ROOTFS_TREE)\n"
 	@printf "ET_ROOTFS_VERSION: $(ET_ROOTFS_VERSION)\n"
 	@printf "ET_ROOTFS_HOSTNAME: $(ET_ROOTFS_HOSTNAME)\n"
@@ -133,3 +134,35 @@ define rootfs-info
 	@printf "ET_ROOTFS_BUILD_DIR: $(ET_ROOTFS_BUILD_DIR)\n"
 	@printf "ET_ROOTFS_TARGET_FINAL: $(ET_ROOTFS_TARGET_FINAL)\n"
 endef
+
+.PHONY: rootfs
+rootfs: $(ET_ROOTFS_TARGET_FINAL)
+$(ET_ROOTFS_TARGET_FINAL):
+	$(call rootfs-targets)
+
+rootfs-%: $(ET_ROOTFS_BUILD_CONFIG)
+	$(call rootfs-build,$(*F))
+
+.PHONY: rootfs-config
+rootfs-config: $(ET_ROOTFS_BUILD_CONFIG)
+$(ET_ROOTFS_BUILD_CONFIG): $(ET_ROOTFS_CONFIG)
+	$(call rootfs-config)
+
+$(ET_ROOTFS_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL)
+	$(call rootfs-build,$(ET_ROOTFS_DEFCONFIG))
+
+.PHONY: rootfs-info
+rootfs-info:
+	$(call $@)
+
+.PHONY: rootfs-clean
+rootfs-clean:
+	$(call $@)
+
+.PHONY: rootfs-purge
+rootfs-purge:
+	$(call $@)
+
+.PHONY: rootfs-version
+rootfs-version:
+	$(call $@)

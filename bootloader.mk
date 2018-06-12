@@ -119,6 +119,7 @@ define bootloader-purge
 endef
 
 define bootloader-info
+	@printf "========================================================================\n"
 	@printf "ET_BOOTLOADER_TREE: $(ET_BOOTLOADER_TREE)\n"
 	@printf "ET_BOOTLOADER_VERSION: $(ET_BOOTLOADER_VERSION)\n"
 	@printf "ET_BOOTLOADER_SOFTWARE_DIR: $(ET_BOOTLOADER_SOFTWARE_DIR)\n"
@@ -130,7 +131,35 @@ define bootloader-info
 	@printf "ET_BOOTLOADER_BUILD_SYSMAP: $(ET_BOOTLOADER_BUILD_SYSMAP)\n"
 	@printf "ET_BOOTLOADER_BUILD_SPL: $(ET_BOOTLOADER_BUILD_SPL)\n"
 	@printf "ET_BOOTLOADER_BUILD_IMAGE: $(ET_BOOTLOADER_BUILD_IMAGE)\n"
-	@printf "ET_BOOTLOADER_DIR: $(ET_BOOTLOADER_DIR)\n"
 	@printf "ET_BOOTLOADER_BUILD_DIR: $(ET_BOOTLOADER_BUILD_DIR)\n"
+	@printf "ET_BOOTLOADER_DIR: $(ET_BOOTLOADER_DIR)\n"
 	@printf "ET_BOOTLOADER_TARGET_FINAL: $(ET_BOOTLOADER_TARGET_FINAL)\n"
 endef
+
+.PHONY: bootloader
+bootloader: $(ET_BOOTLOADER_TARGET_FINAL)
+$(ET_BOOTLOADER_TARGET_FINAL):
+	$(call bootloader-targets)
+
+.PHONY: bootloader-config
+bootloader-config: $(ET_BOOTLOADER_BUILD_CONFIG)
+$(ET_BOOTLOADER_BUILD_CONFIG): $(ET_BOOTLOADER_CONFIG)
+	$(call bootloader-config)
+
+$(ET_BOOTLOADER_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL)
+	$(call bootloader-build,$(ET_BOOTLOADER_DEFCONFIG))
+
+bootloader-%: $(ET_BOOTLOADER_BUILD_CONFIG)
+	$(call bootloader-build,$(*F))
+
+.PHONY: bootloader-purge
+bootloader-purge:
+	$(call $@)
+
+.PHONY: bootloader-version
+bootloader-version:
+	$(call $@)
+
+.PHONY: bootloader-info
+bootloader-info:
+	$(call $@)

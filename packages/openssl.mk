@@ -130,18 +130,19 @@ define openssl-purge
 endef
 
 define openssl-info
+	@printf "========================================================================\n"
 	@printf "ET_OPENSSL_TREE: $(ET_OPENSSL_TREE)\n"
 	@printf "ET_OPENSSL_VERSION: $(ET_OPENSSL_VERSION)\n"
 	@printf "ET_OPENSSL_SOFTWARE_DIR: $(ET_OPENSSL_SOFTWARE_DIR)\n"
+	@printf "ET_OPENSSL_CRYPTO_SO: $(ET_OPENSSL_CRYPTO_SO)\n"
+	@printf "ET_OPENSSL_SSL_SO: $(ET_OPENSSL_SSL_SO)\n"
+	@printf "ET_OPENSSL_BIN: $(ET_OPENSSL_BIN)\n"
 	@printf "ET_OPENSSL_BUILD_CONFIG: $(ET_OPENSSL_BUILD_CONFIG)\n"
 	@printf "ET_OPENSSL_BUILD_CRYPTO_SO: $(ET_OPENSSL_BUILD_CRYPTO_SO)\n"
 	@printf "ET_OPENSSL_BUILD_SSL_SO: $(ET_OPENSSL_BUILD_SSL_SO)\n"
 	@printf "ET_OPENSSL_BUILD_BIN: $(ET_OPENSSL_BUILD_BIN)\n"
-	@printf "ET_OPENSSL_CRYPTO_SO: $(ET_OPENSSL_CRYPTO_SO)\n"
-	@printf "ET_OPENSSL_SSL_SO: $(ET_OPENSSL_SSL_SO)\n"
-	@printf "ET_OPENSSL_BIN: $(ET_OPENSSL_BIN)\n"
-	@printf "ET_OPENSSL_DIR: $(ET_OPENSSL_DIR)\n"
 	@printf "ET_OPENSSL_BUILD_DIR: $(ET_OPENSSL_BUILD_DIR)\n"
+	@printf "ET_OPENSSL_DIR: $(ET_OPENSSL_DIR)\n"
 	@printf "ET_OPENSSL_TARGET_FINAL: $(ET_OPENSSL_TARGET_FINAL)\n"
 endef
 
@@ -153,23 +154,25 @@ $(ET_OPENSSL_TARGET_FINAL): $(ET_OPENSSL_BUILD_CONFIG)
 .PHONY: openssl-config
 openssl-config: $(ET_OPENSSL_BUILD_CONFIG)
 $(ET_OPENSSL_BUILD_CONFIG): $(ET_CRYPTODEV_LINUX_TARGET_FINAL)
+ifeq ($(shell test -f $(ET_OPENSSL_BUILD_CONFIG) && printf "DONE" || printf "CONFIGURE"),CONFIGURE)
 	$(call openssl-config)
+endif
 
 openssl-%: $(ET_OPENSSL_BUILD_CONFIG)
 	$(call openssl-build,$(*F))
 
 .PHONY: openssl-clean
 openssl-clean:
-	$(call openssl-clean)
+	$(call $@)
 
 .PHONY: openssl-purge
 openssl-purge:
-	$(call openssl-purge)
+	$(call $@)
 
 .PHONY: openssl-version
 openssl-version:
-	$(call openssl-version)
+	$(call $@)
 
 .PHONY: openssl-info
 openssl-info:
-	$(call openssl-info)
+	$(call $@)

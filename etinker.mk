@@ -45,8 +45,6 @@ export ET_SOFTWARE_DIR := $(ET_DIR)/software
 export ET_TARBALLS_DIR := $(ET_DIR)/tarballs
 export ET_SCRIPTS_DIR := $(ET_DIR)/scripts
 
-export ET_SYSROOT_DIR ?= $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot
-
 # all configuration files for a given board are stored here
 export ET_CONFIG_DIR ?= $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config
 
@@ -54,6 +52,7 @@ export ET_CONFIG_DIR ?= $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config
 include $(ET_DIR)/software.mk
 include $(ET_DIR)/toolchain.mk
 ifdef ET_BOARD_KERNEL_TREE
+export ET_SYSROOT_DIR ?= $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot
 include $(ET_DIR)/kernel.mk
 endif
 ifdef ET_BOARD_BOOTLOADER_TREE

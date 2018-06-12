@@ -78,6 +78,7 @@ define cryptodev-linux-purge
 endef
 
 define cryptodev-linux-info
+	@printf "========================================================================\n"
 	@printf "ET_CRYPTODEV_LINUX_TREE: $(ET_CRYPTODEV_LINUX_TREE)\n"
 	@printf "ET_CRYPTODEV_LINUX_VERSION: $(ET_CRYPTODEV_LINUX_VERSION)\n"
 	@printf "ET_CRYPTODEV_LINUX_SOFTWARE_DIR: $(ET_CRYPTODEV_LINUX_SOFTWARE_DIR)\n"
@@ -96,23 +97,25 @@ $(ET_CRYPTODEV_LINUX_TARGET_FINAL): $(ET_CRYPTODEV_LINUX_BUILD_CONFIG)
 .PHONY: cryptodev-linux-config
 cryptodev-linux-config: $(ET_CRYPTODEV_LINUX_BUILD_CONFIG)
 $(ET_CRYPTODEV_LINUX_BUILD_CONFIG): $(ET_KERNEL_TARGET_FINAL)
+ifeq ($(shell test -f $(ET_CRYPTODEV_LINUX_BUILD_CONFIG) && printf "DONE" || printf "CONFIGURE"),CONFIGURE)
 	$(call cryptodev-linux-config)
+endif
 
 cryptodev-linux-%: $(ET_CRYPTODEV_LINUX_BUILD_CONFIG)
 	$(call cryptodev-linux-build,$(*F))
 
 .PHONY: cryptodev-linux-clean
 cryptodev-linux-clean:
-	$(call cryptodev-linux-clean)
+	$(call $@)
 
 .PHONY: cryptodev-linux-purge
 cryptodev-linux-purge:
-	$(call cryptodev-linux-purge)
+	$(call $@)
 
 .PHONY: cryptodev-linux-version
 cryptodev-linux-version:
-	$(call cryptodev-linux-version)
+	$(call $@)
 
 .PHONY: cryptodev-linux-info
 cryptodev-linux-info:
-	$(call cryptodev-linux-info)
+	$(call $@)

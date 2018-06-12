@@ -112,6 +112,7 @@ define toolchain-purge
 endef
 
 define toolchain-info
+	@printf "========================================================================\n"
 	@printf "ET_TOOLCHAIN_TREE: $(ET_TOOLCHAIN_TREE)\n"
 	@printf "ET_TOOLCHAIN_VERSION: $(ET_TOOLCHAIN_VERSION)\n"
 	@printf "ET_TOOLCHAIN_SOFTWARE_DIR: $(ET_TOOLCHAIN_SOFTWARE_DIR)\n"
@@ -120,7 +121,37 @@ define toolchain-info
 	@printf "ET_TOOLCHAIN_TARBALLS_DIR: $(ET_TOOLCHAIN_TARBALLS_DIR)\n"
 	@printf "ET_TOOLCHAIN_CONFIG: $(ET_TOOLCHAIN_CONFIG)\n"
 	@printf "ET_TOOLCHAIN_BUILD_CONFIG: $(ET_TOOLCHAIN_BUILD_CONFIG)\n"
-	@printf "ET_TOOLCHAIN_DIR: $(ET_TOOLCHAIN_DIR)\n"
 	@printf "ET_TOOLCHAIN_BUILD_DIR: $(ET_TOOLCHAIN_BUILD_DIR)\n"
+	@printf "ET_TOOLCHAIN_DIR: $(ET_TOOLCHAIN_DIR)\n"
 	@printf "ET_TOOLCHAIN_TARGET_FINAL: $(ET_TOOLCHAIN_TARGET_FINAL)\n"
 endef
+
+.PHONY: toolchain
+toolchain: $(ET_TOOLCHAIN_TARGET_FINAL)
+$(ET_TOOLCHAIN_TARGET_FINAL):
+	$(call toolchain-targets)
+
+.PHONY: toolchain-config
+toolchain-config: $(ET_TOOLCHAIN_BUILD_CONFIG)
+$(ET_TOOLCHAIN_BUILD_CONFIG): $(ET_TOOLCHAIN_GENERATOR) $(ET_TOOLCHAIN_CONFIG)
+	$(call toolchain-config)
+
+.PHONY: toolchain-generator
+toolchain-generator: $(ET_TOOLCHAIN_GENERATOR)
+$(ET_TOOLCHAIN_GENERATOR):
+	$(call toolchain-generator)
+
+toolchain-%: $(ET_TOOLCHAIN_BUILD_CONFIG)
+	$(call toolchain-build,$(*F))
+
+.PHONY: toolchain-purge
+toolchain-purge:
+	$(call $@)
+
+.PHONY: toolchain-version
+toolchain-version:
+	$(call $@)
+
+.PHONY: toolchain-info
+toolchain-info:
+	$(call $@)

@@ -46,11 +46,11 @@ endif
 endif
 ifeq ($(ET_KERNEL_LOCALVERSION),-v$(ET_KERNEL_VERSION))
 # exact tag in series (i.e. v4.14.1)
+ET_KERNEL_LOCALVERSION :=
+endif
 ifeq ($(shell printf "%s" $(ET_KERNEL_VERSION)|cut -d '.' -f 3),)
 # first in release series (i.e. v4.14)
 ET_KERNEL_VERSION := $(ET_KERNEL_VERSION).0
-endif
-ET_KERNEL_LOCALVERSION :=
 endif
 export ET_KERNEL_VERSION
 export ET_KERNEL_LOCALVERSION
@@ -192,6 +192,7 @@ define kernel-purge
 endef
 
 define kernel-info
+	@printf "========================================================================\n"
 	@printf "ET_KERNEL_TREE: $(ET_KERNEL_TREE)\n"
 	@printf "ET_KERNEL_VERSION: $(ET_KERNEL_VERSION)\n"
 	@printf "ET_KERNEL_LOCALVERSION: $(ET_KERNEL_LOCALVERSION)\n"
@@ -207,7 +208,35 @@ define kernel-info
 	@printf "ET_KERNEL_BUILD_SYSMAP: $(ET_KERNEL_BUILD_SYSMAP)\n"
 	@printf "ET_KERNEL_BUILD_UIMAGE: $(ET_KERNEL_BUILD_UIMAGE)\n"
 	@printf "ET_KERNEL_BUILD_ZIMAGE: $(ET_KERNEL_BUILD_ZIMAGE)\n"
-	@printf "ET_KERNEL_DIR: $(ET_KERNEL_DIR)\n"
 	@printf "ET_KERNEL_BUILD_DIR: $(ET_KERNEL_BUILD_DIR)\n"
+	@printf "ET_KERNEL_DIR: $(ET_KERNEL_DIR)\n"
 	@printf "ET_KERNEL_TARGET_FINAL: $(ET_KERNEL_TARGET_FINAL)\n"
 endef
+
+.PHONY: kernel
+kernel: $(ET_KERNEL_TARGET_FINAL)
+$(ET_KERNEL_TARGET_FINAL):
+	$(call kernel-targets)
+
+.PHONY: kernel-config
+kernel-config: $(ET_KERNEL_BUILD_CONFIG)
+$(ET_KERNEL_BUILD_CONFIG): $(ET_KERNEL_CONFIG)
+	$(call kernel-config)
+
+$(ET_KERNEL_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL)
+	$(call kernel-build,$(ET_KERNEL_DEFCONFIG))
+
+kernel-%: $(ET_KERNEL_BUILD_CONFIG)
+	$(call kernel-build,$(*F))
+
+.PHONY: kernel-purge
+kernel-purge:
+	$(call $@)
+
+.PHONY: kernel-version
+kernel-version:
+	$(call $@)
+
+.PHONY: kernel-info
+kernel-info:
+	$(call $@)
