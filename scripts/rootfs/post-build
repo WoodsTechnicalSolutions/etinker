@@ -19,7 +19,13 @@ if [ -d ${ET_BOOTLOADER_DIR}/boot ]; then
 	rsync -av ${ET_BOOTLOADER_DIR}/* ${TARGET}/ 2>/dev/null
 fi
 if [ -d ${ET_OVERLAY_DIR} ]; then
-	rsync -av ${ET_OVERLAY_DIR}/* ${TARGET}/ 2>/dev/null
+	rsync -av \
+		--exclude usr/include \
+		--exclude usr/lib/pkgconfig \
+		--exclude usr/lib/*.a \
+		${ET_OVERLAY_DIR}/ \
+		${TARGET}/ 2>/dev/null
+	${TARGET}/usr/lib/*.a 2>/dev/null
 fi
 printf "\n%s\n\n" "`cat ${TARGET}/etc/issue`" > ${TARGET}/etc/issue
 

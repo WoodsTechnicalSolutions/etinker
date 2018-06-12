@@ -23,6 +23,9 @@ define overlay-version
 endef
 
 define overlay-info
+	@printf "========================================================================\n"
+	@printf "ET_OVERLAY_BUILD_DIR: $(ET_OVERLAY_BUILD_DIR)\n"
+	@printf "ET_OVERLAY_DIR: $(ET_OVERLAY_DIR)\n"
 	$(call cryptodev-linux-info)
 	$(call openssl-info)
 endef

@@ -19,10 +19,9 @@ export ET_OPENSSL_BUILD_CONFIG := $(ET_OPENSSL_BUILD_DIR)/configdata.pm
 export ET_OPENSSL_BUILD_CRYPTO_SO := $(ET_OPENSSL_BUILD_DIR)/libcrypto.so
 export ET_OPENSSL_BUILD_SSL_SO := $(ET_OPENSSL_BUILD_DIR)/libssl.so
 export ET_OPENSSL_BUILD_BIN := $(ET_OPENSSL_BUILD_DIR)/apps/openssl
-export ET_OPENSSL_DIR := $(ET_OVERLAY_DIR)
-export ET_OPENSSL_CRYPTO_SO := $(ET_OPENSSL_DIR)/usr/lib/libcrypto.so
-export ET_OPENSSL_SSL_SO := $(ET_OPENSSL_DIR)/usr/lib/libssl.so
-export ET_OPENSSL_BIN := $(ET_OPENSSL_DIR)/usr/bin/openssl
+export ET_OPENSSL_CRYPTO_SO := $(ET_OVERLAY_DIR)/usr/lib/libcrypto.so
+export ET_OPENSSL_SSL_SO := $(ET_OVERLAY_DIR)/usr/lib/libssl.so
+export ET_OPENSSL_BIN := $(ET_OVERLAY_DIR)/usr/bin/openssl
 export ET_OPENSSL_TARGET_FINAL += $(ET_OPENSSL_BIN)
 
 define openssl-version
@@ -30,7 +29,7 @@ define openssl-version
 endef
 
 define openssl-depends
-	@mkdir -p $(ET_OPENSSL_DIR)
+	@mkdir -p $(ET_OVERLAY_DIR)
 	@mkdir -p $(ET_OPENSSL_BUILD_DIR)
 endef
 
@@ -71,28 +70,14 @@ endef
 
 define openssl-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call openssl-build 'make $1' *****\n\n"
-	@case "$1" in \
-	install_dev) \
-		sed -i s,DESTDIR=,DESTDIR=$$\(ET_ROOTFS_SYSROOT_DIR\), $(ET_OPENSSL_BUILD_DIR)/Makefile; \
-		;; \
-	*) \
-		sed -i s,DESTDIR=,DESTDIR=$$\(ET_OPENSSL_DIR\), $(ET_OPENSSL_BUILD_DIR)/Makefile; \
-		;; \
-	esac
+	sed -i s,DESTDIR=,DESTDIR=$$\(ET_OVERLAY_DIR\), $(ET_OPENSSL_BUILD_DIR)/Makefile
 	@$(MAKE) -C $(ET_OPENSSL_BUILD_DIR) $1
-	@case "$1" in \
-	install_dev) \
-		sed -i s,DESTDIR=$$\(ET_ROOTFS_SYSROOT_DIR\),DESTDIR=, $(ET_OPENSSL_BUILD_DIR)/Makefile; \
-		;; \
-	*) \
-		sed -i s,DESTDIR=$$\(ET_OPENSSL_DIR\),DESTDIR=, $(ET_OPENSSL_BUILD_DIR)/Makefile; \
-		if [ "$1" = "install_runtime" ]; then \
-			cd $(ET_OPENSSL_DIR)/usr/lib/ && \
-				ln -sf libcrypto*.so.* libcrypto.so && \
-				ln -sf libssl*.so.* libssl.so; \
-		fi; \
-		;; \
-	esac
+	sed -i s,DESTDIR=$$\(ET_OVERLAY_DIR\),DESTDIR=, $(ET_OPENSSL_BUILD_DIR)/Makefile
+	@if [ "$1" = "install_runtime" ]; then \
+		cd $(ET_OVERLAY_DIR)/usr/lib/ && \
+			ln -sf libcrypto*.so.* libcrypto.so && \
+			ln -sf libssl*.so.* libssl.so; \
+	fi
 	@if [ "$1" = "all" ]; then \
 		if ! [ -f $(ET_OPENSSL_BUILD_CRYPTO_SO) ]; then \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl crypto library build FAILED! *****\n"; \
@@ -115,12 +100,11 @@ define openssl-clean
 	$(RM) $(ET_OPENSSL_BUILD_CRYPTO_SO)
 	$(RM) $(ET_OPENSSL_BUILD_SSL_SO)
 	$(RM) $(ET_OPENSSL_BUILD_BIN)
-	$(RM) $(ET_OPENSSL_DIR)/usr/lib/*ssl*
-	$(RM) $(ET_OPENSSL_DIR)/usr/lib/*crypto*
-	$(RM) $(ET_OPENSSL_DIR)/usr/lib/pkgconfig/*ssl*
-	$(RM) $(ET_OPENSSL_DIR)/usr/lib/pkgconfig/*crypto*
-	$(RM) -r $(ET_OPENSSL_DIR)/usr/lib/engines*
-	$(RM) -r $(ET_ROOTFS_SYSROOT_DIR)/usr/include/openssl
+	$(RM) $(ET_OVERLAY_DIR)/usr/lib/*ssl*
+	$(RM) $(ET_OVERLAY_DIR)/usr/lib/*crypto*
+	$(RM) $(ET_OVERLAY_DIR)/usr/lib/pkgconfig/*ssl*
+	$(RM) $(ET_OVERLAY_DIR)/usr/lib/pkgconfig/*crypto*
+	$(RM) -r $(ET_OVERLAY_DIR)/usr/lib/engines*
 endef
 
 define openssl-purge
@@ -142,7 +126,6 @@ define openssl-info
 	@printf "ET_OPENSSL_BUILD_SSL_SO: $(ET_OPENSSL_BUILD_SSL_SO)\n"
 	@printf "ET_OPENSSL_BUILD_BIN: $(ET_OPENSSL_BUILD_BIN)\n"
 	@printf "ET_OPENSSL_BUILD_DIR: $(ET_OPENSSL_BUILD_DIR)\n"
-	@printf "ET_OPENSSL_DIR: $(ET_OPENSSL_DIR)\n"
 	@printf "ET_OPENSSL_TARGET_FINAL: $(ET_OPENSSL_TARGET_FINAL)\n"
 endef
 
