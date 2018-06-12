@@ -20,9 +20,9 @@ if [ -d ${ET_BOOTLOADER_DIR}/boot ]; then
 fi
 if [ -d ${ET_OVERLAY_DIR} ]; then
 	rsync -av \
-		--exclude usr/include \
-		--exclude usr/lib/pkgconfig \
-		--exclude usr/lib/*.a \
+		--exclude 'usr/include' \
+		--exclude 'usr/lib/pkgconfig' \
+		--exclude 'usr/lib/*.a' \
 		${ET_OVERLAY_DIR}/ \
 		${TARGET}/ 2>/dev/null
 	${TARGET}/usr/lib/*.a 2>/dev/null
