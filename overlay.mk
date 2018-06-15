@@ -16,10 +16,12 @@ export ET_OVERLAY_DIR := $(ET_DIR)/overlay/$(ET_BOARD)/$(ET_CROSS_TUPLE)
 
 include packages/cryptodev-linux.mk
 include packages/openssl.mk
+include packages/wireless-regdb.mk
 
 define overlay-version
 	$(call cryptodev-linux-version)
 	$(call openssl-version)
+	$(call wireless-regdb-version)
 endef
 
 define overlay-info
@@ -28,17 +30,20 @@ define overlay-info
 	@printf "ET_OVERLAY_DIR: $(ET_OVERLAY_DIR)\n"
 	$(call cryptodev-linux-info)
 	$(call openssl-info)
+	$(call wireless-regdb-info)
 endef
 
 define overlay-clean
 	$(call cryptodev-linux-clean)
 	$(call openssl-clean)
+	$(call wireless-regdb-clean)
 endef
 
 define overlay-purge
 	$(call cryptodev-linux-purge)
 	$(call openssl-purge)
+	$(call wireless-regdb-purge)
 endef
 
 .PHONY: overlay
-overlay: cryptodev-linux openssl
+overlay: cryptodev-linux openssl wireless-regdb
