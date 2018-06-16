@@ -47,3 +47,15 @@ endef
 
 .PHONY: overlay
 overlay: cryptodev-linux openssl wireless-regdb
+
+.PHONY: overlay-info
+overlay-info:
+	$(call $@)
+
+.PHONY: overlay-clean
+overlay-clean:
+	$(call $@)
+
+.PHONY: overlay-purge
+overlay-purge:
+	$(call $@)
