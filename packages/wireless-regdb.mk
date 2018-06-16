@@ -39,6 +39,7 @@ endef
 
 define wireless-regdb-targets
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] wireless-regdb *****\n\n"
+	$(call wireless-regdb-depends)
 	$(call wireless-regdb-build,all)
 endef
 
