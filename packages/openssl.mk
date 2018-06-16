@@ -22,7 +22,7 @@ export ET_OPENSSL_BUILD_BIN := $(ET_OPENSSL_BUILD_DIR)/apps/openssl
 export ET_OPENSSL_CRYPTO_SO := $(ET_OVERLAY_DIR)/usr/lib/libcrypto.so
 export ET_OPENSSL_SSL_SO := $(ET_OVERLAY_DIR)/usr/lib/libssl.so
 export ET_OPENSSL_BIN := $(ET_OVERLAY_DIR)/usr/bin/openssl
-export ET_OPENSSL_TARGET_FINAL += $(ET_OPENSSL_BIN)
+export ET_OPENSSL_TARGET_FINAL ?= $(ET_OPENSSL_BIN)
 
 define openssl-version
 	@printf "ET_OPENSSL_VERSION: $(ET_OPENSSL_VERSION)\n"

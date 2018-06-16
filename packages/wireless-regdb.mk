@@ -25,7 +25,7 @@ export ET_WIRELESS_REGDB_PUB_PEM := $(ET_OVERLAY_DIR)/etc/wireless-regdb/pubkeys
 export ET_WIRELESS_REGDB_DB_P7S := $(ET_OVERLAY_DIR)/lib/firmware/regulatory.db.p7s
 export ET_WIRELESS_REGDB_DB := $(ET_OVERLAY_DIR)/lib/firmware/regulatory.db
 export ET_WIRELESS_REGDB_BIN := $(ET_OVERLAY_DIR)/usr/lib/crda/regulatory.bin
-export ET_WIRELESS_REGDB_TARGET_FINAL += $(ET_WIRELESS_REGDB_BIN)
+export ET_WIRELESS_REGDB_TARGET_FINAL ?= $(ET_WIRELESS_REGDB_BIN)
 
 define wireless-regdb-version
 	@printf "ET_WIRELESS_REGDB_VERSION: $(ET_WIRELESS_REGDB_VERSION)\n"
