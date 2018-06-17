@@ -8,22 +8,22 @@ modules="`find /etc/modprobe.d -name *.sh -exec basename {} \; | sed s,.sh,,`"
 
 for f in ${modules}; do
 	case "$1" in
-		start)
-			printf "modules: loading [%s]\n" "$f"
-			sh /etc/modprobe.d/$f.sh $1
-			;;
-		stop)
-			printf "modules: unloading [%s]\n" "$f"
-			sh /etc/modprobe.d/$f.sh $1
-			;;
-		restart)
-			sh /etc/modprobe.d/$f.sh stop
-			sleep 1
-			sh /etc/modprobe.d/$f.sh start
-			;;
-		*)
-			exit 1
-			;;
+	start)
+		printf "modules: loading [%s]\n" "$f"
+		sh /etc/modprobe.d/$f.sh $1
+		;;
+	stop)
+		printf "modules: unloading [%s]\n" "$f"
+		sh /etc/modprobe.d/$f.sh $1
+		;;
+	restart)
+		sh /etc/modprobe.d/$f.sh stop
+		sleep 1
+		sh /etc/modprobe.d/$f.sh start
+		;;
+	*)
+		exit 1
+		;;
 	esac
 done
 
