@@ -70,6 +70,7 @@ if [ -f /usr/bin/apt ]; then
 		rsync \
 		screen \
 		subversion \
+		swig \
 		texinfo \
 		tig \
 		tmux \
