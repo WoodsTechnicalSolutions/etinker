@@ -43,12 +43,6 @@ define wireless-regdb-targets
 	$(call wireless-regdb-build,all)
 endef
 
-define wireless-regdb-config
-	$(call software-check,$(ET_WIRELESS_REGDB_TREE))
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] wireless-regdb-config *****\n\n"
-	$(call wireless-regdb-depends)
-endef
-
 define wireless-regdb-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call wireless-regdb-build 'make $1' *****\n\n"
 	@if [ "$1" = "all" ]; then \
@@ -78,6 +72,19 @@ define wireless-regdb-build
 		cp -av $(ET_WIRELESS_REGDB_BUILD_DB) $(ET_WIRELESS_REGDB_DB); \
 		cp -av $(ET_WIRELESS_REGDB_BUILD_BIN) $(ET_WIRELESS_REGDB_BIN); \
 	fi
+	@if [ -n "$(shell printf "%s" $1 | grep clean)" ]; then \
+		$(RM) $(ET_WIRELESS_REGDB_X509_PEM); \
+		$(RM) $(ET_WIRELESS_REGDB_PUB_PEM); \
+		$(RM) $(ET_WIRELESS_REGDB_DB_P7S); \
+		$(RM) $(ET_WIRELESS_REGDB_DB); \
+		$(RM) $(ET_WIRELESS_REGDB_BIN); \
+	fi
+endef
+
+define wireless-regdb-config
+	$(call software-check,$(ET_WIRELESS_REGDB_TREE))
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] wireless-regdb-config *****\n\n"
+	$(call wireless-regdb-depends)
 endef
 
 define wireless-regdb-clean
@@ -130,6 +137,9 @@ wireless-regdb-%: $(ET_WIRELESS_REGDB_BUILD_CONFIG)
 
 .PHONY: wireless-regdb-clean
 wireless-regdb-clean:
+ifeq ($(ET_CLEAN),yes)
+	$(call wireless-regdb-build,clean)
+endif
 	$(call $@)
 
 .PHONY: wireless-regdb-purge

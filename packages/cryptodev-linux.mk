@@ -39,16 +39,6 @@ define cryptodev-linux-targets
 	$(call cryptodev-linux-build,modules_install)
 endef
 
-define cryptodev-linux-config
-	$(call software-check,$(ET_CRYPTODEV_LINUX_TREE))
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] cryptodev-linux-config *****\n\n"
-	$(call cryptodev-linux-depends)
-	@if ! [ -d $(ET_CRYPTODEV_LINUX_BUILD_DIR) ]; then \
-		cp -a $(ET_CRYPTODEV_LINUX_SOFTWARE_DIR) $(shell dirname $(ET_CRYPTODEV_LINUX_BUILD_DIR))/; \
-		printf "%s\n" "$(shell date)" > $(ET_CRYPTODEV_LINUX_BUILD_CONFIG); \
-	fi
-endef
-
 define cryptodev-linux-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call cryptodev-linux-build 'make $1' *****\n\n"
 	@$(MAKE) -C $(ET_CRYPTODEV_LINUX_BUILD_DIR) \
@@ -62,6 +52,20 @@ define cryptodev-linux-build
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_CRYPTODEV_LINUX_TREE) $1 FAILED! *****\n"; \
 			exit 2; \
 		fi; \
+	fi
+	@if [ -n "$(shell printf "%s" $1 | grep clean)" ]; then \
+		$(RM) $(ET_CRYPTODEV_LINUX_TARGET_FINAL); \
+		$(RM) $(ET_ROOTFS_SYSROOT_DIR)/usr/include/crypto/cryptodev.h; \
+	fi
+endef
+
+define cryptodev-linux-config
+	$(call software-check,$(ET_CRYPTODEV_LINUX_TREE))
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] cryptodev-linux-config *****\n\n"
+	$(call cryptodev-linux-depends)
+	@if ! [ -d $(ET_CRYPTODEV_LINUX_BUILD_DIR) ]; then \
+		cp -a $(ET_CRYPTODEV_LINUX_SOFTWARE_DIR) $(shell dirname $(ET_CRYPTODEV_LINUX_BUILD_DIR))/; \
+		printf "%s\n" "$(shell date)" > $(ET_CRYPTODEV_LINUX_BUILD_CONFIG); \
 	fi
 endef
 
@@ -107,6 +111,9 @@ cryptodev-linux-%: $(ET_CRYPTODEV_LINUX_BUILD_CONFIG)
 
 .PHONY: cryptodev-linux-clean
 cryptodev-linux-clean:
+ifeq ($(ET_CLEAN),yes)
+	$(call cryptodev-linux-build,clean)
+endif
 	$(call $@)
 
 .PHONY: cryptodev-linux-purge

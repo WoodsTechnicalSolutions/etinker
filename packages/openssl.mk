@@ -42,6 +42,44 @@ define openssl-targets
 	$(call openssl-build,install_ssldirs)
 endef
 
+define openssl-build
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call openssl-build 'make $1' *****\n\n"
+	sed -i s,DESTDIR=,DESTDIR=$$\(ET_OVERLAY_DIR\), $(ET_OPENSSL_BUILD_DIR)/Makefile
+	@$(MAKE) -C $(ET_OPENSSL_BUILD_DIR) $1
+	sed -i s,DESTDIR=$$\(ET_OVERLAY_DIR\),DESTDIR=, $(ET_OPENSSL_BUILD_DIR)/Makefile
+	@if [ "$1" = "install_runtime" ]; then \
+		cd $(ET_OVERLAY_DIR)/usr/lib/ && \
+			ln -sf libcrypto*.so.* libcrypto.so && \
+			ln -sf libssl*.so.* libssl.so; \
+	fi
+	@if [ "$1" = "all" ]; then \
+		if ! [ -f $(ET_OPENSSL_BUILD_CRYPTO_SO) ]; then \
+			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl crypto library build FAILED! *****\n"; \
+			exit 2; \
+		fi; \
+		if ! [ -f $(ET_OPENSSL_BUILD_SSL_SO) ]; then \
+			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl SSL library build FAILED! *****\n"; \
+			exit 2; \
+		fi; \
+		if ! [ -f $(ET_OPENSSL_BUILD_BIN) ]; then \
+			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl binary build FAILED! *****\n"; \
+			exit 2; \
+		fi; \
+	fi
+	@if [ -n "$(shell printf "%s" $1 | grep clean)" ]; then \
+		$(RM) $(ET_OPENSSL_TARGET_FINAL); \
+		$(RM) $(ET_OPENSSL_BUILD_CRYPTO_SO); \
+		$(RM) $(ET_OPENSSL_BUILD_SSL_SO); \
+		$(RM) $(ET_OPENSSL_BUILD_BIN); \
+		$(RM) $(ET_OVERLAY_DIR)/usr/lib/*ssl* ; \
+		$(RM) $(ET_OVERLAY_DIR)/usr/lib/*crypto* ; \
+		$(RM) $(ET_OVERLAY_DIR)/usr/lib/pkgconfig/*ssl* ; \
+		$(RM) $(ET_OVERLAY_DIR)/usr/lib/pkgconfig/*crypto* ; \
+		$(RM) -r $(ET_OVERLAY_DIR)/usr/lib/engines* ; \
+		$(RM) -r $(ET_OVERLAY_DIR)/usr/include/openssl; \
+	fi
+endef
+
 define openssl-config
 	$(call software-check,$(ET_OPENSSL_TREE))
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl-config *****\n\n"
@@ -68,32 +106,6 @@ define openssl-config
 	fi
 endef
 
-define openssl-build
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call openssl-build 'make $1' *****\n\n"
-	sed -i s,DESTDIR=,DESTDIR=$$\(ET_OVERLAY_DIR\), $(ET_OPENSSL_BUILD_DIR)/Makefile
-	@$(MAKE) -C $(ET_OPENSSL_BUILD_DIR) $1
-	sed -i s,DESTDIR=$$\(ET_OVERLAY_DIR\),DESTDIR=, $(ET_OPENSSL_BUILD_DIR)/Makefile
-	@if [ "$1" = "install_runtime" ]; then \
-		cd $(ET_OVERLAY_DIR)/usr/lib/ && \
-			ln -sf libcrypto*.so.* libcrypto.so && \
-			ln -sf libssl*.so.* libssl.so; \
-	fi
-	@if [ "$1" = "all" ]; then \
-		if ! [ -f $(ET_OPENSSL_BUILD_CRYPTO_SO) ]; then \
-			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl crypto library build FAILED! *****\n"; \
-			exit 2; \
-		fi; \
-		if ! [ -f $(ET_OPENSSL_BUILD_SSL_SO) ]; then \
-			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl SSL library build FAILED! *****\n"; \
-			exit 2; \
-		fi; \
-		if ! [ -f $(ET_OPENSSL_BUILD_BIN) ]; then \
-			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl binary build FAILED! *****\n"; \
-			exit 2; \
-		fi; \
-	fi
-endef
-
 define openssl-clean
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call openssl-clean *****\n\n"
 	$(RM) $(ET_OPENSSL_TARGET_FINAL)
@@ -105,6 +117,7 @@ define openssl-clean
 	$(RM) $(ET_OVERLAY_DIR)/usr/lib/pkgconfig/*ssl*
 	$(RM) $(ET_OVERLAY_DIR)/usr/lib/pkgconfig/*crypto*
 	$(RM) -r $(ET_OVERLAY_DIR)/usr/lib/engines*
+	$(RM) -r $(ET_OVERLAY_DIR)/usr/include/openssl
 endef
 
 define openssl-purge
@@ -146,6 +159,9 @@ openssl-%: $(ET_OPENSSL_BUILD_CONFIG)
 
 .PHONY: openssl-clean
 openssl-clean:
+ifeq ($(ET_CLEAN),yes)
+	$(call openssl-build,clean)
+endif
 	$(call $@)
 
 .PHONY: openssl-purge

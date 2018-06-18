@@ -58,6 +58,7 @@ info:
 	@printf "ET_HOST_OS_ID: $(ET_HOST_OS_ID)\n"
 	@printf "ET_HOST_OS_CODENAME: $(ET_HOST_OS_CODENAME)\n"
 	@printf "ET_HOST_OS_RELEASE: $(ET_HOST_OS_RELEASE)\n"
+	@printf "ET_CLEAN: $(ET_CLEAN)\n"
 	@printf "ET_CPUS: $(ET_CPUS) [ make -j $(ET_CPUS) ]\n"
 	@printf "ET_DIR: $(ET_DIR)\n"
 	@printf "ET_PATCH_DIR: $(ET_PATCH_DIR)\n"

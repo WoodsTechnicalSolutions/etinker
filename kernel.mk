@@ -230,6 +230,13 @@ $(ET_KERNEL_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL)
 kernel-%: $(ET_KERNEL_BUILD_CONFIG)
 	$(call kernel-build,$(*F))
 
+.PHONY: kernel-clean
+kernel-clean:
+ifeq ($(ET_CLEAN),yes)
+	$(call kernel-build,clean)
+endif
+	$(call $@)
+
 .PHONY: kernel-purge
 kernel-purge:
 	$(call $@)

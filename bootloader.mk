@@ -152,6 +152,13 @@ $(ET_BOOTLOADER_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL)
 bootloader-%: $(ET_BOOTLOADER_BUILD_CONFIG)
 	$(call bootloader-build,$(*F))
 
+.PHONY: bootloader-clean
+bootloader-clean:
+ifeq ($(ET_CLEAN),yes)
+	$(call bootloader-build,clean)
+endif
+	$(call $@)
+
 .PHONY: bootloader-purge
 bootloader-purge:
 	$(call $@)

@@ -24,15 +24,6 @@ define overlay-version
 	$(call wireless-regdb-version)
 endef
 
-define overlay-info
-	@printf "========================================================================\n"
-	@printf "ET_OVERLAY_BUILD_DIR: $(ET_OVERLAY_BUILD_DIR)\n"
-	@printf "ET_OVERLAY_DIR: $(ET_OVERLAY_DIR)\n"
-	$(call cryptodev-linux-info)
-	$(call openssl-info)
-	$(call wireless-regdb-info)
-endef
-
 define overlay-clean
 	$(call cryptodev-linux-clean)
 	$(call openssl-clean)
@@ -45,12 +36,17 @@ define overlay-purge
 	$(call wireless-regdb-purge)
 endef
 
+define overlay-info
+	@printf "========================================================================\n"
+	@printf "ET_OVERLAY_BUILD_DIR: $(ET_OVERLAY_BUILD_DIR)\n"
+	@printf "ET_OVERLAY_DIR: $(ET_OVERLAY_DIR)\n"
+	$(call cryptodev-linux-info)
+	$(call openssl-info)
+	$(call wireless-regdb-info)
+endef
+
 .PHONY: overlay
 overlay: cryptodev-linux openssl wireless-regdb
-
-.PHONY: overlay-info
-overlay-info:
-	$(call $@)
 
 .PHONY: overlay-clean
 overlay-clean:
@@ -58,4 +54,12 @@ overlay-clean:
 
 .PHONY: overlay-purge
 overlay-purge:
+	$(call $@)
+
+.PHONY: overlay-version
+overlay-version:
+	$(call $@)
+
+.PHONY: overlay-info
+overlay-info:
 	$(call $@)
