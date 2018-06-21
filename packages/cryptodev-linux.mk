@@ -99,15 +99,15 @@ cryptodev-linux: $(ET_CRYPTODEV_LINUX_TARGET_FINAL)
 $(ET_CRYPTODEV_LINUX_TARGET_FINAL): $(ET_CRYPTODEV_LINUX_BUILD_CONFIG)
 	$(call cryptodev-linux-targets)
 
+cryptodev-linux-%: $(ET_CRYPTODEV_LINUX_BUILD_CONFIG)
+	$(call cryptodev-linux-build,$(*F))
+
 .PHONY: cryptodev-linux-config
 cryptodev-linux-config: $(ET_CRYPTODEV_LINUX_BUILD_CONFIG)
 $(ET_CRYPTODEV_LINUX_BUILD_CONFIG): $(ET_KERNEL_TARGET_FINAL)
 ifeq ($(shell test -f $(ET_CRYPTODEV_LINUX_BUILD_CONFIG) && printf "DONE" || printf "CONFIGURE"),CONFIGURE)
 	$(call cryptodev-linux-config)
 endif
-
-cryptodev-linux-%: $(ET_CRYPTODEV_LINUX_BUILD_CONFIG)
-	$(call cryptodev-linux-build,$(*F))
 
 .PHONY: cryptodev-linux-clean
 cryptodev-linux-clean:

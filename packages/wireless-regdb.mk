@@ -125,15 +125,15 @@ wireless-regdb: $(ET_WIRELESS_REGDB_TARGET_FINAL)
 $(ET_WIRELESS_REGDB_TARGET_FINAL): $(ET_WIRELESS_REGDB_BUILD_CONFIG)
 	$(call wireless-regdb-targets)
 
+wireless-regdb-%: $(ET_WIRELESS_REGDB_BUILD_CONFIG)
+	$(call wireless-regdb-build,$(*F))
+
 .PHONY: wireless-regdb-config
 wireless-regdb-config: $(ET_WIRELESS_REGDB_BUILD_CONFIG)
 $(ET_WIRELESS_REGDB_BUILD_CONFIG):
 ifeq ($(shell test -f $(ET_WIRELESS_REGDB_BUILD_CONFIG) && printf "DONE" || printf "CONFIGURE"),CONFIGURE)
 	$(call wireless-regdb-config)
 endif
-
-wireless-regdb-%: $(ET_WIRELESS_REGDB_BUILD_CONFIG)
-	$(call wireless-regdb-build,$(*F))
 
 .PHONY: wireless-regdb-clean
 wireless-regdb-clean:

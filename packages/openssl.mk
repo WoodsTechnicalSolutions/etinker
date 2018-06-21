@@ -147,15 +147,15 @@ openssl: $(ET_OPENSSL_TARGET_FINAL)
 $(ET_OPENSSL_TARGET_FINAL): $(ET_OPENSSL_BUILD_CONFIG)
 	$(call openssl-targets)
 
+openssl-%: $(ET_OPENSSL_BUILD_CONFIG)
+	$(call openssl-build,$(*F))
+
 .PHONY: openssl-config
 openssl-config: $(ET_OPENSSL_BUILD_CONFIG)
 $(ET_OPENSSL_BUILD_CONFIG): $(ET_CRYPTODEV_LINUX_TARGET_FINAL)
 ifeq ($(shell test -f $(ET_OPENSSL_BUILD_CONFIG) && printf "DONE" || printf "CONFIGURE"),CONFIGURE)
 	$(call openssl-config)
 endif
-
-openssl-%: $(ET_OPENSSL_BUILD_CONFIG)
-	$(call openssl-build,$(*F))
 
 .PHONY: openssl-clean
 openssl-clean:

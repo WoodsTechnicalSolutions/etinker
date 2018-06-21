@@ -126,21 +126,23 @@ endef
 
 .PHONY: toolchain
 toolchain: $(ET_TOOLCHAIN_TARGET_FINAL)
-$(ET_TOOLCHAIN_TARGET_FINAL):
+$(ET_TOOLCHAIN_TARGET_FINAL): $(ET_TOOLCHAIN_BUILD_CONFIG)
 	$(call toolchain-targets)
+
+toolchain-%: $(ET_TOOLCHAIN_BUILD_CONFIG)
+	$(call toolchain-build,$(*F))
 
 .PHONY: toolchain-config
 toolchain-config: $(ET_TOOLCHAIN_BUILD_CONFIG)
 $(ET_TOOLCHAIN_BUILD_CONFIG): $(ET_TOOLCHAIN_GENERATOR) $(ET_TOOLCHAIN_CONFIG)
+ifeq ($(shell test -f $(ET_TOOLCHAIN_BUILD_CONFIG) && printf "DONE" || printf "CONFIGURE"),CONFIGURE)
 	$(call toolchain-config)
+endif
 
 .PHONY: toolchain-generator
 toolchain-generator: $(ET_TOOLCHAIN_GENERATOR)
 $(ET_TOOLCHAIN_GENERATOR):
 	$(call toolchain-generator)
-
-toolchain-%: $(ET_TOOLCHAIN_BUILD_CONFIG)
-	$(call toolchain-build,$(*F))
 
 .PHONY: toolchain-clean
 toolchain-clean:

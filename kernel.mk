@@ -216,19 +216,21 @@ endef
 
 .PHONY: kernel
 kernel: $(ET_KERNEL_TARGET_FINAL)
-$(ET_KERNEL_TARGET_FINAL):
+$(ET_KERNEL_TARGET_FINAL): $(ET_KERNEL_BUILD_CONFIG)
 	$(call kernel-targets)
+
+kernel-%: $(ET_KERNEL_BUILD_CONFIG)
+	$(call kernel-build,$(*F))
 
 .PHONY: kernel-config
 kernel-config: $(ET_KERNEL_BUILD_CONFIG)
 $(ET_KERNEL_BUILD_CONFIG): $(ET_KERNEL_CONFIG)
+ifeq ($(shell test -f $(ET_KERNEL_BUILD_CONFIG) && printf "DONE" || printf "CONFIGURE"),CONFIGURE)
 	$(call kernel-config)
+endif
 
 $(ET_KERNEL_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL)
 	$(call kernel-build,$(ET_KERNEL_DEFCONFIG))
-
-kernel-%: $(ET_KERNEL_BUILD_CONFIG)
-	$(call kernel-build,$(*F))
 
 .PHONY: kernel-clean
 kernel-clean:

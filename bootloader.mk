@@ -138,19 +138,21 @@ endef
 
 .PHONY: bootloader
 bootloader: $(ET_BOOTLOADER_TARGET_FINAL)
-$(ET_BOOTLOADER_TARGET_FINAL):
+$(ET_BOOTLOADER_TARGET_FINAL): $(ET_BOOTLOADER_BUILD_CONFIG)
 	$(call bootloader-targets)
+
+bootloader-%: $(ET_BOOTLOADER_BUILD_CONFIG)
+	$(call bootloader-build,$(*F))
 
 .PHONY: bootloader-config
 bootloader-config: $(ET_BOOTLOADER_BUILD_CONFIG)
 $(ET_BOOTLOADER_BUILD_CONFIG): $(ET_BOOTLOADER_CONFIG)
+ifeq ($(shell test -f $(ET_BOOTLOADER_BUILD_CONFIG) && printf "DONE" || printf "CONFIGURE"),CONFIGURE)
 	$(call bootloader-config)
+endif
 
 $(ET_BOOTLOADER_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL)
 	$(call bootloader-build,$(ET_BOOTLOADER_DEFCONFIG))
-
-bootloader-%: $(ET_BOOTLOADER_BUILD_CONFIG)
-	$(call bootloader-build,$(*F))
 
 .PHONY: bootloader-clean
 bootloader-clean:

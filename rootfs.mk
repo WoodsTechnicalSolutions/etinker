@@ -137,7 +137,7 @@ endef
 
 .PHONY: rootfs
 rootfs: $(ET_ROOTFS_TARGET_FINAL)
-$(ET_ROOTFS_TARGET_FINAL):
+$(ET_ROOTFS_TARGET_FINAL): $(ET_ROOTFS_BUILD_CONFIG)
 	$(call rootfs-targets)
 
 rootfs-%: $(ET_ROOTFS_BUILD_CONFIG)
@@ -146,14 +146,14 @@ rootfs-%: $(ET_ROOTFS_BUILD_CONFIG)
 .PHONY: rootfs-config
 rootfs-config: $(ET_ROOTFS_BUILD_CONFIG)
 $(ET_ROOTFS_BUILD_CONFIG): $(ET_ROOTFS_CONFIG)
+ifeq ($(shell test -f $(ET_ROOTFS_BUILD_CONFIG) && printf "DONE" || printf "CONFIGURE"),CONFIGURE)
 	$(call rootfs-config)
+endif
 
 $(ET_ROOTFS_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL)
+ifneq ($(ET_ROOTFS_DEFCONFIG),)
 	$(call rootfs-build,$(ET_ROOTFS_DEFCONFIG))
-
-.PHONY: rootfs-info
-rootfs-info:
-	$(call $@)
+endif
 
 .PHONY: rootfs-clean
 rootfs-clean:
@@ -165,4 +165,8 @@ rootfs-purge:
 
 .PHONY: rootfs-version
 rootfs-version:
+	$(call $@)
+
+.PHONY: rootfs-info
+rootfs-info:
 	$(call $@)
