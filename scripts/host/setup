@@ -66,6 +66,7 @@ if [ -f /usr/bin/apt ]; then
 		mtd-utils \
 		openssh-client \
 		pkg-config \
+		python-dev \
 		qemu \
 		rsync \
 		screen \
