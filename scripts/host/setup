@@ -27,7 +27,7 @@ if [ -f /usr/bin/apt ]; then
 		flex \
 		flip \
 		gawk \
-		gcc-7-doc \
+		gcc-doc \
 		g++-multilib \
 		gcc-multilib \
 		gettext \
