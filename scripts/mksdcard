@@ -1,0 +1,133 @@
+#!/bin/bash
+
+if ! [ "`id -u`" = "0" ]; then
+	printf "***** THIS MUST BE RUN AS 'root' USER *****\n"
+	exit 1
+fi
+
+function usage()
+{
+	printf "USAGE: mksdcard <board> <block-device>\n"
+}
+
+if [ "${1}" = "" ]; then
+	printf "***** MISSING BOARD NAME *****\n"
+	usage
+	exit 1
+fi
+
+board=$1
+
+case "${board}" in
+	*sama5d3*)
+		printf "***** SAMA5D3 ARM Cortex-A5 *****\n"
+		;;
+	*am3517*|*beagle*|*torpedo*|*omap3*|*overo*)
+		printf "***** OMAP3 ARM Cortex-A8 *****\n"
+		;;
+	olinuxino-maxi)
+		printf "***** ARM9 ARM926E-JS *****\n"
+		;;
+	*)
+		printf "***** INVALID BOARD NAME *****\n"
+		usage
+		exit 1
+		;;
+esac
+
+if [ "${2}" = "" ]; then
+	printf "***** MISSING SDCARD DEVICE PATH *****\n"
+	usage
+	exit 1
+fi
+
+disk=$2
+
+controller="unknown"
+
+echo ${disk} | grep -q "/dev/mmcblk"
+if [ "$?" = "0" ]; then
+	controller=MMC
+fi
+
+echo ${disk} | grep -q "/dev/sd"
+if [ "$?" = "0" ]; then
+	controller=ATA
+fi
+
+if [ "${controller}" = "unknown" ]; then
+	printf "***** DISK ${disk} IS NOT SUPPORTED *****\n"
+	exit 1
+fi
+
+if ! [ -b "${disk}" ]; then
+	printf "***** DISK ${disk} IS NOT A BLOCK DEVICE *****\n"
+	exit 1
+fi
+
+mount | grep -q ${disk}
+if [ "$?" = "0" ]; then
+	printf "***** DISK ${disk} HAS ACTIVE MOUNT POINT *****\n"
+	exit 1
+fi
+
+printf "[${board}] ALL DATA ON ${disk} WILL BE LOST. Are you sure? (yes or no) : "
+read proceed
+
+if ! [ "${proceed}" = "yes" ]; then
+	exit 1
+fi
+
+printf "[${board}] Preparing ${controller} @ ${disk}\n"
+
+sleep 3
+
+case "${board}" in
+	*am3517*|*beagle*|*sama5d3*|*torpedo*|*omap3*|*overo*)
+		printf "[${board}] Partitioning ${disk} [ 256MB (BOOT) / <fill> (rootfs) ]\n"
+		LC_ALL=C sfdisk "${disk}" <<-__EOF__
+		1M,256M,0xE,*
+		,,,-
+		__EOF__
+		case "${controller}" in
+			MMC)
+				printf "[${board}] Formatting ${disk}p1 as vfat\n"
+				mkfs.vfat -F 16 ${disk}p1 -n BOOT
+				printf "[${board}] Formatting ${disk}p2 as ext4\n"
+				mkfs.ext4 ${disk}p2 -L rootfs
+				;;
+			ATA)
+				printf "[${board}] Formatting ${disk}1 as vfat\n"
+				mkfs.vfat -F 16 ${disk}1 -n BOOT
+				printf "[${board}] Formatting ${disk}2 as ext4\n"
+				mkfs.ext4 ${disk}2 -L rootfs
+				;;
+			*)
+				;;
+		esac
+		;;
+
+	olinuxino-maxi)
+		printf "[${board}] Partitioning ${disk} [ 16MB (RAW) / <fill> (rootfs) ]\n"
+		LC_ALL=C sfdisk "${disk}" <<-__EOF__
+		1M,16M,0x53,-
+		,,,-
+		__EOF__
+		case "${controller}" in
+			MMC)
+				printf "[${board}] Formatting ${disk}p2 as ext4\n"
+				mkfs.ext4 ${disk}p2 -L rootfs
+				;;
+			ATA)
+				printf "[${board}] Formatting ${disk}2 as ext4\n"
+				mkfs.ext4 ${disk}2 -L rootfs
+				;;
+			*)
+				;;
+		esac
+		;;
+	*)
+		;;
+esac
+
+printf "[${board}] Done.\n"
