@@ -80,7 +80,7 @@ case "${destination}" in
 				sudo rsync -aP ${target_dir}/* ${media}/rootfs/ && sync
 				;;
 			rootfs)
-				sudo tar -xU ${target_dir}/images/rootfs.tar -C ${media}/rootfs/ && sync
+				sudo tar -xUf ${target_dir}/images/rootfs.tar -C ${media}/rootfs/ && sync
 				;;
 			*)
 				printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}
