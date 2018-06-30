@@ -66,7 +66,7 @@ endef
 define rootfs-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rootfs-build 'make $1' *****\n\n"
 	$(call rootfs-depends)
-	@if ! [ -n "$(shell printf "%s" $1 | grep clean)" ]; then \
+	@if [ -z "$(shell printf "%s" $1 | grep clean)" ]; then \
 		$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_ROOTFS_SOFTWARE_DIR) O=$(ET_ROOTFS_BUILD_DIR) \
 			$(ET_CROSS_PARAMS) $1; \
 	fi
@@ -85,7 +85,7 @@ define rootfs-build
 	*) \
 		;; \
 	esac
-	@if [ "$1empty" = "empty" ]; then \
+	@if [ -z "$1" ]; then \
 		if ! [ -f $(ET_ROOTFS_BUILD_IMAGE) ]; then \
 			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_ROOTFS_BUILD_IMAGE) build FAILED! *****\n\n"; \
 			exit 2; \
