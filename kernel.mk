@@ -214,6 +214,10 @@ define kernel-info
 	@printf "ET_KERNEL_TARGET_FINAL: $(ET_KERNEL_TARGET_FINAL)\n"
 endef
 
+define kernel-sync
+	@$(ET_DIR)/scripts/sync kernel $1
+endef
+
 .PHONY: kernel
 kernel: $(ET_KERNEL_TARGET_FINAL)
 $(ET_KERNEL_TARGET_FINAL): $(ET_KERNEL_BUILD_CONFIG)
@@ -250,3 +254,6 @@ kernel-version:
 .PHONY: kernel-info
 kernel-info:
 	$(call $@)
+
+kernel-sync-%:
+	$(call kernel-sync,$(*F))

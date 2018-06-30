@@ -135,6 +135,10 @@ define rootfs-info
 	@printf "ET_ROOTFS_TARGET_FINAL: $(ET_ROOTFS_TARGET_FINAL)\n"
 endef
 
+define rootfs-sync
+	@$(ET_DIR)/scripts/sync rootfs $1
+endef
+
 .PHONY: rootfs
 rootfs: $(ET_ROOTFS_TARGET_FINAL)
 $(ET_ROOTFS_TARGET_FINAL): $(ET_ROOTFS_BUILD_CONFIG)
@@ -170,3 +174,6 @@ rootfs-version:
 .PHONY: rootfs-info
 rootfs-info:
 	$(call $@)
+
+rootfs-sync-%:
+	$(call rootfs-sync,$(*F))

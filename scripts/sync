@@ -1,0 +1,107 @@
+#!/bin/bash
+#
+
+usage()
+{
+	printf "USAGE: sync <target> <destination>\n"
+	printf "       sync <bootloader|kernel|rootfs|overlay> mmc\n"
+	printf "       sync <bootloader|kernel|rootfs>         net:<ipv4-address>\n"
+}
+
+if ! [ -n "${2}" ]; then
+	printf "Missing sync destination!\n"
+	usage
+	exit 1
+fi
+
+destination=${2}
+
+if ! [ -n "${1}" ]; then
+	printf "Missing sync build target!\n"
+	usage
+	exit 1
+fi
+
+target=${1}
+
+case "${target}" in
+	bootloader)
+		target_dir="${ET_BOOTLOADER_DIR}"
+		;;
+	kernel)
+		target_dir="${ET_KERNEL_DIR}"
+		;;
+	overlay)
+		target_dir="${ET_OVERLAY_DIR}"
+		;;
+	rootfs)
+		target_dir="${ET_ROOTFS_DIR}"
+		;;
+	*)
+		printf "Unsupported build target! [%s]\n" ${target}
+		exit 1
+		;;
+esac
+
+if ! [ -d ${target_dir} ]; then
+	printf "Target directory does not exist! [%s]\n" ${target_dir}
+	usage
+	exit 1
+fi
+
+case "${destination}" in
+	mmc)
+		if [ -d /media/$USER ]; then
+			media="/media/$USER"
+		else
+			if [ -d /run/media/$USER ]; then
+				media="/run/media/$USER"
+			else
+				printf "Unknown SD/MMC media directory location!\n"
+				exit 1
+			fi
+		fi
+		case "${target}" in
+			kernel|bootloader)
+				sudo rsync -aP ${target_dir}/* ${media}/rootfs/ && sync
+				sudo rsync -P  ${target_dir}/boot/* ${media}/BOOT/ && sync
+				;;
+			overlay)
+				sudo rsync -aP ${target_dir}/* ${media}/rootfs/ && sync
+				;;
+			rootfs)
+				sudo tar -xU ${target_dir}/images/rootfs.tar -C ${media}/rootfs/ && sync
+				;;
+			*)
+				printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}
+				exit 1
+				;;
+		esac
+		;;
+	net:*)
+		ipv4="`printf ${destination} | cut -d ':' -f 2`"
+		case "${target}" in
+			kernel|bootloader)
+				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
+					-aP ${target_dir}/* \
+					root@${ipv4}:/
+				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
+					-P ${target_dir}/boot/* \
+					root@${ipv4}:/media/BOOT/
+				;;
+			rootfs)
+				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
+					-aP ${target_dir}/images/rootfs.tar \
+					root@${ipv4}:
+				;;
+			*)
+				printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}
+				exit 1
+				;;
+		esac
+		;;
+	*)
+		printf "Sync destination [${destination}] not implemented!\n"
+		usage
+		exit 1
+esac

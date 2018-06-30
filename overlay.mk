@@ -45,6 +45,10 @@ define overlay-info
 	$(call wireless-regdb-info)
 endef
 
+define overlay-sync
+	@$(ET_DIR)/scripts/sync overlay $1
+endef
+
 .PHONY: overlay
 overlay: cryptodev-linux openssl wireless-regdb
 
@@ -63,3 +67,6 @@ overlay-version:
 .PHONY: overlay-info
 overlay-info:
 	$(call $@)
+
+overlay-sync-%:
+	$(call overlay-sync,$(*F))

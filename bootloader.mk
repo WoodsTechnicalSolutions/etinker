@@ -136,6 +136,10 @@ define bootloader-info
 	@printf "ET_BOOTLOADER_TARGET_FINAL: $(ET_BOOTLOADER_TARGET_FINAL)\n"
 endef
 
+define bootloader-sync
+	@$(ET_DIR)/scripts/sync bootloader $1
+endef
+
 .PHONY: bootloader
 bootloader: $(ET_BOOTLOADER_TARGET_FINAL)
 $(ET_BOOTLOADER_TARGET_FINAL): $(ET_BOOTLOADER_BUILD_CONFIG)
@@ -172,3 +176,6 @@ bootloader-version:
 .PHONY: bootloader-info
 bootloader-info:
 	$(call $@)
+
+bootloader-sync-%:
+	$(call bootloader-sync,$(*F))
