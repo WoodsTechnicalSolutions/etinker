@@ -101,12 +101,10 @@ define toolchain-clean
 endef
 
 define toolchain-purge
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-purge *****\n\n"
+	printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-purge *****\n\n"
 	$(RM) -r $(ET_TOOLCHAIN_DIR)
 	$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)
-	@if [ -n "$(ET_PURGE_ALL)" ]; then \
-		$(RM) -r $(ET_TOOLCHAIN_GENERATOR_DIR); \
-	fi
+	$(RM) -r $(ET_TOOLCHAIN_GENERATOR_DIR)
 endef
 
 define toolchain-info
@@ -153,7 +151,9 @@ endif
 
 .PHONY: toolchain-purge
 toolchain-purge:
+ifeq ($(ET_PURGE),yes)
 	$(call $@)
+endif
 
 .PHONY: toolchain-version
 toolchain-version:
