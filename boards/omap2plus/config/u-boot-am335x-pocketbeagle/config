@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# U-Boot 2018.07-rc2 Configuration
+# U-Boot 2018.07 Configuration
 #
 CONFIG_CREATE_ARCH_SYMLINK=y
 # CONFIG_ARC is not set
@@ -542,6 +542,7 @@ CONFIG_BOOTP_DNS=y
 # CONFIG_BOOTP_DNS2 is not set
 CONFIG_BOOTP_GATEWAY=y
 CONFIG_BOOTP_HOSTNAME=y
+# CONFIG_BOOTP_PREFER_SERVERIP is not set
 CONFIG_BOOTP_SUBNETMASK=y
 # CONFIG_BOOTP_NTPSERVER is not set
 CONFIG_BOOTP_PXE=y
@@ -561,6 +562,7 @@ CONFIG_CMD_PING=y
 # CONFIG_CMD_LINK_LOCAL is not set
 # CONFIG_CMD_ETHSW is not set
 CONFIG_CMD_PXE=y
+# CONFIG_CMD_WOL is not set
 
 #
 # Misc commands
