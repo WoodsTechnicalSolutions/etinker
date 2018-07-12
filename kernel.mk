@@ -89,7 +89,7 @@ define kernel-targets
 	$(call kernel-depends)
 	@if ! [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
 		if [ -f $(ET_KERNEL_CONFIG) ]; then \
-			cat $(ET_KERNEL_CONFIG) > $(ET_KERNEL_BUILD_CONFIG); \
+			rsync $(ET_KERNEL_CONFIG) $(ET_KERNEL_BUILD_CONFIG); \
 		else \
 			$(MAKE) --no-print-directory -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
 				$(ET_CROSS_PARAMS) $(ET_BOARD_KERNEL_DEFCONFIG); \
@@ -101,13 +101,22 @@ define kernel-targets
 	$(call kernel-build,modules)
 	$(call kernel-build,modules_install)
 	@if [ -n "$(shell diff -q $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG) 2> /dev/null)" ]; then \
-		cat $(ET_KERNEL_BUILD_CONFIG) > $(ET_KERNEL_CONFIG); \
+		rsync $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG); \
 	fi
 endef
 
 define kernel-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-build 'make $1' *****\n\n"
 	$(call kernel-depends)
+	@if [ -f $(ET_KERNEL_CONFIG) ] && ! [ "$1" = "$(ET_KERNEL_DEFCONFIG)" ]; then \
+		case "$1" in \
+		*config) \
+			rsync $(ET_KERNEL_CONFIG) $(ET_KERNEL_BUILD_CONFIG); \
+			;; \
+		*) \
+			;; \
+		esac; \
+	fi
 	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
 		$(ET_CROSS_PARAMS) \
 		$1 \
@@ -158,7 +167,7 @@ define kernel-build
 		;; \
 	*config) \
 		if [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
-			cat $(ET_KERNEL_BUILD_CONFIG) > $(ET_KERNEL_CONFIG); \
+			rsync $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG); \
 		else \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) .config MISSING! *****\n"; \
 			exit 2; \
@@ -177,7 +186,7 @@ define kernel-config
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-config build FAILED! *****\n\n"; \
 		exit 2; \
 	fi
-	@cat $(ET_KERNEL_CONFIG) > $(ET_KERNEL_BUILD_CONFIG)
+	@rsync $(ET_KERNEL_CONFIG) $(ET_KERNEL_BUILD_CONFIG)
 endef
 
 define kernel-clean

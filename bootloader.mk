@@ -49,7 +49,7 @@ define bootloader-targets
 	$(call bootloader-depends)
 	@if ! [ -f $(ET_BOOTLOADER_BUILD_CONFIG) ]; then \
 		if [ -f $(ET_BOOTLOADER_CONFIG) ]; then \
-			cat $(ET_BOOTLOADER_CONFIG) > $(ET_BOOTLOADER_BUILD_CONFIG); \
+			rsync $(ET_BOOTLOADER_CONFIG) $(ET_BOOTLOADER_BUILD_CONFIG); \
 		else \
 			$(MAKE) --no-print-directory -C $(ET_BOOTLOADER_SOFTWARE_DIR) O=$(ET_BOOTLOADER_BUILD_DIR) \
 				$(ET_CROSS_PARAMS) $(ET_BOARD_BOOTLOADER_DEFCONFIG); \
@@ -57,19 +57,28 @@ define bootloader-targets
 	fi
 	$(call bootloader-build)
 	@if [ -n "$(shell diff -q $(ET_BOOTLOADER_BUILD_CONFIG) $(ET_BOOTLOADER_CONFIG) 2> /dev/null)" ]; then \
-		cat $(ET_BOOTLOADER_BUILD_CONFIG) > $(ET_BOOTLOADER_CONFIG); \
+		rsync $(ET_BOOTLOADER_BUILD_CONFIG) $(ET_BOOTLOADER_CONFIG); \
 	fi
 endef
 
 define bootloader-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-build 'make $1' *****\n\n"
 	$(call bootloader-depends)
+	@if [ -f $(ET_BOOTLOADER_CONFIG) ] && ! [ "$1" = "$(ET_BOOTLOADER_DEFCONFIG)" ]; then \
+		case "$1" in \
+		*config) \
+			rsync $(ET_BOOTLOADER_CONFIG) $(ET_BOOTLOADER_BUILD_CONFIG); \
+			;; \
+		*) \
+			;; \
+		esac; \
+	fi
 	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_BOOTLOADER_SOFTWARE_DIR) O=$(ET_BOOTLOADER_BUILD_DIR) \
 		$(ET_CROSS_PARAMS) $1
 	@if [ -n "$1" ]; then \
 		if [ -n "$(shell printf "%s" $1 | grep config)" ]; then \
 			if [ -f $(ET_BOOTLOADER_BUILD_CONFIG) ]; then \
-				cat $(ET_BOOTLOADER_BUILD_CONFIG) > $(ET_BOOTLOADER_CONFIG); \
+				rsync $(ET_BOOTLOADER_BUILD_CONFIG) $(ET_BOOTLOADER_CONFIG); \
 			else \
 				printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_TREE) .config MISSING! *****\n"; \
 				exit 2; \
@@ -103,7 +112,7 @@ define bootloader-config
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-config FAILED! *****\n\n"; \
 		exit 2; \
 	fi
-	@cat $(ET_BOOTLOADER_CONFIG) > $(ET_BOOTLOADER_BUILD_CONFIG)
+	@rsync $(ET_BOOTLOADER_CONFIG) $(ET_BOOTLOADER_BUILD_CONFIG)
 endef
 
 define bootloader-clean

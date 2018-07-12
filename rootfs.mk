@@ -51,7 +51,7 @@ define rootfs-targets
 	$(call rootfs-depends)
 	@if ! [ -f $(ET_ROOTFS_BUILD_CONFIG) ]; then \
 		if [ -f $(ET_ROOTFS_CONFIG) ]; then \
-			cat $(ET_ROOTFS_CONFIG) > $(ET_ROOTFS_BUILD_CONFIG); \
+			rsync $(ET_ROOTFS_CONFIG) $(ET_ROOTFS_BUILD_CONFIG); \
 		else \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_ROOTFS_CONFIG) MISSING! *****\n"; \
 			exit 2; \
@@ -59,7 +59,7 @@ define rootfs-targets
 	fi
 	$(call rootfs-build)
 	@if [ -n "$(shell diff -q $(ET_ROOTFS_BUILD_CONFIG) $(ET_ROOTFS_CONFIG) 2> /dev/null)" ]; then \
-		cat $(ET_ROOTFS_BUILD_CONFIG) > $(ET_ROOTFS_CONFIG); \
+		rsync $(ET_ROOTFS_BUILD_CONFIG) $(ET_ROOTFS_CONFIG); \
 	fi
 endef
 
@@ -76,7 +76,7 @@ define rootfs-build
 		;; \
 	*config) \
 		if [ -f $(ET_ROOTFS_BUILD_CONFIG) ]; then \
-			cat $(ET_ROOTFS_BUILD_CONFIG) > $(ET_ROOTFS_CONFIG); \
+			rsync $(ET_ROOTFS_BUILD_CONFIG) $(ET_ROOTFS_CONFIG); \
 		else \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_ROOTFS_TREE) .config MISSING! *****\n"; \
 			exit 2; \
@@ -103,7 +103,7 @@ define rootfs-config
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rootfs-config FAILED! *****\n\n"; \
 		exit 2; \
 	fi
-	@cat $(ET_ROOTFS_CONFIG) > $(ET_ROOTFS_BUILD_CONFIG)
+	@rsync $(ET_ROOTFS_CONFIG) $(ET_ROOTFS_BUILD_CONFIG)
 endef
 
 define rootfs-clean

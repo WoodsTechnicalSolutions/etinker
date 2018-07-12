@@ -34,7 +34,7 @@ define toolchain-targets
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) $(ET_TOOLCHAIN_VERSION) *****\n\n"
 	$(call toolchain-depends)
 	@if ! [ -f $(ET_TOOLCHAIN_BUILD_CONFIG) ] && [ -f $(ET_TOOLCHAIN_CONFIG) ]; then \
-		cat $(ET_TOOLCHAIN_CONFIG) > $(ET_TOOLCHAIN_BUILD_CONFIG); \
+		rsync $(ET_TOOLCHAIN_CONFIG) $(ET_TOOLCHAIN_BUILD_CONFIG); \
 	fi
 	$(call toolchain-build,build)
 	@if ! [ -f $(ET_TOOLCHAIN_TARGET_FINAL) ]; then \
@@ -47,7 +47,7 @@ define toolchain-targets
 		fi; \
 	fi
 	@if [ -n "$(shell diff -q $(ET_TOOLCHAIN_BUILD_CONFIG) $(ET_TOOLCHAIN_CONFIG) 2> /dev/null)" ]; then \
-		cat $(ET_TOOLCHAIN_BUILD_CONFIG) > $(ET_TOOLCHAIN_CONFIG); \
+		rsync $(ET_TOOLCHAIN_BUILD_CONFIG) $(ET_TOOLCHAIN_CONFIG); \
 	fi
 endef
 
@@ -57,7 +57,7 @@ define toolchain-build
 	@(cd $(ET_TOOLCHAIN_BUILD_DIR) && CT_ARCH=$(ET_ARCH) $(ET_TOOLCHAIN_GENERATOR) $1)
 	@if [ -n "$(shell printf "%s" $1 | grep config)" ]; then \
 		if [ -f $(ET_TOOLCHAIN_BUILD_CONFIG) ]; then \
-			cat $(ET_TOOLCHAIN_BUILD_CONFIG) > $(ET_TOOLCHAIN_CONFIG); \
+			rsync $(ET_TOOLCHAIN_BUILD_CONFIG) $(ET_TOOLCHAIN_CONFIG); \
 		else \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) .config MISSING! *****\n"; \
 			exit 2; \
@@ -76,7 +76,7 @@ define toolchain-config
 		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-config FAILED! *****\n"; \
 		exit 2; \
 	fi
-	@cat $(ET_TOOLCHAIN_CONFIG) > $(ET_TOOLCHAIN_BUILD_CONFIG)
+	@rsync $(ET_TOOLCHAIN_CONFIG) $(ET_TOOLCHAIN_BUILD_CONFIG)
 endef
 
 define toolchain-generator
