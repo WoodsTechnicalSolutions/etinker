@@ -40,11 +40,12 @@ case "${ET_BOARD_TYPE}" in
 		printf "/dev/mmcblk0p1 /media/BOOT auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 		printf "/dev/mmcblk0p2 /media/rootfs auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 		case "${ET_BOARD}" in
-			*omap3-evm*|*beagle*|sama5d3-xpld-*)
-				mkdir -p ${TARGET}/media/ubifs
-				printf "ubi0:rootfs /media/ubifs ubifs defaults 0 0\n" >> ${TARGET}/etc/fstab
+			omap3-beagle-xm*|am335x-pocketbeagle*)
+				# NO NAND AVAILABLE
 				;;
 			*)
+				mkdir -p ${TARGET}/media/ubifs
+				printf "ubi0:rootfs /media/ubifs ubifs defaults 0 0\n" >> ${TARGET}/etc/fstab
 				;;
 		esac
 		;;
