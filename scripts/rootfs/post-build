@@ -29,6 +29,7 @@ if [ -d ${ET_OVERLAY_DIR} ]; then
 fi
 printf "\n%s\n\n" "`cat ${TARGET}/etc/issue`" > ${TARGET}/etc/issue
 printf "\n::sysinit:/bin/mount -t debugfs none /sys/kernel/debug\n" >> ${TARGET}/etc/inittab
+printf "\n::sysinit:/bin/mount -t configfs none /sys/kernel/config\n" >> ${TARGET}/etc/inittab
 
 # Board Specific Modifications
 case "${ET_BOARD_TYPE}" in
