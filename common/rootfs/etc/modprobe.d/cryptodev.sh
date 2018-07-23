@@ -1,9 +1,10 @@
 module="cryptodev"
+options=""
 ko="/lib/modules/`uname -r`/extra/$module.ko"
 if [ -f $ko ]; then
 	case "$1" in
 	start)
-		modprobe -v $module
+		modprobe -v $module "$options"
 		;;
 	stop)
 		modprobe -r $module
