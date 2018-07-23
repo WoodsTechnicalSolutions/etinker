@@ -103,6 +103,9 @@ case "${destination}" in
 				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
 					-aP ${target_dir}/images/rootfs.tar \
 					root@${ipv4}:
+				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
+					-aP ${target_dir}/../../../common/rootfs/* \
+					root@${ipv4}:/
 				;;
 			*)
 				printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}
