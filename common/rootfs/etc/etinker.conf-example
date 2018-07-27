@@ -1,0 +1,14 @@
+{
+	"usbcdc": {
+		"serialnumber": "388d49055ed4",
+		"manufacturer": "Woods Technical Solutions",
+		"product": "CDC ACM and ECM",
+		"acm": "0 1",
+		"ecm": [
+			{
+				"host_addr": "38:8d:49:05:5e:d4",	
+				"dev_addr": "e2:cb:35:fa:37:7b"
+			}
+		]
+	}
+}
