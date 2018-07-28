@@ -25,7 +25,7 @@ if [ -f $ko ]; then
 		mkdir -p configs/c.1/strings/0x409
 		echo "Config 1: ECM network" > configs/c.1/strings/0x409/configuration
 		echo 250 > configs/c.1/MaxPower
-        
+
 		# Serial (ACM)
 		list="`grep -Eo '"acm":.*?[^\\]",' /etc/etinker.conf | cut -d '"' -f 4`"
 		for i in $list;  do
@@ -38,7 +38,7 @@ if [ -f $ko ]; then
 		grep -Eo '"host_addr":.*?[^\\]",' /etc/etinker.conf | cut -d '"' -f 4 > functions/ecm.usb0/host_addr
 		grep -Eo '"dev_addr":.*?[^\\]",' /etc/etinker.conf | cut -d '"' -f 4 > functions/ecm.usb0/dev_addr
 		ln -s functions/ecm.usb0 configs/c.1/
-        
+
 		# Startup
 		ls /sys/class/udc > UDC
 
