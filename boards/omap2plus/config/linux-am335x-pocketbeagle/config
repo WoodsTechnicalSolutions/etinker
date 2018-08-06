@@ -2751,6 +2751,7 @@ CONFIG_FB_SYS_IMAGEBLIT=m
 # CONFIG_FB_FOREIGN_ENDIAN is not set
 CONFIG_FB_SYS_FOPS=m
 CONFIG_FB_DEFERRED_IO=y
+CONFIG_FB_BACKLIGHT=y
 CONFIG_FB_MODE_HELPERS=y
 CONFIG_FB_TILEBLITTING=y
 
@@ -3665,7 +3666,133 @@ CONFIG_VIRTIO=m
 #
 # Microsoft Hyper-V guest support
 #
-# CONFIG_STAGING is not set
+CONFIG_STAGING=y
+# CONFIG_PRISM2_USB is not set
+# CONFIG_COMEDI is not set
+# CONFIG_RTLLIB is not set
+# CONFIG_RTL8723BS is not set
+# CONFIG_R8712U is not set
+# CONFIG_R8188EU is not set
+# CONFIG_VT6656 is not set
+
+#
+# IIO staging drivers
+#
+
+#
+# Accelerometers
+#
+# CONFIG_ADIS16203 is not set
+# CONFIG_ADIS16240 is not set
+
+#
+# Analog to digital converters
+#
+# CONFIG_AD7606 is not set
+# CONFIG_AD7780 is not set
+# CONFIG_AD7816 is not set
+# CONFIG_AD7192 is not set
+# CONFIG_AD7280 is not set
+
+#
+# Analog digital bi-direction converters
+#
+# CONFIG_ADT7316 is not set
+
+#
+# Capacitance to digital converters
+#
+# CONFIG_AD7150 is not set
+# CONFIG_AD7152 is not set
+# CONFIG_AD7746 is not set
+
+#
+# Direct Digital Synthesis
+#
+# CONFIG_AD9832 is not set
+# CONFIG_AD9834 is not set
+
+#
+# Digital gyroscope sensors
+#
+# CONFIG_ADIS16060 is not set
+
+#
+# Network Analyzer, Impedance Converters
+#
+# CONFIG_AD5933 is not set
+
+#
+# Active energy metering IC
+#
+# CONFIG_ADE7854 is not set
+
+#
+# Resolver to digital converters
+#
+# CONFIG_AD2S90 is not set
+# CONFIG_AD2S1210 is not set
+
+#
+# Speakup console speech
+#
+# CONFIG_SPEAKUP is not set
+# CONFIG_STAGING_MEDIA is not set
+
+#
+# Android
+#
+# CONFIG_STAGING_BOARD is not set
+# CONFIG_LTE_GDM724X is not set
+# CONFIG_MTD_SPINAND_MT29F is not set
+# CONFIG_GS_FPGABOOT is not set
+# CONFIG_UNISYSSPAR is not set
+# CONFIG_COMMON_CLK_XLNX_CLKWZRD is not set
+CONFIG_FB_TFT=m
+# CONFIG_FB_TFT_AGM1264K_FL is not set
+# CONFIG_FB_TFT_BD663474 is not set
+# CONFIG_FB_TFT_HX8340BN is not set
+# CONFIG_FB_TFT_HX8347D is not set
+# CONFIG_FB_TFT_HX8353D is not set
+# CONFIG_FB_TFT_HX8357D is not set
+# CONFIG_FB_TFT_ILI9163 is not set
+# CONFIG_FB_TFT_ILI9320 is not set
+# CONFIG_FB_TFT_ILI9325 is not set
+# CONFIG_FB_TFT_ILI9340 is not set
+# CONFIG_FB_TFT_ILI9341 is not set
+# CONFIG_FB_TFT_ILI9481 is not set
+# CONFIG_FB_TFT_ILI9486 is not set
+# CONFIG_FB_TFT_PCD8544 is not set
+# CONFIG_FB_TFT_RA8875 is not set
+# CONFIG_FB_TFT_S6D02A1 is not set
+# CONFIG_FB_TFT_S6D1121 is not set
+# CONFIG_FB_TFT_SH1106 is not set
+# CONFIG_FB_TFT_SSD1289 is not set
+# CONFIG_FB_TFT_SSD1305 is not set
+# CONFIG_FB_TFT_SSD1306 is not set
+# CONFIG_FB_TFT_SSD1331 is not set
+CONFIG_FB_TFT_SSD1351=m
+# CONFIG_FB_TFT_ST7735R is not set
+# CONFIG_FB_TFT_ST7789V is not set
+# CONFIG_FB_TFT_TINYLCD is not set
+# CONFIG_FB_TFT_TLS8204 is not set
+# CONFIG_FB_TFT_UC1611 is not set
+# CONFIG_FB_TFT_UC1701 is not set
+# CONFIG_FB_TFT_UPD161704 is not set
+# CONFIG_FB_TFT_WATTEROTT is not set
+CONFIG_FB_FLEX=m
+CONFIG_FB_TFT_FBTFT_DEVICE=m
+# CONFIG_WILC1000_SDIO is not set
+# CONFIG_WILC1000_SPI is not set
+# CONFIG_MOST is not set
+# CONFIG_KS7010 is not set
+# CONFIG_GREYBUS is not set
+
+#
+# USB Power Delivery and Type-C drivers
+#
+# CONFIG_PI433 is not set
+# CONFIG_MTK_MMC is not set
 # CONFIG_GOLDFISH is not set
 # CONFIG_CHROME_PLATFORMS is not set
 # CONFIG_MELLANOX_PLATFORM is not set
