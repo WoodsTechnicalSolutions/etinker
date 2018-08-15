@@ -29,17 +29,12 @@ if [ -f $ko ]; then
 		grep -Eo '"serialnumber":.*?[^\\]",' /etc/etinker.conf | cut -d '"' -f 4 > strings/0x409/serialnumber
 		grep -Eo '"manufacturer":.*?[^\\]",' /etc/etinker.conf | cut -d '"' -f 4 > strings/0x409/manufacturer
 		grep -Eo '"product":.*?[^\\]",' /etc/etinker.conf | cut -d '"' -f 4 > strings/0x409/product
-		echo "Config 1: RNDIS network" > configs/c.1/strings/0x409/configuration
 
 		mkdir -p configs/c.1/strings/0x409
+		echo "Config 1: RNDIS network" > configs/c.1/strings/0x409/configuration
 		echo 250 > configs/c.1/MaxPower
-
-		# Serial (ACM)
-		list="`grep -Eo '"acm":.*?[^\\]",' /etc/etinker.conf | cut -d '"' -f 4`"
-		for i in $list;  do
-			mkdir -p functions/acm.gs$i
-			ln -s functions/acm.gs$i configs/c.1/
-		done
+		# USB_OTG_SRP | USB_OTG_HNP
+		echo 0x80 > configs/c.1/bmAttributes
 
 		# MS Windows 10 RNDIS
 		# - [http://irq5.io/2016/12/22/raspberry-pi-zero-as-multiple-usb-gadgets/]
@@ -55,6 +50,13 @@ if [ -f $ko ]; then
 		grep -Eo '"host_addr":.*?[^\\]",' /etc/etinker.conf | cut -d '"' -f 4 > functions/rndis.usb0/host_addr
 		grep -Eo '"dev_addr":.*?[^\\]",' /etc/etinker.conf | cut -d '"' -f 4 > functions/rndis.usb0/dev_addr
 		ln -s functions/rndis.usb0 configs/c.1/
+
+		# Serial (ACM)
+		list="`grep -Eo '"acm":.*?[^\\]",' /etc/etinker.conf | cut -d '"' -f 4`"
+		for i in $list;  do
+			mkdir -p functions/acm.gs$i
+			ln -s functions/acm.gs$i configs/c.1/
+		done
 
 		udevadm settle -t 5 || :
 
