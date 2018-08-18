@@ -18,6 +18,7 @@ if [ -f /usr/bin/apt ]; then
 		curl \
 		cvs \
 		dblatex \
+		debootstrap \
 		device-tree-compiler \
 		dia \
 		docbook-utils \
@@ -41,8 +42,10 @@ if [ -f /usr/bin/apt ]; then
 		inkscape \
 		intltool \
 		kernel-package \
+		less \
 		libasound2-dev \
 		libexpat1-dev \
+		libfreetype6-dev \
 		libglade2-dev \
 		libglib2.0-dev \
 		libgtk2.0-dev \
@@ -55,7 +58,9 @@ if [ -f /usr/bin/apt ]; then
 		libusb-1.0-0-dev \
 		libusb-dev \
 		libx11-dev \
+		libxext-dev \
 		libxml2-utils \
+		lrzsz \
 		lzma \
 		lzop \
 		man \
@@ -64,14 +69,21 @@ if [ -f /usr/bin/apt ]; then
 		mc \
 		mercurial \
 		mtd-utils \
+		mtools \
+		netpbm \
 		openssh-client \
 		pkg-config \
 		python-dev \
 		qemu \
+		rpm \
 		rsync \
+		schroot \
 		screen \
+		sshfs \
 		subversion \
+		sudo \
 		swig \
+		tcl \
 		texinfo \
 		tig \
 		tmux \
