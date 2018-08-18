@@ -1,0 +1,135 @@
+#!/bin/bash
+
+if ! [ "`id -u`" = "0" ]; then
+	printf "***** THIS MUST BE RUN WITH 'root' PERMISSIONS *****\n"
+	exit 1
+fi
+
+# Who is the real user?
+if [ -n "${SUDO_COMMAND}" ]; then
+	uid="${SUDO_UID}"
+	gid="${SUDO_GID}"
+	uid_s="${SUDO_USER}"
+else
+	uid="`id -u`"
+	gid="`id -g`"
+	uid_s="${USER}"
+fi
+
+usage()
+{
+	printf "Usage: sudo cifs-mount <server> <path> [unmount]\n\n"
+	printf "Example:\n\n"
+	printf "$ sudo cifs-mount 192.168.0.1 projects/foo\n\n"
+	printf "Generates this mount command: [abbreviated]\n\n"
+	printf "# mount -type cifs //192.168.0.1/projects/foo /media/${uid_s}/cifs/foo\n\n"
+}
+
+if [ "x${1}" = "x" ]; then
+	printf "Missing network server argument!\n"
+	usage
+	exit 1
+fi
+
+if [ "x${2}" = "x" ]; then
+	printf "Missing network share path argument!\n"
+	usage
+	exit 1
+fi
+
+name="`basename ${2}`"
+
+# Get Linux distribution name
+distro="`lsb_release -i|cut -d ':' -f 2| tr -d '\t'`"
+
+# Distro specific '/media' convention
+if [ "${distro}" = "Arch" ]; then
+	media="/run/media/${uid_s}/cifs/${name}"
+else
+	media="/media/${uid_s}/cifs/${name}"
+fi
+
+if [ "${3}" = "unmount" ]; then
+	printf "Unmounting ${media} ... "
+	umount ${media} 2> /dev/null
+	sleep 1
+	cat /proc/mounts | grep -q -e "${media}"
+	if [ "$?" = "0" ]; then
+		printf "[FAIL]\n"
+		exit 1
+	else
+		printf "[OK]\n"
+		rmdir ${media} 2> /dev/null
+	fi
+	exit 0
+fi
+
+# Build distro specific base mount path
+if [ "${distro}" = "Arch" ]; then
+	mkdir -p /run/media/${uid_s}/cifs
+	chown ${uid}.${gid} /run/media/${uid_s}/cifs
+else
+	mkdir -p /media/${uid_s}/cifs
+	chown ${uid}.${gid} /media/${uid_s}/cifs
+fi
+
+# Build final mount path
+mkdir -p ${media}
+chown ${uid}.${gid} ${media}
+
+# Build full MS Windows UNC Network Path (i.e. //<server>/<path>)
+remote="//${1}/${2}"
+
+# Read secret string
+# https://stackoverflow.com/questions/3980668/how-to-get-a-password-from-a-shell-script-without-echoing
+read_secret()
+{
+	old_tty="`stty -g`"
+	# Disable echo.
+	stty -echo
+	# Set up trap to ensure echo is enabled before exiting if the script
+	# is terminated while echo is disabled.
+	trap 'stty echo' EXIT
+	# Read secret.
+	read "$@"
+	# Enable echo.
+	stty echo
+	trap - EXIT
+	# Print a newline because the newline entered by the user after
+	# entering the passcode is not echoed. This ensures that the
+	# next line of output begins at a new line.
+	printf "\n"
+	stty ${old_tty}
+}
+
+# Read Windows Username
+printf "Windows Username: "
+read windows_username
+
+# Read Windows Password
+printf "Windows Password: "
+read_secret windows_password
+
+# Cleanup any existing mounted instance
+umount ${media} 2> /dev/null
+
+sleep 1
+
+printf "Mounting ${media} ... "
+
+mount -v -t cifs \
+	-o noserverino,username="${windows_username}",password=${windows_password},uid=${uid},gid=${gid},rw,nounix,iocharset=utf8,file_mode=0777,dir_mode=0777 \
+	${remote} \
+	${media} > /tmp/cifs-connect-`date +%Y%m%d%H%M%S`.log 2>&1
+
+cat /proc/mounts | grep -q -e "${media}"
+if [ "$?" = "0" ]; then
+	printf "[OK]\n"
+	df ${media}
+else
+	printf "[FAIL]\n"
+	rmdir ${media} 2> /dev/null
+	exit 1
+fi
+
+exit 0
