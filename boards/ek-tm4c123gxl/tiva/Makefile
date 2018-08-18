@@ -1,15 +1,17 @@
 ET_BOARD := ek-tm4c123gxl
 
-ET_DIR := $(shell realpath ../../..)
-
-include $(ET_DIR)/etinker.mk
-
 TARGET_NAME = tiva-$(ET_BOARD)
 
 TARGET_ELF = $(TARGET_NAME).elf
 TARGET_BIN = $(TARGET_NAME).axf
 TARGET_HEX = $(TARGET_NAME).hex
 TARGET_MAP = $(TARGET_NAME).map
+
+all: $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
+
+ET_DIR := $(shell realpath ../../..)
+
+include $(ET_DIR)/etinker.mk
 
 CFLAGS = -march=armv7e-m -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb
 CFLAGS += -MD -std=c99 -Wall -ffunction-sections -fdata-sections -pedantic
@@ -46,8 +48,6 @@ OBJECTS = $(addprefix $(OUTPUT)/,$(notdir $(SOURCES:.c=.s)))
 else
 OBJECTS = $(addprefix $(OUTPUT)/,$(notdir $(SOURCES:.c=.o)))
 endif
-
-all: $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
 
 $(TARGET_ELF): $(OUTPUT)/$(TARGET_ELF)
 $(OUTPUT)/$(TARGET_ELF): $(OBJECTS)
