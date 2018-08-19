@@ -13,12 +13,14 @@ ET_DIR := $(shell realpath ../../..)
 
 include $(ET_DIR)/etinker.mk
 
+TIVAWARE := $(ET_SOFTWARE_DIR)/tivaware
+
 CFLAGS = -march=armv7e-m -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb
 CFLAGS += -MD -std=c99 -Wall -ffunction-sections -fdata-sections -pedantic
 CFLAGS += -DPART_$(shell echo $(ET_BOARD_MCU) | tr '[:lower:]' '[:upper:]') -DTARGET_IS_TM4C129_RA1
-CFLAGS += -I$(ET_SOFTWARE_DIR)/tivaware
+CFLAGS += -I$(TIVAWARE)
 ifdef DEBUG
-CFLAGS += -Og -g3 -gdwarf
+CFLAGS += -Og -g3 -gdwarf -DDEBUG=1
 else
 CFLAGS += -Os
 endif
@@ -43,14 +45,17 @@ LDFLAGS = -Wl,-T$(ET_BOARD_MCU).ld \
 LDLIBS = $(ET_SOFTWARE_DIR)/tivaware/driverlib/gcc/libdriver.a
 
 SOURCES = $(shell find src/ -name "*.c" -print)
+TIVAWARE_SOURCES := $(TIVAWARE)/utils/uartstdio.c
 ifdef DEBUG
 OBJECTS = $(addprefix $(OUTPUT)/,$(notdir $(SOURCES:.c=.s)))
+TIVAWARE_OBJECTS = $(addprefix $(OUTPUT)/tivaware/,$(notdir $(TIVAWARE_SOURCES:.c=.s)))
 else
 OBJECTS = $(addprefix $(OUTPUT)/,$(notdir $(SOURCES:.c=.o)))
+TIVAWARE_OBJECTS = $(addprefix $(OUTPUT)/tivaware/,$(notdir $(TIVAWARE_SOURCES:.c=.o)))
 endif
 
 $(TARGET_ELF): $(OUTPUT)/$(TARGET_ELF)
-$(OUTPUT)/$(TARGET_ELF): $(OBJECTS)
+$(OUTPUT)/$(TARGET_ELF): $(TIVAWARE_OBJECTS) $(OBJECTS)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 	@$(SIZE) $@
 ifdef DEBUG
@@ -68,13 +73,19 @@ $(OUTPUT)/$(TARGET_BIN): $(OUTPUT)/$(TARGET_ELF)
 ifdef DEBUG
 $(OUTPUT)/%.s: src/%.c | $(OUTPUT)
 	$(CC) $(CFLAGS) -S $^ -o $@
+
+$(OUTPUT)/tivaware/%.s: $(TIVAWARE)/utils/%.c | $(OUTPUT)
+	$(CC) $(CFLAGS) -S $^ -o $@
 else
 $(OUTPUT)/%.o: src/%.c | $(OUTPUT)
+	$(CC) $(CFLAGS) -c $^ -o $@
+
+$(OUTPUT)/tivaware/%.o: $(TIVAWARE)/utils/%.c | $(OUTPUT)
 	$(CC) $(CFLAGS) -c $^ -o $@
 endif
 
 $(OUTPUT):
-	@$(MKDIR) $(OUTPUT)
+	@$(MKDIR) $(OUTPUT)/tivaware
 
 clean:
 	$(RM) -r $(OUTPUT) *.log
