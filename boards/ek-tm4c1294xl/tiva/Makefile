@@ -80,11 +80,11 @@ clean:
 	$(RM) -r $(OUTPUT) *.log
 
 flash: $(OUTPUT)/$(TARGET_BIN)
-	@lm4flash $<
+	lm4flash $<
 
 gdb: $(OUTPUT)/$(TARGET_ELF)
 	@$(GDB) \
-		-ex 'target remote | openocd -f board/ek-tm4c1294xl.cfg -c "gdb_port pipe; log_output openocd.log"; monitor reset halt' \
+		-ex 'target remote | openocd -p -f board/$(ET_BOARD).cfg -c "gdb_port pipe; log_output $(ET_BOARD)-openocd.log"' \
 		$<
 
 .PHONY: all clean flash gdb $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
