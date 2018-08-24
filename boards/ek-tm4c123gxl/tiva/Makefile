@@ -91,7 +91,7 @@ clean:
 	$(RM) -r $(OUTPUT) *.log
 
 flash: $(OUTPUT)/$(TARGET_BIN)
-	lm4flash $<
+	lm4flash -s $(TARGET_SERIAL) $<
 
 gdb: $(OUTPUT)/$(TARGET_ELF)
 	@$(GDB) \
