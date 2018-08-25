@@ -19,6 +19,7 @@ CFLAGS = -march=armv7e-m -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mth
 CFLAGS += -MD -std=c99 -Wall -ffunction-sections -fdata-sections -pedantic
 CFLAGS += -DPART_$(shell echo $(ET_BOARD_MCU) | tr '[:lower:]' '[:upper:]') -DTARGET_IS_TM4C123_RB1
 CFLAGS += -I$(TIVAWARE)
+CFLAGS += $(ET_CFLAGS)
 ifdef DEBUG
 CFLAGS += -Og -g3 -gdwarf -DDEBUG=1
 else
@@ -91,7 +92,11 @@ clean:
 	$(RM) -r $(OUTPUT) *.log
 
 flash: $(OUTPUT)/$(TARGET_BIN)
+ifdef TARGET_SERIAL
 	lm4flash -s $(TARGET_SERIAL) $<
+else
+	lm4flash $<
+endif
 
 gdb: $(OUTPUT)/$(TARGET_ELF)
 	@$(GDB) \
