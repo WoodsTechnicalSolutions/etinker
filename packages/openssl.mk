@@ -98,8 +98,7 @@ define openssl-config
 			zlib-dynamic \
 			no-rc5 \
 			enable-camellia \
-			enable-mdc2 \
-			enable-tlsext
+			enable-mdc2
 	@if ! [ -f $(ET_OPENSSL_BUILD_DIR)/Makefile ]; then \
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call openssl-config FAILED! *****\n\n"; \
 		exit 2; \
@@ -144,10 +143,10 @@ endef
 
 .PHONY: openssl
 openssl: $(ET_OPENSSL_TARGET_FINAL)
-$(ET_OPENSSL_TARGET_FINAL): $(ET_OPENSSL_BUILD_CONFIG)
+$(ET_OPENSSL_TARGET_FINAL): $(ET_OPENSSL_BUILD_CONFIG) | openssl-config
 	$(call openssl-targets)
 
-openssl-%: $(ET_OPENSSL_BUILD_CONFIG)
+openssl-%: $(ET_OPENSSL_BUILD_CONFIG) | openssl-config
 	$(call openssl-build,$(*F))
 
 .PHONY: openssl-config
