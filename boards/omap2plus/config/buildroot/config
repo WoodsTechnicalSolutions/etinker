@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Buildroot 2018.05.1 Configuration
+# Buildroot 2018.05.2 Configuration
 #
 BR2_HAVE_DOT_CONFIG=y
 BR2_HOST_GCC_AT_LEAST_4_5=y
@@ -1050,11 +1050,7 @@ BR2_PACKAGE_LINUX_FIRMWARE_TI_WL128X=y
 #
 
 #
-# dahdi-tools needs a toolchain w/ threads
-#
-
-#
-# dahdi-tools needs a Linux kernel to be built
+# dahdi-tools needs a toolchain w/ threads and a Linux kernel to be built
 #
 # BR2_PACKAGE_DBUS is not set
 BR2_PACKAGE_DFU_UTIL=y
