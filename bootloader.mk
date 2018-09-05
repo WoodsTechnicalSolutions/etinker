@@ -16,11 +16,30 @@ export ET_BOOTLOADER_TREE := $(ET_BOARD_BOOTLOADER_TREE)
 export ET_BOOTLOADER_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_BOOTLOADER_TREE)
 export ET_BOOTLOADER_DEFCONFIG := $(ET_BOARD_BOOTLOADER_DEFCONFIG)
 # [start] bootloader version magic
-ET_BOOTLOADER_VERSION := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --long --dirty 2>/dev/null | tr -d v)
-ifeq ($(shell echo $(ET_BOOTLOADER_VERSION) | cut -d '-' -f 2),0)
 ET_BOOTLOADER_VERSION := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v)
+ET_BOOTLOADER_LOCALVERSION := -$(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | cut -d '-' -f 2-5)
+ifeq ($(shell echo $(ET_BOOTLOADER_LOCALVERSION) | sed s,[0-9].*,,),-rc)
+# RC version (i.e. v2018.09-rc1)
+rcversion := $(shell printf "%s" $(ET_BOOTLOADER_LOCALVERSION) | cut -d '-' -f 2)
+ET_BOOTLOADER_VERSION := $(ET_BOOTLOADER_VERSION)
+rclocalversion := -$(shell printf "%s" $(ET_BOOTLOADER_LOCALVERSION) | cut -d '-' -f 3-5)
+ifeq ($(ET_BOOTLOADER_LOCALVERSION),-$(rcversion)$(rclocalversion))
+ET_BOOTLOADER_LOCALVERSION := $(rclocalversion)
+endif
+ifeq ($(ET_BOOTLOADER_LOCALVERSION),-$(rcversion))
+ET_BOOTLOADER_LOCALVERSION :=
+endif
+endif
+ifeq ($(ET_BOOTLOADER_LOCALVERSION),-)
+# empty local version
+ET_BOOTLOADER_LOCALVERSION :=
+endif
+ifeq ($(ET_BOOTLOADER_LOCALVERSION),-v$(ET_BOOTLOADER_VERSION))
+# exact tag in series (i.e. v2018.09)
+ET_BOOTLOADER_LOCALVERSION :=
 endif
 export ET_BOOTLOADER_VERSION
+export ET_BOOTLOADER_LOCALVERSION
 # [end] bootloader version magic
 export ET_BOOTLOADER_BUILD_DIR := $(ET_DIR)/bootloader/build/$(ET_BOARD)/$(ET_CROSS_TUPLE)
 export ET_BOOTLOADER_BUILD_CONFIG := $(ET_BOOTLOADER_BUILD_DIR)/.config
@@ -36,6 +55,7 @@ export ET_BOOTLOADER_TARGET_FINAL ?= $(ET_BOOTLOADER_IMAGE)
 
 define bootloader-version
 	@printf "ET_BOOTLOADER_VERSION: $(ET_BOOTLOADER_VERSION)\n"
+	@printf "ET_BOOTLOADER_LOCALVERSION: $(ET_BOOTLOADER_LOCALVERSION)\n"
 endef
 
 define bootloader-depends
@@ -74,7 +94,8 @@ define bootloader-build
 		esac; \
 	fi
 	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_BOOTLOADER_SOFTWARE_DIR) O=$(ET_BOOTLOADER_BUILD_DIR) \
-		$(ET_CROSS_PARAMS) $1
+		$(ET_CROSS_PARAMS) $1 \
+		LOCALVERSION=$(ET_BOOTLOADER_LOCALVERSION)
 	@if [ -n "$1" ]; then \
 		if [ -n "$(shell printf "%s" $1 | grep config)" ]; then \
 			if [ -f $(ET_BOOTLOADER_BUILD_CONFIG) ]; then \
@@ -131,6 +152,7 @@ define bootloader-info
 	@printf "========================================================================\n"
 	@printf "ET_BOOTLOADER_TREE: $(ET_BOOTLOADER_TREE)\n"
 	@printf "ET_BOOTLOADER_VERSION: $(ET_BOOTLOADER_VERSION)\n"
+	@printf "ET_BOOTLOADER_LOCALVERSION: $(ET_BOOTLOADER_LOCALVERSION)\n"
 	@printf "ET_BOOTLOADER_SOFTWARE_DIR: $(ET_BOOTLOADER_SOFTWARE_DIR)\n"
 	@printf "ET_BOOTLOADER_SYSMAP: $(ET_BOOTLOADER_SYSMAP)\n"
 	@printf "ET_BOOTLOADER_SPL: $(ET_BOOTLOADER_SPL)\n"
