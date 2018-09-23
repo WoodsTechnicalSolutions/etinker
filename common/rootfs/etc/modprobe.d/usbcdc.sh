@@ -44,6 +44,12 @@ if [ -f $ko ]; then
 
 		# Ethernet (RNDIS)
 		mkdir -p functions/rndis.usb0
+		# taken from Debian's am335x_evm boot scripts
+		if [ -f functions/rndis.usb0/class ]; then
+			echo EF > functions/rndis.usb0/class
+			echo 04 > functions/rndis.usb0/subclass
+			echo 01 > functions/rndis.usb0/protocol
+		fi
 		echo RNDIS > functions/rndis.usb0/os_desc/interface.rndis/compatible_id
 		echo 5162001 > functions/rndis.usb0/os_desc/interface.rndis/sub_compatible_id
 		ln -s configs/c.1 os_desc

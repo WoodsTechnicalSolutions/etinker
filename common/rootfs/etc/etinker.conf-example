@@ -2,7 +2,7 @@
 	"usbcdc": {
 		"serialnumber": "388d49055ed4",
 		"manufacturer": "Woods Technical Solutions",
-		"product": "CDC ACM and ECM",
+		"product": "CDC ACM and RNDIS",
 		"acm": "0 1",
 		"ecm": [
 			{
