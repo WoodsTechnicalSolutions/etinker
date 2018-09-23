@@ -8,6 +8,7 @@ printf "\n***** [${ET_BOARD}][${ET_BOARD_TYPE}] post-build script *****\n\n"
 cp -a ${TARGET} ${TARGET}-bare
 
 # Update target file system
+mkdir -p ${TARGET}/lib/firmware
 rsync -av ${ET_DIR}/common/rootfs/* ${TARGET}/ 2>/dev/null
 if [ -d ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/debug-root ]; then
 	rsync -av ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/debug-root/* ${TARGET}/ 2>/dev/null
@@ -36,22 +37,32 @@ printf "\nttyGS0::respawn:/sbin/getty -L ttyGS0 115200 vt102\n" >> ${TARGET}/etc
 
 # Board Specific Modifications
 case "${ET_BOARD_TYPE}" in
-	omap2plus|sama5d3-xpld-*)
-		printf "\n***** [${ET_BOARD}][${ET_BOARD_TYPE}] update /etc/fstab *****\n\n"
-		mkdir -p ${TARGET}/media/BOOT
-		mkdir -p ${TARGET}/media/rootfs
-		printf "/dev/mmcblk0p1 /media/BOOT auto defaults 0 0\n" >> ${TARGET}/etc/fstab
-		printf "/dev/mmcblk0p2 /media/rootfs auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+omap2plus|sama5d3-xpld-*)
+	printf "\n***** [${ET_BOARD}][${ET_BOARD_TYPE}] update /etc/fstab *****\n\n"
+	mkdir -p ${TARGET}/media/BOOT
+	mkdir -p ${TARGET}/media/rootfs
+	printf "/dev/mmcblk0p1 /media/BOOT auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+	printf "/dev/mmcblk0p2 /media/rootfs auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+	case "${ET_BOARD}" in
+	omap3-beagle-xm*|am335x-pocketbeagle*)
 		case "${ET_BOARD}" in
-			omap3-beagle-xm*|am335x-pocketbeagle*)
-				# NO NAND AVAILABLE
-				;;
-			*)
-				mkdir -p ${TARGET}/media/ubifs
-				printf "ubi0:rootfs /media/ubifs ubifs defaults 0 0\n" >> ${TARGET}/etc/fstab
-				;;
+		am335x*)
+			# ADD FIRMWARE
+			rsync -av ${ET_DIR}/firmware/am335x* ${TARGET}/lib/firmware/
+			;;
+		*)
+			# DEFAULT NO-OP
+			;;
 		esac
 		;;
 	*)
+		# NAND AVAILABLE
+		mkdir -p ${TARGET}/media/ubifs
+		printf "ubi0:rootfs /media/ubifs ubifs defaults 0 0\n" >> ${TARGET}/etc/fstab
 		;;
+	esac
+	;;
+*)
+	# DEFAULT NO-OP
+	;;
 esac

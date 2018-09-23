@@ -74,6 +74,7 @@ case "${destination}" in
 		case "${target}" in
 			kernel|bootloader)
 				sudo rsync -aP ${target_dir}/* ${media}/rootfs/ && sync
+				sudo rsync -aP  ${target_dir}/../../../firmware/* ${media}/rootfs/lib/firmware/ && sync
 				sudo rsync -P  ${target_dir}/boot/* ${media}/BOOT/ && sync
 				;;
 			overlay)
@@ -95,6 +96,9 @@ case "${destination}" in
 				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
 					-aP ${target_dir}/* \
 					root@${ipv4}:/
+				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
+					-aP ${target_dir}/../../../firmware/* \
+					root@${ipv4}:/lib/firmware/
 				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
 					-P ${target_dir}/boot/* \
 					root@${ipv4}:/media/BOOT/
