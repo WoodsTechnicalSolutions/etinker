@@ -1,6 +1,7 @@
 #!/bin/bash
 
 if [ -f /usr/bin/apt ]; then
+	sudo dpkg --add-architecture i386
 	sudo apt update
 	sudo apt install -y \
 		asciidoc \
@@ -21,6 +22,7 @@ if [ -f /usr/bin/apt ]; then
 		debootstrap \
 		device-tree-compiler \
 		dia \
+		diffstat \
 		docbook-utils \
 		dosfstools \
 		exuberant-ctags \
@@ -35,12 +37,14 @@ if [ -f /usr/bin/apt ]; then
 		git-core \
 		gitg \
 		gitk \
+		gnupg \
 		gperf \
 		help2man \
 		htop \
 		indent \
 		inkscape \
 		intltool \
+		iproute2 \
 		kernel-package \
 		less \
 		libasound2-dev \
@@ -52,6 +56,8 @@ if [ -f /usr/bin/apt ]; then
 		libjpeg-dev \
 		libncurses-dev \
 		libreadline-dev \
+		libsdl1.2-dev \
+		libselinux1 \
 		libssl-dev \
 		libtool \
 		libtool-bin \
@@ -71,7 +77,9 @@ if [ -f /usr/bin/apt ]; then
 		mtd-utils \
 		mtools \
 		netpbm \
+		net-tools \
 		openssh-client \
+		pax \
 		pkg-config \
 		python-dev \
 		qemu \
@@ -79,6 +87,7 @@ if [ -f /usr/bin/apt ]; then
 		rsync \
 		schroot \
 		screen \
+		socat \
 		sshfs \
 		subversion \
 		sudo \
@@ -87,6 +96,7 @@ if [ -f /usr/bin/apt ]; then
 		texinfo \
 		tig \
 		tmux \
+		tofrodos \
 		tree \
 		u-boot-tools \
 		uucp \
@@ -98,8 +108,11 @@ if [ -f /usr/bin/apt ]; then
 		whiptail \
 		whois \
 		xmlto \
+		xvfb \
 		xz-utils \
-		zip
+		zip \
+		zlib1g-dev:i386 \
+		zlib1g-dev
 	if [ "`uname -m`" = "x86_64" ]; then
 		sudo apt install -y libc6-dev-i386
 	fi
