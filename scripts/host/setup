@@ -83,6 +83,7 @@ if [ -f /usr/bin/apt ]; then
 		pkg-config \
 		python-dev \
 		qemu \
+		rlwrap \
 		rpm \
 		rsync \
 		schroot \
