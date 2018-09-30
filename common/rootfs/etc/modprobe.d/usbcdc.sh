@@ -26,9 +26,9 @@ if [ -f $ko ]; then
 		echo 0x01 > bDeviceProtocol
 
 		mkdir -p strings/0x409
-		grep -Eo '"serialnumber":.*?[^\\]",' /etc/etinker.conf | cut -d '"' -f 4 > strings/0x409/serialnumber
-		grep -Eo '"manufacturer":.*?[^\\]",' /etc/etinker.conf | cut -d '"' -f 4 > strings/0x409/manufacturer
-		grep -Eo '"product":.*?[^\\]",' /etc/etinker.conf | cut -d '"' -f 4 > strings/0x409/product
+		grep -Eo '"serialnumber":.*?[^\\]"' /etc/etinker.conf | cut -d '"' -f 4 > strings/0x409/serialnumber
+		grep -Eo '"manufacturer":.*?[^\\]"' /etc/etinker.conf | cut -d '"' -f 4 > strings/0x409/manufacturer
+		grep -Eo '"product":.*?[^\\]"' /etc/etinker.conf | cut -d '"' -f 4 > strings/0x409/product
 
 		mkdir -p configs/c.1/strings/0x409
 		echo "Config 1: RNDIS network" > configs/c.1/strings/0x409/configuration
@@ -53,8 +53,8 @@ if [ -f $ko ]; then
 		echo RNDIS > functions/rndis.usb0/os_desc/interface.rndis/compatible_id
 		echo 5162001 > functions/rndis.usb0/os_desc/interface.rndis/sub_compatible_id
 		ln -s configs/c.1 os_desc
-		grep -Eo '"host_addr":.*?[^\\]",' /etc/etinker.conf | cut -d '"' -f 4 > functions/rndis.usb0/host_addr
-		grep -Eo '"dev_addr":.*?[^\\]",' /etc/etinker.conf | cut -d '"' -f 4 > functions/rndis.usb0/dev_addr
+		grep -Eo '"host_addr":.*?[^\\]"' /etc/etinker.conf | cut -d '"' -f 4 > functions/rndis.usb0/host_addr
+		grep -Eo '"dev_addr":.*?[^\\]"' /etc/etinker.conf | cut -d '"' -f 4 > functions/rndis.usb0/dev_addr
 		ln -s functions/rndis.usb0 configs/c.1/
 
 		# Serial (ACM)
