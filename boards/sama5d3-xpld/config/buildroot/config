@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Buildroot 2018.08 Configuration
+# Buildroot 2018.08.1 Configuration
 #
 BR2_HAVE_DOT_CONFIG=y
 BR2_HOST_GCC_AT_LEAST_4_5=y
@@ -550,7 +550,7 @@ BR2_PACKAGE_PULSEAUDIO_HAS_ATOMIC=y
 # BR2_PACKAGE_TWOLAME is not set
 # BR2_PACKAGE_UDPXY is not set
 # BR2_PACKAGE_UPMPDCLI is not set
-# BR2_PACKAGE_V4L2GRAB is not set
+BR2_PACKAGE_V4L2GRAB=y
 
 #
 # v4l2loopback needs a Linux kernel to be built
@@ -1032,7 +1032,7 @@ BR2_PACKAGE_QT5XMLPATTERNS=y
 # BR2_PACKAGE_XORG7 is not set
 
 #
-# midori needs libgtk3 and a glibc toolchain w/ C++, gcc >= 5, host gcc >= 4.8
+# midori needs libgtk3 and a glibc toolchain w/ C++, gcc >= 6, host gcc >= 4.8
 #
 # BR2_PACKAGE_QT_WEBKIT_KIOSK is not set
 
@@ -1089,7 +1089,7 @@ BR2_PACKAGE_QT5XMLPATTERNS=y
 # BR2_PACKAGE_DBUS is not set
 BR2_PACKAGE_DFU_UTIL=y
 # BR2_PACKAGE_DMRAID is not set
-# BR2_PACKAGE_DT_UTILS is not set
+BR2_PACKAGE_DT_UTILS=y
 # BR2_PACKAGE_DTV_SCAN_TABLES is not set
 # BR2_PACKAGE_DUMP1090 is not set
 # BR2_PACKAGE_DVB_APPS is not set
@@ -1151,7 +1151,36 @@ BR2_PACKAGE_LSUIO=y
 # BR2_PACKAGE_OFONO is not set
 # BR2_PACKAGE_OPEN2300 is not set
 # BR2_PACKAGE_OPENIPMI is not set
-# BR2_PACKAGE_OPENOCD is not set
+BR2_PACKAGE_OPENOCD=y
+
+#
+# Adapters
+#
+BR2_PACKAGE_OPENOCD_FTDI=y
+BR2_PACKAGE_OPENOCD_STLINK=y
+BR2_PACKAGE_OPENOCD_TI_ICDI=y
+# BR2_PACKAGE_OPENOCD_ULINK is not set
+# BR2_PACKAGE_OPENOCD_UBLASTER2 is not set
+BR2_PACKAGE_OPENOCD_JLINK=y
+# BR2_PACKAGE_OPENOCD_OSDBM is not set
+# BR2_PACKAGE_OPENOCD_OPENDOUS is not set
+# BR2_PACKAGE_OPENOCD_AICE is not set
+# BR2_PACKAGE_OPENOCD_VSLLINK is not set
+# BR2_PACKAGE_OPENOCD_USBPROG is not set
+# BR2_PACKAGE_OPENOCD_RLINK is not set
+# BR2_PACKAGE_OPENOCD_ARMEW is not set
+BR2_PACKAGE_OPENOCD_PARPORT=y
+# BR2_PACKAGE_OPENOCD_VPI is not set
+# BR2_PACKAGE_OPENOCD_UBLASTER is not set
+# BR2_PACKAGE_OPENOCD_AMTJT is not set
+# BR2_PACKAGE_OPENOCD_EP93XX is not set
+# BR2_PACKAGE_OPENOCD_AT91RM is not set
+# BR2_PACKAGE_OPENOCD_BCM2835 is not set
+# BR2_PACKAGE_OPENOCD_GW16012 is not set
+# BR2_PACKAGE_OPENOCD_PRESTO is not set
+# BR2_PACKAGE_OPENOCD_OPENJTAG is not set
+# BR2_PACKAGE_OPENOCD_BUSPIRATE is not set
+BR2_PACKAGE_OPENOCD_SYSFS=y
 
 #
 # owl-linux needs a Linux kernel to be built
@@ -1671,7 +1700,7 @@ BR2_PACKAGE_TIFF_UTILITIES=y
 BR2_PACKAGE_WEBKITGTK_ARCH_SUPPORTS=y
 
 #
-# webkitgtk needs libgtk3 and a glibc toolchain w/ C++, gcc >= 5, host gcc >= 4.8
+# webkitgtk needs libgtk3 and a glibc toolchain w/ C++, gcc >= 6, host gcc >= 4.8
 #
 BR2_PACKAGE_WEBP=y
 BR2_PACKAGE_WEBP_DEMUX=y
@@ -2169,7 +2198,7 @@ BR2_PACKAGE_READLINE=y
 # BR2_PACKAGE_COLLECTD is not set
 
 #
-# domoticz needs lua >= 5.2 and a toolchain w/ C++, NPTL, wchar, dynamic library
+# domoticz needs lua >= 5.2 and a toolchain w/ C++, gcc >= 4.8, NPTL, wchar, dynamic library
 #
 # BR2_PACKAGE_EMPTY is not set
 # BR2_PACKAGE_GNURADIO is not set
@@ -2581,7 +2610,7 @@ BR2_PACKAGE_LOCKFILE_PROGS=y
 # BR2_PACKAGE_RANGER is not set
 BR2_PACKAGE_SCREEN=y
 # BR2_PACKAGE_SUDO is not set
-# BR2_PACKAGE_TMUX is not set
+BR2_PACKAGE_TMUX=y
 # BR2_PACKAGE_XMLSTARLET is not set
 # BR2_PACKAGE_XXHASH is not set
 
