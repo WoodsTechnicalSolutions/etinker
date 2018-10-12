@@ -14,7 +14,18 @@ all:
 include etinker.mk
 
 .PHONY: sandbox
-sandbox: toolchain kernel bootloader rootfs overlay
+sandbox:
+	@$(MAKE) --no-print-directory -C $(ET_DIR) toolchain
+ifdef ET_BOARD_KERNEL_TREE
+	@$(MAKE) --no-print-directory -C $(ET_DIR) kernel
+endif
+ifdef ET_BOARD_BOOTLOADER_TREE
+	@$(MAKE) --no-print-directory -C $(ET_DIR) bootloader
+endif
+ifdef ET_BOARD_ROOTFS_TREE
+	@$(MAKE) --no-print-directory -C $(ET_DIR) rootfs
+	@$(MAKE) --no-print-directory -C $(ET_DIR) overlay
+endif
 
 .PHONY: version
 version:
