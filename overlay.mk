@@ -14,9 +14,9 @@ endif
 export ET_OVERLAY_BUILD_DIR := $(ET_DIR)/overlay/build/$(ET_BOARD_TYPE)/$(ET_CROSS_TUPLE)
 export ET_OVERLAY_DIR := $(ET_DIR)/overlay/$(ET_BOARD)/$(ET_CROSS_TUPLE)
 
-include packages/cryptodev-linux.mk
-include packages/openssl.mk
-include packages/wireless-regdb.mk
+include $(ET_DIR)/packages/cryptodev-linux.mk
+include $(ET_DIR)/packages/openssl.mk
+include $(ET_DIR)/packages/wireless-regdb.mk
 
 define overlay-version
 	$(call cryptodev-linux-version)

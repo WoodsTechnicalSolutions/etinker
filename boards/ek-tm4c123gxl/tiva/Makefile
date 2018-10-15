@@ -9,7 +9,7 @@ TARGET_MAP = $(TARGET_NAME).map
 
 all: $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
 
-ET_DIR := $(shell realpath ../../..)
+ET_DIR ?= $(shell realpath ../../..)
 
 include $(ET_DIR)/etinker.mk
 
