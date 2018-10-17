@@ -24,6 +24,7 @@ if [ -f /usr/bin/apt ]; then
 		dia \
 		diffstat \
 		docbook-utils \
+		docbook2x \
 		dosfstools \
 		exuberant-ctags \
 		fakeroot \
