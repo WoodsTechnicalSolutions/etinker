@@ -1,0 +1,30 @@
+TivaWare(tm) for C Series Libraries
+===================================
+
+1. Download "SW-EK-TM4C123GXL-2.1.4.178.exe" from http://www.ti.com/tool/sw-tm4c
+
+2. Use 'wine' install to /home/<user>/.wine/drive_c/ti/TivaWare_C_Series-2.1.4.178
+
+3. Archive the source code
+
+   $ tar -zcf ~/Downloads/TivaWare_C_Series-2.1.4.178.tar.gz /home/<user>/.wine/drive_c/ti/TivaWare_C_Series-2.1.4.178
+
+4. Place TivaWare in 'etinker' software directory
+
+   $ cp -a /home/<user>/.wine/drive_c/ti/TivaWare_C_Series-2.1.4.178 /path/to/etinker/software/tivaware
+
+5. Build TivaWare
+
+   a. Modify PATH in 'tivaware/makedefs' to include '/path/to/etinker/toolchain/arm-none-eabihf/bin'
+
+   b. Modify PREFIX in 'tivaware/makedefs' to fall back to 'arm-none-eabihf' as the default
+
+   c. Export PATH in shell
+
+      $ export PATH="/path/to/etinker/toolchain/arm-none-eabihf/bin:${PATH}"
+
+   d. Build
+
+      $ cd /path/to/etinker/software/tivaware
+      $ make clean all
+
