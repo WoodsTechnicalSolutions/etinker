@@ -19,7 +19,7 @@ CFLAGS = -march=armv7e-m -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mth
 CFLAGS += -MD -std=c99 -Wall -ffunction-sections -fdata-sections -pedantic
 CFLAGS += -DPART_$(shell echo $(ET_BOARD_MCU) | tr '[:lower:]' '[:upper:]') -DTARGET_IS_TM4C129_RA1
 CFLAGS += -I$(TIVAWARE)
-ifdef DEBUG
+ifndef RELEASE
 CFLAGS += -Og -g3 -gdwarf -DDEBUG=1
 else
 CFLAGS += -Os
@@ -46,7 +46,7 @@ LDLIBS = $(ET_SOFTWARE_DIR)/tivaware/driverlib/gcc/libdriver.a
 
 SOURCES = $(shell find src/ -name "*.c" -print)
 TIVAWARE_SOURCES := $(TIVAWARE)/utils/uartstdio.c
-ifdef DEBUG
+ifndef RELEASE
 OBJECTS = $(addprefix $(OUTPUT)/,$(notdir $(SOURCES:.c=.s)))
 TIVAWARE_OBJECTS = $(addprefix $(OUTPUT)/tivaware/,$(notdir $(TIVAWARE_SOURCES:.c=.s)))
 else
@@ -58,7 +58,7 @@ $(TARGET_ELF): $(OUTPUT)/$(TARGET_ELF)
 $(OUTPUT)/$(TARGET_ELF): $(TIVAWARE_OBJECTS) $(OBJECTS)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 	@$(SIZE) $@
-ifdef DEBUG
+ifndef RELEASE
 	@$(OBJDUMP) -S --disassemble $@ > $@.lst 2> $@-error.lst
 endif
 
@@ -70,7 +70,7 @@ $(TARGET_BIN): $(OUTPUT)/$(TARGET_BIN)
 $(OUTPUT)/$(TARGET_BIN): $(OUTPUT)/$(TARGET_ELF)
 	$(OBJCOPY) -O binary $< $@
 
-ifdef DEBUG
+ifndef RELEASE
 $(OUTPUT)/%.s: src/%.c | $(OUTPUT)
 	$(CC) $(CFLAGS) -S $^ -o $@
 
