@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm 4.19.0 Kernel Configuration
+# Linux/arm 4.19.2 Kernel Configuration
 #
 
 #
@@ -531,8 +531,9 @@ CONFIG_REFCOUNT_FULL=y
 #
 # CONFIG_GCOV_KERNEL is not set
 CONFIG_ARCH_HAS_GCOV_PROFILE_ALL=y
-CONFIG_PLUGIN_HOSTCC=""
+CONFIG_PLUGIN_HOSTCC="g++"
 CONFIG_HAVE_GCC_PLUGINS=y
+# CONFIG_GCC_PLUGINS is not set
 CONFIG_RT_MUTEXES=y
 CONFIG_BASE_SMALL=0
 CONFIG_MODULES=y
@@ -3983,7 +3984,6 @@ CONFIG_CRYPTO_DES=y
 # CONFIG_CRYPTO_SEED is not set
 # CONFIG_CRYPTO_SERPENT is not set
 # CONFIG_CRYPTO_SM4 is not set
-# CONFIG_CRYPTO_SPECK is not set
 # CONFIG_CRYPTO_TEA is not set
 # CONFIG_CRYPTO_TWOFISH is not set
 
