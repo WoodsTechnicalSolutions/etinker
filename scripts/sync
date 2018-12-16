@@ -73,6 +73,7 @@ case "${destination}" in
 		fi
 		case "${target}" in
 			kernel|bootloader)
+				sudo mkdir -p ${media}/rootfs/lib/firmware
 				sudo rsync -aP ${target_dir}/* ${media}/rootfs/ && sync
 				sudo rsync -aP  ${target_dir}/../../../firmware/* ${media}/rootfs/lib/firmware/ && sync
 				sudo rsync -P  ${target_dir}/boot/* ${media}/BOOT/ && sync
