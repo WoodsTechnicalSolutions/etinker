@@ -75,6 +75,7 @@ if [ -f /usr/bin/apt ]; then
 		manpages-posix-dev \
 		mc \
 		mercurial \
+		moreutils \
 		mtd-utils \
 		mtools \
 		netpbm \
