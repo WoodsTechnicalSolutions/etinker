@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm 4.20.0 Kernel Configuration
+# Linux/arm 4.20.2 Kernel Configuration
 #
 
 #
@@ -3344,6 +3344,7 @@ CONFIG_USB_CONFIGFS_F_HID=y
 CONFIG_USB_CONFIGFS_F_UVC=y
 # CONFIG_USB_CONFIGFS_F_PRINTER is not set
 # CONFIG_TYPEC is not set
+CONFIG_USB_ROLE_SWITCH=m
 CONFIG_USB_LED_TRIG=y
 CONFIG_USB_ULPI_BUS=m
 # CONFIG_UWB is not set
