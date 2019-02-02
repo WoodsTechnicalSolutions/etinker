@@ -46,9 +46,6 @@ define toolchain-targets
 			cp -a $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot.cache; \
 		fi; \
 	fi
-	@if [ -n "$(shell diff -q $(ET_TOOLCHAIN_BUILD_CONFIG) $(ET_TOOLCHAIN_CONFIG) 2> /dev/null)" ]; then \
-		rsync $(ET_TOOLCHAIN_BUILD_CONFIG) $(ET_TOOLCHAIN_CONFIG); \
-	fi
 endef
 
 define toolchain-build
@@ -66,6 +63,11 @@ define toolchain-build
 	@if [ -n "$(shell printf "%s" $1 | grep clean)" ]; then \
 		$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/src; \
 		$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/$(ET_CROSS_TUPLE); \
+	fi
+	@if [ -f $(ET_TOOLCHAIN_BUILD_CONFIG) ]; then \
+		if [ -n "$(shell diff -q $(ET_TOOLCHAIN_BUILD_CONFIG) $(ET_TOOLCHAIN_CONFIG) 2> /dev/null)" ]; then \
+			rsync $(ET_TOOLCHAIN_BUILD_CONFIG) $(ET_TOOLCHAIN_CONFIG); \
+		fi; \
 	fi
 endef
 

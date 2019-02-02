@@ -100,9 +100,6 @@ define kernel-targets
 	$(call kernel-build,$(ET_KERNEL_DT).dtb)
 	$(call kernel-build,modules)
 	$(call kernel-build,modules_install)
-	@if [ -n "$(shell diff -q $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG) 2> /dev/null)" ]; then \
-		rsync $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG); \
-	fi
 endef
 
 define kernel-build
@@ -176,6 +173,11 @@ define kernel-build
 	*) \
 		;; \
 	esac
+	@if [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
+		if [ -n "$(shell diff -q $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG) 2> /dev/null)" ]; then \
+			rsync $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG); \
+		fi; \
+	fi
 endef
 
 define kernel-config

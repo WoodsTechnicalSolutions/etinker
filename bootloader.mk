@@ -76,9 +76,6 @@ define bootloader-targets
 		fi; \
 	fi
 	$(call bootloader-build)
-	@if [ -n "$(shell diff -q $(ET_BOOTLOADER_BUILD_CONFIG) $(ET_BOOTLOADER_CONFIG) 2> /dev/null)" ]; then \
-		rsync $(ET_BOOTLOADER_BUILD_CONFIG) $(ET_BOOTLOADER_CONFIG); \
-	fi
 endef
 
 define bootloader-build
@@ -122,6 +119,11 @@ define bootloader-build
 		$(RM) $(ET_BOOTLOADER_DIR)/boot/boot*; \
 		cp -av $(ET_BOOTLOADER_BUILD_SPL) $(ET_BOOTLOADER_DIR)/boot/; \
 		cp -av $(ET_BOOTLOADER_BUILD_IMAGE) $(ET_BOOTLOADER_DIR)/boot/; \
+	fi
+	@if [ -f $(ET_BOOTLOADER_BUILD_CONFIG) ]; then \
+		if [ -n "$(shell diff -q $(ET_BOOTLOADER_BUILD_CONFIG) $(ET_BOOTLOADER_CONFIG) 2> /dev/null)" ]; then \
+			rsync $(ET_BOOTLOADER_BUILD_CONFIG) $(ET_BOOTLOADER_CONFIG); \
+		fi; \
 	fi
 endef
 
