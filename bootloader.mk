@@ -189,7 +189,9 @@ ifeq ($(shell test -f $(ET_BOOTLOADER_BUILD_CONFIG) && printf "DONE" || printf "
 endif
 
 $(ET_BOOTLOADER_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL)
+ifeq ($(shell test -f $(ET_BOOTLOADER_CONFIG) && printf "EXISTS" || printf "DEFAULT"),DEFAULT)
 	$(call bootloader-build,$(ET_BOOTLOADER_DEFCONFIG))
+endif
 
 .PHONY: bootloader-clean
 bootloader-clean:

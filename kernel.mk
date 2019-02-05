@@ -245,7 +245,9 @@ ifeq ($(shell test -f $(ET_KERNEL_BUILD_CONFIG) && printf "DONE" || printf "CONF
 endif
 
 $(ET_KERNEL_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL)
+ifeq ($(shell test -f $(ET_KERNEL_CONFIG) && printf "EXISTS" || printf "DEFAULT"),DEFAULT)
 	$(call kernel-build,$(ET_KERNEL_DEFCONFIG))
+endif
 
 .PHONY: kernel-clean
 kernel-clean:
