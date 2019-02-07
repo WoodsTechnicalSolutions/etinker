@@ -22,9 +22,11 @@ if [ -f /usr/bin/apt ]; then
 		debootstrap \
 		device-tree-compiler \
 		dia \
+		dialog \
 		diffstat \
 		docbook-utils \
 		docbook2x \
+		dos2unix \
 		dosfstools \
 		exuberant-ctags \
 		fakeroot \
@@ -49,10 +51,12 @@ if [ -f /usr/bin/apt ]; then
 		kernel-package \
 		less \
 		libasound2-dev \
+		libelf-dev \
 		libexpat1-dev \
 		libfreetype6-dev \
 		libglade2-dev \
 		libglib2.0-dev \
+		libgpiod-dev \
 		libgtk2.0-dev \
 		libjpeg-dev \
 		libncurses-dev \
