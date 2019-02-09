@@ -1,13 +1,13 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm 4.20.6 Kernel Configuration
+# Linux/arm 4.20.7 Kernel Configuration
 #
 
 #
-# Compiler: arm-cortexa5-linux-gnueabihf-gcc (ARM Cortex-A5 gnueabihf) 7.3.0
+# Compiler: arm-cortexa5-linux-gnueabihf-gcc (ARM Cortex-A5 gnueabihf) 7.4.0
 #
 CONFIG_CC_IS_GCC=y
-CONFIG_GCC_VERSION=70300
+CONFIG_GCC_VERSION=70400
 CONFIG_CLANG_VERSION=0
 CONFIG_IRQ_WORK=y
 CONFIG_BUILDTIME_EXTABLE_SORT=y
