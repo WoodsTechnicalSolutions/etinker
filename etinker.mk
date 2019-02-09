@@ -48,6 +48,8 @@ export ET_SOFTWARE_DIR := $(ET_DIR)/software
 export ET_TARBALLS_DIR := $(ET_DIR)/tarballs
 export ET_SCRIPTS_DIR := $(ET_DIR)/scripts
 
+export ET_BOARD_DIR ?= $(ET_DIR)/boards/$(ET_BOARD)
+
 # all configuration files for a given board are stored here
 export ET_CONFIG_DIR ?= $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config
 
