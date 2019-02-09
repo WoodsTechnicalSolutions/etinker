@@ -91,11 +91,15 @@ define openssl-config
 			--openssldir=/etc/ssl \
 			--cross-compile-prefix=$(ET_CROSS_COMPILE) \
 			-I$(ET_ROOTFS_SYSROOT_DIR)/usr/include \
-			-DHAVE_CRYPTODEV -DUSE_CRYPTODEV_DIGESTS \
-			enable-weak-ssl-ciphers \
+			-latomic \
 			threads \
 			shared \
 			zlib-dynamic \
+			enable-devcryptoeng \
+			enable-weak-ssl-ciphers \
+			no-tests \
+			no-fuzz-libfuzzer \
+			no-fuzz-afl \
 			no-rc5 \
 			enable-camellia \
 			enable-mdc2
