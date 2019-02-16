@@ -38,6 +38,7 @@ if [ -f /usr/bin/apt ]; then
 		gcc-multilib \
 		gettext \
 		git-core \
+		git-email \
 		gitg \
 		gitk \
 		gnupg \
