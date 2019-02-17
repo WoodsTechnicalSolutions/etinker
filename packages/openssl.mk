@@ -30,6 +30,8 @@ endef
 
 define openssl-depends
 	@mkdir -p $(ET_OVERLAY_DIR)
+	@mkdir -p $(ET_OVERLAY_DIR)/usr/bin
+	@mkdir -p $(ET_OVERLAY_DIR)/usr/lib
 	@mkdir -p $(ET_OPENSSL_BUILD_DIR)
 endef
 
@@ -44,6 +46,7 @@ endef
 
 define openssl-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call openssl-build 'make $1' *****\n\n"
+	$(call openssl-depends)
 	sed -i s,DESTDIR=,DESTDIR=$$\(ET_OVERLAY_DIR\), $(ET_OPENSSL_BUILD_DIR)/Makefile
 	@$(MAKE) -C $(ET_OPENSSL_BUILD_DIR) $1
 	sed -i s,DESTDIR=$$\(ET_OVERLAY_DIR\),DESTDIR=, $(ET_OPENSSL_BUILD_DIR)/Makefile
