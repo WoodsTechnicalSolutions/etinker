@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Buildroot 2019.02 Configuration
+# Buildroot 2019.02.1 Configuration
 #
 BR2_HAVE_DOT_CONFIG=y
 BR2_HOST_GCC_AT_LEAST_4_5=y
@@ -1127,6 +1127,8 @@ BR2_PACKAGE_EUDEV_ENABLE_HWDB=y
 # BR2_PACKAGE_FAN_CTRL is not set
 # BR2_PACKAGE_FCONFIG is not set
 # BR2_PACKAGE_FIS is not set
+BR2_PACKAGE_FLASHROM_ARCH_SUPPORTS=y
+# BR2_PACKAGE_FLASHROM is not set
 # BR2_PACKAGE_FMTOOLS is not set
 # BR2_PACKAGE_FREESCALE_IMX is not set
 # BR2_PACKAGE_FXLOAD is not set
@@ -2963,6 +2965,7 @@ BR2_PACKAGE_HOST_TI_CGT_PRU_ARCH_SUPPORTS=y
 #
 # Legacy options removed in 2019.02
 #
+# BR2_PACKAGE_GST_PLUGINS_BAD_PLUGIN_APEXSINK is not set
 # BR2_PACKAGE_QT is not set
 # BR2_PACKAGE_QTUIO is not set
 # BR2_PACKAGE_PINENTRY_QT4 is not set
