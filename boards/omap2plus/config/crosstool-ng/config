@@ -3,15 +3,20 @@
 # crosstool-NG  Configuration
 #
 CT_CONFIGURE_has_static_link=y
+CT_CONFIGURE_has_cxx11=y
 CT_CONFIGURE_has_wget=y
 CT_CONFIGURE_has_curl=y
 CT_CONFIGURE_has_make_3_81_or_newer=y
+CT_CONFIGURE_has_make_4_0_or_newer=y
 CT_CONFIGURE_has_libtool_2_4_or_newer=y
 CT_CONFIGURE_has_libtoolize_2_4_or_newer=y
 CT_CONFIGURE_has_autoconf_2_65_or_newer=y
 CT_CONFIGURE_has_autoreconf_2_65_or_newer=y
 CT_CONFIGURE_has_automake_1_15_or_newer=y
 CT_CONFIGURE_has_gnu_m4_1_4_12_or_newer=y
+CT_CONFIGURE_has_python_3_4_or_newer=y
+CT_CONFIGURE_has_bison_2_7_or_newer=y
+CT_CONFIGURE_has_python=y
 CT_CONFIGURE_has_dtc=y
 CT_CONFIGURE_has_cvs=y
 CT_CONFIGURE_has_svn=y
@@ -21,8 +26,8 @@ CT_CONFIGURE_has_sha1sum=y
 CT_CONFIGURE_has_sha256sum=y
 CT_CONFIGURE_has_sha512sum=y
 CT_CONFIGURE_has_install_with_strip_program=y
-CT_CONFIG_VERSION_CURRENT="2"
-CT_CONFIG_VERSION="2"
+CT_CONFIG_VERSION_CURRENT="3"
+CT_CONFIG_VERSION="3"
 CT_MODULES=y
 
 #
@@ -298,6 +303,7 @@ CT_LINUX_V_4_14=y
 # CT_LINUX_V_3_10 is not set
 # CT_LINUX_V_3_4 is not set
 # CT_LINUX_V_3_2 is not set
+# CT_LINUX_NO_VERSIONS is not set
 CT_LINUX_VERSION="4.14.99"
 CT_LINUX_MIRRORS="$(CT_Mirrors kernel.org linux ${CT_LINUX_VERSION})"
 CT_LINUX_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
@@ -357,6 +363,7 @@ CT_BINUTILS_V_2_32=y
 # CT_BINUTILS_V_2_28 is not set
 # CT_BINUTILS_V_2_27 is not set
 # CT_BINUTILS_V_2_26 is not set
+# CT_BINUTILS_NO_VERSIONS is not set
 CT_BINUTILS_VERSION="2.32"
 CT_BINUTILS_MIRRORS="$(CT_Mirrors GNU binutils) $(CT_Mirrors sourceware binutils/releases)"
 CT_BINUTILS_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
@@ -439,12 +446,15 @@ CT_GLIBC_V_2_29=y
 # CT_GLIBC_V_2_19 is not set
 # CT_GLIBC_V_2_17 is not set
 # CT_GLIBC_V_2_12_1 is not set
+# CT_GLIBC_NO_VERSIONS is not set
 CT_GLIBC_VERSION="2.29"
 CT_GLIBC_MIRRORS="$(CT_Mirrors GNU glibc)"
 CT_GLIBC_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
 CT_GLIBC_ARCHIVE_DIRNAME="@{pkg_name}-@{version}"
 CT_GLIBC_ARCHIVE_FORMATS=".tar.xz .tar.bz2 .tar.gz"
 CT_GLIBC_SIGNATURE_FORMAT="packed/.sig"
+CT_GLIBC_2_29_or_later=y
+CT_GLIBC_2_29_or_older=y
 CT_GLIBC_later_than_2_27=y
 CT_GLIBC_2_27_or_later=y
 CT_GLIBC_later_than_2_26=y
@@ -464,6 +474,7 @@ CT_GLIBC_2_14_or_later=y
 CT_GLIBC_DEP_KERNEL_HEADERS_VERSION=y
 CT_GLIBC_DEP_BINUTILS=y
 CT_GLIBC_DEP_GCC=y
+CT_GLIBC_DEP_PYTHON=y
 CT_GLIBC_BUILD_SSP=y
 CT_GLIBC_HAS_LIBIDN_ADDON=y
 CT_GLIBC_USE_LIBIDN_ADDON=y
@@ -539,7 +550,7 @@ CT_GCC_V_8=y
 # CT_GCC_V_7 is not set
 # CT_GCC_V_6 is not set
 # CT_GCC_V_5 is not set
-# CT_GCC_V_4_9 is not set
+# CT_GCC_NO_VERSIONS is not set
 CT_GCC_VERSION="8.3.0"
 CT_GCC_MIRRORS="$(CT_Mirrors GNU gcc/gcc-${CT_GCC_VERSION}) $(CT_Mirrors sourceware gcc/releases/gcc-${CT_GCC_VERSION})"
 CT_GCC_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
@@ -552,6 +563,7 @@ CT_GCC_later_than_6=y
 CT_GCC_6_or_later=y
 CT_GCC_later_than_5=y
 CT_GCC_5_or_later=y
+CT_GCC_REQUIRE_5_or_later=y
 CT_GCC_later_than_4_9=y
 CT_GCC_4_9_or_later=y
 CT_GCC_REQUIRE_4_9_or_later=y
@@ -617,56 +629,22 @@ CT_CC_LANG_OTHERS=""
 # Debug facilities
 #
 # CT_DEBUG_DUMA is not set
-CT_DEBUG_GDB=y
-CT_DEBUG_GDB_PKG_KSYM="GDB"
-CT_GDB_DIR_NAME="gdb"
-CT_GDB_USE_GNU=y
-CT_GDB_USE="GDB"
-CT_GDB_PKG_NAME="gdb"
-CT_GDB_SRC_RELEASE=y
+# CT_DEBUG_GDB is not set
+# CT_GDB_USE_GNU is not set
+# CT_GDB_SRC_RELEASE is not set
 # CT_GDB_SRC_DEVEL is not set
 # CT_GDB_SRC_CUSTOM is not set
-CT_GDB_PATCH_GLOBAL=y
+# CT_GDB_PATCH_GLOBAL is not set
 # CT_GDB_PATCH_BUNDLED is not set
 # CT_GDB_PATCH_LOCAL is not set
 # CT_GDB_PATCH_BUNDLED_LOCAL is not set
 # CT_GDB_PATCH_LOCAL_BUNDLED is not set
 # CT_GDB_PATCH_NONE is not set
-CT_GDB_PATCH_ORDER="global"
-CT_GDB_V_8_2=y
+# CT_GDB_V_8_2 is not set
 # CT_GDB_V_8_1 is not set
 # CT_GDB_V_8_0 is not set
 # CT_GDB_V_7_12 is not set
 # CT_GDB_V_7_11 is not set
-CT_GDB_VERSION="8.2.1"
-CT_GDB_MIRRORS="$(CT_Mirrors GNU gdb) $(CT_Mirrors sourceware gdb/releases)"
-CT_GDB_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
-CT_GDB_ARCHIVE_DIRNAME="@{pkg_name}-@{version}"
-CT_GDB_ARCHIVE_FORMATS=".tar.xz .tar.gz"
-CT_GDB_SIGNATURE_FORMAT=""
-CT_GDB_later_than_8_0=y
-CT_GDB_8_0_or_later=y
-CT_GDB_later_than_7_12=y
-CT_GDB_7_12_or_later=y
-CT_GDB_later_than_7_2=y
-CT_GDB_7_2_or_later=y
-CT_GDB_later_than_7_0=y
-CT_GDB_7_0_or_later=y
-CT_GDB_CROSS=y
-# CT_GDB_CROSS_STATIC is not set
-# CT_GDB_CROSS_SIM is not set
-CT_GDB_CROSS_PYTHON=y
-CT_GDB_CROSS_PYTHON_BINARY=""
-CT_GDB_CROSS_EXTRA_CONFIG_ARRAY=""
-# CT_GDB_NATIVE is not set
-CT_GDB_GDBSERVER=y
-CT_GDB_GDBSERVER_HAS_IPA_LIB=y
-# CT_GDB_GDBSERVER_STATIC is not set
-# CT_GDB_GDBSERVER_STATIC_LIBSTDCXX is not set
-# CT_GDB_GDBSERVER_BUILD_IPA_LIB is not set
-CT_GDB_HAS_PKGVERSION_BUGURL=y
-CT_GDB_HAS_PYTHON=y
-CT_GDB_INSTALL_GDBINIT=y
 CT_DEBUG_LTRACE=y
 CT_DEBUG_LTRACE_PKG_KSYM="LTRACE"
 CT_LTRACE_DIR_NAME="ltrace"
@@ -682,6 +660,7 @@ CT_LTRACE_PATCH_GLOBAL=y
 # CT_LTRACE_PATCH_NONE is not set
 CT_LTRACE_PATCH_ORDER="global"
 CT_LTRACE_V_0_7_3=y
+# CT_LTRACE_NO_VERSIONS is not set
 CT_LTRACE_VERSION="0.7.3"
 CT_LTRACE_MIRRORS="http://ftp.debian.org/debian/pool/main/l/ltrace ftp:://ftp.debian.org/debian/pool/main/l/ltrace"
 CT_LTRACE_ARCHIVE_FILENAME="@{pkg_name}_@{version}.orig"
@@ -714,6 +693,7 @@ CT_STRACE_V_4_26=y
 # CT_STRACE_V_4_17 is not set
 # CT_STRACE_V_4_16 is not set
 # CT_STRACE_V_4_15 is not set
+# CT_STRACE_NO_VERSIONS is not set
 CT_STRACE_VERSION="4.26"
 CT_STRACE_MIRRORS="https://strace.io/files/${CT_STRACE_VERSION}"
 CT_STRACE_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
@@ -742,6 +722,7 @@ CT_EXPAT_PATCH_GLOBAL=y
 # CT_EXPAT_PATCH_NONE is not set
 CT_EXPAT_PATCH_ORDER="global"
 CT_EXPAT_V_2_2=y
+# CT_EXPAT_NO_VERSIONS is not set
 CT_EXPAT_VERSION="2.2.6"
 CT_EXPAT_MIRRORS="http://downloads.sourceforge.net/project/expat/expat/${CT_EXPAT_VERSION}"
 CT_EXPAT_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
@@ -763,6 +744,7 @@ CT_GETTEXT_PATCH_GLOBAL=y
 # CT_GETTEXT_PATCH_NONE is not set
 CT_GETTEXT_PATCH_ORDER="global"
 CT_GETTEXT_V_0_19_8_1=y
+# CT_GETTEXT_NO_VERSIONS is not set
 CT_GETTEXT_VERSION="0.19.8.1"
 CT_GETTEXT_MIRRORS="$(CT_Mirrors GNU gettext)"
 CT_GETTEXT_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
@@ -784,6 +766,7 @@ CT_GMP_PATCH_GLOBAL=y
 # CT_GMP_PATCH_NONE is not set
 CT_GMP_PATCH_ORDER="global"
 CT_GMP_V_6_1=y
+# CT_GMP_NO_VERSIONS is not set
 CT_GMP_VERSION="6.1.2"
 CT_GMP_MIRRORS="https://gmplib.org/download/gmp https://gmplib.org/download/gmp/archive $(CT_Mirrors GNU gmp)"
 CT_GMP_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
@@ -815,6 +798,7 @@ CT_ISL_V_0_20=y
 # CT_ISL_V_0_17 is not set
 # CT_ISL_V_0_16 is not set
 # CT_ISL_V_0_15 is not set
+# CT_ISL_NO_VERSIONS is not set
 CT_ISL_VERSION="0.20"
 CT_ISL_MIRRORS="http://isl.gforge.inria.fr"
 CT_ISL_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
@@ -849,6 +833,7 @@ CT_LIBELF_PATCH_GLOBAL=y
 # CT_LIBELF_PATCH_NONE is not set
 CT_LIBELF_PATCH_ORDER="global"
 CT_LIBELF_V_0_8=y
+# CT_LIBELF_NO_VERSIONS is not set
 CT_LIBELF_VERSION="0.8.13"
 CT_LIBELF_MIRRORS="http://www.mr511.de/software https://fossies.org/linux/misc/old"
 CT_LIBELF_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
@@ -870,6 +855,7 @@ CT_LIBICONV_PATCH_GLOBAL=y
 # CT_LIBICONV_PATCH_NONE is not set
 CT_LIBICONV_PATCH_ORDER="global"
 CT_LIBICONV_V_1_15=y
+# CT_LIBICONV_NO_VERSIONS is not set
 CT_LIBICONV_VERSION="1.15"
 CT_LIBICONV_MIRRORS="$(CT_Mirrors GNU libiconv)"
 CT_LIBICONV_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
@@ -892,6 +878,7 @@ CT_MPC_PATCH_GLOBAL=y
 CT_MPC_PATCH_ORDER="global"
 CT_MPC_V_1_1=y
 # CT_MPC_V_1_0 is not set
+# CT_MPC_NO_VERSIONS is not set
 CT_MPC_VERSION="1.1.0"
 CT_MPC_MIRRORS="http://www.multiprecision.org/downloads $(CT_Mirrors GNU mpc)"
 CT_MPC_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
@@ -916,6 +903,7 @@ CT_MPFR_PATCH_GLOBAL=y
 CT_MPFR_PATCH_ORDER="global"
 CT_MPFR_V_4_0=y
 # CT_MPFR_V_3_1 is not set
+# CT_MPFR_NO_VERSIONS is not set
 CT_MPFR_VERSION="4.0.2"
 CT_MPFR_MIRRORS="http://www.mpfr.org/mpfr-${CT_MPFR_VERSION} $(CT_Mirrors GNU mpfr)"
 CT_MPFR_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
@@ -943,6 +931,7 @@ CT_NCURSES_PATCH_GLOBAL=y
 CT_NCURSES_PATCH_ORDER="global"
 CT_NCURSES_V_6_1=y
 # CT_NCURSES_V_6_0 is not set
+# CT_NCURSES_NO_VERSIONS is not set
 CT_NCURSES_VERSION="6.1"
 CT_NCURSES_MIRRORS="ftp://invisible-island.net/ncurses $(CT_Mirrors GNU ncurses)"
 CT_NCURSES_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
@@ -956,7 +945,28 @@ CT_NCURSES_HOST_FALLBACKS="linux,xterm,xterm-color,xterm-256color,vt100"
 CT_NCURSES_TARGET_CONFIG_ARGS=""
 CT_NCURSES_TARGET_DISABLE_DB=y
 CT_NCURSES_TARGET_FALLBACKS="linux,xterm,xterm-color,xterm-256color,vt100"
-# CT_COMP_LIBS_ZLIB is not set
+CT_COMP_LIBS_ZLIB=y
+CT_COMP_LIBS_ZLIB_PKG_KSYM="ZLIB"
+CT_ZLIB_DIR_NAME="zlib"
+CT_ZLIB_PKG_NAME="zlib"
+CT_ZLIB_SRC_RELEASE=y
+# CT_ZLIB_SRC_DEVEL is not set
+# CT_ZLIB_SRC_CUSTOM is not set
+CT_ZLIB_PATCH_GLOBAL=y
+# CT_ZLIB_PATCH_BUNDLED is not set
+# CT_ZLIB_PATCH_LOCAL is not set
+# CT_ZLIB_PATCH_BUNDLED_LOCAL is not set
+# CT_ZLIB_PATCH_LOCAL_BUNDLED is not set
+# CT_ZLIB_PATCH_NONE is not set
+CT_ZLIB_PATCH_ORDER="global"
+CT_ZLIB_V_1_2_11=y
+# CT_ZLIB_NO_VERSIONS is not set
+CT_ZLIB_VERSION="1.2.11"
+CT_ZLIB_MIRRORS="http://downloads.sourceforge.net/project/libpng/zlib/${CT_ZLIB_VERSION}"
+CT_ZLIB_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
+CT_ZLIB_ARCHIVE_DIRNAME="@{pkg_name}-@{version}"
+CT_ZLIB_ARCHIVE_FORMATS=".tar.xz .tar.gz"
+CT_ZLIB_SIGNATURE_FORMAT="packed/.asc"
 CT_ALL_COMP_LIBS_CHOICES="CLOOG EXPAT GETTEXT GMP ISL LIBELF LIBICONV MPC MPFR NCURSES ZLIB"
 CT_LIBICONV_NEEDED=y
 CT_GETTEXT_NEEDED=y
@@ -965,17 +975,16 @@ CT_MPFR_NEEDED=y
 CT_ISL_NEEDED=y
 CT_MPC_NEEDED=y
 CT_LIBELF_TARGET=y
-CT_EXPAT_NEEDED=y
 CT_NCURSES_NEEDED=y
-# CT_ZLIB_NEEDED is not set
+CT_ZLIB_NEEDED=y
 CT_LIBICONV=y
 CT_GETTEXT=y
 CT_GMP=y
 CT_MPFR=y
 CT_ISL=y
 CT_MPC=y
-CT_EXPAT=y
 CT_NCURSES=y
+CT_ZLIB=y
 
 #
 # Companion tools
@@ -983,11 +992,12 @@ CT_NCURSES=y
 # CT_COMP_TOOLS_FOR_HOST is not set
 # CT_COMP_TOOLS_AUTOCONF is not set
 # CT_COMP_TOOLS_AUTOMAKE is not set
+# CT_COMP_TOOLS_BISON is not set
 # CT_COMP_TOOLS_DTC is not set
 # CT_COMP_TOOLS_LIBTOOL is not set
 # CT_COMP_TOOLS_M4 is not set
 # CT_COMP_TOOLS_MAKE is not set
-CT_ALL_COMP_TOOLS_CHOICES="AUTOCONF AUTOMAKE DTC LIBTOOL M4 MAKE"
+CT_ALL_COMP_TOOLS_CHOICES="AUTOCONF AUTOMAKE BISON DTC LIBTOOL M4 MAKE"
 
 #
 # Test suite
