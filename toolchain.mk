@@ -69,6 +69,7 @@ define toolchain-build
 			rsync $(ET_TOOLCHAIN_BUILD_CONFIG) $(ET_TOOLCHAIN_CONFIG); \
 		fi; \
 	fi
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain 'ct-ng $1' done. *****\n\n"
 endef
 
 define toolchain-config

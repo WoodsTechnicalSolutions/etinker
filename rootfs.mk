@@ -93,6 +93,7 @@ define rootfs-build
 		$(RM) -r $(ET_ROOTFS_DIR)/images; \
 		cp -av $(ET_ROOTFS_BUILD_DIR)/images $(ET_ROOTFS_DIR)/; \
 	fi
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] rootfs-build 'make $1' done. *****\n\n"
 endef
 
 define rootfs-config

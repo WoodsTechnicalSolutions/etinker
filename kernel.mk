@@ -181,6 +181,7 @@ define kernel-build
 			rsync $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG); \
 		fi; \
 	fi
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] kernel-build 'make $1' done. *****\n\n"
 endef
 
 define kernel-config

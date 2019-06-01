@@ -81,6 +81,7 @@ define openssl-build
 		$(RM) -r $(ET_OVERLAY_DIR)/usr/lib/engines* ; \
 		$(RM) -r $(ET_OVERLAY_DIR)/usr/include/openssl; \
 	fi
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl-build 'make $1' done. *****\n\n"
 endef
 
 define openssl-config

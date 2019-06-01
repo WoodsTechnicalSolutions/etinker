@@ -133,6 +133,7 @@ define bootloader-build
 			rsync $(ET_BOOTLOADER_BUILD_CONFIG) $(ET_BOOTLOADER_CONFIG); \
 		fi; \
 	fi
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] bootloader-build 'make $1' done. *****\n\n"
 endef
 
 define bootloader-config

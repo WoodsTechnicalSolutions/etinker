@@ -79,6 +79,7 @@ define wireless-regdb-build
 		$(RM) $(ET_WIRELESS_REGDB_DB); \
 		$(RM) $(ET_WIRELESS_REGDB_BIN); \
 	fi
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] wireless-regdb-build 'make $1' done. *****\n\n"
 endef
 
 define wireless-regdb-config

@@ -57,6 +57,7 @@ define cryptodev-linux-build
 		$(RM) $(ET_CRYPTODEV_LINUX_TARGET_FINAL); \
 		$(RM) $(ET_ROOTFS_SYSROOT_DIR)/usr/include/crypto/cryptodev.h; \
 	fi
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] cryptodev-linux-build 'make $1' done. *****\n\n"
 endef
 
 define cryptodev-linux-config
