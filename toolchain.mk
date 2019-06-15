@@ -83,7 +83,7 @@ define toolchain-config
 endef
 
 define toolchain-generator
-	$(call software-check,$(ET_TOOLCHAIN_TREE))
+	$(call software-check,$(ET_TOOLCHAIN_TREE),toolchain)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-generator *****\n\n"
 	@(cd $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE); \
 		$(MAKE) distclean; \

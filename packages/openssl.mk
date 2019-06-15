@@ -85,7 +85,7 @@ define openssl-build
 endef
 
 define openssl-config
-	$(call software-check,$(ET_OPENSSL_TREE))
+	$(call software-check,$(ET_OPENSSL_TREE),openssl)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl-config *****\n\n"
 	$(call openssl-depends)
 	@cd $(ET_OPENSSL_BUILD_DIR) && \

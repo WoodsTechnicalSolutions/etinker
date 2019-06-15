@@ -97,7 +97,7 @@ define rootfs-build
 endef
 
 define rootfs-config
-	$(call software-check,$(ET_ROOTFS_TREE))
+	$(call software-check,$(ET_ROOTFS_TREE),rootfs)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rootfs-config *****\n\n"
 	$(call rootfs-depends)
 	@if ! [ -f $(ET_ROOTFS_CONFIG) ]; then \

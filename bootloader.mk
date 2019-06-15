@@ -137,7 +137,7 @@ define bootloader-build
 endef
 
 define bootloader-config
-	$(call software-check,$(ET_BOOTLOADER_TREE))
+	$(call software-check,$(ET_BOOTLOADER_TREE),bootloader)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-config *****\n\n"
 	$(call bootloader-depends)
 	@if ! [ -f $(ET_BOOTLOADER_CONFIG) ]; then \

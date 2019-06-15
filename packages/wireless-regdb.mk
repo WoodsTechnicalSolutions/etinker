@@ -83,7 +83,7 @@ define wireless-regdb-build
 endef
 
 define wireless-regdb-config
-	$(call software-check,$(ET_WIRELESS_REGDB_TREE))
+	$(call software-check,$(ET_WIRELESS_REGDB_TREE),wireless-regdb)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] wireless-regdb-config *****\n\n"
 	$(call wireless-regdb-depends)
 endef

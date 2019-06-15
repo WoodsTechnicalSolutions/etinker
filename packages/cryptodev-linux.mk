@@ -61,7 +61,7 @@ define cryptodev-linux-build
 endef
 
 define cryptodev-linux-config
-	$(call software-check,$(ET_CRYPTODEV_LINUX_TREE))
+	$(call software-check,$(ET_CRYPTODEV_LINUX_TREE),cryptodev-linux)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] cryptodev-linux-config *****\n\n"
 	$(call cryptodev-linux-depends)
 	@if ! [ -d $(ET_CRYPTODEV_LINUX_BUILD_DIR) ]; then \

@@ -185,7 +185,7 @@ define kernel-build
 endef
 
 define kernel-config
-	$(call software-check,$(ET_KERNEL_TREE))
+	$(call software-check,$(ET_KERNEL_TREE),kernel)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-config *****\n\n"
 	$(call kernel-depends)
 	@if ! [ -f $(ET_KERNEL_CONFIG) ]; then \
