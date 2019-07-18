@@ -18,6 +18,7 @@ endif
 export ET_CRYPTODEV_LINUX_TREE := cryptodev-linux
 export ET_CRYPTODEV_LINUX_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_CRYPTODEV_LINUX_TREE)
 export ET_CRYPTODEV_LINUX_VERSION := $(shell cd $(ET_CRYPTODEV_LINUX_SOFTWARE_DIR) 2>/dev/null && git describe --long --dirty 2>/dev/null)
+export ET_CRYPTODEV_LINUX_CACHED_VERSION := "`grep cryptodev-linux-ref $(ET_BOARD_DIR)/software.conf | cut -d ':' -f 2-3 | tr -d \\\\n`"
 export ET_CRYPTODEV_LINUX_BUILD_DIR := $(ET_OVERLAY_BUILD_DIR)/cryptodev-linux
 export ET_CRYPTODEV_LINUX_BUILD_CONFIG := $(ET_CRYPTODEV_LINUX_BUILD_DIR)/.configured
 export ET_CRYPTODEV_LINUX_BUILD_KO := $(ET_CRYPTODEV_LINUX_BUILD_DIR)/cryptodev.ko
@@ -25,7 +26,7 @@ export ET_CRYPTODEV_LINUX_KO := $(ET_KERNEL_DIR)/lib/modules/$(ET_KERNEL_VERSION
 export ET_CRYPTODEV_LINUX_TARGET_FINAL ?= $(ET_CRYPTODEV_LINUX_KO)
 
 define cryptodev-linux-version
-	@printf "ET_CRYPTODEV_LINUX_VERSION: $(ET_CRYPTODEV_LINUX_VERSION)\n"
+	@printf "ET_CRYPTODEV_LINUX_VERSION: \033[0;33m[$(ET_CRYPTODEV_LINUX_CACHED_VERSION)]\033[0m $(ET_CRYPTODEV_LINUX_VERSION)\n"
 endef
 
 define cryptodev-linux-depends
@@ -81,6 +82,7 @@ define cryptodev-linux-purge
 	$(call cryptodev-linux-clean)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call cryptodev-linux-purge *****\n\n"
 	$(RM) -r $(ET_CRYPTODEV_LINUX_BUILD_DIR)
+	$(call cryptodev-linux-config)
 endef
 
 define cryptodev-linux-info

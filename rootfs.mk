@@ -23,6 +23,7 @@ ifeq ($(shell echo $(ET_ROOTFS_VERSION) | cut -d '-' -f 2),0)
 ET_ROOTFS_VERSION := $(shell cd $(ET_ROOTFS_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v)
 endif
 export ET_ROOTFS_VERSION
+export ET_ROOTFS_CACHED_VERSION := "`grep rootfs-ref $(ET_BOARD_DIR)/software.conf | cut -d ':' -f 2-3 | tr -d \\\\n`"
 # [end] rootfs version magic
 export ET_ROOTFS_BUILD_DIR := $(ET_DIR)/rootfs/build/$(ET_BOARD_TYPE)/$(ET_CROSS_TUPLE)
 export ET_ROOTFS_BUILD_CONFIG := $(ET_ROOTFS_BUILD_DIR)/.config
@@ -36,7 +37,7 @@ export ET_ROOTFS_TARGET_FINAL ?= $(ET_ROOTFS_IMAGE)
 export ET_ROOTFS_SYSROOT_DIR := $(ET_ROOTFS_BUILD_DIR)/host/$(ET_ARCH)-buildroot-$(ET_OS)-$(ET_ABI)/sysroot
 
 define rootfs-version
-	@printf "ET_ROOTFS_VERSION: $(ET_ROOTFS_VERSION)\n"
+	@printf "ET_ROOTFS_VERSION: \033[0;33m[$(ET_ROOTFS_CACHED_VERSION)]\033[0m $(ET_ROOTFS_VERSION)\n"
 endef
 
 define rootfs-depends

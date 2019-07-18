@@ -54,6 +54,7 @@ ET_KERNEL_VERSION := $(ET_KERNEL_VERSION).0
 endif
 export ET_KERNEL_VERSION
 export ET_KERNEL_LOCALVERSION
+export ET_KERNEL_CACHED_VERSION := "`grep kernel-ref $(ET_BOARD_DIR)/software.conf | cut -d ':' -f 2-3 | tr -d \\\\n`"
 # [end] kernel version magic
 export ET_KERNEL_BUILD_DIR := $(ET_DIR)/kernel/build/$(ET_BOARD_TYPE)/$(ET_CROSS_TUPLE)
 export ET_KERNEL_BUILD_BOOT_DIR := $(ET_KERNEL_BUILD_DIR)/arch/$(ET_ARCH)/boot
@@ -74,7 +75,7 @@ export ET_KERNEL_TARGET_FINAL ?= $(ET_KERNEL_MODULES)
 export CT_LINUX_CUSTOM_LOCATION := ${ET_KERNEL_SOFTWARE_DIR}
 
 define kernel-version
-	@printf "ET_KERNEL_VERSION: $(ET_KERNEL_VERSION)\n"
+	@printf "ET_KERNEL_VERSION: \033[0;33m[$(ET_KERNEL_CACHED_VERSION)]\033[0m $(ET_KERNEL_VERSION)\n"
 	@printf "ET_KERNEL_LOCALVERSION: $(ET_KERNEL_LOCALVERSION)\n"
 endef
 
