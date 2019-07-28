@@ -83,8 +83,8 @@ define kernel-depends
 	@mkdir -p $(ET_KERNEL_DIR)/boot
 	@mkdir -p $(ET_KERNEL_DIR)/lib/modules
 	@mkdir -p $(ET_KERNEL_BUILD_BOOT_DIR)
-	@if [ -d $(ET_BOARD_DIR)/dts ]; then \
-		rsync -aP $(ET_BOARD_DIR)/dts $(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_ARCH)/boot/; \
+	@if [ -d $(ET_BOARD_DIR)/dts/linux ]; then \
+		rsync -aP $(ET_BOARD_DIR)/dts/linux/* $(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_ARCH)/boot/dts/; \
 	fi
 endef
 

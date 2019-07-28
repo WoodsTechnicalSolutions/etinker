@@ -65,8 +65,8 @@ define bootloader-depends
 	@mkdir -p $(ET_BOOTLOADER_DIR)/boot
 	@mkdir -p $(ET_BOOTLOADER_BUILD_DIR)
 	@mkdir -p $(shell dirname $(ET_BOOTLOADER_CONFIG))
-	@if [ -d $(ET_BOARD_DIR)/dts ]; then \
-		rsync -aP $(ET_BOARD_DIR)/dts $(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_ARCH); \
+	@if [ -d $(ET_BOARD_DIR)/dts/u-boot ]; then \
+		rsync -aP $(ET_BOARD_DIR)/dts/u-boot/* $(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_ARCH)/dts/; \
 	fi
 endef
 
