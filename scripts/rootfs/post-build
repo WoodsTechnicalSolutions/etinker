@@ -43,7 +43,7 @@ printf "\n#ttyGS0::respawn:/sbin/getty -L ttyGS0 115200 vt102\n" >> ${TARGET}/et
 
 # Board Specific Modifications
 case "${ET_BOARD_TYPE}" in
-omap2plus|sama5d3-xpld-*)
+omap2plus|sama5d3-xpld-*|zynq*)
 	printf "\n***** [${ET_BOARD}][${ET_BOARD_TYPE}] update /etc/fstab *****\n\n"
 	mkdir -p ${TARGET}/media/BOOT
 	mkdir -p ${TARGET}/media/rootfs
