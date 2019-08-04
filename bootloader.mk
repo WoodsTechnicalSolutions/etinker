@@ -69,26 +69,27 @@ define bootloader-depends
 	@mkdir -p $(ET_BOOTLOADER_DIR)/boot
 	@mkdir -p $(ET_BOOTLOADER_BUILD_DIR)
 	@mkdir -p $(shell dirname $(ET_BOOTLOADER_CONFIG))
+	@case "$(ET_BOARD_TYPE)" in \
+	zynq*) \
+		if [ -d $(ET_BOARD_DIR)/fpga/sdk ]; then \
+			rsync -a $(ET_BOARD_DIR)/fpga/dts $(ET_BOARD_DIR)/; \
+			rsync -a $(ET_BOARD_DIR)/fpga/sdk/ps*_init_gpl.* \
+				$(ET_BOOTLOADER_SOFTWARE_DIR)/board/xilinx/$(ET_BOARD_TYPE)/$(ET_BOARD_KERNEL_DT)/; \
+		else \
+			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] FPGA BUILD IS MISSING! *****\n"; \
+			exit 2; \
+		fi \
+		;; \
+	*) \
+		;; \
+	esac
+	@if [ -d $(ET_BOARD_DIR)/dts ]; then \
+		rsync -aP $(ET_BOARD_DIR)/dts/*.dts* \
+			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_ARCH)/dts/; \
+	fi
 	@if [ -d $(ET_BOARD_DIR)/dts/u-boot ]; then \
-		case "$(ET_BOARD_TYPE)" in \
-		zynq*) \
-			rsync -a $(ET_BOARD_DIR)/fpga/dts/u-boot $(ET_BOARD_DIR)/dts/; \
-			if [ -d $(ET_BOARD_DIR)/fpga/sdk ]; then \
-				(cd $(ET_BOARD_DIR)/fpga/sdk && \
-					rsync -a pcw.dtsi pl.dtsi system.dts system-top.dts \
-					$(ET_BOARD_DIR)/dts/u-boot/); \
-				(cd $(ET_BOARD_DIR)/fpga/sdk && \
-					rsync -a ps*_init_gpl.* \
-					$(ET_BOOTLOADER_SOFTWARE_DIR)/board/xilinx/$(ET_BOARD_TYPE)/$(ET_BOARD_KERNEL_DT)/); \
-			else \
-				printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] FPGA BUILD IS MISSING! *****\n"; \
-				exit 2; \
-			fi \
-			;; \
-		*) \
-			;; \
-		esac; \
-		rsync -aP $(ET_BOARD_DIR)/dts/u-boot/* $(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_ARCH)/dts/; \
+		rsync -aP $(ET_BOARD_DIR)/dts/u-boot/*.dts* \
+			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_ARCH)/dts/; \
 	fi
 endef
 
@@ -157,7 +158,8 @@ define bootloader-build
 		zynq*) \
 			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Generating Xilinx 'system.bit.bin' *****\n\n"; \
 			(cd $(ET_BOARD_DIR)/fpga && \
-				$(ET_SCRIPTS_DIR)/fpga-bit-to-bin.py -f "`ls sdk/*.bit | tr -d \\\n`" $(ET_BOOTLOADER_DIR)/boot/system.bit.bin); \
+				$(ET_SCRIPTS_DIR)/fpga-bit-to-bin.py -f "`ls sdk/*.bit | tr -d \\\n`" \
+				$(ET_BOOTLOADER_DIR)/boot/system.bit.bin); \
 			if ! [ -f $(ET_BOOTLOADER_DIR)/boot/system.bit.bin ]; then \
 				printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Xilinx 'system.bit.bin' build FAILED! *****\n\n"; \
 				exit 2; \
