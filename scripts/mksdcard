@@ -19,6 +19,9 @@ fi
 board=$1
 
 case "${board}" in
+	*zynq*)
+		printf "***** Xilinx Zynq ARM Cortex-A9 *****\n"
+		;;
 	*sama5d3*)
 		printf "***** SAMA5D3 ARM Cortex-A5 *****\n"
 		;;
@@ -83,7 +86,7 @@ printf "[${board}] Preparing ${controller} @ ${disk}\n"
 sleep 3
 
 case "${board}" in
-	*am3517*|*beagle*|*sama5d3*|*torpedo*|*omap3*|*overo*)
+	*am3517*|*beagle*|*sama5d3*|*torpedo*|*omap3*|*overo*|*zynq*)
 		printf "[${board}] Partitioning ${disk} [ 256MB (BOOT) / <fill> (rootfs) ]\n"
 		LC_ALL=C sfdisk "${disk}" <<-__EOF__
 		1M,256M,0xE,*
