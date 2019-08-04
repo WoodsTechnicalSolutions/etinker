@@ -45,7 +45,11 @@ export ET_BOOTLOADER_CACHED_VERSION = "`grep bootloader-ref $(ET_BOARD_DIR)/soft
 export ET_BOOTLOADER_BUILD_DIR := $(ET_DIR)/bootloader/build/$(ET_BOARD)/$(ET_CROSS_TUPLE)
 export ET_BOOTLOADER_BUILD_CONFIG := $(ET_BOOTLOADER_BUILD_DIR)/.config
 export ET_BOOTLOADER_BUILD_SYSMAP := $(ET_BOOTLOADER_BUILD_DIR)/System.map
+ifeq ($(ET_BOARD_TYPE),zynq)
+export ET_BOOTLOADER_BUILD_SPL := $(ET_BOOTLOADER_BUILD_DIR)/spl/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
+else
 export ET_BOOTLOADER_BUILD_SPL := $(ET_BOOTLOADER_BUILD_DIR)/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
+endif
 export ET_BOOTLOADER_BUILD_DTB := $(ET_BOOTLOADER_BUILD_DIR)/u-boot-dtb.img
 export ET_BOOTLOADER_BUILD_IMAGE := $(ET_BOOTLOADER_BUILD_DIR)/u-boot.img
 export ET_BOOTLOADER_DIR := $(ET_DIR)/bootloader/$(ET_BOARD)/$(ET_CROSS_TUPLE)
@@ -133,6 +137,11 @@ define bootloader-build
 	else \
 		$(RM) $(ET_BOOTLOADER_DIR)/boot/u-boot*; \
 		$(RM) $(ET_BOOTLOADER_DIR)/boot/boot*; \
+		if ! [ -f $(ET_BOOTLOADER_BUILD_SPL) ]; then \
+			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_BUILD_SPL) build FAILED! *****\n\n"; \
+			exit 2; \
+		fi; \
+		cp -av $(ET_BOOTLOADER_BUILD_SPL) $(ET_BOOTLOADER_DIR)/boot/; \
 		if ! [ -f $(ET_BOOTLOADER_BUILD_IMAGE) ]; then \
 			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_BUILD_IMAGE) build FAILED! *****\n\n"; \
 			exit 2; \
@@ -141,23 +150,20 @@ define bootloader-build
 		if [ -f $(ET_BOOTLOADER_BUILD_DTB) ]; then \
 			cp -av $(ET_BOOTLOADER_BUILD_DTB) $(ET_BOOTLOADER_DIR)/boot/; \
 		fi; \
+		if [ -f $(ET_CONFIG_DIR)/$(ET_BOOTLOADER_TREE)/uEnv.txt ]; then \
+			cp -av $(ET_CONFIG_DIR)/$(ET_BOOTLOADER_TREE)/uEnv.txt $(ET_BOOTLOADER_DIR)/boot/; \
+		fi; \
 		case "$(ET_BOARD_TYPE)" in \
 		zynq*) \
-			cp -av $(ET_BOOTLOADER_BUILD_DIR)/u-boot.elf $(ET_BOARD_DIR)/fpga/sdk/; \
-			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Generating Xilinx 'boot.bin' *****\n\n"; \
+			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Generating Xilinx 'system.bit.bin' *****\n\n"; \
 			(cd $(ET_BOARD_DIR)/fpga && \
-				zynq-mkbootimage/mkbootimage pynq_z2.bif sdk/boot.bin); \
-			if ! [ -f $(ET_BOARD_DIR)/fpga/sdk/boot.bin ]; then \
-				printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Xilinx 'boot.bin' build FAILED! *****\n\n"; \
+				$(ET_SCRIPTS_DIR)/fpga-bit-to-bin.py -f "`ls sdk/*.bit | tr -d \\\n`" $(ET_BOOTLOADER_DIR)/boot/system.bit.bin); \
+			if ! [ -f $(ET_BOOTLOADER_DIR)/boot/system.bit.bin ]; then \
+				printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Xilinx 'system.bit.bin' build FAILED! *****\n\n"; \
 				exit 2; \
 			fi; \
 			;; \
 		*) \
-			if ! [ -f $(ET_BOOTLOADER_BUILD_SPL) ]; then \
-				printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_BUILD_SPL) build FAILED! *****\n\n"; \
-				exit 2; \
-			fi; \
-			cp -av $(ET_BOOTLOADER_BUILD_SPL) $(ET_BOOTLOADER_DIR)/boot/; \
 			;; \
 		esac; \
 	fi

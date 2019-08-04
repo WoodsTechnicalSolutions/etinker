@@ -6,6 +6,11 @@
 	model = "Zynq PYNQ-Z2 Development Board";
 	compatible = "digilent,zynq-artyz", "xlnx,zynq-7000";
 
+	chosen {
+		bootargs = "earlycon";
+		stdout-path = "serial0:115200n8";
+	};
+
 	aliases {
 		ethernet0 = &gem0;
 		serial0 = &uart0;

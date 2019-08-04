@@ -6,6 +6,11 @@
 	model = "Zynq PYNQ-Z2 Development Board";
 	compatible = "digilent,zynq-artyz", "xlnx,zynq-7000";
 
+	chosen {
+		bootargs = "earlycon root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait";
+		stdout-path = "serial0:115200n8";
+	};
+
 	amba {
 		audio0:audio-codec-ctrl@43c00000 {
 			compatible = "xlnk,audio-codec-ctrl-1.0";
