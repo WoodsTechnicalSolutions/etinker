@@ -87,7 +87,7 @@ define kernel-depends
 	@case "$(ET_BOARD_TYPE)" in \
 	zynq*) \
 		if [ -d $(ET_BOARD_DIR)/fpga/sdk ]; then \
-			rsync -a $(ET_BOARD_DIR)/fpga/dts $(ET_BOARD_DIR)/; \
+			rsync -r $(ET_BOARD_DIR)/fpga/dts $(ET_BOARD_DIR)/; \
 		else \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] FPGA BUILD IS MISSING! *****\n"; \
 			exit 2; \
@@ -96,12 +96,12 @@ define kernel-depends
 	*) \
 		;; \
 	esac
-	@if [ -d $(ET_BOARD_DIR)/dts ]; then \
-		rsync -aP $(ET_BOARD_DIR)/dts/*.dts* \
+	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.{dts,dtsi} 2> /dev/null`" ]; then \
+		rsync -rP $(ET_BOARD_DIR)/dts/*.dts* \
 			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_ARCH)/boot/dts/; \
 	fi
-	@if [ -d $(ET_BOARD_DIR)/dts/linux ]; then \
-		rsync -aP $(ET_BOARD_DIR)/dts/linux/*.dts* \
+	@if [ -d $(ET_BOARD_DIR)/dts/linux ] && [ -n "`ls $(ET_BOARD_DIR)/dts/linux/*.{dts,dtsi} 2> /dev/null`" ]; then \
+		rsync -rP $(ET_BOARD_DIR)/dts/linux/*.dts* \
 			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_ARCH)/boot/dts/; \
 	fi
 endef

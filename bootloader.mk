@@ -72,8 +72,8 @@ define bootloader-depends
 	@case "$(ET_BOARD_TYPE)" in \
 	zynq*) \
 		if [ -d $(ET_BOARD_DIR)/fpga/sdk ]; then \
-			rsync -a $(ET_BOARD_DIR)/fpga/dts $(ET_BOARD_DIR)/; \
-			rsync -a $(ET_BOARD_DIR)/fpga/sdk/ps*_init_gpl.* \
+			rsync -r $(ET_BOARD_DIR)/fpga/dts $(ET_BOARD_DIR)/; \
+			rsync -r $(ET_BOARD_DIR)/fpga/sdk/ps*_init_gpl.* \
 				$(ET_BOOTLOADER_SOFTWARE_DIR)/board/xilinx/$(ET_BOARD_TYPE)/$(ET_BOARD_KERNEL_DT)/; \
 		else \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] FPGA BUILD IS MISSING! *****\n"; \
@@ -83,12 +83,12 @@ define bootloader-depends
 	*) \
 		;; \
 	esac
-	@if [ -d $(ET_BOARD_DIR)/dts ]; then \
-		rsync -aP $(ET_BOARD_DIR)/dts/*.dts* \
+	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.{dts,dtsi} 2> /dev/null`" ]; then \
+		rsync -rP $(ET_BOARD_DIR)/dts/*.dts* \
 			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_ARCH)/dts/; \
 	fi
-	@if [ -d $(ET_BOARD_DIR)/dts/u-boot ]; then \
-		rsync -aP $(ET_BOARD_DIR)/dts/u-boot/*.dts* \
+	@if [ -d $(ET_BOARD_DIR)/dts/u-boot ] && [ -n "`ls $(ET_BOARD_DIR)/dts/u-boot/*.{dts,dtsi} 2> /dev/null`" ]; then \
+		rsync -rP $(ET_BOARD_DIR)/dts/u-boot/*.dts* \
 			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_ARCH)/dts/; \
 	fi
 endef
