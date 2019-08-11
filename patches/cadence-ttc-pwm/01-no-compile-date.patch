@@ -1,0 +1,15 @@
+diff --git a/src/kernel/pwm-cadence.c b/src/kernel/pwm-cadence.c
+index fe3f5bf..02ef37c 100644
+--- a/src/kernel/pwm-cadence.c
++++ b/src/kernel/pwm-cadence.c
+@@ -333,8 +333,8 @@ static int __init cadence_pwm_init(void)
+ {
+ 	int ret;
+ 
+-	printk(KERN_INFO "cadence_pwm: Compiled on "
+-		__DATE__ " at " __TIME__ "\n");
++	//printk(KERN_INFO "cadence_pwm: Compiled on "
++	//	__DATE__ " at " __TIME__ "\n");
+ 	ret = platform_driver_register(&cadence_pwm_driver);
+ 	return ret;
+ }

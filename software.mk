@@ -25,12 +25,14 @@ define software-check
 					(cd $1 && git fetch --all && git fetch --tags) || \
 					git clone $$url $1; \
 				(cd $1 && git checkout $$ref) || exit 2; \
+				(cd $1 && patch -p1 -i $(ET_PATCH_DIR)/$2/*.patch); \
 				;; \
 			*) \
 				[ -d $2 ] && \
 					(cd $2 && git fetch --all && git fetch --tags) || \
 					git clone $$url $2; \
 				(cd $2 && git checkout $$ref) || exit 2; \
+				(cd $2 && patch -p1 -i $(ET_PATCH_DIR)/$2/*.patch); \
 				;; \
 			esac; \
 		); \
