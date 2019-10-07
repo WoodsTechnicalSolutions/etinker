@@ -105,8 +105,9 @@ int main(void)
 
 	while (true) {
 
+#if defined(SPI_TEST)
 		memset(data_rx, 0, sizeof(data_rx));
-
+#endif
 		UARTprintf("\033[2K\033[2J\rLED_RGB: RED");
 
 		GPIOPinWrite(GPIO_PORTF_BASE, LED_RED|LED_GREEN|LED_BLUE, LED_RED);
