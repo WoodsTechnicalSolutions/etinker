@@ -83,11 +83,11 @@ define bootloader-depends
 	*) \
 		;; \
 	esac
-	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.{dts,dtsi} 2> /dev/null`" ]; then \
+	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.dts* 2> /dev/null`" ]; then \
 		rsync -rP $(ET_BOARD_DIR)/dts/*.dts* \
 			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_ARCH)/dts/; \
 	fi
-	@if [ -d $(ET_BOARD_DIR)/dts/u-boot ] && [ -n "`ls $(ET_BOARD_DIR)/dts/u-boot/*.{dts,dtsi} 2> /dev/null`" ]; then \
+	@if [ -d $(ET_BOARD_DIR)/dts/u-boot ] && [ -n "`ls $(ET_BOARD_DIR)/dts/u-boot/*.dts* 2> /dev/null`" ]; then \
 		rsync -rP $(ET_BOARD_DIR)/dts/u-boot/*.dts* \
 			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_ARCH)/dts/; \
 	fi

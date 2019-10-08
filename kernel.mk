@@ -96,11 +96,11 @@ define kernel-depends
 	*) \
 		;; \
 	esac
-	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.{dts,dtsi} 2> /dev/null`" ]; then \
+	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.dts* 2> /dev/null`" ]; then \
 		rsync -rP $(ET_BOARD_DIR)/dts/*.dts* \
 			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_ARCH)/boot/dts/; \
 	fi
-	@if [ -d $(ET_BOARD_DIR)/dts/linux ] && [ -n "`ls $(ET_BOARD_DIR)/dts/linux/*.{dts,dtsi} 2> /dev/null`" ]; then \
+	@if [ -d $(ET_BOARD_DIR)/dts/linux ] && [ -n "`ls $(ET_BOARD_DIR)/dts/linux/*.dts* 2> /dev/null`" ]; then \
 		rsync -rP $(ET_BOARD_DIR)/dts/linux/*.dts* \
 			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_ARCH)/boot/dts/; \
 	fi
