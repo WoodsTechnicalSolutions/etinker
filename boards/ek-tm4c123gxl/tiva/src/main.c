@@ -62,19 +62,15 @@ void spi_setup(void)
 	GPIOPinTypeSSI(GPIO_PORTA_BASE, GPIO_PIN_5 | GPIO_PIN_4 | GPIO_PIN_3 |
 								GPIO_PIN_2);
 
+	SSIConfigSetExpClk(SSI0_BASE,
+			   SysCtlClockGet(),
+			   SSI_FRF_MOTO_MODE_0,
 #if defined(SPI_MASTER)
-	SSIConfigSetExpClk(SSI0_BASE,
-			   SysCtlClockGet(),
-			   SSI_FRF_MOTO_MODE_0,
 			   SSI_MODE_MASTER,
-			   250000, 8);
 #else
-	SSIConfigSetExpClk(SSI0_BASE,
-			   SysCtlClockGet(),
-			   SSI_FRF_MOTO_MODE_0,
 			   SSI_MODE_SLAVE,
-			   250000, 8);
 #endif
+			   1000000, 8);
 
 	SSIEnable(SSI0_BASE);
 
