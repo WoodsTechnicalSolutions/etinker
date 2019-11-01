@@ -15,6 +15,7 @@ endif
 export ET_BOOTLOADER_TREE := $(ET_BOARD_BOOTLOADER_TREE)
 export ET_BOOTLOADER_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_BOOTLOADER_TREE)
 export ET_BOOTLOADER_DEFCONFIG := $(ET_BOARD_BOOTLOADER_DEFCONFIG)
+export ET_BOOTLOADER_CACHED_VERSION = $(shell grep -Po 'bootloader-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
 # [start] bootloader version magic
 ET_BOOTLOADER_VERSION := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v)
 ET_BOOTLOADER_LOCALVERSION := -$(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | cut -d '-' -f 2-5)
@@ -38,9 +39,13 @@ ifeq ($(ET_BOOTLOADER_LOCALVERSION),-v$(ET_BOOTLOADER_VERSION))
 # exact tag in series (i.e. v2018.09)
 ET_BOOTLOADER_LOCALVERSION :=
 endif
+ifeq ($(ET_BOARD_TYPE),zynq)
+# Xilinx zynq U-Boot, just use cached version
+ET_BOOTLOADER_VERSION := $(ET_BOOTLOADER_CACHED_VERSION)
+ET_BOOTLOADER_LOCALVERSION :=
+endif
 export ET_BOOTLOADER_VERSION
 export ET_BOOTLOADER_LOCALVERSION
-export ET_BOOTLOADER_CACHED_VERSION = "`grep bootloader-ref $(ET_BOARD_DIR)/software.conf | cut -d ':' -f 2-3 | tr -d \\\\n`"
 # [end] bootloader version magic
 export ET_BOOTLOADER_BUILD_DIR := $(ET_DIR)/bootloader/build/$(ET_BOARD)/$(ET_CROSS_TUPLE)
 export ET_BOOTLOADER_BUILD_CONFIG := $(ET_BOOTLOADER_BUILD_DIR)/.config

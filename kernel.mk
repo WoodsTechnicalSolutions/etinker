@@ -18,6 +18,7 @@ export ET_KERNEL_LOADADDR := $(ET_BOARD_KERNEL_LOADADDR)
 export ET_KERNEL_DEFCONFIG := $(ET_BOARD_KERNEL_DEFCONFIG)
 export ET_KERNEL_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_KERNEL_TREE)
 export ET_KERNEL_HEADERS_DIR ?= $(ET_SYSROOT_DIR)/usr/include
+export ET_KERNEL_CACHED_VERSION := $(shell grep -Po 'kernel-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
 # [start] kernel version magic
 ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v | cut -d '-' -f 1)
 ET_KERNEL_LOCALVERSION := -$(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | cut -d '-' -f 2-5)
@@ -52,9 +53,13 @@ ifeq ($(shell printf "%s" $(ET_KERNEL_VERSION)|cut -d '.' -f 3),)
 # first in release series (i.e. v4.14)
 ET_KERNEL_VERSION := $(ET_KERNEL_VERSION).0
 endif
+ifeq ($(ET_BOARD_TYPE),zynq)
+# Xilinx zynq kernel, just use cached version
+ET_KERNEL_VERSION := $(ET_KERNEL_CACHED_VERSION)
+ET_KERNEL_LOCALVERSION :=
+endif
 export ET_KERNEL_VERSION
 export ET_KERNEL_LOCALVERSION
-export ET_KERNEL_CACHED_VERSION := "`grep kernel-ref $(ET_BOARD_DIR)/software.conf | cut -d ':' -f 2-3 | tr -d \\\\n`"
 # [end] kernel version magic
 export ET_KERNEL_BUILD_DIR := $(ET_DIR)/kernel/build/$(ET_BOARD_TYPE)/$(ET_CROSS_TUPLE)
 export ET_KERNEL_BUILD_BOOT_DIR := $(ET_KERNEL_BUILD_DIR)/arch/$(ET_ARCH)/boot

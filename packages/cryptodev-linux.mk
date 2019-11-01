@@ -18,7 +18,7 @@ endif
 export ET_CRYPTODEV_LINUX_TREE := cryptodev-linux
 export ET_CRYPTODEV_LINUX_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_CRYPTODEV_LINUX_TREE)
 export ET_CRYPTODEV_LINUX_VERSION := $(shell cd $(ET_CRYPTODEV_LINUX_SOFTWARE_DIR) 2>/dev/null && git describe --long --dirty 2>/dev/null)
-export ET_CRYPTODEV_LINUX_CACHED_VERSION := "`grep cryptodev-linux-ref $(ET_BOARD_DIR)/software.conf | cut -d ':' -f 2-3 | tr -d \\\\n`"
+export ET_CRYPTODEV_LINUX_CACHED_VERSION := $(shell grep -Po 'cryptodev-linux-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
 export ET_CRYPTODEV_LINUX_BUILD_DIR := $(ET_OVERLAY_BUILD_DIR)/cryptodev-linux
 export ET_CRYPTODEV_LINUX_BUILD_CONFIG := $(ET_CRYPTODEV_LINUX_BUILD_DIR)/.configured
 export ET_CRYPTODEV_LINUX_BUILD_KO := $(ET_CRYPTODEV_LINUX_BUILD_DIR)/cryptodev.ko

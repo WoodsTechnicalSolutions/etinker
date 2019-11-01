@@ -14,7 +14,7 @@ endif
 export ET_OPENSSL_TREE := openssl
 export ET_OPENSSL_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_OPENSSL_TREE)
 export ET_OPENSSL_VERSION := $(shell cd $(ET_OPENSSL_SOFTWARE_DIR) 2>/dev/null && git describe --long --dirty 2>/dev/null)
-export ET_OPENSSL_CACHED_VERSION := "`grep openssl-ref $(ET_BOARD_DIR)/software.conf | cut -d ':' -f 2-3 | tr -d \\\\n`"
+export ET_OPENSSL_CACHED_VERSION := $(shell grep -Po 'openssl-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
 export ET_OPENSSL_BUILD_DIR := $(ET_OVERLAY_BUILD_DIR)/openssl
 export ET_OPENSSL_BUILD_CONFIG := $(ET_OPENSSL_BUILD_DIR)/configdata.pm
 export ET_OPENSSL_BUILD_CRYPTO_SO := $(ET_OPENSSL_BUILD_DIR)/libcrypto.so
