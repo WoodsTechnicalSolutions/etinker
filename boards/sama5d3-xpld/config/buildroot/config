@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Buildroot 2019.08.1 Configuration
+# Buildroot 2019.08.2 Configuration
 #
 BR2_HAVE_DOT_CONFIG=y
 BR2_HOST_GCC_AT_LEAST_4_5=y
@@ -2680,7 +2680,7 @@ BR2_PACKAGE_AUDIT_ARCH_SUPPORTS=y
 # BR2_PACKAGE_CGROUPFS_MOUNT is not set
 
 #
-# circus needs Python and a toolchain w/ C++, threads
+# circus needs Python 3 and a toolchain w/ C++, threads
 #
 BR2_PACKAGE_COREUTILS=y
 # BR2_PACKAGE_COREUTILS_INDIVIDUAL_BINARIES is not set
@@ -2915,6 +2915,7 @@ BR2_TARGET_GRUB2_ARCH_SUPPORTS=y
 # BR2_PACKAGE_HOST_DTC is not set
 # BR2_PACKAGE_HOST_E2FSPROGS is not set
 # BR2_PACKAGE_HOST_E2TOOLS is not set
+BR2_PACKAGE_HOST_EUDEV=y
 # BR2_PACKAGE_HOST_F2FS_TOOLS is not set
 # BR2_PACKAGE_HOST_FAKETIME is not set
 # BR2_PACKAGE_HOST_FATCAT is not set
