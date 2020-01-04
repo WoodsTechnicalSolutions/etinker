@@ -31,6 +31,7 @@ export ET_CPUS := $(shell nproc --all | tr -d \\n)
 
 export ET_CLEAN ?= no
 export ET_PURGE ?= no
+export ET_RELEASE ?= no
 
 # pull in board specific information
 include $(ET_DIR)/boards/$(ET_BOARD)/etinker.mk
