@@ -86,7 +86,12 @@ LDFLAGS += -Wl,-T $(NRFX_DIR)/mdk/$(ET_BOARD_MCU)_xxaa.ld
 LDLIBS  = -Wl,--start-group -lm -lc -lgcc -lnosys -Wl,--end-group
 
 SOURCES = $(shell find src/ -name "*.c" -print 2> /dev/null)
+SOURCES += $(NRFX_DIR)/drivers/src/nrfx_gpiote.c
+SOURCES += $(NRFX_DIR)/drivers/src/nrfx_pwm.c
+SOURCES += $(NRFX_DIR)/drivers/src/nrfx_saadc.c
+SOURCES += $(NRFX_DIR)/drivers/src/nrfx_spim.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_systick.c
+SOURCES += $(NRFX_DIR)/drivers/src/nrfx_twi_twim.c
 SOURCES += $(NRFX_DIR)/mdk/system_$(ET_BOARD_MCU).c
 
 OBJECTS = $(addprefix $(BUILD_DIR)/,$(SOURCES:.c=.o))
