@@ -21,18 +21,34 @@ define software-check
 			ref="`grep $2-ref $(ET_BOARD_DIR)/software.conf | cut -d ':' -f 2-3 | tr -d \\\\n`" && \
 			case $2 in \
 			toolchain | bootloader | kernel | rootfs) \
-				[ -d $1 ] && \
-					(cd $1 && git fetch --all && git fetch --tags) || \
+				if [ -d $1 ]; then \
+					(cd $1 && git fetch --all && git fetch --tags); \
+				else \
 					git clone $$url $1; \
-				(cd $1 && git checkout $$ref) || exit 2; \
-				(cd $1 && patch -p1 -i $(ET_PATCH_DIR)/$2/*.patch); \
+				fi; \
+				if ! [ -d $1 ]; then \
+					printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] ERROR MISSING $(ET_SOFTWARE_DIR)/$1 DIRECTORY *****\n\n"; \
+					exit 2; \
+				fi; \
+				(cd $1 && git checkout $$ref); \
+				if [ -d $(ET_PATCH_DIR)/$2 ]; then \
+					(cd $1 && patch -p1 -i $(ET_PATCH_DIR)/$2/*.patch 2> /dev/null); \
+				fi; \
 				;; \
 			*) \
-				[ -d $2 ] && \
-					(cd $2 && git fetch --all && git fetch --tags) || \
+				if [ -d $2 ]; then \
+					(cd $2 && git fetch --all && git fetch --tags); \
+				else \
 					git clone $$url $2; \
-				(cd $2 && git checkout $$ref) || exit 2; \
-				(cd $2 && patch -p1 -i $(ET_PATCH_DIR)/$2/*.patch); \
+				fi; \
+				if ! [ -d $2 ]; then \
+					printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] ERROR MISSING $(ET_SOFTWARE_DIR)/$2 DIRECTORY *****\n\n"; \
+					exit 2; \
+				fi; \
+				(cd $2 && git checkout $$ref); \
+				if [ -d $(ET_PATCH_DIR)/$2 ]; then \
+					(cd $2 && patch -p1 -i $(ET_PATCH_DIR)/$2/*.patch 2> /dev/null); \
+				fi; \
 				;; \
 			esac; \
 		); \
