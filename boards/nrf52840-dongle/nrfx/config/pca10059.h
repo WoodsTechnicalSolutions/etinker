@@ -45,6 +45,7 @@ extern "C" {
 #endif
 
 #include "nrf_gpio.h"
+#include "nrfx_saadc.h"
 
 // LED definitions for PCA10059
 // Each LED color is considered a separate LED
@@ -104,11 +105,13 @@ extern "C" {
 #define I2C_SCL    10 // P1.10
 #define I2C_SDA    13 // P1.13
 
-#define GPIO_1    NRF_GPIO_PIN_MAP(0,2)
-#define GPIO_2    NRF_GPIO_PIN_MAP(0,22)
-#define GPIO_3    NRF_GPIO_PIN_MAP(0,24)
-#define GPIO_4    NRF_GPIO_PIN_MAP(0,29)
+#define GPIO_1    NRF_GPIO_PIN_MAP(0,22)
+#define GPIO_2    NRF_GPIO_PIN_MAP(0,24)
+
 #define GPIO_PWM  NRF_GPIO_PIN_MAP(0,31)
+
+#define AIN_0     NRF_ADC_CONFIG_INPUT_0 // P0.02
+#define AIN_5     NRF_ADC_CONFIG_INPUT_5 // P0.29
 
 #ifdef __cplusplus
 }
