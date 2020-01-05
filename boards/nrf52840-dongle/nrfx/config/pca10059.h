@@ -88,6 +88,28 @@ extern "C" {
 
 #define HWFC           true
 
+// DEFAULT PIN ASSIGNMENTS
+
+#define UART_0_RX   9 // P0.09
+#define UART_0_TX  10 // P0.10
+
+#define UART_1_RX   0 // P1.00
+#define UART_1_TX  15 // P1.15
+
+#define SPI_MISO   13 // P0.13
+#define SPI_MOSI   15 // P0.15
+#define SPI_SCLK   17 // P0.17
+#define SPI_CS     20 // P0.20
+
+#define I2C_SCL    10 // P1.10
+#define I2C_SDA    13 // P1.13
+
+#define GPIO_1    NRF_GPIO_PIN_MAP(0,2)
+#define GPIO_2    NRF_GPIO_PIN_MAP(0,22)
+#define GPIO_3    NRF_GPIO_PIN_MAP(0,24)
+#define GPIO_4    NRF_GPIO_PIN_MAP(0,29)
+#define GPIO_PWM  NRF_GPIO_PIN_MAP(0,31)
+
 #ifdef __cplusplus
 }
 #endif
