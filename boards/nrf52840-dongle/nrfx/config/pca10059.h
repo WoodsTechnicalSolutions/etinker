@@ -91,27 +91,37 @@ extern "C" {
 
 // DEFAULT PIN ASSIGNMENTS
 
-#define UART_0_RX   9 // P0.09
-#define UART_0_TX  10 // P0.10
+#define UART_0_RX       9 // P0.09
+#define UART_0_TX      10 // P0.10
+#define UART_0_RX_PIN  NRF_GPIO_PIN_MAP(0,UART_0_RX)
+#define UART_0_TX_PIN  NRF_GPIO_PIN_MAP(0,UART_0_TX)
 
-#define UART_1_RX   0 // P1.00
-#define UART_1_TX  15 // P1.15
+#define UART_1_RX       0 // P1.00
+#define UART_1_TX      15 // P1.15
+#define UART_1_RX_PIN  NRF_GPIO_PIN_MAP(1,UART_1_RX)
+#define UART_1_TX_PIN  NRF_GPIO_PIN_MAP(1,UART_1_TX)
 
-#define SPI_MISO   13 // P0.13
-#define SPI_MOSI   15 // P0.15
-#define SPI_SCLK   17 // P0.17
-#define SPI_CS     20 // P0.20
+#define SPI_MISO      13 // P0.13
+#define SPI_MOSI      15 // P0.15
+#define SPI_SCLK      17 // P0.17
+#define SPI_CS        20 // P0.20
+#define SPI_MISO_PIN  NRF_GPIO_PIN_MAP(0,SPI_MISO)
+#define SPI_MOSI_PIN  NRF_GPIO_PIN_MAP(0,SPI_MOSI)
+#define SPI_SCLK_PIN  NRF_GPIO_PIN_MAP(0,SPI_SCLK)
+#define SPI_CS_PIN    NRF_GPIO_PIN_MAP(0,SPI_CS)
 
-#define I2C_SCL    10 // P1.10
-#define I2C_SDA    13 // P1.13
+#define I2C_SCL      10 // P1.10
+#define I2C_SDA      13 // P1.13
+#define I2C_SCL_PIN  NRF_GPIO_PIN_MAP(1,I2C_SCL)
+#define I2C_SDA_PIN  NRF_GPIO_PIN_MAP(1,I2C_SDA)
 
 #define GPIO_1    NRF_GPIO_PIN_MAP(0,22)
 #define GPIO_2    NRF_GPIO_PIN_MAP(0,24)
 
 #define GPIO_PWM  NRF_GPIO_PIN_MAP(0,31)
 
-#define AIN_0     NRF_ADC_CONFIG_INPUT_0 // P0.02
-#define AIN_5     NRF_ADC_CONFIG_INPUT_5 // P0.29
+#define AIN_0  NRF_ADC_CONFIG_INPUT_0 // P0.02
+#define AIN_5  NRF_ADC_CONFIG_INPUT_5 // P0.29
 
 #ifdef __cplusplus
 }
