@@ -3,11 +3,12 @@
 #include <stddef.h>
 #include <ctype.h>
 
-#include "nrf.h"
-#include "nrf_gpio.h"
+#include "nrfx_gpiote.h"
 #include "nrfx_systick.h"
 
 #include "boards.h"
+
+nrfx_gpiote_out_config_t led_config = NRFX_GPIOTE_CONFIG_OUT_SIMPLE(true);
 
 static void dongle_gpio_init(void)
 {
@@ -45,16 +46,12 @@ static void dongle_gpio_init(void)
 
 gpio_config:
 
-	nrf_gpio_cfg_output(LED1_G);
-	nrf_gpio_cfg_output(LED2_R);
-	nrf_gpio_cfg_output(LED2_G);
-	nrf_gpio_cfg_output(LED2_B);
+	nrfx_gpiote_init(NRFX_GPIOTE_DEFAULT_CONFIG_IRQ_PRIORITY);
 
-	// default OFF
-	nrf_gpio_pin_write(LED1_G, 0);
-	nrf_gpio_pin_write(LED2_R, 0);
-	nrf_gpio_pin_write(LED2_G, 0);
-	nrf_gpio_pin_write(LED2_B, 0);
+	nrfx_gpiote_out_init(LED1_G, &led_config);
+	nrfx_gpiote_out_init(LED2_R, &led_config);
+	nrfx_gpiote_out_init(LED2_G, &led_config);
+	nrfx_gpiote_out_init(LED2_B, &led_config);
 }
 
 int main(void)
@@ -63,28 +60,25 @@ int main(void)
 
 	dongle_gpio_init();
 
-	nrf_gpio_pin_write(LED1_G, 1);
+	nrfx_gpiote_out_toggle(LED1_G);
 
 	while (true) {
 		nrfx_systick_delay_ms(1000);
-		nrf_gpio_pin_write(LED2_G, 0);
-		nrf_gpio_pin_write(LED2_B, 0);
-		nrfx_systick_delay_ms(100);
-		nrf_gpio_pin_write(LED2_R, 1);
-		nrf_gpio_pin_toggle(LED1_G);
+
+		nrfx_gpiote_out_set(LED2_R);
+		nrfx_gpiote_out_clear(LED2_G);
+		nrfx_gpiote_out_clear(LED2_B);
 
 		nrfx_systick_delay_ms(1000);
-		nrf_gpio_pin_write(LED2_R, 0);
-		nrf_gpio_pin_write(LED2_B, 0);
-		nrfx_systick_delay_ms(100);
-		nrf_gpio_pin_write(LED2_G, 1);
-		nrf_gpio_pin_toggle(LED1_G);
+
+		nrfx_gpiote_out_clear(LED2_R);
+		nrfx_gpiote_out_set(LED2_G);
+		nrfx_gpiote_out_clear(LED2_B);
 
 		nrfx_systick_delay_ms(1000);
-		nrf_gpio_pin_write(LED2_R, 0);
-		nrf_gpio_pin_write(LED2_G, 0);
-		nrfx_systick_delay_ms(100);
-		nrf_gpio_pin_write(LED2_B, 1);
-		nrf_gpio_pin_toggle(LED1_G);
+
+		nrfx_gpiote_out_clear(LED2_R);
+		nrfx_gpiote_out_clear(LED2_G);
+		nrfx_gpiote_out_set(LED2_B);
 	}
 }
