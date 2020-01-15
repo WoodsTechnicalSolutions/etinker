@@ -8,6 +8,7 @@
 #include "nrfx_gpiote.h"
 #include "nrfx_spim.h"
 #include "nrfx_systick.h"
+#include "nrfx_uarte.h"
 
 #include "boards.h"
 
@@ -60,12 +61,16 @@ gpio_config:
 int main(void)
 {
 	uint8_t i;
+	uint8_t tx;
+	nrfx_uarte_t uarte_0 = NRFX_UARTE_INSTANCE(0);
+	nrfx_uarte_config_t uarte_0_config = NRFX_UARTE_DEFAULT_CONFIG(
+						UARTE_0_TX_PIN, UARTE_0_RX_PIN);
 	nrfx_spim_t spim_0 = NRFX_SPIM_INSTANCE(0);
 	nrfx_spim_config_t spim_0_config = {
-		.sck_pin        = SPI_SCLK_PIN,
-		.mosi_pin       = SPI_MOSI_PIN,
-		.miso_pin       = SPI_MISO_PIN,
-		.ss_pin         = SPI_CS_PIN,
+		.sck_pin        = SPIM_0_SCLK_PIN,
+		.mosi_pin       = SPIM_0_MOSI_PIN,
+		.miso_pin       = SPIM_0_MISO_PIN,
+		.ss_pin         = SPIM_0_CS_PIN,
 		.ss_active_high = false,
 		.irq_priority   = NRFX_SPIM_DEFAULT_CONFIG_IRQ_PRIORITY,
 		.orc            = 0xFF,
@@ -75,9 +80,11 @@ int main(void)
 		.miso_pull      = NRF_GPIO_PIN_NOPULL,
 	};
 	nrfx_spim_xfer_desc_t spim_0_xfer = { 0 };
-	uint8_t spim_0_tx[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+	uint8_t spim_0_tx[] = { 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102 };
 
 	nrfx_systick_init();
+
+	nrfx_uarte_init(&uarte_0, &uarte_0_config , NULL);
 
 	nrfx_spim_init(&spim_0, &spim_0_config, NULL, NULL);
 
@@ -112,6 +119,11 @@ int main(void)
 			spim_0_xfer.tx_length = 1;
 			nrfx_spim_xfer(&spim_0, &spim_0_xfer, 0);
 			nrfx_systick_delay_ms(10);
+			nrfx_uarte_tx(&uarte_0, &spim_0_tx[i], 1);
 		}
+		tx = '\r';
+		nrfx_uarte_tx(&uarte_0, &tx, 1);
+		tx = '\n';
+		nrfx_uarte_tx(&uarte_0, &tx, 1);
 	}
 }

@@ -92,6 +92,7 @@ SOURCES += $(NRFX_DIR)/drivers/src/nrfx_saadc.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_spim.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_systick.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_twi_twim.c
+SOURCES += $(NRFX_DIR)/drivers/src/nrfx_uarte.c
 SOURCES += $(NRFX_DIR)/drivers/src/prs/nrfx_prs.c
 SOURCES += $(NRFX_DIR)/mdk/system_$(ET_BOARD_MCU).c
 
