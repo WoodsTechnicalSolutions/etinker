@@ -46,6 +46,7 @@ OPTIMIZE = -g3 -Og
 endif
 
 CFLAGS = $(OPTIMIZE)
+CFLAGS += $(ET_CFLAGS)
 CFLAGS += -std=c11 -Wall -Werror
 CFLAGS += -MD
 CFLAGS += -D$(ET_BOARD_MCU_DEFINE)
@@ -72,6 +73,7 @@ CFLAGS += -I $(NRFX_DIR)/drivers/include
 CFLAGS += -I $(CMSIS_DIR)/CMSIS/Core/Include
 
 LDFLAGS = $(OPTIMIZE)
+LDFLAGS += $(ET_LDFLAGS)
 LDFLAGS += -D$(ET_BOARD_MCU_DEFINE)
 LDFLAGS += -mthumb
 LDFLAGS += -mabi=aapcs
@@ -84,6 +86,7 @@ LDFLAGS += -Wl,-L $(NRFX_DIR)/mdk
 LDFLAGS += -Wl,-T $(NRFX_DIR)/mdk/$(ET_BOARD_MCU)_xxaa.ld
 
 LDLIBS  = -Wl,--start-group -lm -lc -lgcc -lnosys -Wl,--end-group
+LDLIBS += $(ET_LDLIBS)
 
 SOURCES = $(shell find src/ -name "*.c" -print 2> /dev/null)
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_gpiote.c
@@ -92,6 +95,7 @@ SOURCES += $(NRFX_DIR)/drivers/src/nrfx_saadc.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_spim.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_systick.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_twi_twim.c
+SOURCES += $(NRFX_DIR)/drivers/src/nrfx_twim.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_uarte.c
 SOURCES += $(NRFX_DIR)/drivers/src/prs/nrfx_prs.c
 SOURCES += $(NRFX_DIR)/mdk/system_$(ET_BOARD_MCU).c
