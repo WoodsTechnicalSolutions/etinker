@@ -28,7 +28,8 @@ static void gpio_init(void)
 	 * needs to be increased to 3.0 V by configuring the UICR register.
 	 */
 	if (NRF_POWER->MAINREGSTATUS &
-			(POWER_MAINREGSTATUS_MAINREGSTATUS_High << POWER_MAINREGSTATUS_MAINREGSTATUS_Pos)) {
+			(POWER_MAINREGSTATUS_MAINREGSTATUS_High <<
+			 POWER_MAINREGSTATUS_MAINREGSTATUS_Pos)) {
 		// setup 3.0V below
 	} else {
 		goto gpio_config;
@@ -41,8 +42,9 @@ static void gpio_init(void)
 
 		while (NRF_NVMC->READY == NVMC_READY_READY_Busy);
 
-		NRF_UICR->REGOUT0 = (NRF_UICR->REGOUT0 & ~((uint32_t)UICR_REGOUT0_VOUT_Msk)) |
-				    (UICR_REGOUT0_VOUT_3V0 << UICR_REGOUT0_VOUT_Pos);
+		NRF_UICR->REGOUT0 =
+			(NRF_UICR->REGOUT0 & ~((uint32_t)UICR_REGOUT0_VOUT_Msk)) |
+			(UICR_REGOUT0_VOUT_3V0 << UICR_REGOUT0_VOUT_Pos);
 
 		NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Ren;
 
@@ -53,7 +55,10 @@ static void gpio_init(void)
 
 gpio_config:
 
-	nrfx_gpiote_init(NRFX_GPIOTE_DEFAULT_CONFIG_IRQ_PRIORITY);
+	if (nrfx_gpiote_init(NRFX_GPIOTE_DEFAULT_CONFIG_IRQ_PRIORITY)
+							!= NRFX_SUCCESS) {
+		while (true);
+	}
 
 	nrfx_gpiote_out_init(LED1_G, &led_config);
 	nrfx_gpiote_out_init(LED2_R, &led_config);
@@ -64,7 +69,9 @@ gpio_config:
 int main(void)
 {
 	uint8_t i;
-	uint8_t tx;
+#if !defined(USE_TWIM_1)
+	uint8_t tx[] = { 13, 10 }; // '\r\n'
+#endif
 	nrfx_uarte_t uarte_0 = NRFX_UARTE_INSTANCE(0);
 	nrfx_uarte_config_t uarte_0_config = NRFX_UARTE_DEFAULT_CONFIG(
 						UARTE_0_TX_PIN, UARTE_0_RX_PIN);
@@ -90,7 +97,10 @@ int main(void)
 		.miso_pull      = NRF_GPIO_PIN_NOPULL,
 	};
 	nrfx_spim_xfer_desc_t spim_0_xfer = { 0 };
-	uint8_t spim_0_tx[] = { 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102 };
+	uint8_t spim_0_tx[] = { // '0123456789abcdef'
+		48, 49, 50, 51, 52, 53, 54, 55,
+		56, 57, 97, 98, 99, 100, 101, 102
+	};
 
 	gpio_init();
 
@@ -103,15 +113,31 @@ int main(void)
 #if defined(USE_TWIM_1)
 	// TODO: TWIM instance 1 initialization
 #else
-	nrfx_uarte_init(&uarte_1, &uarte_1_config, NULL);
+	if (nrfx_uarte_init(&uarte_1, &uarte_1_config, NULL) != NRFX_SUCCESS) {
+		nrfx_gpiote_out_clear(LED2_G);
+		nrfx_gpiote_out_clear(LED2_B);
+		nrfx_gpiote_out_clear(LED1_G);
+		while (true) {
+			nrfx_systick_delay_ms(3000);
+			nrfx_gpiote_out_toggle(LED2_R);
+		}
+	}
 #endif
 
-	nrfx_spim_init(&spim_0, &spim_0_config, NULL, NULL);
+	if (nrfx_spim_init(&spim_0, &spim_0_config, NULL, NULL)
+							!= NRFX_SUCCESS) {
+		nrfx_gpiote_out_clear(LED2_G);
+		nrfx_gpiote_out_clear(LED2_B);
+		nrfx_gpiote_out_clear(LED1_G);
+		while (true) {
+			nrfx_systick_delay_ms(2000);
+			nrfx_gpiote_out_toggle(LED2_R);
+		}
+	}
 
 	nrfx_gpiote_out_toggle(LED1_G);
 
 	while (true) {
-
 		nrfx_systick_delay_ms(1000);
 
 		nrfx_gpiote_out_set(LED2_R);
@@ -142,13 +168,8 @@ int main(void)
 #endif
 		}
 		printf("\r\n");
-		tx = '\r';
 #if !defined(USE_TWIM_1)
-		nrfx_uarte_tx(&uarte_1, &tx, 1);
-#endif
-		tx = '\n';
-#if !defined(USE_TWIM_1)
-		nrfx_uarte_tx(&uarte_1, &tx, 1);
+		nrfx_uarte_tx(&uarte_1, tx, sizeof(tx));
 #endif
 	}
 }
