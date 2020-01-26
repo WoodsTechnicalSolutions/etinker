@@ -171,11 +171,11 @@ define kernel-build
 			exit 2; \
 		fi; \
 		;; \
-	$(ET_KERNEL_DT).dtb) \
-		if [ -f $(ET_KERNEL_BUILD_DTB) ]; then \
-			$(RM) $(ET_KERNEL_DIR)/boot/$(ET_KERNEL_DT).dtb; \
-			cp -av $(ET_KERNEL_BUILD_DTB) $(ET_KERNEL_DIR)/boot/; \
-		        cp -av $(ET_KERNEL_BUILD_DTB) $(ET_KERNEL_DIR)/boot/devicetree.dtb; \
+	*.dtb) \
+		if [ -f $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$1 ]; then \
+			$(RM) $(ET_KERNEL_DIR)/boot/$1; \
+			cp -av $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$1 $(ET_KERNEL_DIR)/boot/; \
+		        cp -av $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$1 $(ET_KERNEL_DIR)/boot/devicetree.dtb; \
 		else \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_DT).dtb FAILED! *****\n"; \
 			exit 2; \
