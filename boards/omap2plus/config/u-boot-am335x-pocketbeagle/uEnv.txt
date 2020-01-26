@@ -1,0 +1,1 @@
+uenvcmd=if test -n "${ufdtfile}"; then setenv fdtfile ${ufdtfile} && run distro_bootcmd; fi
