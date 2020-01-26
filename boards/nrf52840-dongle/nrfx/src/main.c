@@ -12,6 +12,9 @@
 
 #include "boards.h"
 
+extern int syscalls_init(nrfx_uarte_t const *uart,
+					nrfx_uarte_config_t const *config);
+
 nrfx_gpiote_out_config_t led_config = NRFX_GPIOTE_CONFIG_OUT_SIMPLE(true);
 
 static void gpio_init(void)
@@ -93,12 +96,14 @@ int main(void)
 
 	nrfx_systick_init();
 
-	nrfx_uarte_init(&uarte_0, &uarte_0_config , NULL);
+	syscalls_init(&uarte_0, &uarte_0_config);
+
+	printf("Starting ...\r\n");
 
 #if defined(USE_TWIM_1)
 	// TODO: TWIM instance 1 initialization
 #else
-	nrfx_uarte_init(&uarte_1, &uarte_1_config , NULL);
+	nrfx_uarte_init(&uarte_1, &uarte_1_config, NULL);
 #endif
 
 	nrfx_spim_init(&spim_0, &spim_0_config, NULL, NULL);
@@ -131,18 +136,17 @@ int main(void)
 			spim_0_xfer.p_tx_buffer = (uint8_t const *)&spim_0_tx[i];
 			spim_0_xfer.tx_length = 1;
 			nrfx_spim_xfer(&spim_0, &spim_0_xfer, 0);
-			nrfx_uarte_tx(&uarte_0, &spim_0_tx[i], 1);
+			putchar(spim_0_tx[i]);
 #if !defined(USE_TWIM_1)
 			nrfx_uarte_tx(&uarte_1, &spim_0_tx[i], 1);
 #endif
 		}
+		printf("\r\n");
 		tx = '\r';
-		nrfx_uarte_tx(&uarte_0, &tx, 1);
 #if !defined(USE_TWIM_1)
 		nrfx_uarte_tx(&uarte_1, &tx, 1);
 #endif
 		tx = '\n';
-		nrfx_uarte_tx(&uarte_0, &tx, 1);
 #if !defined(USE_TWIM_1)
 		nrfx_uarte_tx(&uarte_1, &tx, 1);
 #endif
