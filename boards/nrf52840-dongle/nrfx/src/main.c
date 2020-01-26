@@ -14,7 +14,7 @@
 
 nrfx_gpiote_out_config_t led_config = NRFX_GPIOTE_CONFIG_OUT_SIMPLE(true);
 
-static void dongle_gpio_init(void)
+static void gpio_init(void)
 {
 	/**
 	 * pulled from Nordic SDK 16.0.0 'components/boards/boards.c'
@@ -65,6 +65,13 @@ int main(void)
 	nrfx_uarte_t uarte_0 = NRFX_UARTE_INSTANCE(0);
 	nrfx_uarte_config_t uarte_0_config = NRFX_UARTE_DEFAULT_CONFIG(
 						UARTE_0_TX_PIN, UARTE_0_RX_PIN);
+#if defined(USE_TWIM_1)
+	// TODO: TWIM instance 1 declarations
+#else
+	nrfx_uarte_t uarte_1 = NRFX_UARTE_INSTANCE(1);
+	nrfx_uarte_config_t uarte_1_config = NRFX_UARTE_DEFAULT_CONFIG(
+						UARTE_1_TX_PIN, UARTE_1_RX_PIN);
+#endif
 	nrfx_spim_t spim_0 = NRFX_SPIM_INSTANCE(0);
 	nrfx_spim_config_t spim_0_config = {
 		.sck_pin        = SPIM_0_SCLK_PIN,
@@ -82,13 +89,19 @@ int main(void)
 	nrfx_spim_xfer_desc_t spim_0_xfer = { 0 };
 	uint8_t spim_0_tx[] = { 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 97, 98, 99, 100, 101, 102 };
 
+	gpio_init();
+
 	nrfx_systick_init();
 
 	nrfx_uarte_init(&uarte_0, &uarte_0_config , NULL);
 
-	nrfx_spim_init(&spim_0, &spim_0_config, NULL, NULL);
+#if defined(USE_TWIM_1)
+	// TODO: TWIM instance 1 initialization
+#else
+	nrfx_uarte_init(&uarte_1, &uarte_1_config , NULL);
+#endif
 
-	dongle_gpio_init();
+	nrfx_spim_init(&spim_0, &spim_0_config, NULL, NULL);
 
 	nrfx_gpiote_out_toggle(LED1_G);
 
@@ -118,12 +131,20 @@ int main(void)
 			spim_0_xfer.p_tx_buffer = (uint8_t const *)&spim_0_tx[i];
 			spim_0_xfer.tx_length = 1;
 			nrfx_spim_xfer(&spim_0, &spim_0_xfer, 0);
-			nrfx_systick_delay_ms(10);
 			nrfx_uarte_tx(&uarte_0, &spim_0_tx[i], 1);
+#if !defined(USE_TWIM_1)
+			nrfx_uarte_tx(&uarte_1, &spim_0_tx[i], 1);
+#endif
 		}
 		tx = '\r';
 		nrfx_uarte_tx(&uarte_0, &tx, 1);
+#if !defined(USE_TWIM_1)
+		nrfx_uarte_tx(&uarte_1, &tx, 1);
+#endif
 		tx = '\n';
 		nrfx_uarte_tx(&uarte_0, &tx, 1);
+#if !defined(USE_TWIM_1)
+		nrfx_uarte_tx(&uarte_1, &tx, 1);
+#endif
 	}
 }

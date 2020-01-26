@@ -1,5 +1,6 @@
 /**
  * Copyright (c) 2017 - 2019, Nordic Semiconductor ASA
+ * Copyright (c) 2020, Derald D. Woods <woods.technical@gmail.com>
  *
  * All rights reserved.
  *
@@ -61,33 +62,8 @@ extern "C" {
 #define LED_3          LED2_G
 #define LED_4          LED2_B
 
-#define LEDS_ACTIVE_STATE 0
-
-#define LEDS_LIST { LED_1, LED_2, LED_3, LED_4 }
-
-#define LEDS_INV_MASK  LEDS_MASK
-
-#define BSP_LED_0      LED_1
-#define BSP_LED_1      LED_2
-#define BSP_LED_2      LED_3
-#define BSP_LED_3      LED_4
-
-// There is only one button for the application
-// as the second button is used for a RESET.
-#define BUTTONS_NUMBER 1
-
 #define BUTTON_1       NRF_GPIO_PIN_MAP(1,6)
 #define BUTTON_PULL    NRF_GPIO_PIN_PULLUP
-
-#define BUTTONS_ACTIVE_STATE 0
-
-#define BUTTONS_LIST { BUTTON_1 }
-
-#define BSP_BUTTON_0   BUTTON_1
-
-#define BSP_SELF_PINRESET_PIN NRF_GPIO_PIN_MAP(0,19)
-
-#define HWFC           true
 
 // DEFAULT PIN ASSIGNMENTS
 
@@ -95,6 +71,18 @@ extern "C" {
 #define UARTE_0_TX      24 // P0.24
 #define UARTE_0_RX_PIN  NRF_GPIO_PIN_MAP(0, UARTE_0_RX)
 #define UARTE_0_TX_PIN  NRF_GPIO_PIN_MAP(0, UARTE_0_TX)
+
+#if defined(USE_TWIM_1)
+#define TWIM_1_SCL      26 // P0.26
+#define TWIM_1_SDA       4 // P0.04
+#define TWIM_1_SCL_PIN  NRF_GPIO_PIN_MAP(0, TWIM_1_SCL)
+#define TWIM_1_SDA_PIN  NRF_GPIO_PIN_MAP(0, TWIM_1_SDA)
+#else
+#define UARTE_1_RX      26 // P0.26
+#define UARTE_1_TX       4 // P0.04
+#define UARTE_1_RX_PIN  NRF_GPIO_PIN_MAP(0, UARTE_1_RX)
+#define UARTE_1_TX_PIN  NRF_GPIO_PIN_MAP(0, UARTE_1_TX)
+#endif
 
 #define SPIM_0_MISO      13 // P0.13
 #define SPIM_0_MOSI      15 // P0.15
@@ -105,21 +93,19 @@ extern "C" {
 #define SPIM_0_SCLK_PIN  NRF_GPIO_PIN_MAP(0, SPIM_0_SCLK)
 #define SPIM_0_CS_PIN    NRF_GPIO_PIN_MAP(0, SPIM_0_CS)
 
-#define TWIM_1_SCL       0 // P1.00
-#define TWIM_1_SDA      15 // P1.15
-#define TWIM_1_SCL_PIN  NRF_GPIO_PIN_MAP(1, TWIM_1_SCL)
-#define TWIM_1_SDA_PIN  NRF_GPIO_PIN_MAP(1, TWIM_1_SDA)
-
 // low frequency I/O
+
 #define GPIO_1    NRF_GPIO_PIN_MAP(0,  9) // input
 #define GPIO_2    NRF_GPIO_PIN_MAP(0, 10) // input
 #define GPIO_3    NRF_GPIO_PIN_MAP(1, 10) // output
 #define GPIO_4    NRF_GPIO_PIN_MAP(1, 13) // output
+#define GPIO_5    NRF_GPIO_PIN_MAP(1, 15) // output
 
-#define GPIO_PWM  NRF_GPIO_PIN_MAP(0, 31)
+#define GPIO_PWM  NRF_GPIO_PIN_MAP(1, 0)
 
 #define AIN_0  NRF_ADC_CONFIG_INPUT_0 // P0.02
 #define AIN_5  NRF_ADC_CONFIG_INPUT_5 // P0.29
+#define AIN_7  NRF_ADC_CONFIG_INPUT_7 // P0.31
 
 #ifdef __cplusplus
 }
