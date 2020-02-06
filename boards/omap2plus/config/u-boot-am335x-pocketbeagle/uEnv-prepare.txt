@@ -1,0 +1,1 @@
+uenv_prepare=echo Preparing custom environment ...;setenv fdtfile am335x-pocketbeagle.dtb
