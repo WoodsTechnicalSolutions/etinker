@@ -103,9 +103,10 @@ extern "C" {
 
 #define GPIO_PWM  NRF_GPIO_PIN_MAP(1, 0)
 
-#define AIN_0  NRF_ADC_CONFIG_INPUT_0 // P0.02
-#define AIN_5  NRF_ADC_CONFIG_INPUT_5 // P0.29
-#define AIN_7  NRF_ADC_CONFIG_INPUT_7 // P0.31
+#define AIN_0    NRF_SAADC_INPUT_AIN0 // P0.02
+#define AIN_5    NRF_SAADC_INPUT_AIN5 // P0.29
+#define AIN_7    NRF_SAADC_INPUT_AIN7 // P0.31
+#define AIN_VDD  NRF_SAADC_INPUT_VDD  // VDD
 
 #ifdef __cplusplus
 }

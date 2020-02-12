@@ -5,13 +5,18 @@
 #include <stddef.h>
 #include <ctype.h>
 
+#include "nrfx_systick.h"
 #include "nrfx_gpiote.h"
+#include "nrfx_uarte.h"
+#if defined(USE_SPIM_0)
 #include "nrfx_spim.h"
+#endif
 #if defined(USE_TWIM_1)
 #include "nrfx_twim.h"
 #endif
-#include "nrfx_systick.h"
-#include "nrfx_uarte.h"
+#if defined(USE_SAADC)
+#include "nrfx_saadc.h"
+#endif
 
 #include "boards.h"
 
@@ -110,6 +115,20 @@ int main(void)
 		56, 57, 97, 98, 99, 100, 101, 102
 	};
 #endif
+#if defined(USE_SAADC)
+	nrf_saadc_value_t saadc_value[4] = { 0 };
+	uint32_t saadc_mask = 0xf;
+	nrfx_saadc_channel_t saadc[] = {
+		NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_0, 0),
+		NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_5, 1),
+		NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_7, 2),
+		NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_VDD, 3),
+	};
+
+	nrfx_saadc_init(NRFX_SAADC_DEFAULT_CONFIG_IRQ_PRIORITY);
+	nrfx_saadc_channels_config(saadc, sizeof(saadc) / sizeof(saadc[0]));
+	nrfx_saadc_offset_calibrate(NULL);
+#endif
 
 	gpio_init();
 
@@ -117,7 +136,7 @@ int main(void)
 
 	syscalls_init(&uarte_0, &uarte_0_config);
 
-	printf("Starting ...\r\n");
+	printf("\r\nStarting ...\r\n");
 
 #if defined(USE_TWIM_1)
 	err = nrfx_twim_init(&twim_1, &twim_1_config, NULL, NULL);
@@ -180,7 +199,7 @@ int main(void)
 				continue;
 			while (nrfx_twim_is_busy(&twim_1));
 			if (data)
-				fprintf(stderr, "I2C device @ 0x%02x [0x%02x]\r\n", i, data);
+				fprintf(stderr, "\rI2C device @ 0x%02x [0x%02x]", i, data);
 		}
 #endif
 
@@ -196,10 +215,18 @@ int main(void)
 			nrfx_uarte_tx(&uarte_1, &spim_0_tx[i], 1);
 #endif
 		}
-		printf("\r\n");
 #if !defined(USE_TWIM_1)
 		nrfx_uarte_tx(&uarte_1, tx, sizeof(tx));
 #endif
-#endif // USE_SPI_0
+#endif
+#if defined(USE_SAADC)
+		nrfx_saadc_simple_mode_set(saadc_mask, NRF_SAADC_RESOLUTION_12BIT,
+				NRF_SAADC_OVERSAMPLE_DISABLED, NULL);
+		nrfx_saadc_buffer_set(saadc_value,
+				sizeof(saadc_value) / sizeof(saadc_value[0]));
+		nrfx_saadc_mode_trigger();
+		fprintf(stderr, "\r0x%02x,0x%02x,0x%02x,0x%02x",
+			saadc_value[0], saadc_value[1], saadc_value[2], saadc_value[3]);
+#endif
 	}
 }
