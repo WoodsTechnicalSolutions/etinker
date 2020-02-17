@@ -35,26 +35,28 @@ static void gpio_init(void)
 	 * If nRF52 USB Dongle is powered from USB (high voltage mode),
 	 * GPIO output voltage is set to 1.8 V by default, which is not
 	 * enough to turn on green and blue LEDs. Therefore, GPIO voltage
-	 * needs to be increased to 3.0 V by configuring the UICR register.
+	 * needs to be increased to 3.3 V by configuring the UICR register.
 	 */
 	if (NRF_POWER->MAINREGSTATUS &
 			(POWER_MAINREGSTATUS_MAINREGSTATUS_High <<
 			 POWER_MAINREGSTATUS_MAINREGSTATUS_Pos)) {
-		// setup 3.0V below
+		printf("%s: High Voltage Mode detected\r\n", __func__);
 	} else {
+		printf("%s: VDD == VDDH\r\n", __func__);
 		goto gpio_config;
 	}
 
 	if ((NRF_UICR->REGOUT0 & UICR_REGOUT0_VOUT_Msk) ==
 			(UICR_REGOUT0_VOUT_DEFAULT << UICR_REGOUT0_VOUT_Pos)) {
 
+		printf("%s: Adjusting I/O Voltage to 3.3 V\r\n", __func__);
+
 		NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Wen;
 
 		while (NRF_NVMC->READY == NVMC_READY_READY_Busy);
 
-		NRF_UICR->REGOUT0 =
-			(NRF_UICR->REGOUT0 & ~((uint32_t)UICR_REGOUT0_VOUT_Msk)) |
-			(UICR_REGOUT0_VOUT_3V0 << UICR_REGOUT0_VOUT_Pos);
+		NRF_UICR->REGOUT0 = (NRF_UICR->REGOUT0 & ~((uint32_t)UICR_REGOUT0_VOUT_Msk));
+		NRF_UICR->REGOUT0 |= (UICR_REGOUT0_VOUT_3V3 << UICR_REGOUT0_VOUT_Pos);
 
 		NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Ren;
 
@@ -130,13 +132,13 @@ int main(void)
 	nrfx_saadc_offset_calibrate(NULL);
 #endif
 
-	gpio_init();
-
 	nrfx_systick_init();
 
 	syscalls_init(&uarte_0, &uarte_0_config);
 
 	printf("\r\nStarting ...\r\n");
+
+	gpio_init();
 
 #if defined(USE_TWIM_1)
 	err = nrfx_twim_init(&twim_1, &twim_1_config, NULL, NULL);
