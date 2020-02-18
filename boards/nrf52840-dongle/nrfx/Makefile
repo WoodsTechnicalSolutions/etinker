@@ -91,6 +91,7 @@ LDLIBS += $(ET_LDLIBS)
 SOURCES = $(shell find src/ -name "*.c" -print 2> /dev/null)
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_gpiote.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_pwm.c
+SOURCES += $(NRFX_DIR)/drivers/src/nrfx_qspi.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_saadc.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_spim.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_systick.c

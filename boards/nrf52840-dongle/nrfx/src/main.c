@@ -17,6 +17,12 @@
 #if defined(USE_SAADC)
 #include "nrfx_saadc.h"
 #endif
+#if defined(USE_QSPI)
+#include "nrfx_qspi.h"
+#define QSPI_STD_CMD_WRSR   0x01
+#define QSPI_STD_CMD_RSTEN  0x66
+#define QSPI_STD_CMD_RST    0x99
+#endif
 
 #include "boards.h"
 
@@ -80,12 +86,13 @@ gpio_config:
 int main(void)
 {
 	nrfx_err_t err;
-#if defined(USE_SPIM_0) || defined(USE_TWIM_1)
-	uint8_t i;
-#endif
 	nrfx_uarte_t uarte_0 = NRFX_UARTE_INSTANCE(0);
 	nrfx_uarte_config_t uarte_0_config = NRFX_UARTE_DEFAULT_CONFIG(
 						UARTE_0_TX_PIN, UARTE_0_RX_PIN);
+#if !defined(USE_QSPI)
+#if defined(USE_SPIM_0) || defined(USE_TWIM_1)
+	uint8_t i;
+#endif
 #if defined(USE_TWIM_1)
 	nrfx_twim_t twim_1 = NRFX_TWIM_INSTANCE(1);
 	nrfx_twim_config_t twim_1_config = NRFX_TWIM_DEFAULT_CONFIG(
@@ -117,6 +124,7 @@ int main(void)
 		56, 57, 97, 98, 99, 100, 101, 102
 	};
 #endif
+#endif // !USE_QSPI
 #if defined(USE_SAADC)
 	nrf_saadc_value_t saadc_value[4] = { 0 };
 	uint32_t saadc_mask = 0xf;
@@ -131,6 +139,15 @@ int main(void)
 	nrfx_saadc_channels_config(saadc, sizeof(saadc) / sizeof(saadc[0]));
 	nrfx_saadc_offset_calibrate(NULL);
 #endif
+#if defined(USE_QSPI)
+	uint8_t qspi_data = 0x40;
+	nrfx_qspi_config_t qspi = NRFX_QSPI_DEFAULT_CONFIG(
+						QSPI_SCLK_PIN, QSPI_CS_PIN,
+						QSPI_IO_0_PIN, QSPI_IO_1_PIN,
+						QSPI_IO_2_PIN, QSPI_IO_3_PIN);
+	nrf_qspi_cinstr_conf_t cinstr_cfg =
+		NRFX_QSPI_DEFAULT_CINSTR(QSPI_STD_CMD_RSTEN, NRF_QSPI_CINSTR_LEN_1B);
+#endif
 
 	nrfx_systick_init();
 
@@ -140,6 +157,64 @@ int main(void)
 
 	gpio_init();
 
+#if defined(USE_QSPI)
+	err = nrfx_qspi_init(&qspi, NULL, NULL);
+	if (err != NRFX_SUCCESS) {
+		printf("error QSPI init\r\n");
+		nrfx_gpiote_out_clear(LED2_G);
+		nrfx_gpiote_out_clear(LED2_B);
+		nrfx_gpiote_out_clear(LED1_G);
+		while (true) {
+			nrfx_systick_delay_ms(3000);
+			nrfx_gpiote_out_toggle(LED2_R);
+		}
+	}
+	// Send reset enable
+	err = nrfx_qspi_cinstr_xfer(&cinstr_cfg, NULL, NULL);
+	if (err != NRFX_SUCCESS) {
+		printf("error QSPI enable\r\n");
+		nrfx_gpiote_out_clear(LED2_G);
+		nrfx_gpiote_out_clear(LED2_B);
+		nrfx_gpiote_out_clear(LED1_G);
+		while (true) {
+			nrfx_systick_delay_ms(1000);
+			nrfx_gpiote_out_toggle(LED2_R);
+		}
+	}
+	// Send reset command
+	cinstr_cfg.opcode = QSPI_STD_CMD_RST;
+	err = nrfx_qspi_cinstr_xfer(&cinstr_cfg, NULL, NULL);
+	if (err != NRFX_SUCCESS) {
+		printf("error QSPI reset\r\n");
+		nrfx_gpiote_out_clear(LED2_G);
+		nrfx_gpiote_out_clear(LED2_B);
+		nrfx_gpiote_out_clear(LED1_G);
+		while (true) {
+			nrfx_systick_delay_ms(500);
+			nrfx_gpiote_out_toggle(LED2_R);
+		}
+	}
+	// Switch to qspi mode
+	cinstr_cfg.opcode = QSPI_STD_CMD_WRSR;
+	cinstr_cfg.length = NRF_QSPI_CINSTR_LEN_2B;
+	err = nrfx_qspi_cinstr_xfer(&cinstr_cfg, &qspi_data, NULL);
+	if (err != NRFX_SUCCESS) {
+		printf("error QSPI mode set\r\n");
+		nrfx_gpiote_out_clear(LED2_G);
+		nrfx_gpiote_out_clear(LED2_B);
+		nrfx_gpiote_out_clear(LED1_G);
+		while (true) {
+			nrfx_systick_delay_ms(100);
+			nrfx_gpiote_out_toggle(LED2_R);
+		}
+	}
+	for (uint8_t o = 0; o < 16; o++) {
+		uint8_t data;
+		nrfx_qspi_read(&data, 1, o);
+		printf("%02x ", data);
+	}
+	printf("\r\n");
+#else // !USE_QSPI
 #if defined(USE_TWIM_1)
 	err = nrfx_twim_init(&twim_1, &twim_1_config, NULL, NULL);
 #else
@@ -170,6 +245,7 @@ int main(void)
 		}
 	}
 #endif
+#endif // USE_QSPI
 
 	nrfx_gpiote_out_toggle(LED1_G);
 
@@ -192,6 +268,7 @@ int main(void)
 		nrfx_gpiote_out_clear(LED2_G);
 		nrfx_gpiote_out_set(LED2_B);
 
+#if !defined(USE_QSPI)
 #if defined(USE_TWIM_1)
 		for (i = 0; i < 128; i++) {
 			uint8_t data = 0;
@@ -230,5 +307,6 @@ int main(void)
 		fprintf(stderr, "\r0x%02x,0x%02x,0x%02x,0x%02x",
 			saadc_value[0], saadc_value[1], saadc_value[2], saadc_value[3]);
 #endif
+#endif // !USE_QSPI
 	}
 }

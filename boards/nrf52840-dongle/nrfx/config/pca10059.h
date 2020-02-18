@@ -72,18 +72,43 @@ extern "C" {
 #define UARTE_0_RX_PIN  NRF_GPIO_PIN_MAP(0, UARTE_0_RX)
 #define UARTE_0_TX_PIN  NRF_GPIO_PIN_MAP(0, UARTE_0_TX)
 
+#if defined(USE_QSPI)
+#define QSPI_IO_2       26 // P0.26
+#define QSPI_IO_3        4 // P0.04
+#define QSPI_IO_2_PIN   NRF_GPIO_PIN_MAP(0, QSPI_IO_2)
+#define QSPI_IO_3_PIN   NRF_GPIO_PIN_MAP(0, QSPI_IO_3)
+#define QSPI_WP         QSPI_IO_2
+#define QSPI_HOLD       QSPI_IO_3
+#define QSPI_WP_PIN     QSPI_IO_2_PIN
+#define QSPI_HOLD_PIN   QSPI_IO_3_PIN
+#else // !USE_QSPI
 #if defined(USE_TWIM_1)
 #define TWIM_1_SCL      26 // P0.26
 #define TWIM_1_SDA       4 // P0.04
 #define TWIM_1_SCL_PIN  NRF_GPIO_PIN_MAP(0, TWIM_1_SCL)
 #define TWIM_1_SDA_PIN  NRF_GPIO_PIN_MAP(0, TWIM_1_SDA)
-#else
+#else // !USE_TWIM_1
 #define UARTE_1_RX      26 // P0.26
 #define UARTE_1_TX       4 // P0.04
 #define UARTE_1_RX_PIN  NRF_GPIO_PIN_MAP(0, UARTE_1_RX)
 #define UARTE_1_TX_PIN  NRF_GPIO_PIN_MAP(0, UARTE_1_TX)
-#endif
+#endif // USE_TWIM_1
+#endif // USE_QSPI
 
+#if defined(USE_QSPI)
+#define QSPI_IO_1        13 // P0.13
+#define QSPI_IO_0        15 // P0.15
+#define QSPI_SCLK        17 // P0.17
+#define QSPI_CS          20 // P0.20
+#define QSPI_IO_1_PIN  NRF_GPIO_PIN_MAP(0, QSPI_IO_1)
+#define QSPI_IO_0_PIN  NRF_GPIO_PIN_MAP(0, QSPI_IO_0)
+#define QSPI_SCLK_PIN  NRF_GPIO_PIN_MAP(0, QSPI_SCLK)
+#define QSPI_CS_PIN    NRF_GPIO_PIN_MAP(0, QSPI_CS)
+#define QSPI_DO          QSPI_IO_1
+#define QSPI_DI          QSPI_IO_0
+#define QSPI_DO_PIN      QSPI_IO_1_PIN
+#define QSPI_DI_PIN      QSPI_IO_0_PIN
+#else // !USE_QSPI
 #define SPIM_0_MISO      13 // P0.13
 #define SPIM_0_MOSI      15 // P0.15
 #define SPIM_0_SCLK      17 // P0.17
@@ -92,6 +117,7 @@ extern "C" {
 #define SPIM_0_MOSI_PIN  NRF_GPIO_PIN_MAP(0, SPIM_0_MOSI)
 #define SPIM_0_SCLK_PIN  NRF_GPIO_PIN_MAP(0, SPIM_0_SCLK)
 #define SPIM_0_CS_PIN    NRF_GPIO_PIN_MAP(0, SPIM_0_CS)
+#endif // USE_QSPI
 
 // low frequency I/O
 
