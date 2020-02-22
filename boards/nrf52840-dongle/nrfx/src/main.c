@@ -34,9 +34,9 @@ static void gpio_init(void)
 	if (NRF_POWER->MAINREGSTATUS &
 			(POWER_MAINREGSTATUS_MAINREGSTATUS_High <<
 			 POWER_MAINREGSTATUS_MAINREGSTATUS_Pos)) {
-		printf("%s: High Voltage Mode detected\r\n", __func__);
+		printf("\r\nHigh Voltage Mode detected\r\n");
 	} else {
-		printf("%s: VDD == VDDH\r\n", __func__);
+		printf("\r\nVDD == VDDH\r\n");
 		goto gpio_config;
 	}
 
@@ -45,14 +45,14 @@ static void gpio_init(void)
 
 		printf("%s: Adjusting I/O Voltage to 3.3 V\r\n", __func__);
 
-		NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Wen;
+		NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Wen << NVMC_CONFIG_WEN_Pos;
 
 		while (NRF_NVMC->READY == NVMC_READY_READY_Busy);
 
 		NRF_UICR->REGOUT0 = (NRF_UICR->REGOUT0 & ~((uint32_t)UICR_REGOUT0_VOUT_Msk));
 		NRF_UICR->REGOUT0 |= (UICR_REGOUT0_VOUT_3V3 << UICR_REGOUT0_VOUT_Pos);
 
-		NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Ren;
+		NRF_NVMC->CONFIG = NVMC_CONFIG_WEN_Ren << NVMC_CONFIG_WEN_Pos;
 
 		while (NRF_NVMC->READY == NVMC_READY_READY_Busy);
 
@@ -73,11 +73,11 @@ gpio_config:
 
 int main(void)
 {
+	uint8_t i;
 	nrfx_err_t err;
 	nrfx_uarte_t uarte_0 = NRFX_UARTE_INSTANCE(0);
 	nrfx_uarte_config_t uarte_0_config = NRFX_UARTE_DEFAULT_CONFIG(
 						UARTE_0_TX_PIN, UARTE_0_RX_PIN);
-	uint8_t i;
 	nrfx_twim_t twim_1 = NRFX_TWIM_INSTANCE(1);
 	nrfx_twim_config_t twim_1_config = NRFX_TWIM_DEFAULT_CONFIG(
 						TWIM_1_SCL_PIN, TWIM_1_SDA_PIN);
@@ -113,10 +113,6 @@ int main(void)
 		NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_VDD, 3),
 	};
 
-	nrfx_saadc_init(NRFX_SAADC_DEFAULT_CONFIG_IRQ_PRIORITY);
-	nrfx_saadc_channels_config(saadc, sizeof(saadc) / sizeof(saadc[0]));
-	nrfx_saadc_offset_calibrate(NULL);
-
 	nrfx_systick_init();
 
 	syscalls_init(&uarte_0, &uarte_0_config);
@@ -125,8 +121,13 @@ int main(void)
 
 	gpio_init();
 
+	nrfx_saadc_init(NRFX_SAADC_DEFAULT_CONFIG_IRQ_PRIORITY);
+	nrfx_saadc_channels_config(saadc, sizeof(saadc) / sizeof(saadc[0]));
+	nrfx_saadc_offset_calibrate(NULL);
+
 	err = nrfx_twim_init(&twim_1, &twim_1_config, NULL, NULL);
 	if (err != NRFX_SUCCESS) {
+		printf("error nrfx_twim_init\r\n");
 		nrfx_gpiote_out_clear(LED2_G);
 		nrfx_gpiote_out_clear(LED2_B);
 		nrfx_gpiote_out_clear(LED1_G);
@@ -140,6 +141,7 @@ int main(void)
 
 	err = nrfx_uarte_init(&uarte_1, &uarte_1_config, NULL);
 	if (err != NRFX_SUCCESS) {
+		printf("error nrfx_uarte_init\r\n");
 		nrfx_gpiote_out_clear(LED2_G);
 		nrfx_gpiote_out_clear(LED2_B);
 		nrfx_gpiote_out_clear(LED1_G);
@@ -151,6 +153,7 @@ int main(void)
 
 	err = nrfx_spim_init(&spim_0, &spim_0_config, NULL, NULL);
 	if (err != NRFX_SUCCESS) {
+		printf("error nrfx_spim_init\r\n");
 		nrfx_gpiote_out_clear(LED2_G);
 		nrfx_gpiote_out_clear(LED2_B);
 		nrfx_gpiote_out_clear(LED1_G);
@@ -192,12 +195,12 @@ int main(void)
 			if (err != NRFX_SUCCESS)
 				continue;
 			while (nrfx_twim_is_busy(&twim_1));
-			fprintf(stderr, "\rI2C device @ 0x%02x [0x%02x%02x]",
+			fprintf(stderr, " I2C: device @ 0x%02x [0x%02x%02x]\r\n",
 							i, data[1], data[0]);
 		}
-		fprintf(stderr, "\r\n");
 
 		// send data on SPIM 0, UARTE 1, and UARTE 0 [console]
+		fprintf(stderr, " SPI: ");
 		for (i = 0; i < sizeof(spim_0_tx); i++) {
 			spim_0_xfer.p_rx_buffer = NULL;
 			spim_0_xfer.rx_length = 0;
@@ -220,7 +223,7 @@ int main(void)
 				sizeof(saadc_value) / sizeof(saadc_value[0]));
 		nrfx_saadc_mode_trigger();
 		fprintf(stderr,
-			"ADC [0:0x%03x],[5:0x%03x],[7:0x%03x],[VDD:0x%03x]\r\n",
+			" ADC: [0:0x%03x],[5:0x%03x],[7:0x%03x],[VDD:0x%03x]\r\n",
 			saadc_value[0], saadc_value[1],
 			saadc_value[2], saadc_value[3]);
 	}
