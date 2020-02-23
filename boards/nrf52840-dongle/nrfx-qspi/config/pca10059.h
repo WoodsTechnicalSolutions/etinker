@@ -79,8 +79,8 @@ extern "C" {
 
 #define QSPI_CS        13 // P0.13
 #define QSPI_CLK       15 // P0.15
-#define QSPI_IO_0      17 // P0.17 [MOSI]
-#define QSPI_IO_1      20 // P0.20 [MISO]
+#define QSPI_IO_0      17 // P0.17 [MOSI/DI/SI]
+#define QSPI_IO_1      20 // P0.20 [MISO/DO/SO]
 #define QSPI_IO_2      22 // P0.22 [/WP]
 #define QSPI_IO_3      24 // P0.24 [/HOLD]
 #define QSPI_CS_PIN    NRF_GPIO_PIN_MAP(0, QSPI_CS)
