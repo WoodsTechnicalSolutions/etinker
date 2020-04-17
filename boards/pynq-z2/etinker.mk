@@ -31,7 +31,7 @@ include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/etinker.mk
 
 ET_BOARD_TOOLCHAIN_TREE ?= crosstool-ng
 ET_BOARD_KERNEL_TREE ?= linux-xlnx
-ET_BOARD_BOOTLOADER_TREE ?= u-boot-xlnx-$(ET_BOARD)
+ET_BOARD_BOOTLOADER_TREE ?= u-boot-$(ET_BOARD)
 ET_BOARD_ROOTFS_TREE ?= buildroot
 
 ET_BOARD_HOSTNAME ?= $(ET_BOARD)
@@ -43,4 +43,4 @@ ET_BOARD_KERNEL_LOADADDR ?= 0x02080000
 ET_BOARD_KERNEL_DEFCONFIG ?= xilinx_zynq_defconfig
 
 ET_BOARD_BOOTLOADER_SPL_BINARY ?= boot.bin
-ET_BOARD_BOOTLOADER_DEFCONFIG ?= zynq_zc702_defconfig
+ET_BOARD_BOOTLOADER_DEFCONFIG ?= xilinx_zynq_virt_defconfig

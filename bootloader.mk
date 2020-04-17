@@ -15,14 +15,13 @@ endif
 export ET_BOOTLOADER_TREE := $(ET_BOARD_BOOTLOADER_TREE)
 export ET_BOOTLOADER_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_BOOTLOADER_TREE)
 export ET_BOOTLOADER_DEFCONFIG := $(ET_BOARD_BOOTLOADER_DEFCONFIG)
-export ET_BOOTLOADER_CACHED_VERSION = $(shell grep -Po 'bootloader-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
+export ET_BOOTLOADER_CACHED_VERSION := $(shell grep -Po 'bootloader-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
 # [start] bootloader version magic
 ET_BOOTLOADER_VERSION := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v)
 ET_BOOTLOADER_LOCALVERSION := -$(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | cut -d '-' -f 2-5)
 ifeq ($(shell echo $(ET_BOOTLOADER_LOCALVERSION) | sed s,[0-9].*,,),-rc)
 # RC version (i.e. v2018.09-rc1)
 rcversion := $(shell printf "%s" $(ET_BOOTLOADER_LOCALVERSION) | cut -d '-' -f 2)
-ET_BOOTLOADER_VERSION := $(ET_BOOTLOADER_VERSION)
 rclocalversion := -$(shell printf "%s" $(ET_BOOTLOADER_LOCALVERSION) | cut -d '-' -f 3-5)
 ifeq ($(ET_BOOTLOADER_LOCALVERSION),-$(rcversion)$(rclocalversion))
 ET_BOOTLOADER_LOCALVERSION := $(rclocalversion)
@@ -37,11 +36,6 @@ ET_BOOTLOADER_LOCALVERSION :=
 endif
 ifeq ($(ET_BOOTLOADER_LOCALVERSION),-v$(ET_BOOTLOADER_VERSION))
 # exact tag in series (i.e. v2018.09)
-ET_BOOTLOADER_LOCALVERSION :=
-endif
-ifeq ($(ET_BOARD_TYPE),zynq)
-# Xilinx zynq U-Boot, just use cached version
-ET_BOOTLOADER_VERSION := $(ET_BOOTLOADER_CACHED_VERSION)
 ET_BOOTLOADER_LOCALVERSION :=
 endif
 export ET_BOOTLOADER_VERSION
@@ -65,7 +59,10 @@ export ET_BOOTLOADER_DTB := $(ET_BOOTLOADER_DIR)/boot/u-boot-dtb.img
 export ET_BOOTLOADER_IMAGE := $(ET_BOOTLOADER_DIR)/boot/u-boot.img
 export ET_BOOTLOADER_TARGET_FINAL ?= $(ET_BOOTLOADER_IMAGE)
 
-export dtb-y += $(ET_BOARD_KERNEL_DT).dtb
+export DEVICE_TREE := $(ET_BOARD_KERNEL_DT)
+ifeq ($(ET_BOARD_TYPE),zynq)
+DEVICE_TREE_MAKEFILE := -f $(ET_BOARD_DIR)/dts/Makefile
+endif
 
 define bootloader-version
 	@printf "ET_BOOTLOADER_VERSION: \033[0;33m[$(ET_BOOTLOADER_CACHED_VERSION)]\033[0m $(ET_BOOTLOADER_VERSION)\n"
@@ -107,8 +104,11 @@ define bootloader-targets
 		if [ -f $(ET_BOOTLOADER_CONFIG) ]; then \
 			rsync $(ET_BOOTLOADER_CONFIG) $(ET_BOOTLOADER_BUILD_CONFIG); \
 		else \
-			$(MAKE) --no-print-directory -C $(ET_BOOTLOADER_SOFTWARE_DIR) O=$(ET_BOOTLOADER_BUILD_DIR) \
-				$(ET_CROSS_PARAMS) $(ET_BOARD_BOOTLOADER_DEFCONFIG); \
+			$(MAKE) --no-print-directory \
+				$(ET_CROSS_PARAMS) \
+				O=$(ET_BOOTLOADER_BUILD_DIR) \
+				-C $(ET_BOOTLOADER_SOFTWARE_DIR) \
+				$(ET_BOARD_BOOTLOADER_DEFCONFIG); \
 		fi; \
 	fi
 	$(call bootloader-build)
@@ -126,9 +126,15 @@ define bootloader-build
 			;; \
 		esac; \
 	fi
-	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_BOOTLOADER_SOFTWARE_DIR) O=$(ET_BOOTLOADER_BUILD_DIR) \
-		$(ET_CROSS_PARAMS) $1 \
-		LOCALVERSION=$(ET_BOOTLOADER_LOCALVERSION)
+	(cd $(ET_BOOTLOADER_SOFTWARE_DIR) && \
+		$(MAKE) --no-print-directory -j $(ET_CPUS) \
+			$(ET_CROSS_PARAMS) \
+			DEVICE_TREE=$(DEVICE_TREE) \
+			LOCALVERSION=$(ET_BOOTLOADER_LOCALVERSION) \
+			O=$(ET_BOOTLOADER_BUILD_DIR) \
+			$(DEVICE_TREE_MAKEFILE) \
+			-f Makefile \
+			$1)
 	@if [ -n "$1" ]; then \
 		if [ -n "$(shell printf "%s" $1 | grep config)" ]; then \
 			if [ -f $(ET_BOOTLOADER_BUILD_CONFIG) ]; then \
