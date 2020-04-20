@@ -59,7 +59,12 @@ if [ -f /usr/bin/apt ]; then
 		libglib2.0-dev \
 		libgpiod-dev \
 		libgtk2.0-dev \
+		libinput-dev \
 		libjpeg-dev \
+		liblua5.1-dev \
+		liblua5.2-dev \
+		liblua5.3-dev \
+		libluajit-5.1-dev \
 		libncurses-dev \
 		libreadline-dev \
 		libsdl1.2-dev \
@@ -72,6 +77,10 @@ if [ -f /usr/bin/apt ]; then
 		libx11-dev \
 		libxext-dev \
 		libxml2-utils \
+		lua5.1 \
+		lua5.2 \
+		lua5.3 \
+		luajit \
 		lrzsz \
 		lzma \
 		lzop \
