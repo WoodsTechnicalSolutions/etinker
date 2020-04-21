@@ -27,9 +27,9 @@ ET_KERNEL_LOCALVERSION :=
 endif
 ifeq ($(ET_KERNEL_VERSION),next)
 # linux-next
-kversion := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && make kernelversion | tr -d \\n)
-klocalversion := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null)
-ET_KERNEL_VERSION := $(kversion)-$(klocalversion)
+nextversion := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && make kernelversion | tr -d \\n)
+nextlocalversion := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null)
+ET_KERNEL_VERSION := $(nextversion)-$(nextlocalversion)
 ET_KERNEL_LOCALVERSION :=
 endif
 ifeq ($(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,[0-9].*,,),-rc)
@@ -53,9 +53,9 @@ ifeq ($(shell printf "%s" $(ET_KERNEL_VERSION)|cut -d '.' -f 3),)
 ET_KERNEL_VERSION := $(ET_KERNEL_VERSION).0
 endif
 ifeq ($(ET_BOARD_TYPE),zynq)
-# Xilinx zynq kernel, just use cached version
-ET_KERNEL_VERSION := $(ET_KERNEL_CACHED_VERSION)
-ET_KERNEL_LOCALVERSION :=
+# Xilinx zynq kernel, just use the tree as done with next
+ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && make kernelversion | tr -d \\n)
+ET_KERNEL_LOCALVERSION := -xilinx
 endif
 export ET_KERNEL_VERSION
 export ET_KERNEL_LOCALVERSION
