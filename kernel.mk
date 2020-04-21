@@ -118,8 +118,10 @@ define kernel-targets
 		if [ -f $(ET_KERNEL_CONFIG) ]; then \
 			rsync $(ET_KERNEL_CONFIG) $(ET_KERNEL_BUILD_CONFIG); \
 		else \
-			$(MAKE) --no-print-directory -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
-				$(ET_CROSS_PARAMS) $(ET_BOARD_KERNEL_DEFCONFIG); \
+			$(MAKE) --no-print-directory $(ET_CROSS_PARAMS) \
+				O=$(ET_KERNEL_BUILD_DIR) \
+				-C $(ET_KERNEL_SOFTWARE_DIR) \
+				$(ET_BOARD_KERNEL_DEFCONFIG); \
 		fi; \
 	fi
 	$(call kernel-build,zImage)
@@ -141,13 +143,14 @@ define kernel-build
 			;; \
 		esac; \
 	fi
-	$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_KERNEL_SOFTWARE_DIR) O=$(ET_KERNEL_BUILD_DIR) \
-		$(ET_CROSS_PARAMS) \
-		$1 \
-		LOADADDR=$(ET_KERNEL_LOADADDR) \
+	$(MAKE) --no-print-directory -j $(ET_CPUS) $(ET_CROSS_PARAMS) \
 		LOCALVERSION=$(ET_KERNEL_LOCALVERSION) \
+		LOADADDR=$(ET_KERNEL_LOADADDR) \
 		INSTALL_MOD_PATH=$(ET_KERNEL_DIR) \
-		INSTALL_HDR_PATH=$(ET_KERNEL_HEADERS_DIR)
+		INSTALL_HDR_PATH=$(ET_KERNEL_HEADERS_DIR) \
+		O=$(ET_KERNEL_BUILD_DIR) \
+		-C $(ET_KERNEL_SOFTWARE_DIR) \
+		$1
 	@case "$1" in \
 	zImage) \
 		if [ -f $(ET_KERNEL_BUILD_ZIMAGE) ]; then \
