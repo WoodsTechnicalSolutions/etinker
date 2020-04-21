@@ -178,7 +178,13 @@ define kernel-build
 		if [ -f $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$1 ]; then \
 			$(RM) $(ET_KERNEL_DIR)/boot/$1; \
 			cp -av $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$1 $(ET_KERNEL_DIR)/boot/; \
-		        cp -av $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$1 $(ET_KERNEL_DIR)/boot/devicetree.dtb; \
+			case "$(ET_BOARD_TYPE)" in \
+			zynq*) \
+		        	cp -av $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$1 $(ET_KERNEL_DIR)/boot/system.dtb; \
+				;; \
+			*) \
+				;; \
+			esac; \
 		else \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_DT).dtb FAILED! *****\n"; \
 			exit 2; \
