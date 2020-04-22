@@ -30,7 +30,7 @@ export ET_BOARD_TYPE := zynq
 include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/etinker.mk
 
 ET_BOARD_TOOLCHAIN_TREE ?= crosstool-ng
-ET_BOARD_KERNEL_TREE ?= linux-xlnx
+ET_BOARD_KERNEL_TREE ?= linux
 ET_BOARD_BOOTLOADER_TREE ?= u-boot-$(ET_BOARD)
 ET_BOARD_ROOTFS_TREE ?= buildroot
 
@@ -40,8 +40,8 @@ ET_BOARD_GETTY_PORT ?= ttyPS0
 ET_BOARD_KERNEL_DT ?= zynq-pynq-z2
 
 ET_BOARD_KERNEL_LOADADDR ?= 0x02080000
-ET_BOARD_KERNEL_DEFCONFIG ?= xilinx_zynq_defconfig
-ET_BOARD_KERNEL_DEFCONFIG_CACHED := et_$(subst -,_,$(ET_BOARD_TYPE))_defconfig
+ET_BOARD_KERNEL_DEFCONFIG ?= et_$(subst -,_,$(ET_BOARD_TYPE))_defconfig
+ET_BOARD_KERNEL_DEFCONFIG_CACHED := $(ET_BOARD_KERNEL_DEFCONFIG)
 
 ET_BOARD_BOOTLOADER_SPL_BINARY ?= boot.bin
 ET_BOARD_BOOTLOADER_DEFCONFIG ?= xilinx_zynq_virt_defconfig

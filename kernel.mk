@@ -18,6 +18,11 @@ export ET_KERNEL_LOADADDR := $(ET_BOARD_KERNEL_LOADADDR)
 export ET_KERNEL_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_KERNEL_TREE)
 export ET_KERNEL_HEADERS_DIR ?= $(ET_SYSROOT_DIR)/usr/include
 export ET_KERNEL_CACHED_VERSION := $(shell grep -Po 'kernel-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
+ifeq ($(ET_BOARD_KERNEL_DEFCONFIG_CACHED),)
+et_kernel_defconfig := $(ET_BOARD_KERNEL_DEFCONFIG)
+else
+et_kernel_defconfig := $(ET_BOARD_KERNEL_DEFCONFIG_CACHED)
+endif
 # [start] kernel version magic
 ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v | cut -d '-' -f 1)
 ET_KERNEL_LOCALVERSION := -$(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | cut -d '-' -f 2-5)
@@ -52,7 +57,7 @@ ifeq ($(shell printf "%s" $(ET_KERNEL_VERSION)|cut -d '.' -f 3),)
 # first in release series (i.e. v4.14)
 ET_KERNEL_VERSION := $(ET_KERNEL_VERSION).0
 endif
-ifeq ($(ET_BOARD_TYPE),zynq)
+ifeq ($(ET_BOARD),pynq-z2-xlnx)
 # Xilinx zynq kernel, just use the tree as done with next
 ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && make kernelversion | tr -d \\n)
 ET_KERNEL_LOCALVERSION := -xilinx
@@ -70,7 +75,7 @@ export ET_KERNEL_BUILD_UIMAGE := $(ET_KERNEL_BUILD_BOOT_DIR)/uImage
 export ET_KERNEL_BUILD_ZIMAGE := $(ET_KERNEL_BUILD_BOOT_DIR)/zImage
 export ET_KERNEL_DIR := $(ET_DIR)/kernel/$(ET_BOARD)/$(ET_CROSS_TUPLE)
 export ET_KERNEL_CONFIG := $(ET_CONFIG_DIR)/$(ET_KERNEL_TREE)/config
-export ET_KERNEL_DEFCONFIG := $(ET_CONFIG_DIR)/$(ET_KERNEL_TREE)/et_$(ET_BOARD_TYPE)_defconfig
+export ET_KERNEL_DEFCONFIG := $(ET_CONFIG_DIR)/$(ET_KERNEL_TREE)/$(et_kernel_defconfig)
 export ET_KERNEL_SYSMAP := $(ET_KERNEL_DIR)/boot/System.map
 export ET_KERNEL_DTB := $(ET_KERNEL_DIR)/boot/$(ET_KERNEL_DT).dtb
 export ET_KERNEL_UIMAGE := $(ET_KERNEL_DIR)/boot/uImage
@@ -79,12 +84,6 @@ export ET_KERNEL_MODULES := $(ET_KERNEL_DIR)/lib/modules/$(ET_KERNEL_VERSION)$(E
 export ET_KERNEL_TARGET_FINAL ?= $(ET_KERNEL_MODULES)
 
 export CT_LINUX_CUSTOM_LOCATION := ${ET_KERNEL_SOFTWARE_DIR}
-
-ifeq ($(ET_BOARD_KERNEL_DEFCONFIG_CACHED),)
-et_kernel_defconfig := $(ET_BOARD_KERNEL_DEFCONFIG)
-else
-et_kernel_defconfig := $(ET_BOARD_KERNEL_DEFCONFIG_CACHED)
-endif
 
 define kernel-version
 	@printf "ET_KERNEL_VERSION: \033[0;33m[$(ET_KERNEL_CACHED_VERSION)]\033[0m $(ET_KERNEL_VERSION)\n"
@@ -99,22 +98,25 @@ define kernel-depends
 	@case "$(ET_BOARD_TYPE)" in \
 	zynq*) \
 		if [ -d $(ET_BOARD_DIR)/fpga/sdk ]; then \
-			rsync -r $(ET_BOARD_DIR)/fpga/dts $(ET_BOARD_DIR)/; \
+			rsync -r $(ET_BOARD_DIR)/fpga/dts $(ET_BOARD_DIR)/ > /dev/null; \
 		else \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] FPGA BUILD IS MISSING! *****\n"; \
 			exit 2; \
-		fi \
+		fi; \
 		;; \
 	*) \
 		;; \
 	esac
 	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.dts* 2> /dev/null`" ]; then \
-		rsync -rP $(ET_BOARD_DIR)/dts/*.dts* \
-			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_ARCH)/boot/dts/; \
+		rsync -r $(ET_BOARD_DIR)/dts/*.dts* \
+			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_ARCH)/boot/dts/ > /dev/null; \
 	fi
 	@if [ -d $(ET_BOARD_DIR)/dts/linux ] && [ -n "`ls $(ET_BOARD_DIR)/dts/linux/*.dts* 2> /dev/null`" ]; then \
-		rsync -rP $(ET_BOARD_DIR)/dts/linux/*.dts* \
-			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_ARCH)/boot/dts/; \
+		rsync -r $(ET_BOARD_DIR)/dts/linux/*.dts* \
+			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_ARCH)/boot/dts/ > /dev/null; \
+	fi
+	@if [ -f $(ET_KERNEL_DEFCONFIG) ]; then \
+		rsync $(ET_KERNEL_DEFCONFIG) $(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_ARCH)/configs/ > /dev/null; \
 	fi
 endef
 
@@ -125,9 +127,6 @@ define kernel-targets
 		if [ -f $(ET_KERNEL_CONFIG) ]; then \
 			rsync $(ET_KERNEL_CONFIG) $(ET_KERNEL_BUILD_CONFIG); \
 		else \
-			if [ -f $(ET_KERNEL_DEFCONFIG) ] && [ -n "$(ET_BOARD_KERNEL_DEFCONFIG_CACHED)" ]; then \
-				rsync $(ET_KERNEL_DEFCONFIG) $(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_ARCH)/configs/$(et_kernel_defconfig); \
-			fi; \
 			$(MAKE) --no-print-directory $(ET_CROSS_PARAMS) \
 				O=$(ET_KERNEL_BUILD_DIR) \
 				-C $(ET_KERNEL_SOFTWARE_DIR) \
@@ -161,6 +160,7 @@ define kernel-build
 		O=$(ET_KERNEL_BUILD_DIR) \
 		-C $(ET_KERNEL_SOFTWARE_DIR) \
 		$1
+	@echo
 	@case "$1" in \
 	zImage) \
 		if [ -f $(ET_KERNEL_BUILD_ZIMAGE) ]; then \
