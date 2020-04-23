@@ -31,6 +31,10 @@ define cadence-ttc-pwm-version
 	@printf "ET_CADENCE_TTC_PWM_VERSION: \033[0;33m[$(ET_CADENCE_TTC_PWM_CACHED_VERSION)]\033[0m $(ET_CADENCE_TTC_PWM_VERSION)\n"
 endef
 
+define cadence-ttc-pwm-depends
+	@mkdir -p $(shell dirname $(ET_CADENCE_TTC_PWM_BUILD_DIR))
+endef
+
 define cadence-ttc-pwm-targets
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] cadence-ttc-pwm *****\n\n"
 	$(call cadence-ttc-pwm-config)
@@ -53,7 +57,7 @@ endef
 define cadence-ttc-pwm-config
 	$(call software-check,$(ET_CADENCE_TTC_PWM_TREE),cadence-ttc-pwm)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] cadence-ttc-pwm-config *****\n\n"
-	@mkdir -p $(shell dirname $(ET_CADENCE_TTC_PWM_BUILD_DIR))
+	$(call cadence-ttc-pwm-depends)
 	@if ! [ -d $(ET_CADENCE_TTC_PWM_BUILD_DIR) ]; then \
 		mkdir $(ET_CADENCE_TTC_PWM_BUILD_DIR); \
 		cp -a $(ET_CADENCE_TTC_PWM_SOFTWARE_DIR)/src/kernel/pwm-cadence.c $(ET_CADENCE_TTC_PWM_BUILD_DIR)/; \

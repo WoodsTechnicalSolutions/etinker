@@ -40,12 +40,12 @@ endef
 
 define wireless-regdb-targets
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] wireless-regdb *****\n\n"
-	$(call wireless-regdb-depends)
 	$(call wireless-regdb-build,all)
 endef
 
 define wireless-regdb-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call wireless-regdb-build 'make $1' *****\n\n"
+	$(call wireless-regdb-depends)
 	@if [ "$1" = "all" ]; then \
 		if ! [ -f $(ET_WIRELESS_REGDB_BUILD_X509_PEM) ]; then \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] wireless-regdb sforshee.x509.pem FAILED! *****\n"; \

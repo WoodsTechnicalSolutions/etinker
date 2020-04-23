@@ -35,13 +35,13 @@ endef
 
 define cryptodev-linux-targets
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] cryptodev-linux *****\n\n"
-	$(call cryptodev-linux-depends)
 	$(call cryptodev-linux-build,build)
 	$(call cryptodev-linux-build,modules_install)
 endef
 
 define cryptodev-linux-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call cryptodev-linux-build 'make $1' *****\n\n"
+	$(call cryptodev-linux-depends)
 	@$(MAKE) -C $(ET_CRYPTODEV_LINUX_BUILD_DIR) \
 		$(ET_CROSS_PARAMS) \
 		$1 \
