@@ -60,7 +60,7 @@ endif
 ifeq ($(ET_BOARD),pynq-z2-xlnx)
 # Xilinx zynq kernel, just use the tree as done with next
 ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && make kernelversion | tr -d \\n)
-ET_KERNEL_LOCALVERSION := -xilinx
+ET_KERNEL_LOCALVERSION := -$(ET_KERNEL_CACHED_VERSION)
 endif
 export ET_KERNEL_VERSION
 export ET_KERNEL_LOCALVERSION
@@ -190,7 +190,11 @@ define kernel-build
 			cp -av $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$1 $(ET_KERNEL_DIR)/boot/; \
 			case "$(ET_BOARD_TYPE)" in \
 			zynq*) \
-		        	cp -av $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$1 $(ET_KERNEL_DIR)/boot/system.dtb; \
+				if [ "$(ET_BOARD)" = "pynq-z2-xlnx" ]; then \
+					cp -av $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$1 $(ET_KERNEL_DIR)/boot/devicetree.dtb; \
+				else \
+					cp -av $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$1 $(ET_KERNEL_DIR)/boot/system.dtb; \
+				fi; \
 				;; \
 			*) \
 				;; \
