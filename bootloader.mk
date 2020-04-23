@@ -15,10 +15,10 @@ endif
 export ET_BOOTLOADER_TREE := $(ET_BOARD_BOOTLOADER_TREE)
 export ET_BOOTLOADER_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_BOOTLOADER_TREE)
 export ET_BOOTLOADER_CACHED_VERSION := $(shell grep -Po 'bootloader-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
-ifeq ($(ET_BOARD_BOOTLOADER_DEFCONFIG_CACHED),)
+ifeq ($(ET_BOARD_DEFCONFIG),)
 et_bootloader_defconfig := $(ET_BOARD_BOOTLOADER_DEFCONFIG)
 else
-et_bootloader_defconfig := $(ET_BOARD_BOOTLOADER_DEFCONFIG_CACHED)
+et_bootloader_defconfig := $(ET_BOARD_DEFCONFIG)
 endif
 # [start] bootloader version magic
 ET_BOOTLOADER_VERSION := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v)
@@ -121,7 +121,7 @@ define bootloader-targets
 			$(MAKE) --no-print-directory $(ET_CROSS_PARAMS) \
 				O=$(ET_BOOTLOADER_BUILD_DIR) \
 				-C $(ET_BOOTLOADER_SOFTWARE_DIR) \
-				$(et_board_bootloader_defconfig); \
+				$(et_bootloader_defconfig); \
 		fi; \
 	fi
 	$(call bootloader-build)

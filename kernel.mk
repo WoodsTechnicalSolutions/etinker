@@ -18,10 +18,10 @@ export ET_KERNEL_LOADADDR := $(ET_BOARD_KERNEL_LOADADDR)
 export ET_KERNEL_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_KERNEL_TREE)
 export ET_KERNEL_HEADERS_DIR ?= $(ET_SYSROOT_DIR)/usr/include
 export ET_KERNEL_CACHED_VERSION := $(shell grep -Po 'kernel-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
-ifeq ($(ET_BOARD_KERNEL_DEFCONFIG_CACHED),)
+ifeq ($(ET_BOARD_DEFCONFIG),)
 et_kernel_defconfig := $(ET_BOARD_KERNEL_DEFCONFIG)
 else
-et_kernel_defconfig := $(ET_BOARD_KERNEL_DEFCONFIG_CACHED)
+et_kernel_defconfig := $(ET_BOARD_DEFCONFIG)
 endif
 # [start] kernel version magic
 ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v | cut -d '-' -f 1)
