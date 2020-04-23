@@ -95,7 +95,7 @@ preferred disk layout:
 Partition | Type  | Size (MiB) | Label  | Mount Point
 ----------|-------|------------|--------|------------
 1         | fat16 | 256        | BOOT   | /media/user/BOOT
-2         | ext4  | <balance>  | rootfs | /media/user/rootfs
+2         | ext4  | remaining  | rootfs | /media/user/rootfs
 
 Makefile tooling and scripts expect this arrangement.
 
