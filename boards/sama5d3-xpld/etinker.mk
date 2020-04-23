@@ -42,6 +42,7 @@ ET_BOARD_KERNEL_DEFCONFIG_CACHED := et_$(subst -,_,$(ET_BOARD_TYPE))_defconfig
 
 ET_BOARD_BOOTLOADER_SPL_BINARY ?= boot.bin
 ET_BOARD_BOOTLOADER_DEFCONFIG ?= sama5d3_xplained_mmc_defconfig
+ET_BOARD_BOOTLOADER_DEFCONFIG_CACHED := et_$(subst -,_,$(ET_BOARD))_defconfig
 
 # final item built for the configured toolchain
 ET_TOOLCHAIN_TARGET_FINAL := \
