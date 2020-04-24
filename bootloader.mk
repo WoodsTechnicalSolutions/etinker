@@ -42,8 +42,8 @@ ifeq ($(ET_BOOTLOADER_LOCALVERSION),-v$(ET_BOOTLOADER_VERSION))
 # exact tag in series (i.e. v2018.09)
 ET_BOOTLOADER_LOCALVERSION :=
 endif
-ifeq ($(ET_BOARD),pynq-z2-xlnx)
-# Xilinx zynq kernel, just use the tree as done with next
+ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -Po xlnx),xlnx)
+# Xilinx 'u-boot-xlnx' tree
 ET_BOOTLOADER_VERSION := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && make -s ubootversion | tr -d \\n)
 ET_BOOTLOADER_LOCALVERSION := -$(ET_BOOTLOADER_CACHED_VERSION)
 endif
@@ -71,7 +71,8 @@ export ET_BOOTLOADER_IMAGE := $(ET_BOOTLOADER_DIR)/boot/u-boot.img
 export ET_BOOTLOADER_TARGET_FINAL ?= $(ET_BOOTLOADER_IMAGE)
 
 export DEVICE_TREE := $(ET_BOARD_KERNEL_DT)
-ifeq ($(ET_BOARD_TYPE),zynq)
+ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -Po zynq),zynq)
+# Handle out-of-tree devicetree build (i.e. dtb-y += zynq-custom-board.dtb)
 DEVICE_TREE_MAKEFILE := -f $(ET_BOARD_DIR)/dts/Makefile
 endif
 
@@ -85,11 +86,11 @@ define bootloader-depends
 	@mkdir -p $(ET_BOOTLOADER_BUILD_DIR)
 	@mkdir -p $(shell dirname $(ET_BOOTLOADER_CONFIG))
 	@case "$(ET_BOARD_TYPE)" in \
-	zynq*) \
+	zynq|zynq-xlnx) \
 		if [ -d $(ET_BOARD_DIR)/fpga/sdk ]; then \
 			rsync -r $(ET_BOARD_DIR)/fpga/dts $(ET_BOARD_DIR)/; \
 			rsync -r $(ET_BOARD_DIR)/fpga/sdk/ps*_init_gpl.* \
-				$(ET_BOOTLOADER_SOFTWARE_DIR)/board/xilinx/$(ET_BOARD_TYPE)/$(ET_BOARD_KERNEL_DT)/; \
+				$(ET_BOOTLOADER_SOFTWARE_DIR)/board/xilinx/zynq/$(ET_BOARD_KERNEL_DT)/; \
 		else \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] FPGA BUILD IS MISSING! *****\n"; \
 			exit 2; \

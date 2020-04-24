@@ -25,7 +25,7 @@
 # licensed Public Domain.
 #
 
-export ET_BOARD_TYPE := zynq
+export ET_BOARD_TYPE := zynq-xlnx
 
 include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/etinker.mk
 
