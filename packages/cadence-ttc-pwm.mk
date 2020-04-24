@@ -7,7 +7,7 @@
 # available under the terms of the GNU General Public License version 3.
 #
 
-ifeq ($(shell printf $(ET_BOARD_TYPE) | cut -d 'q' -f 1)q,zynq)
+ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -Po zynq),zynq)
 
 ifndef ET_BOARD_ROOTFS_TREE
 $(error [ 'etinker' packages requires buildroot rootfs ] ***)

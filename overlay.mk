@@ -55,6 +55,9 @@ define overlay-sync
 endef
 
 .PHONY: overlay
+ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -Po zynq),zynq)
+overlay: cadence-ttc-pwm 
+endif
 overlay: cryptodev-linux openssl wireless-regdb
 
 .PHONY: overlay-clean
