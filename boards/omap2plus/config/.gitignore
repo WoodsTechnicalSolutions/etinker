@@ -1,8 +1,5 @@
-/crosstool-ng-am335x-pocketbeagle-*
-/crosstool-ng-am3517-evm-*
-/crosstool-ng-omap3-beagle-*
-/crosstool-ng-omap3-beagle-xm-*
-/crosstool-ng-omap3-evm-*
+/buildroot-*
+/crosstool-ng-*
 /linux-am335x-pocketbeagle-*
 /linux-am3517-evm-*
 /linux-omap3-beagle-*
