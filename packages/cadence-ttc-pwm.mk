@@ -62,6 +62,8 @@ define cadence-ttc-pwm-config
 		mkdir $(ET_CADENCE_TTC_PWM_BUILD_DIR); \
 		cp -a $(ET_CADENCE_TTC_PWM_SOFTWARE_DIR)/src/kernel/pwm-cadence.c $(ET_CADENCE_TTC_PWM_BUILD_DIR)/; \
 		printf "obj-m += pwm-cadence.o\n\n"          > $(ET_CADENCE_TTC_PWM_BUILD_CONFIG); \
+		printf "ccflags-y += -Wno-date-time\n\n"          >> $(ET_CADENCE_TTC_PWM_BUILD_CONFIG); \
+		printf "ccflags-y += -Wno-missing-attributes\n\n" >> $(ET_CADENCE_TTC_PWM_BUILD_CONFIG); \
 		printf "build: all\n\n"                     >> $(ET_CADENCE_TTC_PWM_BUILD_CONFIG); \
 		printf "all: install\n\n"                   >> $(ET_CADENCE_TTC_PWM_BUILD_CONFIG); \
 		printf "install: modules\n"                 >> $(ET_CADENCE_TTC_PWM_BUILD_CONFIG); \
