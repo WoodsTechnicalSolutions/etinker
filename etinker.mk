@@ -8,8 +8,8 @@
 #
 
 ET_HOST_OS_ID ?= Ubuntu
-ET_HOST_OS_CODENAME ?= bionic
-ET_HOST_OS_RELEASE ?= 18.04
+ET_HOST_OS_CODENAME ?= focal
+ET_HOST_OS_RELEASE ?= 20.04
 ET_HOST_OS_MESSAGE := [ 'etinker' requires $(ET_HOST_OS_ID) $(ET_HOST_OS_CODENAME) $(ET_HOST_OS_RELEASE) ] ***
 ifneq ($(shell lsb_release -i|cut -d : -f 2|tr -d '\t'),$(ET_HOST_OS_ID))
 $(error $(ET_HOST_OS_MESSAGE))
