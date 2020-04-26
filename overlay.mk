@@ -51,6 +51,9 @@ define overlay-info
 endef
 
 define overlay-sync
+	@printf "exclude\n"            > $(ET_OVERLAY_DIR)/exclude
+	@printf "usr/include\n"       >> $(ET_OVERLAY_DIR)/exclude
+	@printf "usr/lib/pkgconfig\n" >> $(ET_OVERLAY_DIR)/exclude
 	@$(ET_DIR)/scripts/sync overlay $1
 endef
 

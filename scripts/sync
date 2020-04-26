@@ -79,7 +79,9 @@ case "${destination}" in
 				sudo rsync -P  ${target_dir}/boot/* ${media}/BOOT/ && sync
 				;;
 			overlay)
-				sudo rsync -aP ${target_dir}/* ${media}/rootfs/ && sync
+				sudo rsync --exclude-from=${target_dir}/exclude \
+					-aP ${target_dir}/* \
+					${media}/rootfs/ && sync
 				;;
 			rootfs)
 				sudo tar -xf ${target_dir}/images/rootfs.tar -C ${media}/rootfs/ && sync
@@ -103,6 +105,12 @@ case "${destination}" in
 				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
 					-P ${target_dir}/boot/* \
 					root@${ipv4}:/media/BOOT/
+				;;
+			overlay)
+				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
+					--exclude-from=${target_dir}/exclude \
+					-aP ${target_dir}/* \
+					root@${ipv4}:/
 				;;
 			rootfs)
 				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
