@@ -6,6 +6,11 @@
 # This file is part of the Embedded Tinkerer Sandbox, and is made
 # available under the terms of the GNU General Public License version 3.
 #
+# [references]
+# - https://www.openssl.org
+# - https://github.com/openssl/openssl
+# - https://git.busybox.net/buildroot/tree/package/libopenssl/libopenssl.mk
+#
 
 ifndef ET_BOARD_ROOTFS_TREE
 $(error [ 'etinker' packages requires buildroot rootfs ] ***)

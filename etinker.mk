@@ -6,6 +6,12 @@
 # This file is part of the Embedded Tinkerer Sandbox, and is made
 # available under the terms of the GNU General Public License version 3.
 #
+# [references]
+# - https://elinux.org/Main_Page
+# - https://www.gnu.org/software/make
+# - https://www.oreilly.com/openbook/make3/book/index.csp
+# - https://github.com/WoodsTechnicalSolutions/etinker
+#
 
 ET_HOST_OS_ID ?= Ubuntu
 ET_HOST_OS_CODENAME ?= focal

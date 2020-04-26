@@ -6,6 +6,11 @@
 # This file is part of the Embedded Tinkerer Sandbox, and is made
 # available under the terms of the GNU General Public License version 3.
 #
+# [references]
+# - https://crosstool-ng.github.io
+# - https://github.com/crosstool-ng/crosstool-ng
+# - https://crosstool-ng.github.io/docs
+#
 
 # embedded toolchain (GCC, GDB, and LIBC) is built using crosstool-NG
 export ET_TOOLCHAIN_TREE := $(ET_BOARD_TOOLCHAIN_TREE)

@@ -6,6 +6,11 @@
 # This file is part of the Embedded Tinkerer Sandbox, and is made
 # available under the terms of the GNU General Public License version 3.
 #
+# [references]
+# - http://cryptodev-linux.org
+# - https://github.com/cryptodev-linux/cryptodev-linux
+# - https://git.busybox.net/buildroot/tree/package/cryptodev-linux/cryptodev-linux.mk
+#
 
 ifndef ET_BOARD_ROOTFS_TREE
 $(error [ 'etinker' packages requires buildroot rootfs ] ***)

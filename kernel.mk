@@ -6,6 +6,11 @@
 # This file is part of the Embedded Tinkerer Sandbox, and is made
 # available under the terms of the GNU General Public License version 3.
 #
+# [references]
+# - https://www.kernel.org
+# - https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+# - https://www.kernel.org/doc/html/latest/kbuild/index.html
+#
 
 ifndef ET_BOARD_KERNEL_TREE
 $(error [ 'etinker' kernel build requires ET_BOARD_KERNEL_TREE ] ***)

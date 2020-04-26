@@ -6,6 +6,11 @@
 # This file is part of the Embedded Tinkerer Sandbox, and is made
 # available under the terms of the GNU General Public License version 3.
 #
+# [references]
+# - https://buildroot.org
+# - https://git.busybox.net/buildroot
+# - https://buildroot.org/docs.html
+#
 
 ifndef ET_BOARD_ROOTFS_TREE
 $(error [ 'etinker' rootfs build requires ET_BOARD_ROOTFS_TREE ] ***)

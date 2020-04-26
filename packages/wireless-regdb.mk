@@ -6,6 +6,11 @@
 # This file is part of the Embedded Tinkerer Sandbox, and is made
 # available under the terms of the GNU General Public License version 3.
 #
+# [references]
+# - https://wireless.wiki.kernel.org/en/developers/Regulatory/wireless-regdb
+# - https://git.kernel.org/pub/scm/linux/kernel/git/sforshee/wireless-regdb.git
+# - https://git.busybox.net/buildroot/tree/package/wireless-regdb/wireless-regdb.mk
+#
 
 ifndef ET_BOARD_ROOTFS_TREE
 $(error [ 'etinker' packages requires buildroot rootfs ] ***)

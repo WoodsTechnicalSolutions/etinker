@@ -6,6 +6,10 @@
 # This file is part of the Embedded Tinkerer Sandbox, and is made
 # available under the terms of the GNU General Public License version 3.
 #
+# [references]
+# - https://ip.cadence.com/ipportfolio/ip-portfolio-overview/systems-peripherals/bus-ip/pwm-ip
+# - https://github.com/XiphosSystemsCorp/cadence-ttc-pwm
+#
 
 ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -Po zynq),zynq)
 
