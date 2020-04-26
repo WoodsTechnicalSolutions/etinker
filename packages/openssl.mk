@@ -48,6 +48,7 @@ endef
 define openssl-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call openssl-build 'make $1' *****\n\n"
 	$(call openssl-depends)
+	$(call openssl-config,$1)
 	sed -i s,DESTDIR=,DESTDIR=$$\(ET_OVERLAY_DIR\), $(ET_OPENSSL_BUILD_DIR)/Makefile
 	@$(MAKE) -C $(ET_OPENSSL_BUILD_DIR) $1
 	sed -i s,DESTDIR=$$\(ET_OVERLAY_DIR\),DESTDIR=, $(ET_OPENSSL_BUILD_DIR)/Makefile
@@ -89,25 +90,27 @@ define openssl-config
 	$(call software-check,$(ET_OPENSSL_TREE),openssl)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl-config *****\n\n"
 	$(call openssl-depends)
-	@cd $(ET_OPENSSL_BUILD_DIR) && \
-		$(ET_OPENSSL_SOFTWARE_DIR)/Configure \
-			linux-armv4 \
-			--prefix=/usr \
-			--openssldir=/etc/ssl \
-			--cross-compile-prefix=$(ET_CROSS_COMPILE) \
-			-I$(ET_ROOTFS_SYSROOT_DIR)/usr/include \
-			-latomic \
-			threads \
-			shared \
-			zlib-dynamic \
-			enable-devcryptoeng \
-			enable-weak-ssl-ciphers \
-			no-tests \
-			no-fuzz-libfuzzer \
-			no-fuzz-afl \
-			no-rc5 \
-			enable-camellia \
-			enable-mdc2
+	@if [ -z "$1" ] || ! [ -f $(ET_OPENSSL_BUILD_DIR)/Makefile ]; then \
+		cd $(ET_OPENSSL_BUILD_DIR) && \
+			$(ET_OPENSSL_SOFTWARE_DIR)/Configure \
+				linux-armv4 \
+				--prefix=/usr \
+				--openssldir=/etc/ssl \
+				--cross-compile-prefix=$(ET_CROSS_COMPILE) \
+				-I$(ET_ROOTFS_SYSROOT_DIR)/usr/include \
+				-latomic \
+				threads \
+				shared \
+				zlib-dynamic \
+				enable-devcryptoeng \
+				enable-weak-ssl-ciphers \
+				no-tests \
+				no-fuzz-libfuzzer \
+				no-fuzz-afl \
+				no-rc5 \
+				enable-camellia \
+				enable-mdc2; \
+	fi
 	@if ! [ -f $(ET_OPENSSL_BUILD_DIR)/Makefile ]; then \
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call openssl-config FAILED! *****\n\n"; \
 		exit 2; \
@@ -152,15 +155,15 @@ endef
 
 .PHONY: openssl
 openssl: $(ET_OPENSSL_TARGET_FINAL)
-$(ET_OPENSSL_TARGET_FINAL): $(ET_OPENSSL_BUILD_CONFIG) | openssl-config
+$(ET_OPENSSL_TARGET_FINAL): $(ET_OPENSSL_BUILD_CONFIG)
 	$(call openssl-targets)
 
-openssl-%: $(ET_OPENSSL_BUILD_CONFIG) | openssl-config
+openssl-%: $(ET_OPENSSL_BUILD_CONFIG)
 	$(call openssl-build,$(*F))
 
 .PHONY: openssl-config
 openssl-config: $(ET_OPENSSL_BUILD_CONFIG)
-$(ET_OPENSSL_BUILD_CONFIG): $(ET_CRYPTODEV_LINUX_TARGET_FINAL)
+$(ET_OPENSSL_BUILD_CONFIG): $(ET_ROOTFS_TARGET_FINAL) $(ET_CRYPTODEV_LINUX_TARGET_FINAL)
 ifeq ($(shell test -f $(ET_OPENSSL_BUILD_CONFIG) && printf "DONE" || printf "CONFIGURE"),CONFIGURE)
 	$(call openssl-config)
 endif
