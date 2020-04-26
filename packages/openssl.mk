@@ -49,9 +49,11 @@ define openssl-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call openssl-build 'make $1' *****\n\n"
 	$(call openssl-depends)
 	$(call openssl-config,$1)
-	sed -i s,DESTDIR=,DESTDIR=$$\(ET_OVERLAY_DIR\), $(ET_OPENSSL_BUILD_DIR)/Makefile
-	@$(MAKE) -C $(ET_OPENSSL_BUILD_DIR) $1
-	sed -i s,DESTDIR=$$\(ET_OVERLAY_DIR\),DESTDIR=, $(ET_OPENSSL_BUILD_DIR)/Makefile
+	@if [ -z "`grep -m 1 -Po ET_OVERLAY_DIR $(ET_OPENSSL_BUILD_DIR)/Makefile`" ]; then \
+		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl DESTDIR=$(ET_OVERLAY_DIR) *****\n\n"; \
+		sed -e 's,DESTDIR=,DESTDIR=$$\(ET_OVERLAY_DIR\),' -i $(ET_OPENSSL_BUILD_DIR)/Makefile; \
+	fi
+	@$(MAKE) --no-print-directory -C $(ET_OPENSSL_BUILD_DIR) $1
 	@if [ "$1" = "install_runtime" ]; then \
 		cd $(ET_OVERLAY_DIR)/usr/lib/ && \
 			ln -sf libcrypto*.so.* libcrypto.so && \
@@ -88,9 +90,9 @@ endef
 
 define openssl-config
 	$(call software-check,$(ET_OPENSSL_TREE),openssl)
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl-config *****\n\n"
 	$(call openssl-depends)
 	@if [ -z "$1" ] || ! [ -f $(ET_OPENSSL_BUILD_DIR)/Makefile ]; then \
+		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl-config *****\n\n"; \
 		cd $(ET_OPENSSL_BUILD_DIR) && \
 			$(ET_OPENSSL_SOFTWARE_DIR)/Configure \
 				linux-armv4 \
