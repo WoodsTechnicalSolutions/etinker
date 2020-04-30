@@ -11,8 +11,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "nrfx_uarte.h"
+
+char syscalls_string[1024] = { '\0' };
+uint8_t syscalls_memory[4096] = { 0 };
 
 static nrfx_uarte_t const *sys_uart = NULL;
 static nrfx_uarte_config_t const *sys_uart_config = NULL;

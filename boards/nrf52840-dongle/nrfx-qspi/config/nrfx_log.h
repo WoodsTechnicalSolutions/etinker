@@ -32,6 +32,9 @@
 #ifndef NRFX_LOG_H__
 #define NRFX_LOG_H__
 
+#include <stdio.h>
+#include <stdarg.h>
+
 // THIS IS A TEMPLATE FILE.
 // It should be copied to a suitable location within the host environment into
 // which nrfx is integrated, and the following macros should be provided with
@@ -40,6 +43,53 @@
 
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+#if defined(DEBUG_MODULE)
+static inline int printn(const char *fmt, ...)
+{
+	int n;
+	va_list args;
+
+	printf("\r\n");
+
+	va_start(args, fmt);
+
+	n = vprintf(fmt, args);
+
+	va_end(args);
+
+	return n;
+}
+
+static inline int printe(const char *fmt, ...)
+{
+	int n;
+	va_list args;
+
+	fprintf(stderr, "\r\n");
+
+	va_start(args, fmt);
+
+	n = vfprintf(stderr, fmt, args);
+
+	va_end(args);
+
+	return n;
+}
+
+static inline char *stringify(unsigned long int value)
+{
+	extern char syscalls_string[64];
+
+	snprintf(syscalls_string, sizeof(syscalls_string), "0x%08lx", value);
+
+	return syscalls_string;
+}
+#else
+static inline int printn(const char *fmt, ...) { return 0; }
+static inline int printe(const char *fmt, ...) { return 0; }
+static inline char *stringify(unsigned long int value) { return ""; }
 #endif
 
 /**
@@ -57,7 +107,7 @@ extern "C" {
  * @param format printf-style format string, optionally followed by arguments
  *               to be formatted and inserted in the resulting string.
  */
-#define NRFX_LOG_ERROR(format, ...)
+#define NRFX_LOG_ERROR printe
 
 /**
  * @brief Macro for logging a message with the severity level WARNING.
@@ -65,7 +115,7 @@ extern "C" {
  * @param format printf-style format string, optionally followed by arguments
  *               to be formatted and inserted in the resulting string.
  */
-#define NRFX_LOG_WARNING(format, ...)
+#define NRFX_LOG_WARNING printe
 
 /**
  * @brief Macro for logging a message with the severity level INFO.
@@ -73,7 +123,7 @@ extern "C" {
  * @param format printf-style format string, optionally followed by arguments
  *               to be formatted and inserted in the resulting string.
  */
-#define NRFX_LOG_INFO(format, ...)
+#define NRFX_LOG_INFO printe
 
 /**
  * @brief Macro for logging a message with the severity level DEBUG.
@@ -81,7 +131,7 @@ extern "C" {
  * @param format printf-style format string, optionally followed by arguments
  *               to be formatted and inserted in the resulting string.
  */
-#define NRFX_LOG_DEBUG(format, ...)
+#define NRFX_LOG_DEBUG printe
 
 
 /**
@@ -124,7 +174,7 @@ extern "C" {
  *
  * @return String containing the textual representation of the error code.
  */
-#define NRFX_LOG_ERROR_STRING_GET(error_code)
+#define NRFX_LOG_ERROR_STRING_GET stringify
 
 /** @} */
 
