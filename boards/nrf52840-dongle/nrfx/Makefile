@@ -156,6 +156,24 @@ reset:
 		openocd -f $(OPENOCD_CONFIG) -c "init; reset run; shutdown" ; \
 	fi
 
+# https://sourceforge.net/projects/cmsisconfig
+nrfx-config:
+	@if ! [ -f $(ET_SOFTWARE_DIR)/CMSIS_Configuration_Wizard.jar ]; then \
+		wget -O $(ET_SOFTWARE_DIR)/CMSIS_Configuration_Wizard_v0.0.7.zip \
+			https://sourceforge.net/projects/cmsisconfig/files/CMSIS%20Configuration%20Wizard%20v0.0.7/CMSIS_Configuration_Wizard_v0.0.7.zip; \
+		if [ -f $(ET_SOFTWARE_DIR)/CMSIS_Configuration_Wizard_v0.0.7.zip ]; then \
+			unzip $(ET_SOFTWARE_DIR)/CMSIS_Configuration_Wizard_v0.0.7.zip CMSIS_Configuration_Wizard.jar -d $(ET_SOFTWARE_DIR)/ ; \
+		else \
+			exit 2; \
+		fi; \
+	fi
+	@if ! [ -f $(ET_SOFTWARE_DIR)/CMSIS_Configuration_Wizard.jar ]; then \
+		exit 2; \
+	fi
+	@(java -jar \
+		$(ET_SOFTWARE_DIR)/CMSIS_Configuration_Wizard.jar \
+		$(TARGET_DIR)/config/nrfx_config.h &)
+
 distclean: clean
 	$(RM) -r *.log
 	$(RM) -r debug
