@@ -1,12 +1,14 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Buildroot 2020.02.1 Configuration
+# Buildroot 2020.02.2 Configuration
 #
 BR2_HAVE_DOT_CONFIG=y
 BR2_HOST_GCC_AT_LEAST_4_9=y
 BR2_HOST_GCC_AT_LEAST_5=y
 BR2_HOST_GCC_AT_LEAST_6=y
 BR2_HOST_GCC_AT_LEAST_7=y
+BR2_HOST_GCC_AT_LEAST_8=y
+BR2_HOST_GCC_AT_LEAST_9=y
 BR2_HOSTARCH_NEEDS_IA32_LIBS=y
 BR2_HOSTARCH_NEEDS_IA32_COMPILER=y
 
@@ -1018,7 +1020,7 @@ BR2_PACKAGE_QT5_JSCORE_AVAILABLE=y
 # BR2_PACKAGE_APITRACE is not set
 
 #
-# midori needs libgtk3 and a glibc toolchain w/ C++, gcc >= 6
+# midori needs libgtk3 and a glibc toolchain w/ C++, gcc >= 7
 #
 
 #
@@ -1761,8 +1763,8 @@ BR2_PACKAGE_GIFLIB=y
 # irrlicht needs X11 and an OpenGL provider
 #
 # BR2_PACKAGE_JASPER is not set
-BR2_PACKAGE_JPEG=y
 BR2_PACKAGE_JPEG_SIMD_SUPPORT=y
+BR2_PACKAGE_JPEG=y
 # BR2_PACKAGE_LIBJPEG is not set
 BR2_PACKAGE_JPEG_TURBO=y
 BR2_PACKAGE_HAS_JPEG=y
