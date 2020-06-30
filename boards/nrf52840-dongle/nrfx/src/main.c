@@ -5,6 +5,10 @@
 #include <stddef.h>
 #include <ctype.h>
 
+#include "FreeRTOS.h"
+#include "task.h"
+#include "timers.h"
+
 #include "nrfx_systick.h"
 #include "nrfx_gpiote.h"
 #include "nrfx_uarte.h"
@@ -71,8 +75,6 @@ gpio_config:
 	nrfx_gpiote_out_init(LED2_B, &led_config);
 }
 
-int main(void)
-{
 	uint8_t i;
 	nrfx_err_t err;
 	nrfx_uarte_t uarte_0 = NRFX_UARTE_INSTANCE(0);
@@ -113,6 +115,82 @@ int main(void)
 		NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_VDD, 3),
 	};
 
+#define DELAY_1HZ (1000 / portTICK_PERIOD_MS)
+
+TaskHandle_t  main_task;
+
+static void main_task_function (void * pvParameter)
+{
+	while (true) {
+		//nrfx_systick_delay_ms(1000);
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+		nrfx_gpiote_out_clear(LED2_G);
+		nrfx_gpiote_out_clear(LED2_B);
+		nrfx_gpiote_out_set(LED2_R);
+
+		//nrfx_systick_delay_ms(1000);
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+		nrfx_gpiote_out_clear(LED2_R);
+		nrfx_gpiote_out_clear(LED2_B);
+		nrfx_gpiote_out_set(LED2_G);
+
+		//nrfx_systick_delay_ms(1000);
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+		nrfx_gpiote_out_clear(LED2_R);
+		nrfx_gpiote_out_clear(LED2_G);
+		nrfx_gpiote_out_set(LED2_B);
+
+		printf("\e[2J");
+
+		// probe I2C and read PCF8575 16-bit I/O expander if found
+		for (i = 0; i < 128; i++) {
+			uint8_t data[2] = { 0 };
+			nrfx_twim_xfer_desc_t xfer_desc =
+					NRFX_TWIM_XFER_DESC_RX(i, &data[0], 2);
+			err = nrfx_twim_xfer(&twim_1, &xfer_desc, 0);
+			if (err != NRFX_SUCCESS)
+				continue;
+			while (nrfx_twim_is_busy(&twim_1));
+			printf(" I2C: device @ 0x%02x [0x%02x%02x]\r\n",
+							i, data[1], data[0]);
+		}
+
+		// send data on SPIM 0, UARTE 1, and UARTE 0 [console]
+		printf(" SPI: ");
+		for (i = 0; i < sizeof(spim_0_tx); i++) {
+			spim_0_xfer.p_rx_buffer = NULL;
+			spim_0_xfer.rx_length = 0;
+			spim_0_xfer.p_tx_buffer = (uint8_t const *)&spim_0_tx[i];
+			spim_0_xfer.tx_length = 1;
+			nrfx_spim_xfer(&spim_0, &spim_0_xfer, 0);
+			// UARTE 0
+			printf("%c", spim_0_tx[i]);
+			// UARTE 1
+			nrfx_uarte_tx(&uarte_1, &spim_0_tx[i], 1);
+		}
+		printf("\r\n");
+		nrfx_uarte_tx(&uarte_1, nl, sizeof(nl));
+
+		// read SAADC 4 channels [0,5,7,VDD]
+		nrfx_saadc_simple_mode_set(saadc_mask,
+				NRF_SAADC_RESOLUTION_12BIT,
+				NRF_SAADC_OVERSAMPLE_DISABLED, NULL);
+		nrfx_saadc_buffer_set(saadc_value,
+				sizeof(saadc_value) / sizeof(saadc_value[0]));
+		nrfx_saadc_mode_trigger();
+		printf(" ADC: [0:0x%03x],[5:0x%03x],[7:0x%03x],[VDD:0x%03x]\r\n",
+			saadc_value[0], saadc_value[1],
+			saadc_value[2], saadc_value[3]);
+	}
+}
+
+int main(void)
+{
+	BaseType_t rc;
+
 	nrfx_systick_init();
 
 	syscalls_init(&uarte_0, &uarte_0_config);
@@ -121,9 +199,13 @@ int main(void)
 
 	gpio_init();
 
+	printf("\r\nSAADC Init ...\r\n");
+
 	nrfx_saadc_init(NRFX_SAADC_DEFAULT_CONFIG_IRQ_PRIORITY);
 	nrfx_saadc_channels_config(saadc, sizeof(saadc) / sizeof(saadc[0]));
 	nrfx_saadc_offset_calibrate(NULL);
+
+	printf("\r\nTWIM 1 Init ...\r\n");
 
 	err = nrfx_twim_init(&twim_1, &twim_1_config, NULL, NULL);
 	if (err != NRFX_SUCCESS) {
@@ -139,6 +221,8 @@ int main(void)
 
 	nrfx_twim_enable(&twim_1);
 
+	printf("\r\nUARTE 1 Init ...\r\n");
+
 	err = nrfx_uarte_init(&uarte_1, &uarte_1_config, NULL);
 	if (err != NRFX_SUCCESS) {
 		printf("error nrfx_uarte_init\r\n");
@@ -150,6 +234,8 @@ int main(void)
 			nrfx_gpiote_out_toggle(LED2_R);
 		}
 	}
+
+	printf("\r\nSPIM 0 Init ...\r\n");
 
 	err = nrfx_spim_init(&spim_0, &spim_0_config, NULL, NULL);
 	if (err != NRFX_SUCCESS) {
@@ -165,66 +251,24 @@ int main(void)
 
 	nrfx_gpiote_out_toggle(LED1_G);
 
-	while (true) {
-		nrfx_systick_delay_ms(1000);
+	printf("\r\nCreating main_task ... ");
 
-		nrfx_gpiote_out_clear(LED2_G);
-		nrfx_gpiote_out_clear(LED2_B);
-		nrfx_gpiote_out_set(LED2_R);
-
-		nrfx_systick_delay_ms(1000);
-
-		nrfx_gpiote_out_clear(LED2_R);
-		nrfx_gpiote_out_clear(LED2_B);
-		nrfx_gpiote_out_set(LED2_G);
-
-		nrfx_systick_delay_ms(1000);
-
-		nrfx_gpiote_out_clear(LED2_R);
-		nrfx_gpiote_out_clear(LED2_G);
-		nrfx_gpiote_out_set(LED2_B);
-
-		fprintf(stderr, "\033[2J");
-
-		// probe I2C and read PCF8575 16-bit I/O expander if found
-		for (i = 0; i < 128; i++) {
-			uint8_t data[2] = { 0 };
-			nrfx_twim_xfer_desc_t xfer_desc =
-					NRFX_TWIM_XFER_DESC_RX(i, &data[0], 2);
-			err = nrfx_twim_xfer(&twim_1, &xfer_desc, 0);
-			if (err != NRFX_SUCCESS)
-				continue;
-			while (nrfx_twim_is_busy(&twim_1));
-			fprintf(stderr, " I2C: device @ 0x%02x [0x%02x%02x]\r\n",
-							i, data[1], data[0]);
-		}
-
-		// send data on SPIM 0, UARTE 1, and UARTE 0 [console]
-		fprintf(stderr, " SPI: ");
-		for (i = 0; i < sizeof(spim_0_tx); i++) {
-			spim_0_xfer.p_rx_buffer = NULL;
-			spim_0_xfer.rx_length = 0;
-			spim_0_xfer.p_tx_buffer = (uint8_t const *)&spim_0_tx[i];
-			spim_0_xfer.tx_length = 1;
-			nrfx_spim_xfer(&spim_0, &spim_0_xfer, 0);
-			// UARTE 0
-			fprintf(stderr, "%c", spim_0_tx[i]);
-			// UARTE 1
-			nrfx_uarte_tx(&uarte_1, &spim_0_tx[i], 1);
-		}
-		fprintf(stderr, "\r\n");
-		nrfx_uarte_tx(&uarte_1, nl, sizeof(nl));
-
-		// read SAADC 4 channels [0,5,7,VDD]
-		nrfx_saadc_simple_mode_set(saadc_mask,
-				NRF_SAADC_RESOLUTION_12BIT,
-				NRF_SAADC_OVERSAMPLE_DISABLED, NULL);
-		nrfx_saadc_buffer_set(saadc_value,
-				sizeof(saadc_value) / sizeof(saadc_value[0]));
-		nrfx_saadc_mode_trigger();
-		fprintf(stderr,
-			" ADC: [0:0x%03x],[5:0x%03x],[7:0x%03x],[VDD:0x%03x]\r\n",
-			saadc_value[0], saadc_value[1],
-			saadc_value[2], saadc_value[3]);
+	rc = xTaskCreate(main_task_function, "main_task", configMINIMAL_STACK_SIZE + 200, NULL, 2, &main_task);
+	if (rc != pdPASS) {
+		printf("error xTaskCreate (%lu)\r\n", rc);
+		while (true);
 	}
+	printf("PASS(%lu)\r\n", rc);
+
+	SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+
+	printf("\r\nStarting FreeRTOS Scheduler ...\r\n");
+
+	vTaskStartScheduler();
+
+	printf("Oops!\r\n");
+
+	while (true);
+
+	return 0;
 }
