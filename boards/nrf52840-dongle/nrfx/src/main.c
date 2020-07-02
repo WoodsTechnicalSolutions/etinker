@@ -75,75 +75,63 @@ gpio_config:
 	nrfx_gpiote_out_init(LED2_B, &led_config);
 }
 
-	uint8_t i;
-	nrfx_err_t err;
-	nrfx_uarte_t uarte_0 = NRFX_UARTE_INSTANCE(0);
-	nrfx_uarte_config_t uarte_0_config = NRFX_UARTE_DEFAULT_CONFIG(
-						UARTE_0_TX_PIN, UARTE_0_RX_PIN);
-	nrfx_twim_t twim_1 = NRFX_TWIM_INSTANCE(1);
-	nrfx_twim_config_t twim_1_config = NRFX_TWIM_DEFAULT_CONFIG(
-						TWIM_1_SCL_PIN, TWIM_1_SDA_PIN);
-	nrfx_uarte_t uarte_1 = NRFX_UARTE_INSTANCE(1);
-	nrfx_uarte_config_t uarte_1_config = NRFX_UARTE_DEFAULT_CONFIG(
+static uint8_t i;
+static nrfx_err_t err;
+static nrfx_uarte_t uarte_0 = NRFX_UARTE_INSTANCE(0);
+static nrfx_uarte_config_t uarte_0_config = NRFX_UARTE_DEFAULT_CONFIG(UARTE_0_TX_PIN, UARTE_0_RX_PIN);
+static nrfx_twim_t twim_1 = NRFX_TWIM_INSTANCE(1);
+static nrfx_twim_config_t twim_1_config = NRFX_TWIM_DEFAULT_CONFIG(TWIM_1_SCL_PIN, TWIM_1_SDA_PIN);
+static nrfx_uarte_t uarte_1 = NRFX_UARTE_INSTANCE(1);
+static nrfx_uarte_config_t uarte_1_config = NRFX_UARTE_DEFAULT_CONFIG(
 						UARTE_1_TX_PIN, UARTE_1_RX_PIN);
-	uint8_t nl[] = { 13, 10 }; // '\r\n'
-	nrfx_spim_t spim_0 = NRFX_SPIM_INSTANCE(0);
-	nrfx_spim_config_t spim_0_config = {
-		.sck_pin        = SPIM_0_SCLK_PIN,
-		.mosi_pin       = SPIM_0_MOSI_PIN,
-		.miso_pin       = SPIM_0_MISO_PIN,
-		.ss_pin         = SPIM_0_CS_PIN,
-		.ss_active_high = false,
-		.irq_priority   = NRFX_SPIM_DEFAULT_CONFIG_IRQ_PRIORITY,
-		.orc            = 0xFF,
-		.frequency      = NRF_SPIM_FREQ_1M,
-		.mode           = NRF_SPIM_MODE_0,
-		.bit_order      = NRF_SPIM_BIT_ORDER_MSB_FIRST,
-		.miso_pull      = NRF_GPIO_PIN_NOPULL,
-	};
-	nrfx_spim_xfer_desc_t spim_0_xfer = { 0 };
-	uint8_t spim_0_tx[] = { // '0123456789abcdef'
-		48, 49, 50, 51, 52, 53, 54, 55,
-		56, 57, 97, 98, 99, 100, 101, 102
-	};
-	nrf_saadc_value_t saadc_value[4] = { 0 };
-	uint32_t saadc_mask = 0xf;
-	nrfx_saadc_channel_t saadc[] = {
-		NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_0, 0),
-		NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_5, 1),
-		NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_7, 2),
-		NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_VDD, 3),
-	};
+static uint8_t nl[] = { 13, 10 }; // '\r\n'
+static nrfx_spim_t spim_0 = NRFX_SPIM_INSTANCE(0);
+static nrfx_spim_config_t spim_0_config = {
+	.sck_pin        = SPIM_0_SCLK_PIN,
+	.mosi_pin       = SPIM_0_MOSI_PIN,
+	.miso_pin       = SPIM_0_MISO_PIN,
+	.ss_pin         = SPIM_0_CS_PIN,
+	.ss_active_high = false,
+	.irq_priority   = NRFX_SPIM_DEFAULT_CONFIG_IRQ_PRIORITY,
+	.orc            = 0xFF,
+	.frequency      = NRF_SPIM_FREQ_1M,
+	.mode           = NRF_SPIM_MODE_0,
+	.bit_order      = NRF_SPIM_BIT_ORDER_MSB_FIRST,
+	.miso_pull      = NRF_GPIO_PIN_NOPULL,
+};
+static nrfx_spim_xfer_desc_t spim_0_xfer = { 0 };
+static uint8_t spim_0_tx[] = { // '0123456789abcdef'
+	48, 49, 50, 51, 52, 53, 54, 55,
+	56, 57, 97, 98, 99, 100, 101, 102
+};
+static nrf_saadc_value_t saadc_value[4] = { 0 };
+static uint32_t saadc_mask = 0xf;
+static nrfx_saadc_channel_t saadc[] = {
+	NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_0, 0),
+	NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_5, 1),
+	NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_7, 2),
+	NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_VDD, 3),
+};
 
-#define DELAY_1HZ (1000 / portTICK_PERIOD_MS)
+static uint32_t count = 0;
 
-TaskHandle_t  main_task;
+static TaskHandle_t count_task;
 
-static void main_task_function (void * pvParameter)
+static void count_task_function (void *pvParameter)
 {
 	while (true) {
-		//nrfx_systick_delay_ms(1000);
-		vTaskDelay(1000 / portTICK_PERIOD_MS);
+		vTaskDelay(1 / portTICK_PERIOD_MS);
+		if (++count == UINT32_MAX)
+			count = 0;
+	}
+}
 
-		nrfx_gpiote_out_clear(LED2_G);
-		nrfx_gpiote_out_clear(LED2_B);
-		nrfx_gpiote_out_set(LED2_R);
+static TaskHandle_t main_task;
 
-		//nrfx_systick_delay_ms(1000);
-		vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-		nrfx_gpiote_out_clear(LED2_R);
-		nrfx_gpiote_out_clear(LED2_B);
-		nrfx_gpiote_out_set(LED2_G);
-
-		//nrfx_systick_delay_ms(1000);
-		vTaskDelay(1000 / portTICK_PERIOD_MS);
-
-		nrfx_gpiote_out_clear(LED2_R);
-		nrfx_gpiote_out_clear(LED2_G);
-		nrfx_gpiote_out_set(LED2_B);
-
-		printf("\e[2J");
+static void main_task_function (void *pvParameter)
+{
+	while (true) {
+		printf("  MS: %lu\r\n", count);
 
 		// probe I2C and read PCF8575 16-bit I/O expander if found
 		for (i = 0; i < 128; i++) {
@@ -184,6 +172,26 @@ static void main_task_function (void * pvParameter)
 		printf(" ADC: [0:0x%03x],[5:0x%03x],[7:0x%03x],[VDD:0x%03x]\r\n",
 			saadc_value[0], saadc_value[1],
 			saadc_value[2], saadc_value[3]);
+
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+		nrfx_gpiote_out_clear(LED2_G);
+		nrfx_gpiote_out_clear(LED2_B);
+		nrfx_gpiote_out_set(LED2_R);
+
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+		nrfx_gpiote_out_clear(LED2_R);
+		nrfx_gpiote_out_clear(LED2_B);
+		nrfx_gpiote_out_set(LED2_G);
+
+		vTaskDelay(1000 / portTICK_PERIOD_MS);
+
+		nrfx_gpiote_out_clear(LED2_R);
+		nrfx_gpiote_out_clear(LED2_G);
+		nrfx_gpiote_out_set(LED2_B);
+
+		printf("\r\e[2J");
 	}
 }
 
@@ -258,7 +266,16 @@ int main(void)
 		printf("error xTaskCreate (%lu)\r\n", rc);
 		while (true);
 	}
-	printf("PASS(%lu)\r\n", rc);
+	printf("Done (%lu)\r\n", rc);
+
+	printf("\r\nCreating count_task ... ");
+
+	rc = xTaskCreate(count_task_function, "count_task", configMINIMAL_STACK_SIZE + 200, NULL, 2, &count_task);
+	if (rc != pdPASS) {
+		printf("error xTaskCreate (%lu)\r\n", rc);
+		while (true);
+	}
+	printf("Done (%lu)\r\n", rc);
 
 	SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
 
