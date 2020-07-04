@@ -21,7 +21,7 @@
 extern int syscalls_init(nrfx_uarte_t const *uart,
 					nrfx_uarte_config_t const *config);
 
-nrfx_gpiote_out_config_t led_config = NRFX_GPIOTE_CONFIG_OUT_SIMPLE(true);
+static nrfx_gpiote_out_config_t led_config = NRFX_GPIOTE_CONFIG_OUT_SIMPLE(true);
 
 static void gpio_init(void)
 {
@@ -75,18 +75,13 @@ gpio_config:
 	nrfx_gpiote_out_init(LED2_B, &led_config);
 }
 
-static uint8_t i;
-
-static nrfx_err_t err;
-
-static uint8_t nl[] = { 13, 10 }; // '\r\n'
-
 static nrfx_uarte_t uarte_0 = NRFX_UARTE_INSTANCE(0);
 static nrfx_uarte_config_t uarte_0_config = NRFX_UARTE_DEFAULT_CONFIG(UARTE_0_TX_PIN, UARTE_0_RX_PIN);
 
 static nrfx_uarte_t uarte_1 = NRFX_UARTE_INSTANCE(1);
 static nrfx_uarte_config_t uarte_1_config = NRFX_UARTE_DEFAULT_CONFIG(UARTE_1_TX_PIN, UARTE_1_RX_PIN);
 
+#if !defined(TEST_UARTE_NOTIFIY)
 static nrfx_twim_t twim_1 = NRFX_TWIM_INSTANCE(1);
 static nrfx_twim_config_t twim_1_config = NRFX_TWIM_DEFAULT_CONFIG(TWIM_1_SCL_PIN, TWIM_1_SDA_PIN);
 
@@ -118,6 +113,7 @@ static nrfx_saadc_channel_t saadc[] = {
 	NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_7, 2),
 	NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_VDD, 3),
 };
+#endif
 
 static uint8_t uarte_1_rx[1] = { 0 };
 static TaskHandle_t uarte_1_task;
@@ -125,8 +121,23 @@ static TaskHandle_t uarte_1_task;
 static void uarte_1_task_function (void *pvParameter)
 {
 	while (true) {
+		// trigger IRQ read
 		nrfx_uarte_rx(&uarte_1, uarte_1_rx, 1);
-		ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
+		// wait of IRQ completion
+#if defined(TEST_UARTE_NOTIFIY)
+		if (ulTaskNotifyTake(pdTRUE, 5000 / portTICK_PERIOD_MS) != 1) {
+			fprintf(stderr, "5 second timeout\r\n");
+#else
+		if (ulTaskNotifyTake(pdTRUE, portMAX_DELAY) != 1) {
+#endif
+			continue;
+		}
+#if defined(TEST_UARTE_NOTIFIY)
+		// echo to console
+		while (nrfx_uarte_tx_in_progress(&uarte_1))
+			nrfx_systick_delay_us(10);
+		nrfx_uarte_tx(&uarte_0, &uarte_1_rx[0], 1);
+#endif
 		nrfx_gpiote_out_toggle(LED1_G);
 	}
 }
@@ -136,10 +147,9 @@ static void uarte_1_callback(nrfx_uarte_event_t const *evt, void *ctx)
 	switch (evt->type) {
 	case NRFX_UARTE_EVT_RX_DONE:
 		{
-			BaseType_t xHigherPriorityTaskWoken = pdFALSE;;
-			uarte_1_rx[0] = evt->data.rxtx.p_data[0];
-			vTaskNotifyGiveFromISR( uarte_1_task, &xHigherPriorityTaskWoken );
-			portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+			BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+			vTaskNotifyGiveFromISR(uarte_1_task, &xHigherPriorityTaskWoken);
+			portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
 		}
 		break;
 
@@ -169,7 +179,16 @@ static TaskHandle_t main_task;
 
 static void main_task_function (void *pvParameter)
 {
+#if !defined(TEST_UARTE_NOTIFIY)
+	uint8_t i;
+	uint8_t nl[] = { 13, 10 }; // '\r\n'
+	nrfx_err_t err;
+#endif
+
 	while (true) {
+#if defined(TEST_UARTE_NOTIFIY)
+		vTaskDelay(10 / portTICK_PERIOD_MS);
+#else
 		printf("  MS: %lu\r\n", count);
 
 		// probe I2C and read PCF8575 16-bit I/O expander if found
@@ -196,9 +215,13 @@ static void main_task_function (void *pvParameter)
 			// UARTE 0
 			printf("%c", spim_0_tx[i]);
 			// UARTE 1
+			while (nrfx_uarte_tx_in_progress(&uarte_1))
+				nrfx_systick_delay_us(10);
 			nrfx_uarte_tx(&uarte_1, &spim_0_tx[i], 1);
 		}
 		printf("\r\n");
+		while (nrfx_uarte_tx_in_progress(&uarte_1))
+			nrfx_systick_delay_us(10);
 		nrfx_uarte_tx(&uarte_1, nl, sizeof(nl));
 
 		// read SAADC 4 channels [0,5,7,VDD]
@@ -231,12 +254,14 @@ static void main_task_function (void *pvParameter)
 		nrfx_gpiote_out_set(LED2_B);
 
 		printf("\r\e[2J");
+#endif
 	}
 }
 
 int main(void)
 {
 	BaseType_t rc;
+	nrfx_err_t err;
 
 	nrfx_systick_init();
 
@@ -246,6 +271,21 @@ int main(void)
 
 	gpio_init();
 
+	printf("\r\nUARTE 1 Init ...\r\n");
+
+	err = nrfx_uarte_init(&uarte_1, &uarte_1_config, uarte_1_callback);
+	if (err != NRFX_SUCCESS) {
+		printf("error nrfx_uarte_init\r\n");
+		nrfx_gpiote_out_clear(LED2_G);
+		nrfx_gpiote_out_clear(LED2_B);
+		nrfx_gpiote_out_clear(LED1_G);
+		while (true) {
+			nrfx_systick_delay_ms(2000);
+			nrfx_gpiote_out_toggle(LED2_R);
+		}
+	}
+
+#if !defined(TEST_UARTE_NOTIFIY)
 	printf("\r\nSAADC Init ...\r\n");
 
 	nrfx_saadc_init(NRFX_SAADC_DEFAULT_CONFIG_IRQ_PRIORITY);
@@ -268,20 +308,6 @@ int main(void)
 
 	nrfx_twim_enable(&twim_1);
 
-	printf("\r\nUARTE 1 Init ...\r\n");
-
-	err = nrfx_uarte_init(&uarte_1, &uarte_1_config, uarte_1_callback);
-	if (err != NRFX_SUCCESS) {
-		printf("error nrfx_uarte_init\r\n");
-		nrfx_gpiote_out_clear(LED2_G);
-		nrfx_gpiote_out_clear(LED2_B);
-		nrfx_gpiote_out_clear(LED1_G);
-		while (true) {
-			nrfx_systick_delay_ms(2000);
-			nrfx_gpiote_out_toggle(LED2_R);
-		}
-	}
-
 	printf("\r\nSPIM 0 Init ...\r\n");
 
 	err = nrfx_spim_init(&spim_0, &spim_0_config, NULL, NULL);
@@ -295,12 +321,17 @@ int main(void)
 			nrfx_gpiote_out_toggle(LED2_R);
 		}
 	}
+#endif
 
 	nrfx_gpiote_out_toggle(LED1_G);
 
 	printf("\r\nCreating main_task ... ");
 
-	rc = xTaskCreate(main_task_function, "main_task", configMINIMAL_STACK_SIZE + 200, NULL, 2, &main_task);
+	rc = xTaskCreate(main_task_function, "main_task",
+						configMINIMAL_STACK_SIZE + 200,
+						NULL,
+						2,
+						&main_task);
 	if (rc != pdPASS) {
 		printf("error xTaskCreate (%lu)\r\n", rc);
 		while (true);
@@ -309,7 +340,11 @@ int main(void)
 
 	printf("\r\nCreating count_task ... ");
 
-	rc = xTaskCreate(count_task_function, "count_task", configMINIMAL_STACK_SIZE + 200, NULL, 2, &count_task);
+	rc = xTaskCreate(count_task_function, "count_task",
+						configMINIMAL_STACK_SIZE + 200,
+						NULL,
+						2,
+						&count_task);
 	if (rc != pdPASS) {
 		printf("error xTaskCreate (%lu)\r\n", rc);
 		while (true);
@@ -318,7 +353,11 @@ int main(void)
 
 	printf("\r\nCreating uarte_1_task ... ");
 
-	rc = xTaskCreate(uarte_1_task_function, "uarte_1_task", configMINIMAL_STACK_SIZE + 200, NULL, 2, &uarte_1_task);
+	rc = xTaskCreate(uarte_1_task_function, "uarte_1_task",
+						configMINIMAL_STACK_SIZE + 200,
+						NULL,
+						(configMAX_PRIORITIES - 1),
+						&uarte_1_task);
 	if (rc != pdPASS) {
 		printf("error xTaskCreate (%lu)\r\n", rc);
 		while (true);
