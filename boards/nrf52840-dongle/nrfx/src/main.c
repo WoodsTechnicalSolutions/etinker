@@ -76,15 +76,20 @@ gpio_config:
 }
 
 static uint8_t i;
+
 static nrfx_err_t err;
+
+static uint8_t nl[] = { 13, 10 }; // '\r\n'
+
 static nrfx_uarte_t uarte_0 = NRFX_UARTE_INSTANCE(0);
 static nrfx_uarte_config_t uarte_0_config = NRFX_UARTE_DEFAULT_CONFIG(UARTE_0_TX_PIN, UARTE_0_RX_PIN);
+
+static nrfx_uarte_t uarte_1 = NRFX_UARTE_INSTANCE(1);
+static nrfx_uarte_config_t uarte_1_config = NRFX_UARTE_DEFAULT_CONFIG(UARTE_1_TX_PIN, UARTE_1_RX_PIN);
+
 static nrfx_twim_t twim_1 = NRFX_TWIM_INSTANCE(1);
 static nrfx_twim_config_t twim_1_config = NRFX_TWIM_DEFAULT_CONFIG(TWIM_1_SCL_PIN, TWIM_1_SDA_PIN);
-static nrfx_uarte_t uarte_1 = NRFX_UARTE_INSTANCE(1);
-static nrfx_uarte_config_t uarte_1_config = NRFX_UARTE_DEFAULT_CONFIG(
-						UARTE_1_TX_PIN, UARTE_1_RX_PIN);
-static uint8_t nl[] = { 13, 10 }; // '\r\n'
+
 static nrfx_spim_t spim_0 = NRFX_SPIM_INSTANCE(0);
 static nrfx_spim_config_t spim_0_config = {
 	.sck_pin        = SPIM_0_SCLK_PIN,
@@ -104,6 +109,7 @@ static uint8_t spim_0_tx[] = { // '0123456789abcdef'
 	48, 49, 50, 51, 52, 53, 54, 55,
 	56, 57, 97, 98, 99, 100, 101, 102
 };
+
 static nrf_saadc_value_t saadc_value[4] = { 0 };
 static uint32_t saadc_mask = 0xf;
 static nrfx_saadc_channel_t saadc[] = {
@@ -112,6 +118,39 @@ static nrfx_saadc_channel_t saadc[] = {
 	NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_7, 2),
 	NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_VDD, 3),
 };
+
+static uint8_t uarte_1_rx[1] = { 0 };
+static TaskHandle_t uarte_1_task;
+
+static void uarte_1_task_function (void *pvParameter)
+{
+	while (true) {
+		nrfx_uarte_rx(&uarte_1, uarte_1_rx, 1);
+		ulTaskNotifyTake( pdTRUE, portMAX_DELAY );
+		nrfx_gpiote_out_toggle(LED1_G);
+	}
+}
+
+static void uarte_1_callback(nrfx_uarte_event_t const *evt, void *ctx)
+{
+	switch (evt->type) {
+	case NRFX_UARTE_EVT_RX_DONE:
+		{
+			BaseType_t xHigherPriorityTaskWoken = pdFALSE;;
+			uarte_1_rx[0] = evt->data.rxtx.p_data[0];
+			vTaskNotifyGiveFromISR( uarte_1_task, &xHigherPriorityTaskWoken );
+			portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+		}
+		break;
+
+	case NRFX_UARTE_EVT_TX_DONE:
+		break;
+
+	case NRFX_UARTE_EVT_ERROR:
+	default:
+		break;
+	}
+}
 
 static uint32_t count = 0;
 
@@ -231,7 +270,7 @@ int main(void)
 
 	printf("\r\nUARTE 1 Init ...\r\n");
 
-	err = nrfx_uarte_init(&uarte_1, &uarte_1_config, NULL);
+	err = nrfx_uarte_init(&uarte_1, &uarte_1_config, uarte_1_callback);
 	if (err != NRFX_SUCCESS) {
 		printf("error nrfx_uarte_init\r\n");
 		nrfx_gpiote_out_clear(LED2_G);
@@ -271,6 +310,15 @@ int main(void)
 	printf("\r\nCreating count_task ... ");
 
 	rc = xTaskCreate(count_task_function, "count_task", configMINIMAL_STACK_SIZE + 200, NULL, 2, &count_task);
+	if (rc != pdPASS) {
+		printf("error xTaskCreate (%lu)\r\n", rc);
+		while (true);
+	}
+	printf("Done (%lu)\r\n", rc);
+
+	printf("\r\nCreating uarte_1_task ... ");
+
+	rc = xTaskCreate(uarte_1_task_function, "uarte_1_task", configMINIMAL_STACK_SIZE + 200, NULL, 2, &uarte_1_task);
 	if (rc != pdPASS) {
 		printf("error xTaskCreate (%lu)\r\n", rc);
 		while (true);
