@@ -45,4 +45,6 @@ ET_BOARD_KERNEL_DEFCONFIG ?= xilinx_zynq_defconfig
 ET_BOARD_BOOTLOADER_SPL_BINARY ?= boot.bin
 ET_BOARD_BOOTLOADER_DEFCONFIG ?= xilinx_zynq_virt_defconfig
 
+ifeq ($(ET_USE_DEFCONFIG),yes)
 ET_BOARD_DEFCONFIG := et_$(subst -,_,$(ET_BOARD))_defconfig
+endif

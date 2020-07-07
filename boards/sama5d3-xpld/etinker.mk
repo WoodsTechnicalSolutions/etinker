@@ -42,7 +42,9 @@ ET_BOARD_KERNEL_DEFCONFIG ?= sama5_defconfig
 ET_BOARD_BOOTLOADER_SPL_BINARY ?= boot.bin
 ET_BOARD_BOOTLOADER_DEFCONFIG ?= sama5d3_xplained_mmc_defconfig
 
+ifeq ($(ET_USE_DEFCONFIG),yes)
 ET_BOARD_DEFCONFIG := et_$(subst -,_,$(ET_BOARD))_defconfig
+endif
 
 # final item built for the configured toolchain
 ET_TOOLCHAIN_TARGET_FINAL := \
