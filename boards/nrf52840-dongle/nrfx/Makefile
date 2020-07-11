@@ -52,8 +52,8 @@ CFLAGS += -std=c11 -Wall -Werror
 CFLAGS += -MD
 CFLAGS += -D$(ET_BOARD_MCU_DEFINE)
 CFLAGS += -DCONFIG_GPIO_AS_PINRESET
-CFLAGS += -D__HEAP_SIZE=8192
-CFLAGS += -D__STACK_SIZE=8192
+CFLAGS += -D__HEAP_SIZE=16384
+CFLAGS += -D__STACK_SIZE=16384
 CFLAGS += -ffunction-sections
 CFLAGS += -fdata-sections
 CFLAGS += -fno-builtin
