@@ -195,11 +195,7 @@ define kernel-build
 			cp -av $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$1 $(ET_KERNEL_DIR)/boot/; \
 			case "$(ET_BOARD_TYPE)" in \
 			zynq*) \
-				if [ "$(ET_BOARD)" = "pynq-z2-xlnx" ]; then \
-					cp -av $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$1 $(ET_KERNEL_DIR)/boot/devicetree.dtb; \
-				else \
-					cp -av $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$1 $(ET_KERNEL_DIR)/boot/system.dtb; \
-				fi; \
+				cp -av $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$1 $(ET_KERNEL_DIR)/boot/system.dtb; \
 				;; \
 			*) \
 				;; \
