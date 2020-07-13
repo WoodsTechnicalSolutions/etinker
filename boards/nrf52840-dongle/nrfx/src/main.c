@@ -69,28 +69,32 @@ gpio_config:
 	if (err != NRFX_SUCCESS)
 		while (true);
 
-	nrfx_gpiote_out_init(LED1_G, &led_config);
-	nrfx_gpiote_out_init(LED2_R, &led_config);
-	nrfx_gpiote_out_init(LED2_G, &led_config);
-	nrfx_gpiote_out_init(LED2_B, &led_config);
+	nrfx_gpiote_out_init(LED_1_G, &led_config);
+	nrfx_gpiote_out_init(LED_2_R, &led_config);
+	nrfx_gpiote_out_init(LED_2_G, &led_config);
+	nrfx_gpiote_out_init(LED_2_B, &led_config);
 }
 
 static nrfx_uarte_t uarte_0 = NRFX_UARTE_INSTANCE(0);
 static nrfx_uarte_config_t uarte_0_config = NRFX_UARTE_DEFAULT_CONFIG(UARTE_0_TX_PIN, UARTE_0_RX_PIN);
 
+#if !defined(USE_SPIM_0)
 static nrfx_uarte_t uarte_1 = NRFX_UARTE_INSTANCE(1);
 static nrfx_uarte_config_t uarte_1_config = NRFX_UARTE_DEFAULT_CONFIG(UARTE_1_TX_PIN, UARTE_1_RX_PIN);
+#endif // ! USE_SPIM_0
 
 #if !defined(TEST_UARTE_NOTIFIY)
-static nrfx_twim_t twim_1 = NRFX_TWIM_INSTANCE(1);
-static nrfx_twim_config_t twim_1_config = NRFX_TWIM_DEFAULT_CONFIG(TWIM_1_SCL_PIN, TWIM_1_SDA_PIN);
+#if !defined(USE_SPIM_0)
+static nrfx_twim_t twim_0 = NRFX_TWIM_INSTANCE(1);
+static nrfx_twim_config_t twim_0_config = NRFX_TWIM_DEFAULT_CONFIG(TWIM_0_SCL_PIN, TWIM_0_SDA_PIN);
+#endif // ! USE_SPIM_0
 
-static nrfx_spim_t spim_0 = NRFX_SPIM_INSTANCE(0);
-static nrfx_spim_config_t spim_0_config = {
-	.sck_pin        = SPIM_0_SCLK_PIN,
-	.mosi_pin       = SPIM_0_MOSI_PIN,
-	.miso_pin       = SPIM_0_MISO_PIN,
-	.ss_pin         = SPIM_0_CS_PIN,
+static nrfx_spim_t spim_1 = NRFX_SPIM_INSTANCE(0);
+static nrfx_spim_config_t spim_1_config = {
+	.sck_pin        = SPIM_1_SCLK_PIN,
+	.mosi_pin       = SPIM_1_MOSI_PIN,
+	.miso_pin       = SPIM_1_MISO_PIN,
+	.ss_pin         = SPIM_1_CS_PIN,
 	.ss_active_high = false,
 	.irq_priority   = NRFX_SPIM_DEFAULT_CONFIG_IRQ_PRIORITY,
 	.orc            = 0xFF,
@@ -99,8 +103,8 @@ static nrfx_spim_config_t spim_0_config = {
 	.bit_order      = NRF_SPIM_BIT_ORDER_MSB_FIRST,
 	.miso_pull      = NRF_GPIO_PIN_NOPULL,
 };
-static nrfx_spim_xfer_desc_t spim_0_xfer = { 0 };
-static uint8_t spim_0_tx[] = { // '0123456789abcdef'
+static nrfx_spim_xfer_desc_t spim_1_xfer = { 0 };
+static uint8_t spim_1_tx[] = { // '0123456789abcdef'
 	48, 49, 50, 51, 52, 53, 54, 55,
 	56, 57, 97, 98, 99, 100, 101, 102
 };
@@ -113,8 +117,9 @@ static nrfx_saadc_channel_t saadc[] = {
 	NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_7, 2),
 	NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_VDD, 3),
 };
-#endif
+#endif // ! TEST_UARTE_NOTIFIY
 
+#if !defined(USE_SPIM_0)
 static uint8_t uarte_1_rx[1] = { 0 };
 static TaskHandle_t uarte_1_task;
 
@@ -129,7 +134,7 @@ static void uarte_1_task_function (void *pvParameter)
 			fprintf(stderr, "5 second timeout\r\n");
 #else
 		if (ulTaskNotifyTake(pdTRUE, portMAX_DELAY) != 1) {
-#endif
+#endif // TEST_UARTE_NOTIFIY
 			continue;
 		}
 #if defined(TEST_UARTE_NOTIFIY)
@@ -137,8 +142,8 @@ static void uarte_1_task_function (void *pvParameter)
 		while (nrfx_uarte_tx_in_progress(&uarte_1))
 			nrfx_systick_delay_us(10);
 		nrfx_uarte_tx(&uarte_0, &uarte_1_rx[0], 1);
-#endif
-		nrfx_gpiote_out_toggle(LED1_G);
+#endif // TEST_UARTE_NOTIFIY
+		nrfx_gpiote_out_toggle(LED_1_G);
 	}
 }
 
@@ -161,6 +166,7 @@ static void uarte_1_callback(nrfx_uarte_event_t const *evt, void *ctx)
 		break;
 	}
 }
+#endif // ! USE_SPIM_0
 
 static uint32_t count = 0;
 
@@ -183,7 +189,7 @@ static void main_task_function (void *pvParameter)
 	uint8_t i;
 	uint8_t nl[] = { 13, 10 }; // '\r\n'
 	nrfx_err_t err;
-#endif
+#endif // TEST_UARTE_NOTIFIY
 
 	while (true) {
 #if defined(TEST_UARTE_NOTIFIY)
@@ -191,38 +197,44 @@ static void main_task_function (void *pvParameter)
 #else
 		printf("  MS: %lu\r\n", count);
 
+#if !defined(USE_SPIM_0)
 		// probe I2C and read PCF8575 16-bit I/O expander if found
 		for (i = 0; i < 128; i++) {
 			uint8_t data[2] = { 0 };
 			nrfx_twim_xfer_desc_t xfer_desc =
 					NRFX_TWIM_XFER_DESC_RX(i, &data[0], 2);
-			err = nrfx_twim_xfer(&twim_1, &xfer_desc, 0);
+			err = nrfx_twim_xfer(&twim_0, &xfer_desc, 0);
 			if (err != NRFX_SUCCESS)
 				continue;
-			while (nrfx_twim_is_busy(&twim_1));
+			while (nrfx_twim_is_busy(&twim_0));
 			printf(" I2C: device @ 0x%02x [0x%02x%02x]\r\n",
 							i, data[1], data[0]);
 		}
+#endif // ! USE_SPIM_0
 
-		// send data on SPIM 0, UARTE 1, and UARTE 0 [console]
+		// send data on SPIM 1, UARTE 1, and UARTE 0 [console]
 		printf(" SPI: ");
-		for (i = 0; i < sizeof(spim_0_tx); i++) {
-			spim_0_xfer.p_rx_buffer = NULL;
-			spim_0_xfer.rx_length = 0;
-			spim_0_xfer.p_tx_buffer = (uint8_t const *)&spim_0_tx[i];
-			spim_0_xfer.tx_length = 1;
-			nrfx_spim_xfer(&spim_0, &spim_0_xfer, 0);
+		for (i = 0; i < sizeof(spim_1_tx); i++) {
+			spim_1_xfer.p_rx_buffer = NULL;
+			spim_1_xfer.rx_length = 0;
+			spim_1_xfer.p_tx_buffer = (uint8_t const *)&spim_1_tx[i];
+			spim_1_xfer.tx_length = 1;
+			nrfx_spim_xfer(&spim_1, &spim_1_xfer, 0);
 			// UARTE 0
-			printf("%c", spim_0_tx[i]);
+			printf("%c", spim_1_tx[i]);
+#if !defined(USE_SPIM_0)
 			// UARTE 1
 			while (nrfx_uarte_tx_in_progress(&uarte_1))
 				nrfx_systick_delay_us(10);
-			nrfx_uarte_tx(&uarte_1, &spim_0_tx[i], 1);
+			nrfx_uarte_tx(&uarte_1, &spim_1_tx[i], 1);
+#endif // ! USE_SPIM_0
 		}
 		printf("\r\n");
+#if !defined(USE_SPIM_0)
 		while (nrfx_uarte_tx_in_progress(&uarte_1))
 			nrfx_systick_delay_us(10);
 		nrfx_uarte_tx(&uarte_1, nl, sizeof(nl));
+#endif // ! USE_SPIM_0
 
 		// read SAADC 4 channels [0,5,7,VDD]
 		nrfx_saadc_simple_mode_set(saadc_mask,
@@ -237,24 +249,24 @@ static void main_task_function (void *pvParameter)
 
 		vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-		nrfx_gpiote_out_clear(LED2_G);
-		nrfx_gpiote_out_clear(LED2_B);
-		nrfx_gpiote_out_set(LED2_R);
+		nrfx_gpiote_out_clear(LED_2_G);
+		nrfx_gpiote_out_clear(LED_2_B);
+		nrfx_gpiote_out_set(LED_2_R);
 
 		vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-		nrfx_gpiote_out_clear(LED2_R);
-		nrfx_gpiote_out_clear(LED2_B);
-		nrfx_gpiote_out_set(LED2_G);
+		nrfx_gpiote_out_clear(LED_2_R);
+		nrfx_gpiote_out_clear(LED_2_B);
+		nrfx_gpiote_out_set(LED_2_G);
 
 		vTaskDelay(1000 / portTICK_PERIOD_MS);
 
-		nrfx_gpiote_out_clear(LED2_R);
-		nrfx_gpiote_out_clear(LED2_G);
-		nrfx_gpiote_out_set(LED2_B);
+		nrfx_gpiote_out_clear(LED_2_R);
+		nrfx_gpiote_out_clear(LED_2_G);
+		nrfx_gpiote_out_set(LED_2_B);
 
 		printf("\r\e[2J");
-#endif
+#endif // TEST_UARTE_NOTIFIY
 	}
 }
 
@@ -271,19 +283,21 @@ int main(void)
 
 	gpio_init();
 
+#if !defined(USE_SPIM_0)
 	printf("\r\nUARTE 1 Init ...\r\n");
 
 	err = nrfx_uarte_init(&uarte_1, &uarte_1_config, uarte_1_callback);
 	if (err != NRFX_SUCCESS) {
 		printf("error nrfx_uarte_init\r\n");
-		nrfx_gpiote_out_clear(LED2_G);
-		nrfx_gpiote_out_clear(LED2_B);
-		nrfx_gpiote_out_clear(LED1_G);
+		nrfx_gpiote_out_clear(LED_2_G);
+		nrfx_gpiote_out_clear(LED_2_B);
+		nrfx_gpiote_out_clear(LED_1_G);
 		while (true) {
 			nrfx_systick_delay_ms(2000);
-			nrfx_gpiote_out_toggle(LED2_R);
+			nrfx_gpiote_out_toggle(LED_2_R);
 		}
 	}
+#endif // ! USE_SPIM_0
 
 #if !defined(TEST_UARTE_NOTIFIY)
 	printf("\r\nSAADC Init ...\r\n");
@@ -292,38 +306,40 @@ int main(void)
 	nrfx_saadc_channels_config(saadc, sizeof(saadc) / sizeof(saadc[0]));
 	nrfx_saadc_offset_calibrate(NULL);
 
+#if !defined(USE_SPIM_0)
 	printf("\r\nTWIM 1 Init ...\r\n");
 
-	err = nrfx_twim_init(&twim_1, &twim_1_config, NULL, NULL);
+	err = nrfx_twim_init(&twim_0, &twim_0_config, NULL, NULL);
 	if (err != NRFX_SUCCESS) {
 		printf("error nrfx_twim_init\r\n");
-		nrfx_gpiote_out_clear(LED2_G);
-		nrfx_gpiote_out_clear(LED2_B);
-		nrfx_gpiote_out_clear(LED1_G);
+		nrfx_gpiote_out_clear(LED_2_G);
+		nrfx_gpiote_out_clear(LED_2_B);
+		nrfx_gpiote_out_clear(LED_1_G);
 		while (true) {
 			nrfx_systick_delay_ms(3000);
-			nrfx_gpiote_out_toggle(LED2_R);
+			nrfx_gpiote_out_toggle(LED_2_R);
 		}
 	}
 
-	nrfx_twim_enable(&twim_1);
+	nrfx_twim_enable(&twim_0);
+#endif // ! USE_SPIM_0
 
-	printf("\r\nSPIM 0 Init ...\r\n");
+	printf("\r\nSPIM 1 Init ...\r\n");
 
-	err = nrfx_spim_init(&spim_0, &spim_0_config, NULL, NULL);
+	err = nrfx_spim_init(&spim_1, &spim_1_config, NULL, NULL);
 	if (err != NRFX_SUCCESS) {
 		printf("error nrfx_spim_init\r\n");
-		nrfx_gpiote_out_clear(LED2_G);
-		nrfx_gpiote_out_clear(LED2_B);
-		nrfx_gpiote_out_clear(LED1_G);
+		nrfx_gpiote_out_clear(LED_2_G);
+		nrfx_gpiote_out_clear(LED_2_B);
+		nrfx_gpiote_out_clear(LED_1_G);
 		while (true) {
 			nrfx_systick_delay_ms(1000);
-			nrfx_gpiote_out_toggle(LED2_R);
+			nrfx_gpiote_out_toggle(LED_2_R);
 		}
 	}
-#endif
+#endif // ! TEST_UARTE_NOTIFIY
 
-	nrfx_gpiote_out_toggle(LED1_G);
+	nrfx_gpiote_out_toggle(LED_1_G);
 
 	printf("\r\nCreating main_task ... ");
 
@@ -351,6 +367,7 @@ int main(void)
 	}
 	printf("Done (%lu)\r\n", rc);
 
+#if !defined(USE_SPIM_0)
 	printf("\r\nCreating uarte_1_task ... ");
 
 	rc = xTaskCreate(uarte_1_task_function, "uarte_1_task",
@@ -363,6 +380,7 @@ int main(void)
 		while (true);
 	}
 	printf("Done (%lu)\r\n", rc);
+#endif // ! USE_SPIM_0
 
 	SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
 

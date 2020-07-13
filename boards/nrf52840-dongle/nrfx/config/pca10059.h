@@ -45,65 +45,79 @@
 extern "C" {
 #endif
 
-#include "nrf_gpio.h"
+#include "nrfx_gpiote.h"
 #include "nrfx_saadc.h"
 
-// LED definitions for PCA10059
-// Each LED color is considered a separate LED
-#define LEDS_NUMBER    4
+// fixed I/O pin assignments
+//----------------------------------------------------------------------
 
-#define LED1_G         NRF_GPIO_PIN_MAP(0,6)
-#define LED2_R         NRF_GPIO_PIN_MAP(0,8)
-#define LED2_G         NRF_GPIO_PIN_MAP(1,9)
-#define LED2_B         NRF_GPIO_PIN_MAP(0,12)
+#define SW_1  NRF_GPIO_PIN_MAP(1, 6)
 
-#define LED_1          LED1_G
-#define LED_2          LED2_R
-#define LED_3          LED2_G
-#define LED_4          LED2_B
+#define LED_1_G  NRF_GPIO_PIN_MAP(0,  6)
+#define LED_2_R  NRF_GPIO_PIN_MAP(0,  8)
+#define LED_2_G  NRF_GPIO_PIN_MAP(1,  9)
+#define LED_2_B  NRF_GPIO_PIN_MAP(0, 12)
 
-#define BUTTON_1       NRF_GPIO_PIN_MAP(1,6)
-#define BUTTON_PULL    NRF_GPIO_PIN_PULLUP
+// board edge pin assignments
+//----------------------------------------------------------------------
 
-// DEFAULT PIN ASSIGNMENTS
+#define UARTE_0_RX_PIN  NRF_GPIO_PIN_MAP(0, 13) // HF
+#define UARTE_0_TX_PIN  NRF_GPIO_PIN_MAP(0, 15) // HF
 
-#define UARTE_0_RX      26 // P0.26
-#define UARTE_0_TX       4 // P0.04
-#define UARTE_0_RX_PIN  NRF_GPIO_PIN_MAP(0, UARTE_0_RX)
-#define UARTE_0_TX_PIN  NRF_GPIO_PIN_MAP(0, UARTE_0_TX)
-#define UARTE_1_RX      22 // P0.22
-#define UARTE_1_TX      24 // P0.24
-#define UARTE_1_RX_PIN  NRF_GPIO_PIN_MAP(0, UARTE_1_RX)
-#define UARTE_1_TX_PIN  NRF_GPIO_PIN_MAP(0, UARTE_1_TX)
+#if defined(USE_SPIM_0)
 
-#define TWIM_1_SCL      11 // P0.11
-#define TWIM_1_SDA      14 // P0.14
-#define TWIM_1_SCL_PIN  NRF_GPIO_PIN_MAP(0, TWIM_1_SCL)
-#define TWIM_1_SDA_PIN  NRF_GPIO_PIN_MAP(0, TWIM_1_SDA)
+#define SPIM_0_MISO_PIN  NRF_GPIO_PIN_MAP(0, 17) // HF
+#define SPIM_0_MOSI_PIN  NRF_GPIO_PIN_MAP(0, 20) // HF
+#define SPIM_0_SCLK_PIN  NRF_GPIO_PIN_MAP(0, 22) // HF
+#define SPIM_0_CS_PIN    NRF_GPIO_PIN_MAP(0, 24) // HF
 
-#define SPIM_0_MISO      13 // P0.13
-#define SPIM_0_MOSI      15 // P0.15
-#define SPIM_0_SCLK      17 // P0.17
-#define SPIM_0_CS        20 // P0.20
-#define SPIM_0_MISO_PIN  NRF_GPIO_PIN_MAP(0, SPIM_0_MISO)
-#define SPIM_0_MOSI_PIN  NRF_GPIO_PIN_MAP(0, SPIM_0_MOSI)
-#define SPIM_0_SCLK_PIN  NRF_GPIO_PIN_MAP(0, SPIM_0_SCLK)
-#define SPIM_0_CS_PIN    NRF_GPIO_PIN_MAP(0, SPIM_0_CS)
+#else // !USE_SPIM_0
 
-// low frequency I/O
+#define UARTE_1_RX_PIN  NRF_GPIO_PIN_MAP(0, 17) // HF
+#define UARTE_1_TX_PIN  NRF_GPIO_PIN_MAP(0, 20) // HF
 
-#define GPIO_1    NRF_GPIO_PIN_MAP(0,  9) // input
-#define GPIO_2    NRF_GPIO_PIN_MAP(0, 10) // input
-#define GPIO_3    NRF_GPIO_PIN_MAP(1, 10) // output
-#define GPIO_4    NRF_GPIO_PIN_MAP(1, 13) // output
-#define GPIO_5    NRF_GPIO_PIN_MAP(1, 15) // output
+#define TWIM_0_SCL_PIN  NRF_GPIO_PIN_MAP(0, 22) // HF
+#define TWIM_0_SDA_PIN  NRF_GPIO_PIN_MAP(0, 24) // HF
 
-#define GPIO_PWM  NRF_GPIO_PIN_MAP(1, 0)
+#endif // USE_SPIM_0
 
-#define AIN_0    NRF_SAADC_INPUT_AIN0 // P0.02
-#define AIN_5    NRF_SAADC_INPUT_AIN5 // P0.29
-#define AIN_7    NRF_SAADC_INPUT_AIN7 // P0.31
+#define GPIO_PWM_PIN  NRF_GPIO_PIN_MAP(1, 0) // HF
+
+#define GPIO_1_PIN  NRF_GPIO_PIN_MAP(0,  9)
+#define GPIO_2_PIN  NRF_GPIO_PIN_MAP(0, 10)
+#define GPIO_3_PIN  NRF_GPIO_PIN_MAP(1, 10)
+#define GPIO_4_PIN  NRF_GPIO_PIN_MAP(1, 13)
+#define GPIO_5_PIN  NRF_GPIO_PIN_MAP(1, 15)
+
+#if defined(USE_ALL_GPIO)
+
+#define GPIO_6_PIN  NRF_GPIO_PIN_MAP(0,  2)
+#define GPIO_7_PIN  NRF_GPIO_PIN_MAP(0, 29)
+#define GPIO_8_PIN  NRF_GPIO_PIN_MAP(0, 31)
+
+#else
+
+#define AIN_0  NRF_SAADC_INPUT_AIN0 // P0.02
+#define AIN_5  NRF_SAADC_INPUT_AIN5 // P0.29
+#define AIN_7  NRF_SAADC_INPUT_AIN7 // P0.31
+
+#endif // USE_ADC
+
 #define AIN_VDD  NRF_SAADC_INPUT_VDD  // VDD
+
+// bottom side pin assignments
+//----------------------------------------------------------------------
+
+#define GPIO_9_PIN   NRF_GPIO_PIN_MAP(1,  1)
+#define GPIO_10_PIN  NRF_GPIO_PIN_MAP(1,  2)
+#define GPIO_11_PIN  NRF_GPIO_PIN_MAP(1,  4)
+#define GPIO_12_PIN  NRF_GPIO_PIN_MAP(1,  7)
+#define GPIO_13_PIN  NRF_GPIO_PIN_MAP(1, 11)
+
+#define SPIM_1_SCLK_PIN  NRF_GPIO_PIN_MAP(0, 11) // HF
+#define SPIM_1_CS_PIN    NRF_GPIO_PIN_MAP(0, 14) // HF
+#define SPIM_1_MOSI_PIN  NRF_GPIO_PIN_MAP(0,  4) // HF
+#define SPIM_1_MISO_PIN  NRF_GPIO_PIN_MAP(0, 26) // HF
 
 #ifdef __cplusplus
 }
