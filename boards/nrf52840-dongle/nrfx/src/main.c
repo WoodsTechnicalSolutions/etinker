@@ -23,6 +23,14 @@ extern int syscalls_init(nrfx_uarte_t const *uart,
 
 static nrfx_gpiote_out_config_t led_config = NRFX_GPIOTE_CONFIG_OUT_SIMPLE(true);
 
+static nrfx_gpiote_in_config_t sw_1_config = {
+	.sense = NRF_GPIOTE_POLARITY_TOGGLE,
+	.pull = NRF_GPIO_PIN_PULLUP,
+	.is_watcher = false,
+	.hi_accuracy = true,
+	.skip_gpio_setup = false,
+};
+
 static void gpio_init(void)
 {
 	nrfx_err_t err;
@@ -68,6 +76,8 @@ gpio_config:
 	err = nrfx_gpiote_init(NRFX_GPIOTE_DEFAULT_CONFIG_IRQ_PRIORITY);
 	if (err != NRFX_SUCCESS)
 		while (true);
+
+	nrfx_gpiote_in_init(SW_1, &sw_1_config, NULL);
 
 	nrfx_gpiote_out_init(LED_1_G, &led_config);
 	nrfx_gpiote_out_init(LED_2_R, &led_config);
@@ -196,6 +206,7 @@ static void main_task_function (void *pvParameter)
 		vTaskDelay(10 / portTICK_PERIOD_MS);
 #else
 		printf("  MS: %lu\r\n", count);
+		printf(" SW1: %s\r\n", nrfx_gpiote_in_is_set(SW_1) ? "up" : "down");
 
 #if !defined(USE_SPIM_0)
 		// probe I2C and read PCF8575 16-bit I/O expander if found
