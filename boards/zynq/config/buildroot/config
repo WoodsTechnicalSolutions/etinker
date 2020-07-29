@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Buildroot 2020.05 Configuration
+# Buildroot 2020.05.1 Configuration
 #
 BR2_HAVE_DOT_CONFIG=y
 BR2_HOST_GCC_AT_LEAST_4_9=y
@@ -206,7 +206,7 @@ BR2_OPTIMIZE_S=y
 BR2_SHARED_LIBS=y
 # BR2_SHARED_STATIC_LIBS is not set
 BR2_PACKAGE_OVERRIDE_FILE="$(TOPDIR)/local.mk"
-BR2_GLOBAL_PATCH_DIR="$(ET_DIR)/patches"
+BR2_GLOBAL_PATCH_DIR="$(ET_PATCH_DIR)"
 
 #
 # Advanced
@@ -686,7 +686,7 @@ BR2_PACKAGE_SPIDEV_TEST=y
 # BR2_PACKAGE_STRESS_NG is not set
 
 #
-# sysdig needs a glibc or uclibc toolchain w/ C++, gcc >= 4.8, dynamic library and a Linux kernel to be built
+# sysdig needs a glibc or uclibc toolchain w/ C++, threads, gcc >= 4.8, dynamic library and a Linux kernel to be built
 #
 # BR2_PACKAGE_TCF_AGENT is not set
 BR2_PACKAGE_TCF_AGENT_ARCH="arm"
@@ -2100,10 +2100,6 @@ BR2_PACKAGE_LIBOPENH264_ARCH_SUPPORTS=y
 # BR2_PACKAGE_LIBYUV is not set
 # BR2_PACKAGE_LIVE555 is not set
 # BR2_PACKAGE_MEDIASTREAMER is not set
-
-#
-# mediastreamer needs a toolchain w/ threads, C++, dynamic library
-#
 # BR2_PACKAGE_X264 is not set
 # BR2_PACKAGE_X265 is not set
 
@@ -2373,6 +2369,7 @@ BR2_PACKAGE_OPENBLAS_ARCH_SUPPORTS=y
 # BR2_PACKAGE_OPENBLAS is not set
 # BR2_PACKAGE_ORC is not set
 # BR2_PACKAGE_P11_KIT is not set
+BR2_PACKAGE_POCO_ARCH_SUPPORTS=y
 # BR2_PACKAGE_POCO is not set
 BR2_PACKAGE_PROTOBUF_ARCH_SUPPORTS=y
 # BR2_PACKAGE_PROTOBUF is not set
