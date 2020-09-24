@@ -299,7 +299,8 @@ CT_BINUTILS_PATCH_GLOBAL=y
 # CT_BINUTILS_PATCH_LOCAL_BUNDLED is not set
 # CT_BINUTILS_PATCH_NONE is not set
 CT_BINUTILS_PATCH_ORDER="global"
-CT_BINUTILS_V_2_34=y
+CT_BINUTILS_V_2_35=y
+# CT_BINUTILS_V_2_34 is not set
 # CT_BINUTILS_V_2_33 is not set
 # CT_BINUTILS_V_2_32 is not set
 # CT_BINUTILS_V_2_31 is not set
@@ -309,7 +310,7 @@ CT_BINUTILS_V_2_34=y
 # CT_BINUTILS_V_2_27 is not set
 # CT_BINUTILS_V_2_26 is not set
 # CT_BINUTILS_NO_VERSIONS is not set
-CT_BINUTILS_VERSION="2.34"
+CT_BINUTILS_VERSION="2.35"
 CT_BINUTILS_MIRRORS="$(CT_Mirrors GNU binutils) $(CT_Mirrors sourceware binutils/releases)"
 CT_BINUTILS_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
 CT_BINUTILS_ARCHIVE_DIRNAME="@{pkg_name}-@{version}"
@@ -422,7 +423,7 @@ CT_LIBC_NEWLIB_ENABLE_TARGET_OPTSPACE=y
 CT_LIBC_NEWLIB_NANO_MALLOC=y
 CT_LIBC_NEWLIB_NANO_FORMATTED_IO=y
 CT_LIBC_NEWLIB_EXTRA_CONFIG_ARRAY=""
-CT_ALL_LIBC_CHOICES="AVR_LIBC BIONIC GLIBC MINGW_W64 MOXIEBOX MUSL NEWLIB NONE UCLIBC"
+CT_ALL_LIBC_CHOICES="AVR_LIBC BIONIC GLIBC MINGW_W64 MOXIEBOX MUSL NEWLIB NONE PICOLIBC UCLIBC"
 CT_LIBC_SUPPORT_THREADS_NONE=y
 CT_LIBC_PROVIDES_CXA_ATEXIT=y
 
@@ -465,14 +466,15 @@ CT_GCC_PATCH_GLOBAL=y
 # CT_GCC_PATCH_LOCAL_BUNDLED is not set
 # CT_GCC_PATCH_NONE is not set
 CT_GCC_PATCH_ORDER="global"
-CT_GCC_V_9=y
+CT_GCC_V_10=y
+# CT_GCC_V_9 is not set
 # CT_GCC_V_8 is not set
 # CT_GCC_V_7 is not set
 # CT_GCC_V_6 is not set
 # CT_GCC_V_5 is not set
 # CT_GCC_V_4_9 is not set
 # CT_GCC_NO_VERSIONS is not set
-CT_GCC_VERSION="9.2.0"
+CT_GCC_VERSION="10.2.0"
 CT_GCC_MIRRORS="$(CT_Mirrors GNU gcc/gcc-${CT_GCC_VERSION}) $(CT_Mirrors sourceware gcc/releases/gcc-${CT_GCC_VERSION})"
 CT_GCC_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
 CT_GCC_ARCHIVE_DIRNAME="@{pkg_name}-@{version}"
@@ -558,7 +560,7 @@ CT_GDB_PATCH_GLOBAL=y
 # CT_GDB_PATCH_LOCAL_BUNDLED is not set
 # CT_GDB_PATCH_NONE is not set
 CT_GDB_PATCH_ORDER="global"
-CT_GDB_V_9_1=y
+CT_GDB_V_9_2=y
 # CT_GDB_V_8_3 is not set
 # CT_GDB_V_8_2 is not set
 # CT_GDB_V_8_1 is not set
@@ -566,7 +568,7 @@ CT_GDB_V_9_1=y
 # CT_GDB_V_7_12 is not set
 # CT_GDB_V_7_11 is not set
 # CT_GDB_NO_VERSIONS is not set
-CT_GDB_VERSION="9.1"
+CT_GDB_VERSION="9.2"
 CT_GDB_MIRRORS="$(CT_Mirrors GNU gdb) $(CT_Mirrors sourceware gdb/releases)"
 CT_GDB_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
 CT_GDB_ARCHIVE_DIRNAME="@{pkg_name}-@{version}"
@@ -625,7 +627,7 @@ CT_EXPAT_PATCH_ORDER="global"
 CT_EXPAT_V_2_2=y
 # CT_EXPAT_NO_VERSIONS is not set
 CT_EXPAT_VERSION="2.2.9"
-CT_EXPAT_MIRRORS="http://downloads.sourceforge.net/project/expat/expat/${CT_EXPAT_VERSION}"
+CT_EXPAT_MIRRORS="http://downloads.sourceforge.net/project/expat/expat/${CT_EXPAT_VERSION} https://github.com/libexpat/libexpat/releases/download/R_${CT_EXPAT_VERSION//./_}"
 CT_EXPAT_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
 CT_EXPAT_ARCHIVE_DIRNAME="@{pkg_name}-@{version}"
 CT_EXPAT_ARCHIVE_FORMATS=".tar.xz .tar.lz .tar.bz2 .tar.gz"
@@ -718,7 +720,7 @@ CT_LIBELF_PATCH_ORDER="global"
 CT_LIBELF_V_0_8=y
 # CT_LIBELF_NO_VERSIONS is not set
 CT_LIBELF_VERSION="0.8.13"
-CT_LIBELF_MIRRORS="http://www.mr511.de/software https://fossies.org/linux/misc/old"
+CT_LIBELF_MIRRORS="https://fossies.org/linux/misc/old"
 CT_LIBELF_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
 CT_LIBELF_ARCHIVE_DIRNAME="@{pkg_name}-@{version}"
 CT_LIBELF_ARCHIVE_FORMATS=".tar.gz"
@@ -738,17 +740,18 @@ CT_MPC_PATCH_GLOBAL=y
 # CT_MPC_PATCH_LOCAL_BUNDLED is not set
 # CT_MPC_PATCH_NONE is not set
 CT_MPC_PATCH_ORDER="global"
-CT_MPC_V_1_1=y
+CT_MPC_V_1_2=y
+# CT_MPC_V_1_1 is not set
 # CT_MPC_V_1_0 is not set
 # CT_MPC_NO_VERSIONS is not set
-CT_MPC_VERSION="1.1.0"
+CT_MPC_VERSION="1.2.0"
 CT_MPC_MIRRORS="http://www.multiprecision.org/downloads $(CT_Mirrors GNU mpc)"
 CT_MPC_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
 CT_MPC_ARCHIVE_DIRNAME="@{pkg_name}-@{version}"
 CT_MPC_ARCHIVE_FORMATS=".tar.gz"
 CT_MPC_SIGNATURE_FORMAT="packed/.sig"
+CT_MPC_later_than_1_1_0=y
 CT_MPC_1_1_0_or_later=y
-CT_MPC_1_1_0_or_older=y
 CT_COMP_LIBS_MPFR=y
 CT_COMP_LIBS_MPFR_PKG_KSYM="MPFR"
 CT_MPFR_DIR_NAME="mpfr"
@@ -763,10 +766,11 @@ CT_MPFR_PATCH_GLOBAL=y
 # CT_MPFR_PATCH_LOCAL_BUNDLED is not set
 # CT_MPFR_PATCH_NONE is not set
 CT_MPFR_PATCH_ORDER="global"
-CT_MPFR_V_4_0=y
+CT_MPFR_V_4_1=y
+# CT_MPFR_V_4_0 is not set
 # CT_MPFR_V_3_1 is not set
 # CT_MPFR_NO_VERSIONS is not set
-CT_MPFR_VERSION="4.0.2"
+CT_MPFR_VERSION="4.1.0"
 CT_MPFR_MIRRORS="http://www.mpfr.org/mpfr-${CT_MPFR_VERSION} $(CT_Mirrors GNU mpfr)"
 CT_MPFR_ARCHIVE_FILENAME="@{pkg_name}-@{version}"
 CT_MPFR_ARCHIVE_DIRNAME="@{pkg_name}-@{version}"
