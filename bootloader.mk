@@ -25,6 +25,7 @@ et_bootloader_defconfig := $(ET_BOARD_BOOTLOADER_DEFCONFIG)
 else
 et_bootloader_defconfig := $(ET_BOARD_DEFCONFIG)
 endif
+
 # [start] bootloader version magic
 ET_BOOTLOADER_VERSION := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v)
 ET_BOOTLOADER_LOCALVERSION := -$(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | cut -d '-' -f 2-5)
@@ -47,36 +48,27 @@ ifeq ($(ET_BOOTLOADER_LOCALVERSION),-v$(ET_BOOTLOADER_VERSION))
 # exact tag in series (i.e. v2018.09)
 ET_BOOTLOADER_LOCALVERSION :=
 endif
-ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -Po xlnx),xlnx)
-# Xilinx 'u-boot-xlnx' tree
-ET_BOOTLOADER_VERSION := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && make -s ubootversion | tr -d \\n)
-ET_BOOTLOADER_LOCALVERSION := -$(ET_BOOTLOADER_CACHED_VERSION)
-endif
 export ET_BOOTLOADER_VERSION
 export ET_BOOTLOADER_LOCALVERSION
 # [end] bootloader version magic
+
 export ET_BOOTLOADER_BUILD_DIR := $(ET_DIR)/bootloader/build/$(ET_BOARD)/$(ET_CROSS_TUPLE)
 export ET_BOOTLOADER_BUILD_CONFIG := $(ET_BOOTLOADER_BUILD_DIR)/.config
 export ET_BOOTLOADER_BUILD_DEFCONFIG := $(ET_BOOTLOADER_BUILD_DIR)/defconfig
 export ET_BOOTLOADER_BUILD_SYSMAP := $(ET_BOOTLOADER_BUILD_DIR)/System.map
-export ET_BOOTLOADER_BUILD_DTB := $(ET_BOOTLOADER_BUILD_DIR)/u-boot-dtb.img
-export ET_BOOTLOADER_BUILD_IMAGE := $(ET_BOOTLOADER_BUILD_DIR)/u-boot.img
 export ET_BOOTLOADER_DIR := $(ET_DIR)/bootloader/$(ET_BOARD)/$(ET_CROSS_TUPLE)
 export ET_BOOTLOADER_CONFIG := $(ET_CONFIG_DIR)/$(ET_BOOTLOADER_TREE)/config
 export ET_BOOTLOADER_DEFCONFIG := $(ET_CONFIG_DIR)/$(ET_BOOTLOADER_TREE)/$(et_bootloader_defconfig)
 export ET_BOOTLOADER_SYSMAP := $(ET_BOOTLOADER_DIR)/System.map
-export ET_BOOTLOADER_DTB := $(ET_BOOTLOADER_DIR)/boot/u-boot-dtb.img
-export ET_BOOTLOADER_IMAGE := $(ET_BOOTLOADER_DIR)/boot/u-boot.img
-export ET_BOOTLOADER_TARGET_FINAL ?= $(ET_BOOTLOADER_IMAGE)
 
 export DEVICE_TREE := $(ET_BOARD_KERNEL_DT)
-ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -Po zynq),zynq)
-# Handle out-of-tree devicetree build (i.e. dtb-y += zynq-custom-board.dtb)
-DEVICE_TREE_MAKEFILE := -f $(ET_BOARD_DIR)/dts/Makefile
-endif
 
 # Get board specific definitions
 include $(ET_DIR)/boards/$(ET_BOARD)/bootloader.mk
+
+export ET_BOOTLOADER_BUILD_IMAGE ?= $(ET_BOOTLOADER_BUILD_DIR)/u-boot.img
+export ET_BOOTLOADER_IMAGE ?= $(ET_BOOTLOADER_DIR)/boot/u-boot.img
+export ET_BOOTLOADER_TARGET_FINAL ?= $(ET_BOOTLOADER_IMAGE)
 
 define bootloader-version
 	@printf "ET_BOOTLOADER_VERSION: \033[0;33m[$(ET_BOOTLOADER_CACHED_VERSION)]\033[0m $(ET_BOOTLOADER_VERSION)\n"
@@ -118,6 +110,13 @@ define bootloader-prepare
 endef
 
 define bootloader-finalize
+	@$(RM) $(ET_BOOTLOADER_DIR)/boot/u-boot*
+	@$(RM) $(ET_BOOTLOADER_DIR)/boot/boot*
+	@if ! [ -f $(ET_BOOTLOADER_BUILD_IMAGE) ]; then \
+		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_BUILD_IMAGE) build FAILED! *****\n\n"; \
+		exit 2; \
+	fi
+	@cp -av $(ET_BOOTLOADER_BUILD_IMAGE) $(ET_BOOTLOADER_DIR)/boot/
 	$(call bootloader-finalize-$(ET_BOARD))
 endef
 
@@ -197,7 +196,6 @@ define bootloader-info
 	@printf "ET_BOOTLOADER_LOCALVERSION: $(ET_BOOTLOADER_LOCALVERSION)\n"
 	@printf "ET_BOOTLOADER_SOFTWARE_DIR: $(ET_BOOTLOADER_SOFTWARE_DIR)\n"
 	@printf "ET_BOOTLOADER_SYSMAP: $(ET_BOOTLOADER_SYSMAP)\n"
-	@printf "ET_BOOTLOADER_DTB: $(ET_BOOTLOADER_DTB)\n"
 	@printf "ET_BOOTLOADER_IMAGE: $(ET_BOOTLOADER_IMAGE)\n"
 	@printf "ET_BOOTLOADER_CONFIG: $(ET_BOOTLOADER_CONFIG)\n"
 	@printf "et_bootloader_defconfig: $(et_bootloader_defconfig)\n"
@@ -206,7 +204,6 @@ define bootloader-info
 	@printf "ET_BOOTLOADER_BUILD_CONFIG: $(ET_BOOTLOADER_BUILD_CONFIG)\n"
 	@printf "ET_BOOTLOADER_BUILD_DEFCONFIG: $(ET_BOOTLOADER_BUILD_DEFCONFIG)\n"
 	@printf "ET_BOOTLOADER_BUILD_SYSMAP: $(ET_BOOTLOADER_BUILD_SYSMAP)\n"
-	@printf "ET_BOOTLOADER_BUILD_DTB: $(ET_BOOTLOADER_BUILD_DTB)\n"
 	@printf "ET_BOOTLOADER_BUILD_IMAGE: $(ET_BOOTLOADER_BUILD_IMAGE)\n"
 	@printf "ET_BOOTLOADER_BUILD_DIR: $(ET_BOOTLOADER_BUILD_DIR)\n"
 	@printf "ET_BOOTLOADER_DIR: $(ET_BOOTLOADER_DIR)\n"
