@@ -59,18 +59,12 @@ export ET_BOOTLOADER_BUILD_DIR := $(ET_DIR)/bootloader/build/$(ET_BOARD)/$(ET_CR
 export ET_BOOTLOADER_BUILD_CONFIG := $(ET_BOOTLOADER_BUILD_DIR)/.config
 export ET_BOOTLOADER_BUILD_DEFCONFIG := $(ET_BOOTLOADER_BUILD_DIR)/defconfig
 export ET_BOOTLOADER_BUILD_SYSMAP := $(ET_BOOTLOADER_BUILD_DIR)/System.map
-ifeq ($(shell echo $(ET_BOARD_TYPE)|grep omap2plus|cut -d '-' -f 1),omap2plus)
-export ET_BOOTLOADER_BUILD_SPL := $(ET_BOOTLOADER_BUILD_DIR)/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
-else
-export ET_BOOTLOADER_BUILD_SPL := $(ET_BOOTLOADER_BUILD_DIR)/spl/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
-endif
 export ET_BOOTLOADER_BUILD_DTB := $(ET_BOOTLOADER_BUILD_DIR)/u-boot-dtb.img
 export ET_BOOTLOADER_BUILD_IMAGE := $(ET_BOOTLOADER_BUILD_DIR)/u-boot.img
 export ET_BOOTLOADER_DIR := $(ET_DIR)/bootloader/$(ET_BOARD)/$(ET_CROSS_TUPLE)
 export ET_BOOTLOADER_CONFIG := $(ET_CONFIG_DIR)/$(ET_BOOTLOADER_TREE)/config
 export ET_BOOTLOADER_DEFCONFIG := $(ET_CONFIG_DIR)/$(ET_BOOTLOADER_TREE)/$(et_bootloader_defconfig)
 export ET_BOOTLOADER_SYSMAP := $(ET_BOOTLOADER_DIR)/System.map
-export ET_BOOTLOADER_SPL := $(ET_BOOTLOADER_DIR)/boot/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
 export ET_BOOTLOADER_DTB := $(ET_BOOTLOADER_DIR)/boot/u-boot-dtb.img
 export ET_BOOTLOADER_IMAGE := $(ET_BOOTLOADER_DIR)/boot/u-boot.img
 export ET_BOOTLOADER_TARGET_FINAL ?= $(ET_BOOTLOADER_IMAGE)
@@ -81,6 +75,9 @@ ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -Po zynq),zynq)
 DEVICE_TREE_MAKEFILE := -f $(ET_BOARD_DIR)/dts/Makefile
 endif
 
+# Get board specific definitions
+include $(ET_DIR)/boards/$(ET_BOARD)/bootloader.mk
+
 define bootloader-version
 	@printf "ET_BOOTLOADER_VERSION: \033[0;33m[$(ET_BOOTLOADER_CACHED_VERSION)]\033[0m $(ET_BOOTLOADER_VERSION)\n"
 	@printf "ET_BOOTLOADER_LOCALVERSION: $(ET_BOOTLOADER_LOCALVERSION)\n"
@@ -90,20 +87,7 @@ define bootloader-depends
 	@mkdir -p $(ET_BOOTLOADER_DIR)/boot
 	@mkdir -p $(ET_BOOTLOADER_BUILD_DIR)
 	@mkdir -p $(shell dirname $(ET_BOOTLOADER_CONFIG))
-	@case "$(ET_BOARD_TYPE)" in \
-	zynq|zynq-xlnx) \
-		if [ -d $(ET_BOARD_DIR)/fpga/sdk ]; then \
-			rsync -r $(ET_BOARD_DIR)/fpga/dts $(ET_BOARD_DIR)/; \
-			rsync -r $(ET_BOARD_DIR)/fpga/sdk/ps*_init_gpl.* \
-				$(ET_BOOTLOADER_SOFTWARE_DIR)/board/xilinx/zynq/$(ET_BOARD_KERNEL_DT)/; \
-		else \
-			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] FPGA BUILD IS MISSING! *****\n"; \
-			exit 2; \
-		fi \
-		;; \
-	*) \
-		;; \
-	esac
+	$(call bootloader-depends-$(ET_BOARD))
 	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.dts* 2> /dev/null`" ]; then \
 		rsync -rP $(ET_BOARD_DIR)/dts/*.dts* \
 			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_ARCH)/dts/; \
@@ -117,9 +101,10 @@ define bootloader-depends
 	fi
 endef
 
-define bootloader-targets
+define bootloader-prepare
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_TREE) $(ET_BOOTLOADER_VERSION) *****\n\n"
 	$(call bootloader-depends)
+	$(call bootloader-prepare-$(ET_BOARD))
 	@if ! [ -f $(ET_BOOTLOADER_BUILD_CONFIG) ]; then \
 		if [ -f $(ET_BOOTLOADER_CONFIG) ]; then \
 			rsync $(ET_BOOTLOADER_CONFIG) $(ET_BOOTLOADER_BUILD_CONFIG); \
@@ -130,7 +115,10 @@ define bootloader-targets
 				$(et_bootloader_defconfig); \
 		fi; \
 	fi
-	$(call bootloader-build)
+endef
+
+define bootloader-finalize
+	$(call bootloader-finalize-$(ET_BOARD))
 endef
 
 define bootloader-build
@@ -166,39 +154,6 @@ define bootloader-build
 			$(RM) $(ET_BOOTLOADER_DIR)/boot/boot*; \
 			$(RM) $(ET_BOOTLOADER_DIR)/boot/u-boot*; \
 		fi; \
-	else \
-		$(RM) $(ET_BOOTLOADER_DIR)/boot/u-boot*; \
-		$(RM) $(ET_BOOTLOADER_DIR)/boot/boot*; \
-		if ! [ -f $(ET_BOOTLOADER_BUILD_SPL) ]; then \
-			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_BUILD_SPL) build FAILED! *****\n\n"; \
-			exit 2; \
-		fi; \
-		cp -av $(ET_BOOTLOADER_BUILD_SPL) $(ET_BOOTLOADER_DIR)/boot/; \
-		if ! [ -f $(ET_BOOTLOADER_BUILD_IMAGE) ]; then \
-			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_BUILD_IMAGE) build FAILED! *****\n\n"; \
-			exit 2; \
-		fi; \
-		cp -av $(ET_BOOTLOADER_BUILD_IMAGE) $(ET_BOOTLOADER_DIR)/boot/; \
-		if [ -f $(ET_BOOTLOADER_BUILD_DTB) ]; then \
-			cp -av $(ET_BOOTLOADER_BUILD_DTB) $(ET_BOOTLOADER_DIR)/boot/; \
-		fi; \
-		if [ -f $(ET_CONFIG_DIR)/$(ET_BOOTLOADER_TREE)/uEnv.txt ]; then \
-			cp -av $(ET_CONFIG_DIR)/$(ET_BOOTLOADER_TREE)/uEnv.txt $(ET_BOOTLOADER_DIR)/boot/; \
-		fi; \
-		case "$(ET_BOARD_TYPE)" in \
-		zynq*) \
-			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Generating Xilinx 'system.bit.bin' *****\n\n"; \
-			(cd $(ET_BOARD_DIR)/fpga && \
-				$(ET_SCRIPTS_DIR)/fpga-bit-to-bin.py -f "`ls sdk/*.bit | tr -d \\\n`" \
-				$(ET_BOOTLOADER_DIR)/boot/system.bit.bin); \
-			if ! [ -f $(ET_BOOTLOADER_DIR)/boot/system.bit.bin ]; then \
-				printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Xilinx 'system.bit.bin' build FAILED! *****\n\n"; \
-				exit 2; \
-			fi; \
-			;; \
-		*) \
-			;; \
-		esac; \
 	fi
 	@if [ -f $(ET_BOOTLOADER_BUILD_CONFIG) ]; then \
 		if [ -n "$(shell diff -q $(ET_BOOTLOADER_BUILD_CONFIG) $(ET_BOOTLOADER_CONFIG) 2> /dev/null)" ]; then \
@@ -242,16 +197,15 @@ define bootloader-info
 	@printf "ET_BOOTLOADER_LOCALVERSION: $(ET_BOOTLOADER_LOCALVERSION)\n"
 	@printf "ET_BOOTLOADER_SOFTWARE_DIR: $(ET_BOOTLOADER_SOFTWARE_DIR)\n"
 	@printf "ET_BOOTLOADER_SYSMAP: $(ET_BOOTLOADER_SYSMAP)\n"
-	@printf "ET_BOOTLOADER_SPL: $(ET_BOOTLOADER_SPL)\n"
 	@printf "ET_BOOTLOADER_DTB: $(ET_BOOTLOADER_DTB)\n"
 	@printf "ET_BOOTLOADER_IMAGE: $(ET_BOOTLOADER_IMAGE)\n"
 	@printf "ET_BOOTLOADER_CONFIG: $(ET_BOOTLOADER_CONFIG)\n"
 	@printf "et_bootloader_defconfig: $(et_bootloader_defconfig)\n"
 	@printf "ET_BOOTLOADER_DEFCONFIG: $(ET_BOOTLOADER_DEFCONFIG)\n"
+	$(call bootloader-info-$(ET_BOARD))
 	@printf "ET_BOOTLOADER_BUILD_CONFIG: $(ET_BOOTLOADER_BUILD_CONFIG)\n"
 	@printf "ET_BOOTLOADER_BUILD_DEFCONFIG: $(ET_BOOTLOADER_BUILD_DEFCONFIG)\n"
 	@printf "ET_BOOTLOADER_BUILD_SYSMAP: $(ET_BOOTLOADER_BUILD_SYSMAP)\n"
-	@printf "ET_BOOTLOADER_BUILD_SPL: $(ET_BOOTLOADER_BUILD_SPL)\n"
 	@printf "ET_BOOTLOADER_BUILD_DTB: $(ET_BOOTLOADER_BUILD_DTB)\n"
 	@printf "ET_BOOTLOADER_BUILD_IMAGE: $(ET_BOOTLOADER_BUILD_IMAGE)\n"
 	@printf "ET_BOOTLOADER_BUILD_DIR: $(ET_BOOTLOADER_BUILD_DIR)\n"
@@ -266,7 +220,9 @@ endef
 .PHONY: bootloader
 bootloader: $(ET_BOOTLOADER_TARGET_FINAL)
 $(ET_BOOTLOADER_TARGET_FINAL): $(ET_BOOTLOADER_BUILD_CONFIG)
-	$(call bootloader-targets)
+	$(call bootloader-prepare)
+	$(call bootloader-build)
+	$(call bootloader-finalize)
 
 bootloader-%: $(ET_BOOTLOADER_BUILD_CONFIG)
 	$(call bootloader-build,$(*F))
