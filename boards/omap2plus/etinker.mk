@@ -28,6 +28,8 @@ ET_BOARD_OS ?= linux
 ET_BOARD_ABI ?= gnueabihf
 ET_BOARD_CROSS_TUPLE := $(ET_BOARD_ARCH)-$(ET_BOARD_VENDOR)-$(ET_BOARD_OS)-$(ET_BOARD_ABI)
 
+ET_BOARD_KERNEL_ARCH := $(ET_BOARD_ARCH)
+
 # final item built for the configured toolchain
 ET_TOOLCHAIN_TARGET_FINAL := \
 	$(ET_DIR)/toolchain/$(ET_BOARD_CROSS_TUPLE)/$(ET_BOARD_CROSS_TUPLE)/debug-root/usr/bin/strace
