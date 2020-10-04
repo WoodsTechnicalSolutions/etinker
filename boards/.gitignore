@@ -1,10 +1,16 @@
 /am335x-pocketbeagle-*
 /am3517-evm-*
+/aml-s905x-cc-*
 /arm-bare-metal-*
 /ek-tm4c123gxl-*
 /ek-tm4c1294xl-*
+/meson-*
+/nrf52840-dongle-*
+/zynq-master
+/zynq-next
 /omap2plus-*
-/omap3-beagle-*
+/omap3-beagle-master
+/omap3-beagle-next
 /omap3-beagle-xm-*
 /omap3-evm-*
 /sama5d3-xpld-*

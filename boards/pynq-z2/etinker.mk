@@ -42,7 +42,6 @@ ET_BOARD_KERNEL_DT ?= zynq-pynq-z2
 ET_BOARD_KERNEL_LOADADDR ?= 0x02080000
 ET_BOARD_KERNEL_DEFCONFIG ?= et_$(subst -,_,$(ET_BOARD_TYPE))_defconfig
 
-ET_BOARD_BOOTLOADER_SPL_BINARY ?= boot.bin
 ET_BOARD_BOOTLOADER_DEFCONFIG ?= xilinx_zynq_virt_defconfig
 
 ifeq ($(ET_USE_DEFCONFIG),yes)
