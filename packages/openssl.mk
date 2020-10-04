@@ -30,6 +30,11 @@ export ET_OPENSSL_SSL_SO := $(ET_OVERLAY_DIR)/usr/lib/libssl.so
 export ET_OPENSSL_BIN := $(ET_OVERLAY_DIR)/usr/bin/openssl
 export ET_OPENSSL_TARGET_FINAL ?= $(ET_OPENSSL_BIN)
 
+ET_OPENSSL_ARCH := linux-armv4 -march=armv7-a
+ifeq ($(ET_BOARD_KERNEL_ARCH),arm64)
+ET_OPENSSL_ARCH := linux-aarch64 -march=armv8-a
+endif
+
 define openssl-version
 	@printf "ET_OPENSSL_VERSION: \033[0;33m[$(ET_OPENSSL_CACHED_VERSION)]\033[0m $(ET_OPENSSL_VERSION)\n"
 endef
@@ -100,7 +105,7 @@ define openssl-config
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl-config *****\n\n"; \
 		cd $(ET_OPENSSL_BUILD_DIR) && \
 			$(ET_OPENSSL_SOFTWARE_DIR)/Configure \
-				linux-armv4 \
+				$(ET_OPENSSL_ARCH) \
 				--prefix=/usr \
 				--openssldir=/etc/ssl \
 				--cross-compile-prefix=$(ET_CROSS_COMPILE) \

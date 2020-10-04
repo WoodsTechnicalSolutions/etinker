@@ -48,7 +48,7 @@ define cryptodev-linux-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call cryptodev-linux-build 'make $1' *****\n\n"
 	$(call cryptodev-linux-depends)
 	@$(MAKE) -C $(ET_CRYPTODEV_LINUX_BUILD_DIR) \
-		$(ET_CROSS_PARAMS) \
+		ARCH=$(ET_BOARD_KERNEL_ARCH) CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 		$1 \
 		prefix=$(ET_ROOTFS_SYSROOT_DIR)/usr \
 		INSTALL_MOD_PATH=$(ET_KERNEL_DIR) \
