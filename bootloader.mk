@@ -66,8 +66,8 @@ export DEVICE_TREE := $(ET_BOARD_KERNEL_DT)
 # Get board specific definitions
 include $(ET_DIR)/boards/$(ET_BOARD)/bootloader.mk
 
-export ET_BOOTLOADER_BUILD_IMAGE ?= $(ET_BOOTLOADER_BUILD_DIR)/u-boot.img
-export ET_BOOTLOADER_IMAGE ?= $(ET_BOOTLOADER_DIR)/boot/u-boot.img
+export ET_BOOTLOADER_BUILD_IMAGE ?= $(ET_BOOTLOADER_BUILD_DIR)/$(ET_BOARD_BOOTLOADER_IMAGE)
+export ET_BOOTLOADER_IMAGE ?= $(ET_BOOTLOADER_DIR)/boot/$(ET_BOARD_BOOTLOADER_IMAGE)
 export ET_BOOTLOADER_TARGET_FINAL ?= $(ET_BOOTLOADER_IMAGE)
 
 define bootloader-version
