@@ -26,6 +26,16 @@ export ET_TOOLCHAIN_GENERATOR := $(ET_TOOLCHAIN_GENERATOR_DIR)/bin/ct-ng
 export ET_TOOLCHAIN_CONFIG := $(ET_CONFIG_DIR)/$(ET_TOOLCHAIN_TREE)/config
 export ET_TOOLCHAIN_BUILD_CONFIG := $(ET_TOOLCHAIN_BUILD_DIR)/.config
 export ET_TOOLCHAIN_TARGET_FINAL ?= $(ET_TOOLCHAIN_DIR)/bin/$(ET_CROSS_TUPLE)-gdb
+# configured component versions
+export ET_TOOLCHAIN_GCC_VERSION := $(shell grep -oP 'CT_GCC_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_CONFIG))
+export ET_TOOLCHAIN_GDB_VERSION := $(shell grep -oP 'CT_GDB_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_CONFIG))
+ifeq ($(CT_KERNEL),linux)
+export ET_TOOLCHAIN_GLIBC_VERSION := $(shell grep -oP 'CT_GLIBC_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_CONFIG))
+export ET_TOOLCHAIN_LINUX_VERSION := $(shell grep -oP 'CT_LINUX_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_CONFIG))
+endif
+ifeq ($(CT_KERNEL),bare-metal)
+export ET_TOOLCHAIN_NEWLIB_VERSION := $(shell grep -oP 'CT_NEWLIB_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_CONFIG))
+endif
 
 define toolchain-version
 	@printf "ET_TOOLCHAIN_VERSION: \033[0;33m[$(ET_TOOLCHAIN_CACHED_VERSION)]\033[0m $(ET_TOOLCHAIN_VERSION)\n"
@@ -119,6 +129,15 @@ define toolchain-info
 	@printf "========================================================================\n"
 	@printf "ET_TOOLCHAIN_TREE: $(ET_TOOLCHAIN_TREE)\n"
 	@printf "ET_TOOLCHAIN_VERSION: $(ET_TOOLCHAIN_VERSION)\n"
+	@printf "ET_TOOLCHAIN_GCC_VERSION: $(ET_TOOLCHAIN_GCC_VERSION)\n"
+	@printf "ET_TOOLCHAIN_GDB_VERSION: $(ET_TOOLCHAIN_GDB_VERSION)\n"
+	@if [ "$(CT_KERNEL)" = "linux" ]; then \
+		printf "ET_TOOLCHAIN_GLIBC_VERSION: $(ET_TOOLCHAIN_GLIBC_VERSION)\n"; \
+		printf "ET_TOOLCHAIN_LINUX_VERSION: $(ET_TOOLCHAIN_LINUX_VERSION)\n"; \
+	fi
+	@if [ "$(CT_KERNEL)" = "bare-metal" ]; then \
+		printf "ET_TOOLCHAIN_NEWLIB_VERSION: $(ET_TOOLCHAIN_NEWLIB_VERSION)\n"; \
+	fi
 	@printf "ET_TOOLCHAIN_SOFTWARE_DIR: $(ET_TOOLCHAIN_SOFTWARE_DIR)\n"
 	@printf "ET_TOOLCHAIN_GENERATOR: $(ET_TOOLCHAIN_GENERATOR)\n"
 	@printf "ET_TOOLCHAIN_GENERATOR_DIR: $(ET_TOOLCHAIN_GENERATOR_DIR)\n"
