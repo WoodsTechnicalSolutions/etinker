@@ -1,9 +1,3 @@
-ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -Po xlnx),xlnx)
-# Xilinx 'u-boot-xlnx' tree
-export ET_BOOTLOADER_VERSION := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && make -s ubootversion | tr -d \\n)
-export ET_BOOTLOADER_LOCALVERSION := -$(ET_BOOTLOADER_CACHED_VERSION)
-endif
-
 export ET_BOOTLOADER_BUILD_SPL := $(ET_BOOTLOADER_BUILD_DIR)/spl/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
 export ET_BOOTLOADER_SPL := $(ET_BOOTLOADER_DIR)/boot/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
 
@@ -44,6 +38,7 @@ define bootloader-finalize-$(ET_BOARD_TYPE)
 endef
 
 define bootloader-info-$(ET_BOARD_TYPE)
+	@printf "========================================================================\n"
 	@printf "ET_BOOTLOADER_SPL: $(ET_BOOTLOADER_SPL)\n"
 	@printf "ET_BOOTLOADER_BUILD_SPL: $(ET_BOOTLOADER_BUILD_SPL)\n"
 endef

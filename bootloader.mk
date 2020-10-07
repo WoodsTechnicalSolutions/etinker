@@ -200,7 +200,6 @@ define bootloader-info
 	@printf "ET_BOOTLOADER_CONFIG: $(ET_BOOTLOADER_CONFIG)\n"
 	@printf "et_bootloader_defconfig: $(et_bootloader_defconfig)\n"
 	@printf "ET_BOOTLOADER_DEFCONFIG: $(ET_BOOTLOADER_DEFCONFIG)\n"
-	$(call bootloader-info-$(ET_BOARD))
 	@printf "ET_BOOTLOADER_BUILD_CONFIG: $(ET_BOOTLOADER_BUILD_CONFIG)\n"
 	@printf "ET_BOOTLOADER_BUILD_DEFCONFIG: $(ET_BOOTLOADER_BUILD_DEFCONFIG)\n"
 	@printf "ET_BOOTLOADER_BUILD_SYSMAP: $(ET_BOOTLOADER_BUILD_SYSMAP)\n"
@@ -208,6 +207,7 @@ define bootloader-info
 	@printf "ET_BOOTLOADER_BUILD_DIR: $(ET_BOOTLOADER_BUILD_DIR)\n"
 	@printf "ET_BOOTLOADER_DIR: $(ET_BOOTLOADER_DIR)\n"
 	@printf "ET_BOOTLOADER_TARGET_FINAL: $(ET_BOOTLOADER_TARGET_FINAL)\n"
+	$(call bootloader-info-$(ET_BOARD))
 endef
 
 define bootloader-sync

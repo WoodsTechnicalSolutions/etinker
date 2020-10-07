@@ -21,6 +21,7 @@ define bootloader-finalize-$(ET_BOARD_TYPE)
 endef
 
 define bootloader-info-$(ET_BOARD_TYPE)
+	@printf "========================================================================\n"
 	@printf "ET_BOOTLOADER_SPL: $(ET_BOOTLOADER_SPL)\n"
 	@printf "ET_BOOTLOADER_BUILD_SPL: $(ET_BOOTLOADER_BUILD_SPL)\n"
 endef
