@@ -25,7 +25,7 @@ define bootloader-finalize-$(ET_BOARD_TYPE)
 	fi
 	@cp -av $(ET_BOOTLOADER_BUILD_SPL) $(ET_BOOTLOADER_DIR)/boot/
 	@if [ -f $(ET_CONFIG_DIR)/$(ET_BOOTLOADER_TREE)/uEnv.txt ]; then \
-		cp -av $(ET_CONFIG_DIR)/$(ET_BOOTLOADER_TREE)/uEnv.txt $(ET_BOOTLOADER_DIR)/boot/; \
+		cp -av $(ET_CONFIG_DIR)/$(ET_BOOTLOADER_TREE)/uEnv*.txt $(ET_BOOTLOADER_DIR)/boot/; \
 	fi
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Generating Xilinx 'system.bit.bin' *****\n\n"
 	@(cd $(ET_BOARD_DIR)/fpga && \
