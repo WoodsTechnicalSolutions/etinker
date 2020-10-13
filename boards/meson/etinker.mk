@@ -22,11 +22,11 @@ ifeq ($(ET_BOARD),meson)
 $(error [ 'etinker' board 'meson' is virtual ] ***)
 endif
 
-ET_BOARD_ARCH ?= arm
+ET_BOARD_ARCH ?= aarch64
 ET_BOARD_VENDOR ?= cortexa53
 ET_BOARD_OS ?= linux
 ET_BOARD_ABI ?= gnu
-ET_BOARD_CROSS_TUPLE := aarch64-$(ET_BOARD_VENDOR)-$(ET_BOARD_OS)-$(ET_BOARD_ABI)
+ET_BOARD_CROSS_TUPLE := $(ET_BOARD_ARCH)-$(ET_BOARD_VENDOR)-$(ET_BOARD_OS)-$(ET_BOARD_ABI)
 
 ET_BOARD_KERNEL_ARCH := arm64
 ET_BOARD_KERNEL_VENDOR := amlogic/

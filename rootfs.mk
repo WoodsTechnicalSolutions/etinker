@@ -22,14 +22,16 @@ export ET_ROOTFS_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_ROOTFS_TREE)
 export ET_ROOTFS_HOSTNAME := $(ET_BOARD_HOSTNAME)
 export ET_ROOTFS_GETTY_PORT := $(ET_BOARD_GETTY_PORT)
 export ET_ROOTFS_ISSUE := $(shell printf "etinker: $(ET_BOARD)")
+export ET_ROOTFS_CACHED_VERSION := $(shell grep -Po 'rootfs-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
+
 # [start] rootfs version magic
 ET_ROOTFS_VERSION := $(shell cd $(ET_ROOTFS_SOFTWARE_DIR) 2>/dev/null && git describe --long --dirty 2>/dev/null | tr -d v)
 ifeq ($(shell echo $(ET_ROOTFS_VERSION) | cut -d '-' -f 2),0)
 ET_ROOTFS_VERSION := $(shell cd $(ET_ROOTFS_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v)
 endif
 export ET_ROOTFS_VERSION
-export ET_ROOTFS_CACHED_VERSION := $(shell grep -Po 'rootfs-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
 # [end] rootfs version magic
+
 export ET_ROOTFS_BUILD_DIR := $(ET_DIR)/rootfs/build/$(ET_BOARD_TYPE)/$(ET_CROSS_TUPLE)
 export ET_ROOTFS_BUILD_CONFIG := $(ET_ROOTFS_BUILD_DIR)/.config
 export ET_ROOTFS_BUILD_IMAGE := $(ET_ROOTFS_BUILD_DIR)/images/rootfs.tar
@@ -74,7 +76,8 @@ define rootfs-build
 	$(call rootfs-depends)
 	@if [ -z "$(shell printf "%s" $1 | grep clean)" ]; then \
 		$(MAKE) --no-print-directory -j $(ET_CPUS) -C $(ET_ROOTFS_SOFTWARE_DIR) O=$(ET_ROOTFS_BUILD_DIR) \
-			$(ET_CROSS_PARAMS) $1; \
+			CROSS_COMPILE=$(ET_CROSS_COMPILE) \
+			$1; \
 	fi
 	@case "$1" in \
 	*clean) \

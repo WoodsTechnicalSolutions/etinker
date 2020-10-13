@@ -101,7 +101,8 @@ define bootloader-prepare
 		if [ -f $(ET_BOOTLOADER_CONFIG) ]; then \
 			rsync $(ET_BOOTLOADER_CONFIG) $(ET_BOOTLOADER_BUILD_CONFIG); \
 		else \
-			$(MAKE) --no-print-directory $(ET_CROSS_PARAMS) \
+			$(MAKE) --no-print-directory \
+				CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 				O=$(ET_BOOTLOADER_BUILD_DIR) \
 				-C $(ET_BOOTLOADER_SOFTWARE_DIR) \
 				$(et_bootloader_defconfig); \
@@ -133,7 +134,8 @@ define bootloader-build
 		esac; \
 	fi
 	(cd $(ET_BOOTLOADER_SOFTWARE_DIR) && \
-		$(MAKE) --no-print-directory -j $(ET_CPUS) $(ET_CROSS_PARAMS) \
+		$(MAKE) --no-print-directory -j $(ET_CPUS) \
+			CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 			DEVICE_TREE=$(DEVICE_TREE) \
 			LOCALVERSION=$(ET_BOOTLOADER_LOCALVERSION) \
 			O=$(ET_BOOTLOADER_BUILD_DIR) \
