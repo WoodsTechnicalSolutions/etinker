@@ -63,16 +63,16 @@ case "${destination}" in
 				exit 1
 			fi
 		fi
-		if ! [ -d ${media}/BOOT ]; then
-			printf "Unmounted media directory! [%s/BOOT]\n" ${media}
-			exit 1
-		fi
 		if ! [ -d ${media}/rootfs ]; then
 			printf "Unmounted media directory! [%s/rootfs]\n" ${media}
 			exit 1
 		fi
 		case "${target}" in
 			kernel|bootloader)
+				if ! [ -d ${media}/BOOT ]; then
+					printf "Unmounted media directory! [%s/BOOT]\n" ${media}
+					exit 1
+				fi
 				sudo mkdir -p ${media}/rootfs/lib/firmware
 				sudo rsync -aP ${target_dir}/* ${media}/rootfs/ && sync
 				sudo rsync -aP  ${target_dir}/../../../firmware/* ${media}/rootfs/lib/firmware/ && sync
