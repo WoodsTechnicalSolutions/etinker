@@ -75,8 +75,16 @@ case "${destination}" in
 				fi
 				sudo mkdir -p ${media}/rootfs/lib/firmware
 				sudo rsync -aP ${target_dir}/* ${media}/rootfs/ && sync
-				sudo rsync -aP  ${target_dir}/../../../firmware/* ${media}/rootfs/lib/firmware/ && sync
+				if [ "${target}" = "kernel" ]; then
+					sudo rsync -aP  ${target_dir}/../../../firmware/* ${media}/rootfs/lib/firmware/ && sync
+				fi
 				sudo rsync -P  ${target_dir}/boot/* ${media}/BOOT/ && sync
+				if [ "${ET_BOARD_TYPE}" = "meson" ]; then
+					blkdev="`df ${media}/BOOT | tail -1 | cut -d ' ' -f 1 | cut -d 1 -f 1 | tr -d \\n`"
+					printf "\n*** 'dd' ${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin -> ${blkdev} ***\n\n"
+					sudo dd if=${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin of=${blkdev} conv=fsync,notrunc bs=1 count=444
+					sudo dd if=${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin of=${blkdev} conv=fsync,notrunc bs=512 skip=1 seek=1
+				fi
 				;;
 			overlay)
 				sudo rsync --exclude-from=${target_dir}/exclude \
@@ -99,9 +107,11 @@ case "${destination}" in
 				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
 					-aP ${target_dir}/* \
 					root@${ipv4}:/
-				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
-					-aP ${target_dir}/../../../firmware/* \
-					root@${ipv4}:/lib/firmware/
+				if [ "${target}" = "kernel" ]; then
+					rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
+						-aP ${target_dir}/../../../firmware/* \
+						root@${ipv4}:/lib/firmware/
+				fi
 				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
 					-P ${target_dir}/boot/* \
 					root@${ipv4}:/media/BOOT/
