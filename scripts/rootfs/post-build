@@ -43,7 +43,7 @@ printf "\n#ttyGS0::respawn:/sbin/getty -L ttyGS0 115200 vt102\n" >> ${TARGET}/et
 
 # Board Specific Modifications
 case "${ET_BOARD_TYPE}" in
-omap2plus|sama5d3-xpld-*|zynq*|meson*)
+omap2plus|sama5d3-xpld*|zynq*|meson*)
 	printf "\n***** [${ET_BOARD}][${ET_BOARD_TYPE}] update /etc/fstab *****\n\n"
 	mkdir -p ${TARGET}/media/BOOT
 	mkdir -p ${TARGET}/media/rootfs
@@ -57,7 +57,7 @@ omap2plus|sama5d3-xpld-*|zynq*|meson*)
 		printf "/dev/mmcblk0p2 /media/rootfs auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 	fi
 	case "${ET_BOARD}" in
-	omap3-beagle-xm*|am335x-pocketbeagle*)
+	omap3-beagle-xm*|am335x-pocketbeagle*|sama5d3-xpld*)
 		case "${ET_BOARD}" in
 		am335x*)
 			# ADD FIRMWARE
