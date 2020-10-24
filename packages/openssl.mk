@@ -10,6 +10,7 @@
 # - https://www.openssl.org
 # - https://github.com/openssl/openssl
 # - https://git.busybox.net/buildroot/tree/package/libopenssl/libopenssl.mk
+# - https://github.com/archlinuxarm/PKGBUILDs/tree/master/core/openssl-cryptodev
 #
 
 ifndef ET_BOARD_ROOTFS_TREE
@@ -32,7 +33,7 @@ export ET_OPENSSL_TARGET_FINAL ?= $(ET_OPENSSL_BIN)
 
 ET_OPENSSL_ARCH := linux-armv4
 ifeq ($(ET_ARCH),aarch64)
-ET_OPENSSL_ARCH := linux-aarch64
+ET_OPENSSL_ARCH := linux-aarch64 no-afalgeng -DHASH_MAX_LEN=64 -Wa,--noexecstack
 endif
 
 define openssl-version
@@ -49,9 +50,7 @@ endef
 define openssl-targets
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl *****\n\n"
 	$(call openssl-build,all)
-	$(call openssl-build,install_dev)
-	$(call openssl-build,install_engines)
-	$(call openssl-build,install_runtime)
+	$(call openssl-build,install_sw)
 	$(call openssl-build,install_ssldirs)
 endef
 
@@ -103,29 +102,26 @@ define openssl-config
 	$(call openssl-depends)
 	@if [ -z "$1" ] || ! [ -f $(ET_OPENSSL_BUILD_DIR)/Makefile ]; then \
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl-config *****\n\n"; \
-		cd $(ET_OPENSSL_BUILD_DIR) && \
+		cp -av $(ET_SOFTWARE_DIR)/cryptodev-linux/crypto/cryptodev.h $(ET_OPENSSL_SOFTWARE_DIR)/crypto/; \
+		(cd $(ET_OPENSSL_BUILD_DIR) && \
 			$(ET_OPENSSL_SOFTWARE_DIR)/Configure \
 				$(ET_OPENSSL_ARCH) \
 				--prefix=/usr \
 				--openssldir=/etc/ssl \
 				--cross-compile-prefix=$(ET_CROSS_COMPILE) \
 				-I$(ET_ROOTFS_SYSROOT_DIR)/usr/include \
-				-latomic \
-				threads \
+				-DOPENSSL_THREADS \
+				-lpthread threads \
 				shared \
-				zlib-dynamic \
 				enable-devcryptoeng \
-				enable-weak-ssl-ciphers \
+				enable-camellia \
+				enable-mdc2 \
+				no-rc5 \
 				no-tests \
 				no-fuzz-libfuzzer \
 				no-fuzz-afl \
-				no-rc5 \
-				enable-camellia \
-				enable-mdc2; \
-	fi
-	@if ! [ -f $(ET_OPENSSL_BUILD_DIR)/Makefile ]; then \
-		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call openssl-config FAILED! *****\n\n"; \
-		exit 2; \
+				zlib-dynamic && \
+			$(MAKE) --no-print-directory depend); \
 	fi
 endef
 
