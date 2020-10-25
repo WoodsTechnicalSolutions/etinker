@@ -1,0 +1,192 @@
+*** This file captures information needed to get eMMC working ***
+
+If a new eMMC module is connected, the board will boot to it by default.
+You need to program the etinker built 'u-boot.bin' using 'store' command.
+
+[factory eMMC U-Boot update]
+============================
+gxl_p212_v1#fatload mmc 0 $loadaddr u-boot.bin
+gxl_p212_v1#store rom_write $loadaddr 0 $filesize
+
+
+[Full Log]
+============================
+
+gxl_p212_v1#mmcinfo
+Device: SDIO Port B
+Manufacturer ID: 3
+OEM: 5344
+Name: SL16G 
+Tran Speed: 50000000
+Rd Block Len: 512
+SD version 3.0
+High Capacity: Yes
+Capacity: 14.8 GiB
+mmc clock: 40000000
+Bus Width: 4-bit
+gxl_p212_v1#mmc list
+SDIO Port B: 0
+SDIO Port C: 1
+gxl_p212_v1#fatls mmc 0
+            amlogic/
+            lost.dir/
+  1097728   u-boot.bin 
+  1098240   u-boot.bin.sd.bin 
+    49152   u-boot.bin.usb.bl2 
+  1048576   u-boot.bin.usb.tpl 
+ 22962688   image 
+  4785658   system.map 
+      325   uenv.txt 
+    28875   meson-gxl-s905x-libretech-cc.dtb 
+ 4294967295   uboot.env 
+
+9 file(s), 2 dir(s)
+
+gxl_p212_v1#fatload mmc 0 $loadaddr u-boot.bin
+reading u-boot.bin
+1097728 bytes read in 63 ms (16.6 MiB/s)
+gxl_p212_v1#store rom_write $loadaddr 0 $filesize
+mmc switch to boot0 success
+mmc switch to boot1 success
+mmc switch to user success
+gxl_p212_v1#reset
+resetting ...
+GXL:BL1:9ac50e:bb16dc;FEAT:ADFC318C:0;POC:2;RCY:0;USB:0;EMMC:0;READ:0;0.0;CHK:0;
+TE: 843448
+
+BL2 Built : 16:20:27, Apr 19 2018. gxl g9478cf1 - jenkins@walle02-sh
+
+set vcck to 1120 mv
+set vddee to 1000 mv
+Board ID = 3
+CPU clk: 1200MHz
+DQS-corr enabled
+DDR scramble enabled
+DDR3 chl: Rank0+1 @ 912MHz
+bist_test rank: 0 18 01 30 2d 18 43 17 00 2f 32 1a 4a 19 00 32 2d 15 46 17 00 2f 2e 14 48 693  rank: 1 17 03 2c 2d 18 42 14 00 29 31 1a 49 19 03 2f 2b 15 42 18 02 2e 2f 16 48 693   - PASS
+
+Rank0: 1024MB(auto)-2T-13
+
+Rank1: 1024MB(auto)-2T-13
+AddrBus test pass!
+-s
+emmc switch 3 ok
+Authentication key not yet programmed
+emmc_rpmb_key_is_programmed: error 0x00000007
+emmc switch 0 ok
+Load fip header from eMMC, src: 0x0000c200, des: 0x01400000, size: 0x00004000
+New fip structure!
+Load bl30 from eMMC, src: 0x00010200, des: 0x013c0000, size: 0x0000d600
+Load bl31 from eMMC, src: 0x00020200, des: 0x05100000, size: 0x0002c600
+Load bl33 from eMMC, src: 0x00050200, des: 0x01000000, size: 0x000bb800
+NOTICE:  BL3-1: v1.0(release):b60a036
+NOTICE:  BL3-1: Built : 17:03:54, Apr 10 2018
+[BL31]: GXL CPU setup!
+NOTICE:  BL3-1: GXL normal boot!
+mpu_config_enable:ok
+[Image: gxl_v1.1.3308-45470c4 2018-04-12 16:22:58 jenkins@walle02-sh]
+OPS=0x84
+21 0d 84 00 b3 29 f9 c9 42 6c 84 a4 69 b8 80 34 
+[2.031248 Inits done]
+secure task start!
+high task start!
+low task start!
+ERROR:   Error initializing runtime service opteed_fast
+
+
+U-Boot 2020.10 (Oct 21 2020 - 21:39:32 -0500) libretech-cc
+
+Model: Libre Computer AML-S905X-CC
+SoC:   Amlogic Meson GXL (S905X) Revision 21:d (84:2)
+DRAM:  2 GiB
+MMC:   mmc@72000: 0, mmc@74000: 1
+Loading Environment from FAT... *** Warning - bad CRC, using default environment
+
+In:    serial
+Out:   serial
+Err:   serial
+[BL31]: tee size: 0
+[BL31]: tee size: 0
+Net:   eth0: ethernet@c9410000
+Hit any key to stop autoboot:  0 
+switch to partitions #0, OK
+mmc0 is current device
+325 bytes read in 1 ms (317.4 KiB/s)
+
+Booting etinker environment ...
+
+22962688 bytes read in 979 ms (22.4 MiB/s)
+28875 bytes read in 3 ms (9.2 MiB/s)
+Moving Image from 0x8080000 to 0x8200000, end=9850000
+## Flattened Device Tree blob at 08008000
+   Booting using the fdt blob at 0x8008000
+   Loading Device Tree to 000000007bf2a000, end 000000007bf340ca ... OK
+
+Starting kernel ...
+
+[    0.000000] Booting Linux on physical CPU 0x0000000000 [0x410fd034]
+[    0.000000] Linux version 5.9.1 (ddwoods@ubuntu-lxc) (aarch64-cortexa53-linux-gnu-gcc (AArch64 Cortex-A53 Linux GNU) 10.2.0, GNU ld (AArch64 Cortex-A53 Linux GNU) 2.35) #1 SMP PREEMPT Thu Oct 22 20:21:35 CDT 2020
+[    0.000000] Machine model: Libre Computer AML-S905X-CC
+[    0.000000] efi: UEFI not found.
+[    0.000000] Reserved memory: created CMA memory pool at 0x000000006bc00000, size 256 MiB
+[    0.000000] OF: reserved mem: initialized node linux,cma, compatible id shared-dma-pool
+[    0.000000] NUMA: No NUMA configuration found
+[    0.000000] NUMA: Faking a node at [mem 0x0000000001000000-0x000000007fe5afff]
+[    0.000000] NUMA: NODE_DATA [mem 0x7fa3a200-0x7fa3bfff]
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x0000000001000000-0x000000003fffffff]
+[    0.000000]   DMA32    [mem 0x0000000040000000-0x000000007fe5afff]
+[    0.000000]   Normal   empty
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000001000000-0x0000000004ffffff]
+[    0.000000]   node   0: [mem 0x0000000005300000-0x000000000fffffff]
+[    0.000000]   node   0: [mem 0x0000000010200000-0x000000007fe5afff]
+[    0.000000] Zeroed struct page in unavailable ranges: 421 pages
+[    0.000000] Initmem setup node 0 [mem 0x0000000001000000-0x000000007fe5afff]
+[    0.000000] psci: probing for conduit method from DT.
+[    0.000000] psci: PSCIv0.2 detected in firmware.
+[    0.000000] psci: Using standard PSCI v0.2 function IDs
+[    0.000000] psci: Trusted OS migration not required
+[    0.000000] percpu: Embedded 31 pages/cpu s89496 r8192 d29288 u126976
+[    0.000000] Detected VIPT I-cache on CPU0
+[    0.000000] CPU features: detected: ARM erratum 845719
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 510369
+[    0.000000] Policy zone: DMA32
+[    0.000000] Kernel command line: console=ttyAML0,115200 earlyprintk root=/dev/mmcblk1p2 rw rootfstype=ext4 rootwait
+[    0.000000] Dentry cache hash table entries: 262144 (order: 9, 2097152 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 131072 (order: 8, 1048576 bytes, linear)
+[...]
+
+etinker: aml-s905x-cc
+
+aml-s905x-cc login: root
+Password: 
+# 
+# 
+# ls /dev/
+autofs		 loop-control  ptyp4	 tty12	tty34  tty56	ttyp7
+block		 loop0	       ptyp5	 tty13	tty35  tty57	ttyp8
+bus		 loop1	       ptyp6	 tty14	tty36  tty58	ttyp9
+cec0		 loop2	       ptyp7	 tty15	tty37  tty59	ttypa
+cec1		 loop3	       ptyp8	 tty16	tty38  tty6	ttypb
+char		 loop4	       ptyp9	 tty17	tty39  tty60	ttypc
+console		 loop5	       ptypa	 tty18	tty4   tty61	ttypd
+cpu_dma_latency  loop6	       ptypb	 tty19	tty40  tty62	ttype
+crypto		 loop7	       ptypc	 tty2	tty41  tty63	ttypf
+disk		 mem	       ptypd	 tty20	tty42  tty7	udmabuf
+dma_heap	 mmcblk0       ptype	 tty21	tty43  tty8	urandom
+dri		 mmcblk0boot0  ptypf	 tty22	tty44  tty9	vcs
+fb0		 mmcblk0boot1  random	 tty23	tty45  ttyAML0	vcs1
+fd		 mmcblk0rpmb   shm	 tty24	tty46  ttyS0	vcsa
+full		 mmcblk1       snapshot  tty25	tty47  ttyS1	vcsa1
+gpiochip0	 mmcblk1p1     snd	 tty26	tty48  ttyS2	vcsu
+gpiochip1	 mmcblk1p2     stderr	 tty27	tty49  ttyS3	vcsu1
+hwrng		 null	       stdin	 tty28	tty5   ttyp0	watchdog
+i2c-0		 ptmx	       stdout	 tty29	tty50  ttyp1	watchdog0
+iio:device0	 pts	       tty	 tty3	tty51  ttyp2	zero
+input		 ptyp0	       tty0	 tty30	tty52  ttyp3
+kmsg		 ptyp1	       tty1	 tty31	tty53  ttyp4
+lirc0		 ptyp2	       tty10	 tty32	tty54  ttyp5
+log		 ptyp3	       tty11	 tty33	tty55  ttyp6
+
