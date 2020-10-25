@@ -44,7 +44,7 @@ printf "\n#ttyGS0::respawn:/sbin/getty -L ttyGS0 115200 vt102\n" >> ${TARGET}/et
 # Board Specific Modifications
 case "${ET_BOARD_TYPE}" in
 omap2plus|sama5d3-xpld*|zynq*|meson*)
-	printf "\n***** [${ET_BOARD}][${ET_BOARD_TYPE}] update /etc/fstab *****\n\n"
+	printf "\n***** [${ET_BOARD}][${ET_BOARD_TYPE}] custom modifications *****\n\n"
 	mkdir -p ${TARGET}/media/BOOT
 	mkdir -p ${TARGET}/media/rootfs
 	sed -i s,ext2,ext4, ${TARGET}/etc/fstab
@@ -67,6 +67,16 @@ omap2plus|sama5d3-xpld*|zynq*|meson*)
 			# DEFAULT NO-OP
 			;;
 		esac
+		;;
+	aml-s905x-cc*)
+		# Build '/usr/sbin/aml-update' file for on-target updates of SD and eMMC
+		printf "#!/bin/bash\n" > ${TARGET}/usr/sbin/aml-update
+		printf "dd if=/media/BOOT/u-boot.bin of=/dev/mmcblk0 bs=512 seek=1\n" >> ${TARGET}/usr/sbin/aml-update
+		printf "sync\n" >> ${TARGET}/usr/sbin/aml-update
+		printf "dd if=/media/BOOT/u-boot.bin.sd.bin of=/dev/mmcblk1 conv=fsync,notrunc bs=1 count=444\n" >> ${TARGET}/usr/sbin/aml-update
+		printf "dd if=/media/BOOT/u-boot.bin.sd.bin of=/dev/mmcblk1 conv=fsync,notrunc bs=512 skip=1 seek=1\n" >> ${TARGET}/usr/sbin/aml-update
+		printf "sync\n" >> ${TARGET}/usr/sbin/aml-update
+		chmod +x ${TARGET}/usr/sbin/aml-update
 		;;
 	*)
 		# NAND AVAILABLE
