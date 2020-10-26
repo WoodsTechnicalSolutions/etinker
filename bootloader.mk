@@ -117,6 +117,9 @@ define bootloader-finalize
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_BUILD_IMAGE) build FAILED! *****\n\n"; \
 		exit 2; \
 	fi
+	@if [ -f $(ET_CONFIG_DIR)/$(ET_BOOTLOADER_TREE)/uEnv.txt ]; then \
+		cp -av $(ET_CONFIG_DIR)/$(ET_BOOTLOADER_TREE)/uEnv*.txt $(ET_BOOTLOADER_DIR)/boot/; \
+	fi
 	@cp -av $(ET_BOOTLOADER_BUILD_IMAGE) $(ET_BOOTLOADER_DIR)/boot/
 	$(call bootloader-finalize-$(ET_BOARD))
 endef

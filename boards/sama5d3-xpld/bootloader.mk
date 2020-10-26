@@ -13,9 +13,6 @@ define bootloader-finalize-$(ET_BOARD)
 		exit 2; \
 	fi
 	@cp -av $(ET_BOOTLOADER_BUILD_SPL) $(ET_BOOTLOADER_DIR)/boot/
-	@if [ -f $(ET_CONFIG_DIR)/$(ET_BOOTLOADER_TREE)/uEnv.txt ]; then \
-		cp -av $(ET_CONFIG_DIR)/$(ET_BOOTLOADER_TREE)/uEnv*.txt $(ET_BOOTLOADER_DIR)/boot/; \
-	fi
 endef
 
 define bootloader-info-$(ET_BOARD)
