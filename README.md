@@ -12,6 +12,7 @@ suggests, this is about tinkering.
 
 - am335x-pocketbeagle [Octavo/TI ARM Cortex-A8]
 - am3517-evm [TI ARM Cortex-A8]
+- aml-s905x-cc [Amlogic ARM Cortex-A53]
 - arm-bare-metal [Generic ARM MCU]
 - ek-tm4c123gxl [TI TivaC ARM Cortex-M4]
 - ek-tm4c1294xl [TI TivaC ARM Cortex-M4]
