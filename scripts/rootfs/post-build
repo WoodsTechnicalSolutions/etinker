@@ -5,7 +5,13 @@ TARGET=$1
 printf "\n***** [${ET_BOARD}][${ET_BOARD_TYPE}] post-build script *****\n\n"
 
 # Preserve target directory
-cp -a ${TARGET} ${TARGET}-bare
+if [ -d ${TARGET}-bare ]; then
+	printf "***** [${ET_BOARD}][${ET_BOARD_TYPE}] restoring clean target directory *****\n\n"
+	rm -rf ${TARGET}
+	cp -a ${TARGET}-bare ${TARGET}
+else
+	cp -a ${TARGET} ${TARGET}-bare
+fi
 
 # Update target file system
 mkdir -p ${TARGET}/lib/firmware
@@ -43,30 +49,26 @@ printf "\n#ttyGS0::respawn:/sbin/getty -L ttyGS0 115200 vt102\n" >> ${TARGET}/et
 
 # Board Specific Modifications
 case "${ET_BOARD_TYPE}" in
-omap2plus|sama5d3-xpld*|zynq*|meson*)
+omap2plus*|sama5d3-xpld*|zynq*|meson*|layerscape*)
 	printf "\n***** [${ET_BOARD}][${ET_BOARD_TYPE}] custom modifications *****\n\n"
+	# Board Common
 	mkdir -p ${TARGET}/media/BOOT
 	mkdir -p ${TARGET}/media/rootfs
 	sed -i s,ext2,ext4, ${TARGET}/etc/fstab
-	echo "${ET_BOARD_TYPE}" | grep -q "meson"
+	echo "${ET_BOARD}" | grep -q "aml-s905x-cc"
 	if [ "$?" = "0" ]; then
+		# This board's U-Boot places SD on mmc0, Linux places eMMC on mmc0
 		printf "/dev/mmcblk1p1 /media/BOOT auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 		printf "/dev/mmcblk1p2 /media/rootfs auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 	else
+		# Everyone else
 		printf "/dev/mmcblk0p1 /media/BOOT auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 		printf "/dev/mmcblk0p2 /media/rootfs auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 	fi
+	# Board Firmware
 	case "${ET_BOARD}" in
-	omap3-beagle-xm*|am335x-pocketbeagle*|sama5d3-xpld*)
-		case "${ET_BOARD}" in
-		am335x*)
-			# ADD FIRMWARE
-			rsync -av ${ET_DIR}/firmware/am335x* ${TARGET}/lib/firmware/
-			;;
-		*)
-			# DEFAULT NO-OP
-			;;
-		esac
+	am335x-pocketbeagle*)
+		rsync -av ${ET_DIR}/firmware/am335x* ${TARGET}/lib/firmware/
 		;;
 	aml-s905x-cc*)
 		# Build '/usr/sbin/aml-update' file for on-target updates of SD and eMMC
@@ -79,9 +81,26 @@ omap2plus|sama5d3-xpld*|zynq*|meson*)
 		chmod +x ${TARGET}/usr/sbin/aml-update
 		;;
 	*)
-		# NAND AVAILABLE
+		# DEFAULT NO-OP
+		;;
+	esac
+	# Boards capable of using UBI on NAND
+	case "${ET_BOARD}" in
+	omap3-beagle*|omap3-evm*|sama5d3-xpld*|ls1043ardb*)
 		mkdir -p ${TARGET}/media/ubifs
 		printf "ubi0:rootfs /media/ubifs ubifs defaults 0 0\n" >> ${TARGET}/etc/fstab
+		;;
+	*)
+		# DEFAULT NO-OP
+		;;
+	esac
+	# Board with larger, and different, user-space
+	case "${ET_BOARD_TYPE}" in
+	meson*|layerscape*)
+		sed -i s,\#PermitRootLogin\ prohibit-password,PermitRootLogin\ yes, ${TARGET}/etc/ssh/sshd_config
+		;;
+	*)
+		# DEFAULT NO-OP
 		;;
 	esac
 	;;

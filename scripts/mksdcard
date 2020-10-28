@@ -19,7 +19,10 @@ fi
 board=$1
 
 case "${board}" in
-	aml-s905x-cc*)
+	*ls1043ardb*)
+		printf "***** LXP Layerscape ARM Cortex-A53 *****\n"
+		;;
+	*aml-s905x-cc*)
 		printf "***** Amlogic ARM Cortex-A53 *****\n"
 		;;
 	*zynq*)

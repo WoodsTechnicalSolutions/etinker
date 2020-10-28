@@ -4,6 +4,7 @@ TARGET=$1/../target
 
 printf "\n***** [${ET_BOARD}][${ET_BOARD_TYPE}] post-image script *****\n\n"
 
+# Restore target directory
 if [ -d "${TARGET}-bare" ]; then
 	rm -rf ${TARGET}
 	mv ${TARGET}-bare ${TARGET}
