@@ -51,6 +51,9 @@ purge:
 	$(call rootfs-$@)
 	$(call overlay-$@)
 
+.PHONY: update
+update: clean sandbox rootfs-update
+
 .PHONY: info
 info:
 	@printf "========================================================================\n"

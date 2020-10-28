@@ -135,3 +135,6 @@ cryptodev-linux-version:
 .PHONY: cryptodev-linux-info
 cryptodev-linux-info:
 	$(call $@)
+
+.PHONY: cryptodev-linux-update
+cryptodev-linux-update: cryptodev-linux-clean cryptodev-linux

@@ -188,3 +188,6 @@ rootfs-info:
 
 rootfs-sync-%:
 	$(call rootfs-sync,$(*F))
+
+.PHONY: rootfs-update
+rootfs-update: rootfs-clean rootfs

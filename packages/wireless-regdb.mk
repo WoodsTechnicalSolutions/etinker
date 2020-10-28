@@ -160,3 +160,6 @@ wireless-regdb-version:
 .PHONY: wireless-regdb-info
 wireless-regdb-info:
 	$(call $@)
+
+.PHONY: wireless-regdb-update
+wireless-regdb-update: wireless-regdb-clean wireless-regdb

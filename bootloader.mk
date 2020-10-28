@@ -262,3 +262,6 @@ bootloader-info:
 
 bootloader-sync-%:
 	$(call bootloader-sync,$(*F))
+
+.PHONY: bootloader-update
+bootloader-update: bootloader-clean bootloader

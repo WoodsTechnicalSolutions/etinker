@@ -152,4 +152,6 @@ cadence-ttc-pwm-version:
 cadence-ttc-pwm-info:
 	$(call $@)
 
+.PHONY: cadence-ttc-pwm-update
+cadence-ttc-pwm-update: cadence-ttc-pwm-clean cadence-ttc-pwm
 endif

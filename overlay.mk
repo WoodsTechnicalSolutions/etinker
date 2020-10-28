@@ -81,3 +81,6 @@ overlay-info:
 
 overlay-sync-%:
 	$(call overlay-sync,$(*F))
+
+.PHONY: overlay-update
+overlay-update: overlay-clean overlay

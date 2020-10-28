@@ -334,3 +334,6 @@ kernel-info:
 
 kernel-sync-%:
 	$(call kernel-sync,$(*F))
+
+.PHONY: kernel-update
+kernel-update: kernel-clean kernel

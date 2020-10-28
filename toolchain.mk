@@ -189,3 +189,6 @@ toolchain-version:
 .PHONY: toolchain-info
 toolchain-info:
 	$(call $@)
+
+.PHONY: toolchain-update
+toolchain-update: toolchain-clean toolchain

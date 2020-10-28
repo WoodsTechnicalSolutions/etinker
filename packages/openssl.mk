@@ -194,3 +194,6 @@ openssl-version:
 .PHONY: openssl-info
 openssl-info:
 	$(call $@)
+
+.PHONY: openssl-update
+openssl-update: openssl-clean openssl

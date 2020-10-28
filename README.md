@@ -41,7 +41,7 @@ $ ./scripts/host/setup
 3. Build your first board
 
 ```
-$ ET_BOARD=am335x-pocketbeagle make sandbox
+$ ET_BOARD=am335x-pocketbeagle make sandbox rootfs-update
 ```
 
 Depending on your workstation hardware, the build time could be 1.5
@@ -118,8 +118,8 @@ Partition Table: msdos
 Disk Flags: 
 
 Number  Start   End    Size   Type     File system  Flags
- 1      1049kB  269MB  268MB  primary  fat16        boot, lba
- 2      269MB   988MB  719MB  primary  ext4
+ 1      2097kB  271MB  268MB  primary  fat16        boot, lba
+ 2      271MB   988MB  718MB  primary  ext4
 [...]
 ```
 
