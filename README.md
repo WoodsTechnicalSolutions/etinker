@@ -16,6 +16,7 @@ suggests, this is about tinkering.
 - arm-bare-metal [Generic ARM MCU]
 - ek-tm4c123gxl [TI TivaC ARM Cortex-M4]
 - ek-tm4c1294xl [TI TivaC ARM Cortex-M4]
+- ls1043ardb [NXP Layerscape ARM Cortex-A53]
 - nrf52840-dongle [Nordic ARM Cortex-M4]
 - omap3-beagle-xm [TI ARM Cortex-A8]
 - omap3-beagle [TI ARM Cortex-A8]
