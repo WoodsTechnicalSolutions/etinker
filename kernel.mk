@@ -21,6 +21,9 @@ export ET_KERNEL_ARCH := $(ET_BOARD_KERNEL_ARCH)
 export ET_KERNEL_VENDOR := $(ET_BOARD_KERNEL_VENDOR)
 export ET_KERNEL_TREE := $(ET_BOARD_KERNEL_TREE)
 export ET_KERNEL_DT := $(ET_BOARD_KERNEL_DT)
+ifdef ET_BOARD_KERNEL_DT_ETINKER
+export ET_KERNEL_DT_ETINKER := $(ET_BOARD_KERNEL_DT_ETINKER)
+endif
 export ET_KERNEL_LOADADDR := $(ET_BOARD_KERNEL_LOADADDR)
 export ET_KERNEL_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_KERNEL_TREE)
 export ET_KERNEL_HEADERS_DIR ?= $(ET_SYSROOT_DIR)/usr/include
@@ -268,6 +271,7 @@ define kernel-info
 	@printf "ET_KERNEL_VERSION: $(ET_KERNEL_VERSION)\n"
 	@printf "ET_KERNEL_LOCALVERSION: $(ET_KERNEL_LOCALVERSION)\n"
 	@printf "ET_KERNEL_SOFTWARE_DIR: $(ET_KERNEL_SOFTWARE_DIR)\n"
+	@printf "ET_KERNEL_DT_ETINKER: $(ET_KERNEL_DT_ETINKER)\n"
 	@printf "ET_KERNEL_DT: $(ET_KERNEL_DT)\n"
 	@printf "ET_KERNEL_DTB: $(ET_KERNEL_DTB)\n"
 	@printf "ET_KERNEL_SYSMAP: $(ET_KERNEL_SYSMAP)\n"
@@ -294,6 +298,9 @@ $(ET_KERNEL_TARGET_FINAL): $(ET_KERNEL_BUILD_CONFIG)
 	$(call kernel-prepare)
 	$(call kernel-build-$(ET_BOARD))
 	$(call kernel-build,$(ET_KERNEL_VENDOR)$(ET_KERNEL_DT).dtb)
+ifdef ET_KERNEL_DT_ETINKER
+	$(call kernel-build,$(ET_KERNEL_VENDOR)$(ET_KERNEL_DT_ETINKER).dtb)
+endif
 	$(call kernel-build,modules)
 	$(call kernel-build,modules_install)
 	$(call kernel-finalize)
