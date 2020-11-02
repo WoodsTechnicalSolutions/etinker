@@ -3,6 +3,16 @@
 #
 # Copyright (C) 2018 Derald D. Woods
 #
+# [references]
+# ------------------------------------------------------------------------------
+# https://www.microchip.com/wwwproducts/en/ATSAMA5D36
+# https://www.microchip.com/DevelopmentTools/ProductDetails/PartNO/ATSAMA5D3-XPLD
+# https://github.com/u-boot/u-boot/blob/master/configs/sama5d3_xplained_mmc_defconfig
+# https://github.com/u-boot/u-boot/blob/master/arch/arm/dts/at91-sama5d3_xplained.dts
+# https://github.com/torvalds/linux/blob/master/arch/arm/configs/sama5_defconfig
+# https://github.com/torvalds/linux/blob/master/arch/arm/boot/dts/at91-sama5d3_xplained.dts
+# ------------------------------------------------------------------------------
+#
 # This file is made available under the Creative Commons CC0 1.0
 # Universal Public Domain Dedication.
 #
@@ -26,8 +36,6 @@ ET_BOARD_OS ?= linux
 ET_BOARD_ABI ?= gnueabihf
 ET_BOARD_CROSS_TUPLE := $(ET_BOARD_ARCH)-$(ET_BOARD_VENDOR)-$(ET_BOARD_OS)-$(ET_BOARD_ABI)
 
-ET_BOARD_KERNEL_ARCH := $(ET_BOARD_ARCH)
-
 ET_BOARD_TOOLCHAIN_TREE ?= crosstool-ng
 ET_BOARD_KERNEL_TREE ?= linux
 ET_BOARD_BOOTLOADER_TREE ?= u-boot-$(ET_BOARD)
@@ -36,18 +44,12 @@ ET_BOARD_ROOTFS_TREE ?= buildroot
 ET_BOARD_HOSTNAME ?= $(ET_BOARD)
 ET_BOARD_GETTY_PORT ?= ttyS0
 
-ET_BOARD_KERNEL_DT ?= at91-sama5d3_xplained
-
+ET_BOARD_KERNEL_ARCH := $(ET_BOARD_ARCH)
 ET_BOARD_KERNEL_LOADADDR ?= 0x22000000
-ET_BOARD_KERNEL_DEFCONFIG ?= sama5_defconfig
+ET_BOARD_KERNEL_DT ?= at91-sama5d3_xplained
 
 ET_BOARD_BOOTLOADER_IMAGE := u-boot.img
 ET_BOARD_BOOTLOADER_SPL_BINARY ?= boot.bin
-ET_BOARD_BOOTLOADER_DEFCONFIG ?= sama5d3_xplained_mmc_defconfig
-
-ifeq ($(ET_USE_DEFCONFIG),yes)
-ET_BOARD_DEFCONFIG := et_$(subst -,_,$(ET_BOARD))_defconfig
-endif
 
 # final item built for the configured toolchain
 ET_TOOLCHAIN_TARGET_FINAL := \

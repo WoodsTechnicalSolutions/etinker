@@ -22,6 +22,14 @@ ifeq ($(ET_BOARD),meson-libre)
 $(error [ 'etinker' board 'meson-libre' is virtual ] ***)
 endif
 
+ifndef ET_BOARD_TYPE
+$(error [ ET_BOARD_TYPE is undefined ] ***)
+endif
+
+ifneq ($(ET_BOARD_TYPE),meson-libre)
+$(error [ ET_BOARD_TYPE is NOT 'meson-libre' ] ***)
+endif
+
 ET_BOARD_ARCH ?= aarch64
 ET_BOARD_VENDOR ?= cortexa53
 ET_BOARD_OS ?= linux
@@ -30,6 +38,7 @@ ET_BOARD_CROSS_TUPLE := $(ET_BOARD_ARCH)-$(ET_BOARD_VENDOR)-$(ET_BOARD_OS)-$(ET_
 
 ET_BOARD_KERNEL_ARCH := arm64
 ET_BOARD_KERNEL_VENDOR := amlogic/
+ET_BOARD_KERNEL_LOADADDR ?= 0x08080000
 
 ET_BOARD_BOOTLOADER_IMAGE := u-boot.bin
 

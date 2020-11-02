@@ -22,6 +22,14 @@ ifeq ($(ET_BOARD),omap2plus)
 $(error [ 'etinker' board 'omap2plus' is virtual ] ***)
 endif
 
+ifndef ET_BOARD_TYPE
+$(error [ ET_BOARD_TYPE is undefined ] ***)
+endif
+
+ifneq ($(ET_BOARD_TYPE),omap2plus)
+$(error [ ET_BOARD_TYPE is NOT 'omap2plus' ] ***)
+endif
+
 ET_BOARD_ARCH ?= arm
 ET_BOARD_VENDOR ?= cortexa8
 ET_BOARD_OS ?= linux
@@ -29,6 +37,7 @@ ET_BOARD_ABI ?= gnueabihf
 ET_BOARD_CROSS_TUPLE := $(ET_BOARD_ARCH)-$(ET_BOARD_VENDOR)-$(ET_BOARD_OS)-$(ET_BOARD_ABI)
 
 ET_BOARD_KERNEL_ARCH := $(ET_BOARD_ARCH)
+ET_BOARD_KERNEL_LOADADDR ?= 0x82000000
 
 ET_BOARD_BOOTLOADER_IMAGE := u-boot.img
 ET_BOARD_BOOTLOADER_SPL_BINARY ?= MLO

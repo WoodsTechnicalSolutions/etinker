@@ -1,6 +1,8 @@
 #
 # LS1043ARDB, ARM Cortex-A53, board configuration file for 'etinker'
 #
+# Copyright (C) 2020 Derald D. Woods
+#
 # [references]
 # ------------------------------------------------------------------------------
 # https://www.nxp.com/design/qoriq-developer-resources/layerscape-ls1043a-reference-design-board:LS1043A-RDB
@@ -9,8 +11,6 @@
 # https://github.com/torvalds/linux/blob/master/arch/arm64/configs/defconfig
 # https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/freescale/fsl-ls1043a-rdb.dts
 # ------------------------------------------------------------------------------
-#
-# Copyright (C) 2020 Derald D. Woods
 #
 # This file is made available under the Creative Commons CC0 1.0
 # Universal Public Domain Dedication.
@@ -33,7 +33,7 @@ include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/etinker.mk
 
 ET_BOARD_TOOLCHAIN_TREE ?= crosstool-ng
 ET_BOARD_KERNEL_TREE ?= linux
-ET_BOARD_BOOTLOADER_TREE ?= u-boot-$(ET_BOARD)
+ET_BOARD_BOOTLOADER_TREE ?= u-boot
 ET_BOARD_ROOTFS_TREE ?= buildroot
 
 ET_BOARD_HOSTNAME ?= $(ET_BOARD)
@@ -41,12 +41,3 @@ ET_BOARD_GETTY_PORT ?= ttyS0
 
 ET_BOARD_KERNEL_DT ?= fsl-ls1043a-rdb
 ET_BOARD_KERNEL_DT_ETINKER ?= fsl-ls1043a-rdb-etinker
-
-ET_BOARD_KERNEL_LOADADDR ?= 0x80080000
-ET_BOARD_KERNEL_DEFCONFIG ?= et_$(subst -,_,$(ET_BOARD_TYPE))_defconfig
-
-ET_BOARD_BOOTLOADER_DEFCONFIG ?= ls1043ardb_defconfig
-
-ifeq ($(ET_USE_DEFCONFIG),yes)
-ET_BOARD_DEFCONFIG := et_$(subst -,_,$(ET_BOARD))_defconfig
-endif

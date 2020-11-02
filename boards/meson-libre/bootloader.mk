@@ -4,8 +4,6 @@ export ET_BOOTLOADER_VERSION := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/
 export ET_BOOTLOADER_LOCALVERSION := -libretech
 endif
 
-export ET_BOOTLOADER_BUILD_SPL := $(ET_BOOTLOADER_BUILD_DIR)/spl/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
-export ET_BOOTLOADER_SPL := $(ET_BOOTLOADER_DIR)/boot/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
 export FIP_DIR := $(ET_SOFTWARE_DIR)/fip
 export FIP_BUILD_DIR := $(ET_BOOTLOADER_BUILD_DIR)/fip
 
@@ -79,6 +77,6 @@ endef
 
 define bootloader-info-$(ET_BOARD_TYPE)
 	@printf "========================================================================\n"
-	@printf "ET_BOOTLOADER_SPL: $(ET_BOOTLOADER_SPL)\n"
-	@printf "ET_BOOTLOADER_BUILD_SPL: $(ET_BOOTLOADER_BUILD_SPL)\n"
+	@printf "FIP_DIR: $(FIP_DIR)\n"
+	@printf "FIP_BUILD_DIR: $(FIP_BUILD_DIR)\n"
 endef

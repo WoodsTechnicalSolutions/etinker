@@ -6,6 +6,9 @@
 # http://www.tul.com.tw/ProductsPYNQ-Z2.html
 # https://github.com/Xilinx/PYNQ/tree/master/boards/Pynq-Z2
 # https://github.com/WoodsTechnicalSolutions/pynq-z2
+# https://github.com/WoodsTechnicalSolutions/pynq-z2/blob/master/dts/linux/zynq-pynq-z2.dts
+# https://github.com/WoodsTechnicalSolutions/pynq-z2/blob/master/dts/u-boot/zynq-pynq-z2.dts
+# https://github.com/u-boot/u-boot/blob/master/configs/xilinx_zynq_virt_defconfig
 # ------------------------------------------------------------------------------
 #
 # Copyright (C) 2019 Derald D. Woods
@@ -31,19 +34,10 @@ include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/etinker.mk
 
 ET_BOARD_TOOLCHAIN_TREE ?= crosstool-ng
 ET_BOARD_KERNEL_TREE ?= linux
-ET_BOARD_BOOTLOADER_TREE ?= u-boot-$(ET_BOARD)
+ET_BOARD_BOOTLOADER_TREE ?= u-boot
 ET_BOARD_ROOTFS_TREE ?= buildroot
 
 ET_BOARD_HOSTNAME ?= $(ET_BOARD)
 ET_BOARD_GETTY_PORT ?= ttyPS0
 
 ET_BOARD_KERNEL_DT ?= zynq-pynq-z2
-
-ET_BOARD_KERNEL_LOADADDR ?= 0x02080000
-ET_BOARD_KERNEL_DEFCONFIG ?= et_$(subst -,_,$(ET_BOARD_TYPE))_defconfig
-
-ET_BOARD_BOOTLOADER_DEFCONFIG ?= xilinx_zynq_virt_defconfig
-
-ifeq ($(ET_USE_DEFCONFIG),yes)
-ET_BOARD_DEFCONFIG := et_$(subst -,_,$(ET_BOARD))_defconfig
-endif

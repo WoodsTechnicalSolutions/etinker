@@ -20,11 +20,8 @@ endif
 export ET_BOOTLOADER_TREE := $(ET_BOARD_BOOTLOADER_TREE)
 export ET_BOOTLOADER_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_BOOTLOADER_TREE)
 export ET_BOOTLOADER_CACHED_VERSION := $(shell grep -Po 'bootloader-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
-ifeq ($(ET_BOARD_DEFCONFIG),)
-et_bootloader_defconfig := $(ET_BOARD_BOOTLOADER_DEFCONFIG)
-else
-et_bootloader_defconfig := $(ET_BOARD_DEFCONFIG)
-endif
+
+bootloader_defconfig := et_$(subst -,_,$(ET_BOARD))_defconfig
 
 # [start] bootloader version magic
 ET_BOOTLOADER_VERSION := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v)
@@ -57,8 +54,8 @@ export ET_BOOTLOADER_BUILD_CONFIG := $(ET_BOOTLOADER_BUILD_DIR)/.config
 export ET_BOOTLOADER_BUILD_DEFCONFIG := $(ET_BOOTLOADER_BUILD_DIR)/defconfig
 export ET_BOOTLOADER_BUILD_SYSMAP := $(ET_BOOTLOADER_BUILD_DIR)/System.map
 export ET_BOOTLOADER_DIR := $(ET_DIR)/bootloader/$(ET_BOARD)/$(ET_CROSS_TUPLE)
-export ET_BOOTLOADER_CONFIG := $(ET_CONFIG_DIR)/$(ET_BOOTLOADER_TREE)/config
-export ET_BOOTLOADER_DEFCONFIG := $(ET_CONFIG_DIR)/$(ET_BOOTLOADER_TREE)/$(et_bootloader_defconfig)
+export ET_BOOTLOADER_CONFIG := $(ET_CONFIG_DIR)/u-boot-$(ET_BOARD)/config
+export ET_BOOTLOADER_DEFCONFIG := $(ET_CONFIG_DIR)/u-boot-$(ET_BOARD)/$(bootloader_defconfig)
 export ET_BOOTLOADER_SYSMAP := $(ET_BOOTLOADER_DIR)/System.map
 
 export DEVICE_TREE := $(ET_BOARD_KERNEL_DT)
@@ -105,7 +102,7 @@ define bootloader-prepare
 				CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 				O=$(ET_BOOTLOADER_BUILD_DIR) \
 				-C $(ET_BOOTLOADER_SOFTWARE_DIR) \
-				$(et_bootloader_defconfig); \
+				$(bootloader_defconfig); \
 		fi; \
 	fi
 endef
@@ -117,8 +114,8 @@ define bootloader-finalize
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_BUILD_IMAGE) build FAILED! *****\n\n"; \
 		exit 2; \
 	fi
-	@if [ -f $(ET_CONFIG_DIR)/$(ET_BOOTLOADER_TREE)/uEnv.txt ]; then \
-		cp -av $(ET_CONFIG_DIR)/$(ET_BOOTLOADER_TREE)/uEnv*.txt $(ET_BOOTLOADER_DIR)/boot/; \
+	@if [ -f $(ET_CONFIG_DIR)/u-boot-$(ET_BOARD)/uEnv.txt ]; then \
+		cp -av $(ET_CONFIG_DIR)/u-boot-$(ET_BOARD)/uEnv*.txt $(ET_BOOTLOADER_DIR)/boot/; \
 	fi
 	@cp -av $(ET_BOOTLOADER_BUILD_IMAGE) $(ET_BOOTLOADER_DIR)/boot/
 	$(call bootloader-finalize-$(ET_BOARD))
@@ -127,7 +124,7 @@ endef
 define bootloader-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-build 'make $1' *****\n\n"
 	$(call bootloader-depends)
-	@if [ -f $(ET_BOOTLOADER_CONFIG) ] && ! [ "$1" = "$(et_bootloader_defconfig)" ]; then \
+	@if [ -f $(ET_BOOTLOADER_CONFIG) ] && ! [ "$1" = "$(bootloader_defconfig)" ]; then \
 		case "$1" in \
 		*config) \
 			rsync $(ET_BOOTLOADER_CONFIG) $(ET_BOOTLOADER_BUILD_CONFIG); \
@@ -203,7 +200,6 @@ define bootloader-info
 	@printf "ET_BOOTLOADER_SYSMAP: $(ET_BOOTLOADER_SYSMAP)\n"
 	@printf "ET_BOOTLOADER_IMAGE: $(ET_BOOTLOADER_IMAGE)\n"
 	@printf "ET_BOOTLOADER_CONFIG: $(ET_BOOTLOADER_CONFIG)\n"
-	@printf "et_bootloader_defconfig: $(et_bootloader_defconfig)\n"
 	@printf "ET_BOOTLOADER_DEFCONFIG: $(ET_BOOTLOADER_DEFCONFIG)\n"
 	@printf "ET_BOOTLOADER_BUILD_CONFIG: $(ET_BOOTLOADER_BUILD_CONFIG)\n"
 	@printf "ET_BOOTLOADER_BUILD_DEFCONFIG: $(ET_BOOTLOADER_BUILD_DEFCONFIG)\n"
@@ -238,7 +234,7 @@ endif
 
 $(ET_BOOTLOADER_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL)
 ifeq ($(shell test -f $(ET_BOOTLOADER_CONFIG) && printf "EXISTS" || printf "DEFAULT"),DEFAULT)
-	$(call bootloader-build,$(et_bootloader_defconfig))
+	$(call bootloader-build,$(bootloader_defconfig))
 endif
 
 .PHONY: bootloader-clean
