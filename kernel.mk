@@ -46,6 +46,10 @@ nextlocalversion := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git desc
 ET_KERNEL_VERSION := $(nextversion)-$(nextlocalversion)
 ET_KERNEL_LOCALVERSION :=
 endif
+# linux-rt
+ifeq ($(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,[0-9].*,,),-rt)
+ET_KERNEL_LOCALVERSION :=
+endif
 ifeq ($(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,[0-9].*,,),-rc)
 # RC version (i.e. v4.14-rc1)
 rcversion := $(shell printf "%s" $(ET_KERNEL_LOCALVERSION) | cut -d '-' -f 2)
