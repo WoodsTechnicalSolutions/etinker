@@ -45,7 +45,7 @@ printf "\n::sysinit:/bin/mount -t debugfs none /sys/kernel/debug\n" >> ${TARGET}
 printf "\n::sysinit:/bin/mount -t configfs none /sys/kernel/config\n" >> ${TARGET}/etc/inittab
 sed -i s,::sysinit:/etc/init.d/rcS,#::sysinit:/etc/init.d/rcS, ${TARGET}/etc/inittab
 printf "\n::sysinit:/etc/init.d/rcS\n" >> ${TARGET}/etc/inittab
-printf "\n#ttyGS0::respawn:/sbin/getty -L ttyGS0 115200 vt102\n" >> ${TARGET}/etc/inittab
+printf "\n#ttyGS0::respawn:/sbin/getty -L ttyGS0 115200 vt220\n" >> ${TARGET}/etc/inittab
 
 # Board Specific Modifications
 case "${ET_BOARD_TYPE}" in
