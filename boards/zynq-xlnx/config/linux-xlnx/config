@@ -4482,7 +4482,15 @@ CONFIG_FPGA_REGION=y
 CONFIG_OF_FPGA_REGION=y
 # CONFIG_FPGA_DFL is not set
 # CONFIG_FSI is not set
-# CONFIG_TEE is not set
+CONFIG_TEE=m
+
+#
+# TEE drivers
+#
+CONFIG_OPTEE=m
+CONFIG_OPTEE_SHM_NUM_PRIV_PAGES=1
+# end of TEE drivers
+
 # CONFIG_SIOX is not set
 # CONFIG_SLIMBUS is not set
 # CONFIG_INTERCONNECT is not set

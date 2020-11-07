@@ -5746,12 +5746,12 @@ CONFIG_MESON_EFUSE=m
 
 # CONFIG_FPGA is not set
 # CONFIG_FSI is not set
-CONFIG_TEE=y
+CONFIG_TEE=m
 
 #
 # TEE drivers
 #
-CONFIG_OPTEE=y
+CONFIG_OPTEE=m
 CONFIG_OPTEE_SHM_NUM_PRIV_PAGES=1
 # end of TEE drivers
 
