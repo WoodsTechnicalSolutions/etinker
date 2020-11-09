@@ -58,8 +58,10 @@ omap2plus*|sama5d3-xpld*|zynq*|meson*|layerscape*)
 	echo "${ET_BOARD}" | grep -q "aml-s905x-cc"
 	if [ "$?" = "0" ]; then
 		# This board's U-Boot places SD on mmc0, Linux places eMMC on mmc0
+		mkdir -p ${TARGET}/media/emmc
 		printf "/dev/mmcblk1p1 /media/BOOT auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 		printf "/dev/mmcblk1p2 /media/rootfs auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+		printf "/dev/mmcblk0p1 /media/emmc auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 	else
 		# Everyone else
 		printf "/dev/mmcblk0p1 /media/BOOT auto defaults 0 0\n" >> ${TARGET}/etc/fstab
