@@ -28,31 +28,16 @@
 # licensed Public Domain.
 #
 
-export ET_BOARD_TYPE := $(ET_BOARD)
+export ET_BOARD_TYPE := sama5
 
-ET_BOARD_ARCH ?= arm
-ET_BOARD_VENDOR ?= cortexa5
-ET_BOARD_OS ?= linux
-ET_BOARD_ABI ?= gnueabihf
-ET_BOARD_CROSS_TUPLE := $(ET_BOARD_ARCH)-$(ET_BOARD_VENDOR)-$(ET_BOARD_OS)-$(ET_BOARD_ABI)
+include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/etinker.mk
 
 ET_BOARD_TOOLCHAIN_TREE ?= crosstool-ng
 ET_BOARD_KERNEL_TREE ?= linux
-ET_BOARD_BOOTLOADER_TREE ?= u-boot-$(ET_BOARD)
+ET_BOARD_BOOTLOADER_TREE ?= u-boot
 ET_BOARD_ROOTFS_TREE ?= buildroot
 
 ET_BOARD_HOSTNAME ?= $(ET_BOARD)
 ET_BOARD_GETTY_PORT ?= ttyS0
 
-ET_BOARD_KERNEL_ARCH := $(ET_BOARD_ARCH)
-ET_BOARD_KERNEL_LOADADDR ?= 0x22000000
 ET_BOARD_KERNEL_DT ?= at91-sama5d3_xplained
-
-ET_BOARD_BOOTLOADER_IMAGE := u-boot.img
-ET_BOARD_BOOTLOADER_SPL_BINARY ?= boot.bin
-
-# final item built for the configured toolchain
-ET_TOOLCHAIN_TARGET_FINAL := \
-	$(ET_DIR)/toolchain/$(ET_BOARD_CROSS_TUPLE)/$(ET_BOARD_CROSS_TUPLE)/debug-root/usr/bin/strace
-
-export CT_KERNEL = linux
