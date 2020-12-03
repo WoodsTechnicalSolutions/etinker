@@ -1,0 +1,1 @@
+../ls1043ardb/bootloader.mk

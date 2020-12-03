@@ -1,0 +1,1 @@
+../aml-s905x-cc/bootloader.mk

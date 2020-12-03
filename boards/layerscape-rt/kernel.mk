@@ -1,0 +1,1 @@
+../layerscape/kernel.mk
