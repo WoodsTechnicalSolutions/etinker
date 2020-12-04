@@ -17,13 +17,13 @@ ET_HOST_OS_ID ?= Ubuntu
 ET_HOST_OS_CODENAME ?= focal
 ET_HOST_OS_RELEASE ?= 20.04
 ET_HOST_OS_MESSAGE := [ 'etinker' requires $(ET_HOST_OS_ID) $(ET_HOST_OS_CODENAME) $(ET_HOST_OS_RELEASE) ] ***
-ifneq ($(shell lsb_release -i|cut -d : -f 2|tr -d '\t'),$(ET_HOST_OS_ID))
+ifneq ($(shell lsb_release -i|cut -f 2|tr -d \\n),$(ET_HOST_OS_ID))
 $(error $(ET_HOST_OS_MESSAGE))
 endif
-ifneq ($(shell lsb_release -c|cut -d : -f 2|tr -d '\t'),$(ET_HOST_OS_CODENAME))
+ifneq ($(shell lsb_release -c|cut -f 2|tr -d \\n),$(ET_HOST_OS_CODENAME))
 $(error $(ET_HOST_OS_MESSAGE))
 endif
-ifneq ($(shell lsb_release -r|cut -d : -f 2|tr -d '\t'),$(ET_HOST_OS_RELEASE))
+ifneq ($(shell lsb_release -r|cut -f 2|tr -d \\n),$(ET_HOST_OS_RELEASE))
 $(error $(ET_HOST_OS_MESSAGE))
 endif
 
