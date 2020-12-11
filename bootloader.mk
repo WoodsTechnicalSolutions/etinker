@@ -79,11 +79,11 @@ define bootloader-depends
 	$(call bootloader-depends-$(ET_BOARD))
 	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.dts* 2> /dev/null`" ]; then \
 		rsync -rP $(ET_BOARD_DIR)/dts/*.dts* \
-			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_ARCH)/dts/; \
+			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_BOOTLOADER_ARCH)/dts/; \
 	fi
 	@if [ -d $(ET_BOARD_DIR)/dts/u-boot ] && [ -n "`ls $(ET_BOARD_DIR)/dts/u-boot/*.dts* 2> /dev/null`" ]; then \
 		rsync -rP $(ET_BOARD_DIR)/dts/u-boot/*.dts* \
-			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_ARCH)/dts/; \
+			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_BOOTLOADER_ARCH)/dts/; \
 	fi
 	@if [ -f $(ET_BOOTLOADER_DEFCONFIG) ]; then \
 		rsync $(ET_BOOTLOADER_DEFCONFIG) $(ET_BOOTLOADER_SOFTWARE_DIR)/configs/ > /dev/null; \
@@ -196,6 +196,7 @@ define bootloader-info
 	@printf "ET_BOOTLOADER_TREE: $(ET_BOOTLOADER_TREE)\n"
 	@printf "ET_BOOTLOADER_VERSION: $(ET_BOOTLOADER_VERSION)\n"
 	@printf "ET_BOOTLOADER_LOCALVERSION: $(ET_BOOTLOADER_LOCALVERSION)\n"
+	@printf "ET_BOOTLOADER_ARCH: $(ET_BOOTLOADER_ARCH)\n"
 	@printf "ET_BOOTLOADER_SOFTWARE_DIR: $(ET_BOOTLOADER_SOFTWARE_DIR)\n"
 	@printf "ET_BOOTLOADER_SYSMAP: $(ET_BOOTLOADER_SYSMAP)\n"
 	@printf "ET_BOOTLOADER_IMAGE: $(ET_BOOTLOADER_IMAGE)\n"

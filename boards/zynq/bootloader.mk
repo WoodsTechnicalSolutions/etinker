@@ -1,8 +1,15 @@
+export ET_BOOTLOADER_ARCH := $(ET_BOARD_ARCH)
+
+ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -Po xlnx),xlnx)
+# Xilinx 'u-boot-xlnx' tree
+export ET_BOOTLOADER_VERSION := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && make -s ubootversion | tr -d \\n)
+export ET_BOOTLOADER_LOCALVERSION := -$(ET_BOOTLOADER_CACHED_VERSION)
+endif
 export ET_BOOTLOADER_BUILD_SPL := $(ET_BOOTLOADER_BUILD_DIR)/spl/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
 export ET_BOOTLOADER_SPL := $(ET_BOOTLOADER_DIR)/boot/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
 
 # Handle out-of-tree devicetree build (i.e. dtb-y += zynq-custom-board.dtb)
-export DEVICE_TREE_MAKEFILE := -f $(ET_BOARD_DIR)/dts/Makefile
+export DEVICE_TREE_MAKEFILE := -f $(ET_BOARD_DIR)/dts/u-boot/Makefile
 
 define bootloader-depends-$(ET_BOARD_TYPE)
 	@if [ -d $(ET_BOARD_DIR)/fpga/sdk ]; then \

@@ -1,3 +1,11 @@
+export ET_BOOTLOADER_ARCH := arm
+
+ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -Po libre),libre)
+# Libre Computer 'libretech-u-boot' tree
+export ET_BOOTLOADER_VERSION := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && make -s ubootversion | tr -d \\n)
+export ET_BOOTLOADER_LOCALVERSION := -libretech
+endif
+
 export FIP_DIR := $(ET_SOFTWARE_DIR)/fip
 export FIP_BUILD_DIR := $(ET_BOOTLOADER_BUILD_DIR)/fip
 
