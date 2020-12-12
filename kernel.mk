@@ -267,10 +267,10 @@ endef
 
 define kernel-info
 	@printf "========================================================================\n"
-	@printf "ET_KERNEL_ARCH: $(ET_KERNEL_ARCH)\n"
 	@printf "ET_KERNEL_TREE: $(ET_KERNEL_TREE)\n"
 	@printf "ET_KERNEL_VERSION: $(ET_KERNEL_VERSION)\n"
 	@printf "ET_KERNEL_LOCALVERSION: $(ET_KERNEL_LOCALVERSION)\n"
+	@printf "ET_KERNEL_ARCH: $(ET_KERNEL_ARCH)\n"
 	@printf "ET_KERNEL_SOFTWARE_DIR: $(ET_KERNEL_SOFTWARE_DIR)\n"
 	@printf "ET_KERNEL_DT_ETINKER: $(ET_KERNEL_DT_ETINKER)\n"
 	@printf "ET_KERNEL_DT: $(ET_KERNEL_DT)\n"

@@ -1,2 +1,1 @@
-/buildroot-*
-/crosstool-ng-*
+../../meson/config/.gitignore
