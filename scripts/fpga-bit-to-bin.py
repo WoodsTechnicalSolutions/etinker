@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 # https://wiki.dave.eu/index.php/BELK-AN-008:_Programming_the_FPGA_Bitstream_with_U-Boot
 # https://cloud.dave.eu/public/cdd957
 
