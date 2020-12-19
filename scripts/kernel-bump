@@ -1,0 +1,102 @@
+#!/bin/bash
+#
+# This script ONLY used when bumping the Linux versions
+#
+
+usage ()
+{
+	printf "\nusage: kernel-bump <command> [-rt]\n\n"
+	printf "<command>\n"
+	printf "\tbuild   - Purge and Build\n"
+	printf "\tupdate  - Clean and Build\n"
+	printf "\t*config - {g,menu,n,old}config with savedefconfig\n\n"
+}
+
+do_make ()
+{
+	case $1 in
+	*config)
+		ET_BOARD=$2 make kernel-$1 kernel-savedefconfig
+		;;
+	update)
+		ET_BOARD=$2 make kernel-$1 overlay-$1
+		;;
+	build)
+		ET_BOARD=$2 make kernel-purge overlay-update
+		;;
+	*)
+		;;
+	esac
+}
+
+is_virtual ()
+{
+	if [ "`grep -Po -e 'is virtual' boards/$1/etinker.mk 2> /dev/null`" = "is virtual" ]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# verify first positional argumement
+if [ -e $1 ]; then
+	printf "Missing arguments!\n"
+	usage
+	exit 1
+fi
+
+# validate first positional argumement
+case $1 in
+*config | update | build)
+	;;
+*)
+	printf "Invalid argument list!\n"
+	usage
+	exit 1
+	;;
+esac
+
+# check state of boards directory
+for n in `ls boards`; do
+	if ! [ -f boards/$n/etinker.mk ]; then
+		printf "'$n' is not a valid etinker board!\n" $n
+		exit 1
+	fi
+	if is_virtual $n; then
+		continue
+	fi
+done
+
+# operate on valid boards
+for n in `ls boards`; do
+	if is_virtual $n; then
+		continue
+	fi
+
+	# realtime boards
+	if [ "$2" = "-rt" ]; then
+		case $n in
+		aml-s905x-cc-rt | ls1043ardb-rt)
+			if ! do_make $1 $n; then
+				printf "etinker $0 failed!\n"
+				exit 1
+			fi
+			;;
+		*)
+			;;
+		esac
+		continue
+	fi
+
+	# baseline boards
+	case $n in
+	aml-s905x-cc | ls1043ardb | am335x-pocketbeagle | sama5d3-xpld | pynq-z2)
+		if ! do_make $1 $n; then
+			printf "etinker $0 failed!\n"
+			exit 1
+		fi
+		;;
+	*)
+		;;
+	esac
+done
