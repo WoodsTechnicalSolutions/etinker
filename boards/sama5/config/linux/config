@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm 5.10.1 Kernel Configuration
+# Linux/arm 5.10.2 Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="arm-cortexa5-linux-gnueabihf-gcc (ARM Cortex-A5 gnueabihf) 10.2.0"
 CONFIG_CC_IS_GCC=y
