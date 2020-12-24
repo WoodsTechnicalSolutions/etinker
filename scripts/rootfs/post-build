@@ -46,6 +46,10 @@ printf "\n::sysinit:/bin/mount -t configfs none /sys/kernel/config\n" >> ${TARGE
 sed -i s,::sysinit:/etc/init.d/rcS,#::sysinit:/etc/init.d/rcS, ${TARGET}/etc/inittab
 printf "\n::sysinit:/etc/init.d/rcS\n" >> ${TARGET}/etc/inittab
 printf "\n#ttyGS0::respawn:/sbin/getty -L ttyGS0 115200 xterm-color\n" >> ${TARGET}/etc/inittab
+# Google DNS
+rm -f ${TARGET}/etc/resolv.conf
+printf "nameserver 8.8.8.8\n"  > ${TARGET}/etc/resolv.conf
+printf "nameserver 8.8.4.4\n" >> ${TARGET}/etc/resolv.conf
 
 # Board Specific Modifications
 case "${ET_BOARD_TYPE}" in
