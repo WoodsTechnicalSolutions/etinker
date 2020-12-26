@@ -1,7 +1,10 @@
 #!/bin/sh
 #
-# http://www.thekelleys.org.uk/dnsmasq/doc.html
-# https://wiki.archlinux.org/index.php/Dnsmasq
+# For a real DNS setup, on your development host, consider 'dnsmasq':
+#
+# [dnsmasq]
+# - http://www.thekelleys.org.uk/dnsmasq/doc.html
+# - https://wiki.archlinux.org/index.php/Dnsmasq
 #
 # [/etc/dnsmasq.conf - example]
 # ------------------------------
@@ -23,7 +26,7 @@ if [ -n "$1" ] && ! [ "$1" = "$subnet" ]; then
 	subnet=$1
 fi
 
-# Enablw IPv4 packet forwarding
+# Enable IPv4 packet forwarding
 echo "1" > /proc/sys/net/ipv4/ip_forward
 
 ifhost="enp`route -n|grep UG|sed -n s/.*enp//p`"
