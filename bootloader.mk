@@ -186,6 +186,7 @@ endef
 define bootloader-clean
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-clean *****\n\n"
 	$(RM) $(ET_BOOTLOADER_BUILD_CONFIG)
+	$(RM) $(ET_BOOTLOADER_BUILD_DEFCONFIG)
 	$(RM) $(ET_BOOTLOADER_DIR)/boot/boot*
 	$(RM) $(ET_BOOTLOADER_DIR)/boot/u-boot*
 endef
