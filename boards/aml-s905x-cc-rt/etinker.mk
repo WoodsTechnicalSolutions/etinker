@@ -29,6 +29,10 @@
 
 export ET_BOARD_TYPE := meson-rt
 
+ET_BOARD_TOOLCHAIN_TYPE ?= meson
+ET_BOARD_BOOTLOADER_TYPE ?= meson
+ET_BOARD_ROOTFS_TYPE ?= meson
+
 include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/etinker.mk
 
 ET_BOARD_TOOLCHAIN_TREE ?= crosstool-ng

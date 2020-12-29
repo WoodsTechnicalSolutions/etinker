@@ -16,7 +16,12 @@ ifndef ET_BOARD_ROOTFS_TREE
 $(error [ 'etinker' rootfs build requires ET_BOARD_ROOTFS_TREE ] ***)
 endif
 
+ifndef ET_BOARD_ROOTFS_TYPE
+export ET_BOARD_ROOTFS_TYPE := $(ET_BOARD_TYPE)
+endif
+
 # embedded rootfs, for application processors, is Buildroot
+export ET_ROOTFS_TYPE := $(ET_BOARD_ROOTFS_TYPE)
 export ET_ROOTFS_TREE := $(ET_BOARD_ROOTFS_TREE)
 export ET_ROOTFS_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_ROOTFS_TREE)
 export ET_ROOTFS_HOSTNAME := $(ET_BOARD_HOSTNAME)
@@ -32,12 +37,12 @@ endif
 export ET_ROOTFS_VERSION
 # [end] rootfs version magic
 
-export ET_ROOTFS_BUILD_DIR := $(ET_DIR)/rootfs/build/$(ET_BOARD_TYPE)/$(ET_CROSS_TUPLE)
+export ET_ROOTFS_BUILD_DIR := $(ET_DIR)/rootfs/build/$(ET_ROOTFS_TYPE)/$(ET_CROSS_TUPLE)
 export ET_ROOTFS_BUILD_CONFIG := $(ET_ROOTFS_BUILD_DIR)/.config
 export ET_ROOTFS_BUILD_IMAGE := $(ET_ROOTFS_BUILD_DIR)/images/rootfs.tar
 export ET_ROOTFS_TARBALLS_DIR := $(ET_TARBALLS_DIR)/rootfs
 export ET_ROOTFS_DIR := $(ET_DIR)/rootfs/$(ET_BOARD)/$(ET_CROSS_TUPLE)
-export ET_ROOTFS_CONFIG := $(ET_CONFIG_DIR)/$(ET_ROOTFS_TREE)/config
+export ET_ROOTFS_CONFIG := $(ET_DIR)/boards/$(ET_ROOTFS_TYPE)/config/$(ET_ROOTFS_TREE)/config
 export ET_ROOTFS_IMAGE := $(ET_ROOTFS_DIR)/images/rootfs.tar
 export ET_ROOTFS_TARGET_FINAL ?= $(ET_ROOTFS_IMAGE)
 
@@ -130,6 +135,7 @@ endef
 
 define rootfs-info
 	@printf "========================================================================\n"
+	@printf "ET_ROOTFS_TYPE: $(ET_ROOTFS_TYPE)\n"
 	@printf "ET_ROOTFS_TREE: $(ET_ROOTFS_TREE)\n"
 	@printf "ET_ROOTFS_VERSION: $(ET_ROOTFS_VERSION)\n"
 	@printf "ET_ROOTFS_HOSTNAME: $(ET_ROOTFS_HOSTNAME)\n"

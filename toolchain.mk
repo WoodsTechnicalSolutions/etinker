@@ -12,7 +12,12 @@
 # - https://crosstool-ng.github.io/docs
 #
 
+ifndef ET_BOARD_TOOLCHAIN_TYPE
+export ET_BOARD_TOOLCHAIN_TYPE := $(ET_BOARD_TYPE)
+endif
+
 # embedded toolchain (GCC, GDB, and LIBC) is built using crosstool-NG
+export ET_TOOLCHAIN_TYPE := $(ET_BOARD_TOOLCHAIN_TYPE)
 export ET_TOOLCHAIN_TREE := $(ET_BOARD_TOOLCHAIN_TREE)
 export ET_TOOLCHAIN_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE)
 toolchain_version = $(shell cd $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE)/ 2>/dev/null && git describe --tags 2>/dev/null)
@@ -23,7 +28,7 @@ export ET_TOOLCHAIN_BUILD_DIR := $(ET_DIR)/toolchain/build/$(ET_CROSS_TUPLE)
 export ET_TOOLCHAIN_TARBALLS_DIR := $(ET_TARBALLS_DIR)/toolchain
 export ET_TOOLCHAIN_GENERATOR_DIR := $(ET_DIR)/toolchain/generator
 export ET_TOOLCHAIN_GENERATOR := $(ET_TOOLCHAIN_GENERATOR_DIR)/bin/ct-ng
-export ET_TOOLCHAIN_CONFIG := $(ET_CONFIG_DIR)/$(ET_TOOLCHAIN_TREE)/config
+export ET_TOOLCHAIN_CONFIG := $(ET_DIR)/boards/$(ET_TOOLCHAIN_TYPE)/config/$(ET_TOOLCHAIN_TREE)/config
 export ET_TOOLCHAIN_BUILD_CONFIG := $(ET_TOOLCHAIN_BUILD_DIR)/.config
 export ET_TOOLCHAIN_TARGET_FINAL ?= $(ET_TOOLCHAIN_DIR)/bin/$(ET_CROSS_TUPLE)-gdb
 # configured component versions
@@ -127,6 +132,7 @@ endef
 
 define toolchain-info
 	@printf "========================================================================\n"
+	@printf "ET_TOOLCHAIN_TYPE: $(ET_TOOLCHAIN_TYPE)\n"
 	@printf "ET_TOOLCHAIN_TREE: $(ET_TOOLCHAIN_TREE)\n"
 	@printf "ET_TOOLCHAIN_VERSION: $(ET_TOOLCHAIN_VERSION)\n"
 	@printf "ET_TOOLCHAIN_GCC_VERSION: $(ET_TOOLCHAIN_GCC_VERSION)\n"

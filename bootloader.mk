@@ -16,7 +16,12 @@ ifndef ET_BOARD_BOOTLOADER_TREE
 $(error [ 'etinker' bootloader build requires ET_BOARD_BOOTLOADER_TREE ] ***)
 endif
 
+ifndef ET_BOARD_BOOTLOADER_TYPE
+export ET_BOARD_BOOTLOADER_TYPE := $(ET_BOARD_TYPE)
+endif
+
 # embedded bootloader, for application processors, is Das U-Boot
+export ET_BOOTLOADER_TYPE := $(ET_BOARD_BOOTLOADER_TYPE)
 export ET_BOOTLOADER_TREE := $(ET_BOARD_BOOTLOADER_TREE)
 export ET_BOOTLOADER_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_BOOTLOADER_TREE)
 export ET_BOOTLOADER_CACHED_VERSION := $(shell grep -Po 'bootloader-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
@@ -54,8 +59,8 @@ export ET_BOOTLOADER_BUILD_CONFIG := $(ET_BOOTLOADER_BUILD_DIR)/.config
 export ET_BOOTLOADER_BUILD_DEFCONFIG := $(ET_BOOTLOADER_BUILD_DIR)/defconfig
 export ET_BOOTLOADER_BUILD_SYSMAP := $(ET_BOOTLOADER_BUILD_DIR)/System.map
 export ET_BOOTLOADER_DIR := $(ET_DIR)/bootloader/$(ET_BOARD)/$(ET_CROSS_TUPLE)
-export ET_BOOTLOADER_CONFIG := $(ET_CONFIG_DIR)/u-boot-$(ET_BOARD)/config
-export ET_BOOTLOADER_DEFCONFIG := $(ET_CONFIG_DIR)/u-boot-$(ET_BOARD)/$(bootloader_defconfig)
+export ET_BOOTLOADER_CONFIG := $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(ET_BOARD)/config
+export ET_BOOTLOADER_DEFCONFIG := $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(ET_BOARD)/$(bootloader_defconfig)
 export ET_BOOTLOADER_SYSMAP := $(ET_BOOTLOADER_DIR)/System.map
 
 export DEVICE_TREE := $(ET_BOARD_KERNEL_DT)
@@ -114,8 +119,8 @@ define bootloader-finalize
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_BUILD_IMAGE) build FAILED! *****\n\n"; \
 		exit 2; \
 	fi
-	@if [ -f $(ET_CONFIG_DIR)/u-boot-$(ET_BOARD)/uEnv.txt ]; then \
-		cp -av $(ET_CONFIG_DIR)/u-boot-$(ET_BOARD)/uEnv*.txt $(ET_BOOTLOADER_DIR)/boot/; \
+	@if [ -f $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(ET_BOARD)/uEnv.txt ]; then \
+		cp -av $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(ET_BOARD)/uEnv*.txt $(ET_BOOTLOADER_DIR)/boot/; \
 	fi
 	@cp -av $(ET_BOOTLOADER_BUILD_IMAGE) $(ET_BOOTLOADER_DIR)/boot/
 	$(call bootloader-finalize-$(ET_BOARD))
@@ -193,6 +198,7 @@ endef
 
 define bootloader-info
 	@printf "========================================================================\n"
+	@printf "ET_BOOTLOADER_TYPE: $(ET_BOOTLOADER_TYPE)\n"
 	@printf "ET_BOOTLOADER_TREE: $(ET_BOOTLOADER_TREE)\n"
 	@printf "ET_BOOTLOADER_VERSION: $(ET_BOOTLOADER_VERSION)\n"
 	@printf "ET_BOOTLOADER_LOCALVERSION: $(ET_BOOTLOADER_LOCALVERSION)\n"
