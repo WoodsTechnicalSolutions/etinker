@@ -29,6 +29,8 @@
 
 export ET_BOARD_TYPE := meson-rt
 
+ET_BOARD_ALIAS ?= aml-s905x-cc
+
 ET_BOARD_TOOLCHAIN_TYPE ?= meson
 ET_BOARD_BOOTLOADER_TYPE ?= meson
 ET_BOARD_ROOTFS_TYPE ?= meson
