@@ -81,7 +81,6 @@ export ET_KERNEL_BUILD_DEFCONFIG := $(ET_KERNEL_BUILD_DIR)/defconfig
 export ET_KERNEL_BUILD_SYSMAP := $(ET_KERNEL_BUILD_DIR)/System.map
 export ET_KERNEL_BUILD_DTB := $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$(ET_KERNEL_VENDOR)$(ET_KERNEL_DT).dtb
 export ET_KERNEL_DIR := $(ET_DIR)/kernel/$(ET_BOARD)/$(ET_CROSS_TUPLE)
-export ET_KERNEL_CONFIG := $(ET_CONFIG_DIR)/$(ET_KERNEL_TREE)/config
 export ET_KERNEL_DEFCONFIG := $(ET_CONFIG_DIR)/$(ET_KERNEL_TREE)/$(kernel_defconfig)
 export ET_KERNEL_SYSMAP := $(ET_KERNEL_DIR)/boot/System.map
 export ET_KERNEL_DTB := $(ET_KERNEL_DIR)/boot/$(ET_KERNEL_DT).dtb
@@ -103,7 +102,7 @@ define kernel-depends
 	@mkdir -p $(ET_KERNEL_DIR)/boot
 	@mkdir -p $(ET_KERNEL_DIR)/lib/modules
 	@mkdir -p $(ET_KERNEL_BUILD_BOOT_DIR)
-	@mkdir -p $(shell dirname $(ET_KERNEL_CONFIG))
+	@mkdir -p $(shell dirname $(ET_KERNEL_DEFCONFIG))
 	$(call kernel-depends-$(ET_BOARD))
 	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.dts* 2> /dev/null`" ]; then \
 		rsync -r $(ET_BOARD_DIR)/dts/*.dts* \
@@ -122,16 +121,6 @@ define kernel-prepare
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION)$(ET_KERNEL_LOCALVERSION) *****\n\n"
 	$(call kernel-depends)
 	$(call kernel-prepare-$(ET_BOARD))
-	@if ! [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
-		if [ -f $(ET_KERNEL_CONFIG) ]; then \
-			rsync $(ET_KERNEL_CONFIG) $(ET_KERNEL_BUILD_CONFIG); \
-		else \
-			$(MAKE) --no-print-directory $(ET_KERNEL_CROSS_PARAMS) \
-				O=$(ET_KERNEL_BUILD_DIR) \
-				-C $(ET_KERNEL_SOFTWARE_DIR) \
-				$(kernel_defconfig); \
-		fi; \
-	fi
 endef
 
 define kernel-finalize
@@ -141,15 +130,23 @@ endef
 define kernel-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-build 'make $1' *****\n\n"
 	$(call kernel-depends)
-	@if [ -f $(ET_KERNEL_CONFIG) ] && ! [ "$1" = "$(kernel_defconfig)" ]; then \
-		case "$1" in \
-		*config) \
-			rsync $(ET_KERNEL_CONFIG) $(ET_KERNEL_BUILD_CONFIG); \
-			;; \
-		*) \
-			;; \
-		esac; \
-	fi
+	@case "$1" in \
+	*config) \
+		;; \
+	*) \
+		if ! [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
+			$(MAKE) --no-print-directory \
+				$(ET_KERNEL_CROSS_PARAMS) \
+				O=$(ET_KERNEL_BUILD_DIR) \
+				-C $(ET_KERNEL_SOFTWARE_DIR) \
+				$(kernel_defconfig); \
+			if ! [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
+				printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) .config MISSING! *****\n"; \
+				exit 2; \
+			fi; \
+		fi; \
+		;; \
+	esac
 	$(MAKE) --no-print-directory -j $(ET_CPUS) $(ET_KERNEL_CROSS_PARAMS) \
 		LOCALVERSION=$(ET_KERNEL_LOCALVERSION) \
 		LOADADDR=$(ET_KERNEL_LOADADDR) \
@@ -221,9 +218,16 @@ define kernel-build
 		;; \
 	*config) \
 		if [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
-			rsync $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG); \
+			$(MAKE) --no-print-directory \
+				$(ET_KERNEL_CROSS_PARAMS) \
+				O=$(ET_KERNEL_BUILD_DIR) \
+				-C $(ET_KERNEL_SOFTWARE_DIR) \
+				savedefconfig; \
 			if [ -f $(ET_KERNEL_BUILD_DEFCONFIG) ]; then \
-				rsync $(ET_KERNEL_BUILD_DEFCONFIG) $(ET_KERNEL_DEFCONFIG); \
+				if [ -n "$(shell diff -q $(ET_KERNEL_BUILD_DEFCONFIG) $(ET_KERNEL_DEFCONFIG) 2> /dev/null)" ]; then \
+					rsync $(ET_KERNEL_BUILD_DEFCONFIG) $(ET_KERNEL_DEFCONFIG); \
+				fi; \
+				$(RM) $(ET_KERNEL_BUILD_DEFCONFIG); \
 			fi; \
 		else \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) .config MISSING! *****\n"; \
@@ -233,11 +237,6 @@ define kernel-build
 	*) \
 		;; \
 	esac
-	@if [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
-		if [ -n "$(shell diff -q $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG) 2> /dev/null)" ]; then \
-			rsync $(ET_KERNEL_BUILD_CONFIG) $(ET_KERNEL_CONFIG); \
-		fi; \
-	fi
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] kernel-build 'make $1' done. *****\n\n"
 endef
 
@@ -245,11 +244,11 @@ define kernel-config
 	$(call software-check,$(ET_KERNEL_TREE),kernel)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-config *****\n\n"
 	$(call kernel-depends)
-	@if ! [ -f $(ET_KERNEL_CONFIG) ]; then \
-		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-config build FAILED! *****\n\n"; \
-		exit 2; \
-	fi
-	@rsync $(ET_KERNEL_CONFIG) $(ET_KERNEL_BUILD_CONFIG)
+	$(MAKE) --no-print-directory \
+		$(ET_KERNEL_CROSS_PARAMS) \
+		O=$(ET_KERNEL_BUILD_DIR) \
+		-C $(ET_KERNEL_SOFTWARE_DIR) \
+		$(kernel_defconfig)
 endef
 
 define kernel-clean
@@ -277,7 +276,6 @@ define kernel-info
 	@printf "ET_KERNEL_DT: $(ET_KERNEL_DT)\n"
 	@printf "ET_KERNEL_DTB: $(ET_KERNEL_DTB)\n"
 	@printf "ET_KERNEL_SYSMAP: $(ET_KERNEL_SYSMAP)\n"
-	@printf "ET_KERNEL_CONFIG: $(ET_KERNEL_CONFIG)\n"
 	@printf "ET_KERNEL_DEFCONFIG: $(ET_KERNEL_DEFCONFIG)\n"
 	@printf "ET_KERNEL_BUILD_CONFIG: $(ET_KERNEL_BUILD_CONFIG)\n"
 	@printf "ET_KERNEL_BUILD_DEFCONFIG: $(ET_KERNEL_BUILD_DEFCONFIG)\n"
@@ -311,14 +309,9 @@ kernel-%: $(ET_KERNEL_BUILD_CONFIG)
 
 .PHONY: kernel-config
 kernel-config: $(ET_KERNEL_BUILD_CONFIG)
-$(ET_KERNEL_BUILD_CONFIG): $(ET_KERNEL_CONFIG)
+$(ET_KERNEL_BUILD_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL)
 ifeq ($(shell test -f $(ET_KERNEL_BUILD_CONFIG) && printf "DONE" || printf "CONFIGURE"),CONFIGURE)
 	$(call kernel-config)
-endif
-
-$(ET_KERNEL_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL)
-ifeq ($(shell test -f $(ET_KERNEL_CONFIG) && printf "EXISTS" || printf "DEFAULT"),DEFAULT)
-	$(call kernel-build,$(kernel_defconfig))
 endif
 
 .PHONY: kernel-clean
