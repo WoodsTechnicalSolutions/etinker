@@ -156,7 +156,6 @@ endef
 
 define rootfs-info
 	@printf "========================================================================\n"
-	@printf "ET_ROOTFS_TYPE: $(ET_ROOTFS_TYPE)\n"
 	@printf "ET_ROOTFS_TREE: $(ET_ROOTFS_TREE)\n"
 	@printf "ET_ROOTFS_VERSION: $(ET_ROOTFS_VERSION)\n"
 	@printf "ET_ROOTFS_HOSTNAME: $(ET_ROOTFS_HOSTNAME)\n"
@@ -164,11 +163,11 @@ define rootfs-info
 	@printf "ET_ROOTFS_ISSUE: $(ET_ROOTFS_ISSUE)\n"
 	@printf "ET_ROOTFS_SOFTWARE_DIR: $(ET_ROOTFS_SOFTWARE_DIR)\n"
 	@printf "ET_ROOTFS_TARBALLS_DIR: $(ET_ROOTFS_TARBALLS_DIR)\n"
-	@printf "ET_ROOTFS_DEFCONFIG: $(ET_ROOTFS_DEFCONFIG)\n"
 	@printf "ET_ROOTFS_BUILD_DIR: $(ET_ROOTFS_BUILD_DIR)\n"
 	@printf "ET_ROOTFS_BUILD_CONFIG: $(ET_ROOTFS_BUILD_CONFIG)\n"
 	@printf "ET_ROOTFS_BUILD_DEFCONFIG: $(ET_ROOTFS_BUILD_DEFCONFIG)\n"
 	@printf "ET_ROOTFS_BUILD_IMAGE: $(ET_ROOTFS_BUILD_IMAGE)\n"
+	@printf "ET_ROOTFS_DEFCONFIG: $(ET_ROOTFS_DEFCONFIG)\n"
 	@printf "ET_ROOTFS_DIR: $(ET_ROOTFS_DIR)\n"
 	@printf "ET_ROOTFS_IMAGE: $(ET_ROOTFS_IMAGE)\n"
 	@printf "ET_ROOTFS_TARGET_FINAL: $(ET_ROOTFS_TARGET_FINAL)\n"
@@ -189,9 +188,7 @@ rootfs-%: $(ET_ROOTFS_BUILD_CONFIG)
 .PHONY: rootfs-config
 rootfs-config: $(ET_ROOTFS_BUILD_CONFIG)
 $(ET_ROOTFS_BUILD_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL)
-ifeq ($(shell test -f $(ET_ROOTFS_BUILD_CONFIG) && printf "DONE" || printf "CONFIGURE"),CONFIGURE)
 	$(call rootfs-config)
-endif
 
 .PHONY: rootfs-clean
 rootfs-clean:
