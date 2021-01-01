@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# This script ONLY used when bumping the Buildroot versions
+# This script ONLY used when bumping the U-Boot versions
 #
 
 usage ()
 {
-	printf "\nusage: rootfs-bump <command>\n\n"
+	printf "\nusage: bootloader-bump <command>\n\n"
 	printf "<command>\n"
 	printf "\tbuild   - Purge and Build\n"
 	printf "\tupdate  - Clean and Build\n"
@@ -16,13 +16,13 @@ do_make ()
 {
 	case $1 in
 	*config)
-		ET_BOARD=$2 make rootfs-$1
+		ET_BOARD=$2 make bootloader-$1
 		;;
 	update)
-		ET_BOARD=$2 make rootfs-$1 kernel-$1 overlay-$1
+		ET_BOARD=$2 make bootloader-$1
 		;;
 	build)
-		ET_BOARD=$2 make rootfs-purge rootfs kernel-update overlay-update
+		ET_BOARD=$2 make bootloader-purge bootloader
 		;;
 	*)
 		;;
@@ -64,21 +64,25 @@ for n in `ls boards`; do
 	fi
 done
 
-# operate on valid boards
+# operate on valid virtual boards
 for n in `ls boards`; do
-	if is_virtual $n; then
+	if ! is_virtual $n; then
 		continue
 	fi
 
-	# baseline boards
-	case $n in
-	am335x-pocketbeagle* | aml-s905x-cc* | ls1043ardb* | pynq-z2* | sama5d3-xpld*)
-		if ! do_make $1 $n; then
-			printf "etinker $0 failed!\n"
-			exit 1
-		fi
-		;;
-	*)
-		;;
-	esac
+	# select boards with U-Boot config
+	for b in `ls boards/$n/config/`; do
+		case $b in
+		u-boot-*)
+			board=`echo $b | grep -Po 'u-boot-\K[^\n]*'`
+			if ! do_make $1 $board; then
+				printf "etinker $0 failed!\n"
+				exit 1
+			fi
+			;;
+		*)
+			;;
+		esac
+
+	done
 done
