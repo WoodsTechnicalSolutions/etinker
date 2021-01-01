@@ -79,7 +79,7 @@ case "${destination}" in
 					sudo rsync -aP  ${target_dir}/../../../firmware/* ${media}/rootfs/lib/firmware/ && sync
 				fi
 				sudo rsync -P  ${target_dir}/boot/* ${media}/BOOT/ && sync
-				if [ "${ET_BOARD_TYPE}" = "meson" ]; then
+				if [ "`printf ${ET_BOARD_TYPE}|grep -Po meson`" = "meson" ]; then
 					blkdev="`df ${media}/BOOT | tail -1 | cut -d ' ' -f 1 | cut -d 1 -f 1 | tr -d \\n`"
 					printf "\n*** 'dd' ${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin -> ${blkdev} ***\n\n"
 					sudo dd if=${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin of=${blkdev} conv=fsync,notrunc bs=1 count=444
