@@ -29,7 +29,7 @@ export ET_ROOTFS_GETTY_PORT := $(ET_BOARD_GETTY_PORT)
 export ET_ROOTFS_ISSUE := $(shell printf "etinker: $(ET_BOARD)")
 export ET_ROOTFS_CACHED_VERSION := $(shell grep -Po 'rootfs-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
 
-rootfs_defconfig := et_$(subst -,_,$(ET_BOARD_TYPE))_defconfig
+rootfs_defconfig := et_$(subst -,_,$(ET_ROOTFS_TYPE))_defconfig
 
 # [start] rootfs version magic
 ET_ROOTFS_VERSION := $(shell cd $(ET_ROOTFS_SOFTWARE_DIR) 2>/dev/null && git describe --long --dirty 2>/dev/null | tr -d v)
@@ -45,8 +45,7 @@ export ET_ROOTFS_BUILD_DEFCONFIG := $(ET_ROOTFS_BUILD_DIR)/defconfig
 export ET_ROOTFS_BUILD_IMAGE := $(ET_ROOTFS_BUILD_DIR)/images/rootfs.tar
 export ET_ROOTFS_TARBALLS_DIR := $(ET_TARBALLS_DIR)/rootfs
 export ET_ROOTFS_DIR := $(ET_DIR)/rootfs/$(ET_BOARD)/$(ET_CROSS_TUPLE)
-export ET_ROOTFS_CONFIG := $(ET_DIR)/boards/$(ET_ROOTFS_TYPE)/config/$(ET_ROOTFS_TREE)/config
-export ET_ROOTFS_DEFCONFIG := $(ET_CONFIG_DIR)/$(ET_ROOTFS_TREE)/$(rootfs_defconfig)
+export ET_ROOTFS_DEFCONFIG := $(ET_DIR)/boards/$(ET_ROOTFS_TYPE)/config/$(ET_ROOTFS_TREE)/$(rootfs_defconfig)
 export ET_ROOTFS_IMAGE := $(ET_ROOTFS_DIR)/images/rootfs.tar
 export ET_ROOTFS_TARGET_FINAL ?= $(ET_ROOTFS_IMAGE)
 
@@ -60,7 +59,7 @@ define rootfs-depends
 	@mkdir -p $(ET_ROOTFS_DIR)
 	@mkdir -p $(ET_ROOTFS_BUILD_DIR)
 	@mkdir -p $(ET_ROOTFS_TARBALLS_DIR)
-	@mkdir -p $(shell dirname $(ET_ROOTFS_CONFIG))
+	@mkdir -p $(shell dirname $(ET_ROOTFS_DEFCONFIG))
 	@if [ -f $(ET_ROOTFS_DEFCONFIG) ]; then \
 		rsync $(ET_ROOTFS_DEFCONFIG) $(ET_ROOTFS_SOFTWARE_DIR)/configs/ > /dev/null; \
 	fi
@@ -69,50 +68,48 @@ endef
 define rootfs-targets
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_ROOTFS_TREE) $(ET_ROOTFS_VERSION) *****\n\n"
 	$(call rootfs-depends)
-	@if ! [ -f $(ET_ROOTFS_BUILD_CONFIG) ]; then \
-		if ! [ -f $(ET_ROOTFS_CONFIG) ]; then \
-			$(MAKE) --no-print-directory \
-				CROSS_COMPILE=$(ET_CROSS_COMPILE) \
-				O=$(ET_ROOTFS_BUILD_DIR) \
-				-C $(ET_ROOTFS_SOFTWARE_DIR) \
-				$(rootfs_defconfig); \
-		fi; \
-		rsync $(ET_ROOTFS_CONFIG) $(ET_ROOTFS_BUILD_CONFIG); \
-	fi
 	$(call rootfs-build)
-	@if [ -n "$(shell diff -q $(ET_ROOTFS_BUILD_CONFIG) $(ET_ROOTFS_CONFIG) 2> /dev/null)" ]; then \
-		rsync $(ET_ROOTFS_BUILD_CONFIG) $(ET_ROOTFS_CONFIG); \
-	fi
 endef
 
 define rootfs-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rootfs-build 'make $1' *****\n\n"
 	$(call rootfs-depends)
-	@if [ -f $(ET_ROOTFS_CONFIG) ] && ! [ "$1" = "$(rootfs_defconfig)" ]; then \
-		case "$1" in \
-		*config) \
-			rsync $(ET_ROOTFS_CONFIG) $(ET_ROOTFS_BUILD_CONFIG); \
-			;; \
-		*) \
-			;; \
-		esac; \
-	fi
-	@if [ -z "$(shell printf "%s" $1 | grep clean)" ]; then \
-		$(MAKE) --no-print-directory -j $(ET_CPUS) \
-			CROSS_COMPILE=$(ET_CROSS_COMPILE) \
-			O=$(ET_ROOTFS_BUILD_DIR) \
-			-C $(ET_ROOTFS_SOFTWARE_DIR) \
-			$1; \
-	fi
+	@case "$1" in \
+	*config) \
+		;; \
+	*) \
+		if ! [ -f $(ET_ROOTFS_BUILD_CONFIG) ]; then \
+			$(MAKE) --no-print-directory \
+				CROSS_COMPILE=$(ET_CROSS_COMPILE) \
+				O=$(ET_ROOTFS_BUILD_DIR) \
+				-C $(ET_ROOTFS_SOFTWARE_DIR) \
+				$(rootfs_defconfig); \
+			if ! [ -f $(ET_ROOTFS_BUILD_CONFIG) ]; then \
+				printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_ROOTFS_TREE) .config MISSING! *****\n"; \
+				exit 2; \
+			fi; \
+		fi; \
+		;; \
+	esac
+	$(MAKE) --no-print-directory -j $(ET_CPUS) \
+		CROSS_COMPILE=$(ET_CROSS_COMPILE) \
+		O=$(ET_ROOTFS_BUILD_DIR) \
+		-C $(ET_ROOTFS_SOFTWARE_DIR) \
+		$1
 	@case "$1" in \
 	*clean) \
 		$(RM) -r $(ET_ROOTFS_DIR)/images; \
 		;; \
 	*config) \
 		if [ -f $(ET_ROOTFS_BUILD_CONFIG) ]; then \
-			rsync $(ET_ROOTFS_BUILD_CONFIG) $(ET_ROOTFS_CONFIG); \
+			$(MAKE) --no-print-directory \
+				CROSS_COMPILE=$(ET_CROSS_COMPILE) \
+				O=$(ET_ROOTFS_BUILD_DIR) \
+				-C $(ET_ROOTFS_SOFTWARE_DIR) \
+				savedefconfig; \
 			if [ -f $(ET_ROOTFS_BUILD_DEFCONFIG) ]; then \
 				rsync $(ET_ROOTFS_BUILD_DEFCONFIG) $(ET_ROOTFS_DEFCONFIG); \
+				$(RM) $(ET_ROOTFS_BUILD_DEFCONFIG); \
 			fi; \
 		else \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_ROOTFS_TREE) .config MISSING! *****\n"; \
@@ -137,11 +134,11 @@ define rootfs-config
 	$(call software-check,$(ET_ROOTFS_TREE),rootfs)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rootfs-config *****\n\n"
 	$(call rootfs-depends)
-	@if ! [ -f $(ET_ROOTFS_CONFIG) ]; then \
-		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rootfs-config FAILED! *****\n\n"; \
-		exit 2; \
-	fi
-	@rsync $(ET_ROOTFS_CONFIG) $(ET_ROOTFS_BUILD_CONFIG)
+	$(MAKE) --no-print-directory \
+		CROSS_COMPILE=$(ET_CROSS_COMPILE) \
+		O=$(ET_ROOTFS_BUILD_DIR) \
+		-C $(ET_ROOTFS_SOFTWARE_DIR) \
+		$(rootfs_defconfig)
 endef
 
 define rootfs-clean
@@ -167,14 +164,13 @@ define rootfs-info
 	@printf "ET_ROOTFS_ISSUE: $(ET_ROOTFS_ISSUE)\n"
 	@printf "ET_ROOTFS_SOFTWARE_DIR: $(ET_ROOTFS_SOFTWARE_DIR)\n"
 	@printf "ET_ROOTFS_TARBALLS_DIR: $(ET_ROOTFS_TARBALLS_DIR)\n"
-	@printf "ET_ROOTFS_IMAGE: $(ET_ROOTFS_IMAGE)\n"
-	@printf "ET_ROOTFS_CONFIG: $(ET_ROOTFS_CONFIG)\n"
 	@printf "ET_ROOTFS_DEFCONFIG: $(ET_ROOTFS_DEFCONFIG)\n"
+	@printf "ET_ROOTFS_BUILD_DIR: $(ET_ROOTFS_BUILD_DIR)\n"
 	@printf "ET_ROOTFS_BUILD_CONFIG: $(ET_ROOTFS_BUILD_CONFIG)\n"
 	@printf "ET_ROOTFS_BUILD_DEFCONFIG: $(ET_ROOTFS_BUILD_DEFCONFIG)\n"
 	@printf "ET_ROOTFS_BUILD_IMAGE: $(ET_ROOTFS_BUILD_IMAGE)\n"
 	@printf "ET_ROOTFS_DIR: $(ET_ROOTFS_DIR)\n"
-	@printf "ET_ROOTFS_BUILD_DIR: $(ET_ROOTFS_BUILD_DIR)\n"
+	@printf "ET_ROOTFS_IMAGE: $(ET_ROOTFS_IMAGE)\n"
 	@printf "ET_ROOTFS_TARGET_FINAL: $(ET_ROOTFS_TARGET_FINAL)\n"
 endef
 
@@ -192,14 +188,9 @@ rootfs-%: $(ET_ROOTFS_BUILD_CONFIG)
 
 .PHONY: rootfs-config
 rootfs-config: $(ET_ROOTFS_BUILD_CONFIG)
-$(ET_ROOTFS_BUILD_CONFIG): $(ET_ROOTFS_CONFIG)
+$(ET_ROOTFS_BUILD_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL)
 ifeq ($(shell test -f $(ET_ROOTFS_BUILD_CONFIG) && printf "DONE" || printf "CONFIGURE"),CONFIGURE)
 	$(call rootfs-config)
-endif
-
-$(ET_ROOTFS_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL)
-ifneq ($(ET_ROOTFS_DEFCONFIG),)
-	$(call rootfs-build,$(ET_ROOTFS_DEFCONFIG))
 endif
 
 .PHONY: rootfs-clean
