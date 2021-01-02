@@ -28,18 +28,20 @@ export ET_TOOLCHAIN_BUILD_DIR := $(ET_DIR)/toolchain/build/$(ET_CROSS_TUPLE)
 export ET_TOOLCHAIN_TARBALLS_DIR := $(ET_TARBALLS_DIR)/toolchain
 export ET_TOOLCHAIN_GENERATOR_DIR := $(ET_DIR)/toolchain/generator
 export ET_TOOLCHAIN_GENERATOR := $(ET_TOOLCHAIN_GENERATOR_DIR)/bin/ct-ng
-export ET_TOOLCHAIN_CONFIG := $(ET_DIR)/boards/$(ET_TOOLCHAIN_TYPE)/config/$(ET_TOOLCHAIN_TREE)/config
 export ET_TOOLCHAIN_BUILD_CONFIG := $(ET_TOOLCHAIN_BUILD_DIR)/.config
+export ET_TOOLCHAIN_BUILD_DEFCONFIG := $(ET_TOOLCHAIN_BUILD_DIR)/defconfig
+toolchain_defconfig := et_$(subst -,_,$(ET_TOOLCHAIN_TYPE))_defconfig
+export ET_TOOLCHAIN_DEFCONFIG := $(ET_DIR)/boards/$(ET_TOOLCHAIN_TYPE)/config/$(ET_TOOLCHAIN_TREE)/$(toolchain_defconfig)
 export ET_TOOLCHAIN_TARGET_FINAL ?= $(ET_TOOLCHAIN_DIR)/bin/$(ET_CROSS_TUPLE)-gdb
 # configured component versions
-export ET_TOOLCHAIN_GCC_VERSION := $(shell grep -oP 'CT_GCC_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_CONFIG))
-export ET_TOOLCHAIN_GDB_VERSION := $(shell grep -oP 'CT_GDB_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_CONFIG))
+export ET_TOOLCHAIN_GCC_VERSION := $(shell grep -oP 'CT_GCC_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_BUILD_CONFIG) 2>/dev/null)
+export ET_TOOLCHAIN_GDB_VERSION := $(shell grep -oP 'CT_GDB_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_BUILD_CONFIG) 2>/dev/null)
 ifeq ($(CT_KERNEL),linux)
-export ET_TOOLCHAIN_GLIBC_VERSION := $(shell grep -oP 'CT_GLIBC_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_CONFIG))
-export ET_TOOLCHAIN_LINUX_VERSION := $(shell grep -oP 'CT_LINUX_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_CONFIG))
+export ET_TOOLCHAIN_GLIBC_VERSION := $(shell grep -oP 'CT_GLIBC_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_BUILD_CONFIG) 2>/dev/null)
+export ET_TOOLCHAIN_LINUX_VERSION := $(shell grep -oP 'CT_LINUX_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_BUILD_CONFIG) 2>/dev/null)
 endif
 ifeq ($(CT_KERNEL),bare-metal)
-export ET_TOOLCHAIN_NEWLIB_VERSION := $(shell grep -oP 'CT_NEWLIB_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_CONFIG))
+export ET_TOOLCHAIN_NEWLIB_VERSION := $(shell grep -oP 'CT_NEWLIB_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_BUILD_CONFIG) 2>/dev/null)
 endif
 
 define toolchain-version
@@ -48,59 +50,88 @@ endef
 
 define toolchain-depends
 	@mkdir -p $(ET_TOOLCHAIN_TARBALLS_DIR)
-	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)
+	@mkdir -p $(shell dirname $(ET_TOOLCHAIN_DEFCONFIG))
+	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)/samples/$(ET_CROSS_TUPLE)
+	@if [ -f $(ET_TOOLCHAIN_DEFCONFIG) ]; then \
+		rsync $(ET_TOOLCHAIN_DEFCONFIG) $(ET_TOOLCHAIN_BUILD_DIR)/samples/$(ET_CROSS_TUPLE)/crosstool.config; \
+		printf "reporter_name=\"Woods Technical Solutions\"\n" > $(ET_TOOLCHAIN_BUILD_DIR)/samples/$(ET_CROSS_TUPLE)/reported.by; \
+		printf "reporter_url=\"www.woodsts.org\"\n" >> $(ET_TOOLCHAIN_BUILD_DIR)/samples/$(ET_CROSS_TUPLE)/reported.by; \
+		printf "reporter_comment=\"$(ET_CROSS_TUPLE) toolchain\"\n" >> $(ET_TOOLCHAIN_BUILD_DIR)/samples/$(ET_CROSS_TUPLE)/reported.by; \
+	fi
 endef
 
 define toolchain-targets
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) $(ET_TOOLCHAIN_VERSION) *****\n\n"
-	$(call toolchain-depends)
-	@if ! [ -f $(ET_TOOLCHAIN_BUILD_CONFIG) ] && [ -f $(ET_TOOLCHAIN_CONFIG) ]; then \
-		rsync $(ET_TOOLCHAIN_CONFIG) $(ET_TOOLCHAIN_BUILD_CONFIG); \
-	fi
 	$(call toolchain-build,build)
-	@if ! [ -f $(ET_TOOLCHAIN_TARGET_FINAL) ]; then \
-		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) build FAILED! *****\n"; \
-		exit 2; \
-	fi
-	@if ! [ -d $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot.cache ]; then \
-		if [ -d $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot ]; then \
-			cp -a $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot.cache; \
-		fi; \
-	fi
 endef
 
 define toolchain-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain 'ct-ng $1' *****\n\n"
 	$(call toolchain-depends)
-	@(cd $(ET_TOOLCHAIN_BUILD_DIR) && CT_ARCH=$(ET_ARCH) $(ET_TOOLCHAIN_GENERATOR) $1)
-	@if [ -n "$(shell printf "%s" $1 | grep config)" ]; then \
+	@case "$1" in \
+	*config) \
+		;; \
+	*) \
+		if ! [ -f $(ET_TOOLCHAIN_BUILD_CONFIG) ]; then \
+			(cd $(ET_TOOLCHAIN_BUILD_DIR) && \
+				CT_ARCH=$(ET_ARCH) \
+				$(ET_TOOLCHAIN_GENERATOR) \
+				$(ET_CROSS_TUPLE)); \
+			if ! [ -f $(ET_TOOLCHAIN_BUILD_CONFIG) ]; then \
+				printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) .config MISSING! *****\n"; \
+				exit 2; \
+			fi; \
+		fi; \
+		;; \
+	esac
+	@(cd $(ET_TOOLCHAIN_BUILD_DIR) && \
+		CT_ARCH=$(ET_ARCH) \
+		$(ET_TOOLCHAIN_GENERATOR) \
+		$1)
+	@case "$1" in \
+	build) \
+		if ! [ -f $(ET_TOOLCHAIN_TARGET_FINAL) ]; then \
+			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) build FAILED! *****\n"; \
+			exit 2; \
+		fi; \
+		if ! [ -d $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot.cache ]; then \
+			if [ -d $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot ]; then \
+				cp -a $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot.cache; \
+			fi; \
+		fi; \
+		;; \
+	*clean) \
+		$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/src; \
+		$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/$(ET_CROSS_TUPLE); \
+		;; \
+	*config) \
 		if [ -f $(ET_TOOLCHAIN_BUILD_CONFIG) ]; then \
-			rsync $(ET_TOOLCHAIN_BUILD_CONFIG) $(ET_TOOLCHAIN_CONFIG); \
+			(cd $(ET_TOOLCHAIN_BUILD_DIR) && \
+				CT_ARCH=$(ET_ARCH) \
+				$(ET_TOOLCHAIN_GENERATOR) \
+				savedefconfig); \
+			if [ -f $(ET_TOOLCHAIN_BUILD_DEFCONFIG) ]; then \
+				rsync $(ET_TOOLCHAIN_BUILD_DEFCONFIG) $(ET_TOOLCHAIN_DEFCONFIG); \
+				$(RM) $(ET_TOOLCHAIN_BUILD_DEFCONFIG); \
+			fi; \
 		else \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) .config MISSING! *****\n"; \
 			exit 2; \
 		fi; \
-	fi
-	@if [ -n "$(shell printf "%s" $1 | grep clean)" ]; then \
-		$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/src; \
-		$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/$(ET_CROSS_TUPLE); \
-	fi
-	@if [ -f $(ET_TOOLCHAIN_BUILD_CONFIG) ]; then \
-		if [ -n "$(shell diff -q $(ET_TOOLCHAIN_BUILD_CONFIG) $(ET_TOOLCHAIN_CONFIG) 2> /dev/null)" ]; then \
-			rsync $(ET_TOOLCHAIN_BUILD_CONFIG) $(ET_TOOLCHAIN_CONFIG); \
-		fi; \
-	fi
+		;; \
+	*) \
+		;; \
+	esac
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain 'ct-ng $1' done. *****\n\n"
 endef
 
 define toolchain-config
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-config *****\n\n"
 	$(call toolchain-depends)
-	@if ! [ -f $(ET_TOOLCHAIN_CONFIG) ]; then \
-		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-config FAILED! *****\n"; \
-		exit 2; \
-	fi
-	@rsync $(ET_TOOLCHAIN_CONFIG) $(ET_TOOLCHAIN_BUILD_CONFIG)
+	@(cd $(ET_TOOLCHAIN_BUILD_DIR) && \
+		CT_ARCH=$(ET_ARCH) \
+		$(ET_TOOLCHAIN_GENERATOR) \
+		$(ET_CROSS_TUPLE))
 endef
 
 define toolchain-generator
@@ -149,8 +180,9 @@ define toolchain-info
 	@printf "ET_TOOLCHAIN_TARBALLS_DIR: $(ET_TOOLCHAIN_TARBALLS_DIR)\n"
 	@printf "ET_TOOLCHAIN_BUILD_DIR: $(ET_TOOLCHAIN_BUILD_DIR)\n"
 	@printf "ET_TOOLCHAIN_BUILD_CONFIG: $(ET_TOOLCHAIN_BUILD_CONFIG)\n"
+	@printf "ET_TOOLCHAIN_BUILD_DEFCONFIG: $(ET_TOOLCHAIN_BUILD_DEFCONFIG)\n"
+	@printf "ET_TOOLCHAIN_DEFCONFIG: $(ET_TOOLCHAIN_DEFCONFIG)\n"
 	@printf "ET_TOOLCHAIN_DIR: $(ET_TOOLCHAIN_DIR)\n"
-	@printf "ET_TOOLCHAIN_CONFIG: $(ET_TOOLCHAIN_CONFIG)\n"
 	@printf "ET_TOOLCHAIN_TARGET_FINAL: $(ET_TOOLCHAIN_TARGET_FINAL)\n"
 endef
 
@@ -164,10 +196,8 @@ toolchain-%: $(ET_TOOLCHAIN_BUILD_CONFIG)
 
 .PHONY: toolchain-config
 toolchain-config: $(ET_TOOLCHAIN_BUILD_CONFIG)
-$(ET_TOOLCHAIN_BUILD_CONFIG): $(ET_TOOLCHAIN_GENERATOR) $(ET_TOOLCHAIN_CONFIG)
-ifeq ($(shell test -f $(ET_TOOLCHAIN_BUILD_CONFIG) && printf "DONE" || printf "CONFIGURE"),CONFIGURE)
+$(ET_TOOLCHAIN_BUILD_CONFIG): $(ET_TOOLCHAIN_GENERATOR)
 	$(call toolchain-config)
-endif
 
 .PHONY: toolchain-generator
 toolchain-generator: $(ET_TOOLCHAIN_GENERATOR)
