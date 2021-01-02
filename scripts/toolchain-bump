@@ -1,0 +1,80 @@
+#!/bin/bash
+#
+# This script ONLY used when bumping the crosstool-NG versions
+#
+
+usage ()
+{
+	printf "\nusage: toolchain-bump <command>\n\n"
+	printf "<command>\n"
+	printf "\tbuild   - Purge and Build\n"
+	printf "\t*config - {g,menu,n,old,savedef}config\n\n"
+}
+
+do_make ()
+{
+	case $1 in
+	*config)
+		ET_BOARD=$2 make toolchain-$1
+		;;
+	build)
+		ET_BOARD=$2 ET_PURGE=yes make toolchain-purge toolchain
+		;;
+	*)
+		;;
+	esac
+}
+
+is_virtual ()
+{
+	if [ "`grep -Po -e 'is virtual' boards/$1/etinker.mk 2> /dev/null`" = "is virtual" ]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# verify first positional argument
+if [ -e $1 ]; then
+	printf "Missing arguments!\n"
+	usage
+	exit 1
+fi
+
+# validate first positional argument
+case $1 in
+build | *config)
+	;;
+*)
+	printf "Invalid argument list!\n"
+	usage
+	exit 1
+	;;
+esac
+
+# check state of boards directory
+for n in `ls boards`; do
+	if ! [ -f boards/$n/etinker.mk ]; then
+		printf "'$n' is not a valid etinker board!\n" $n
+		exit 1
+	fi
+done
+
+# operate on valid boards
+for n in `ls boards`; do
+	if is_virtual $n; then
+		continue
+	fi
+
+	# baseline boards for supported toolchains
+	case $n in
+	ek-tm4c123gxl | arm-bare-metal | am335x-pocketbeagle | aml-s905x-cc | pynq-z2 | sama5d3-xpld)
+		if ! do_make $1 $n; then
+			printf "etinker $0 failed!\n"
+			exit 1
+		fi
+		;;
+	*)
+		;;
+	esac
+done
