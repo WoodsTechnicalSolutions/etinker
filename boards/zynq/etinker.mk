@@ -1,7 +1,7 @@
 #
 # Xilinx Zynq 7000, ARM Cortex-A9, board configuration file for 'etinker'
 #
-# Copyright (C) 2019 Derald D. Woods
+# Copyright (C) 2019-2021 Derald D. Woods
 #
 # This file is made available under the Creative Commons CC0 1.0
 # Universal Public Domain Dedication.

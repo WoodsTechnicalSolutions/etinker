@@ -10,7 +10,7 @@
 # https://github.com/torvalds/linux/blob/master/arch/arm64/boot/dts/amlogic/meson-gxl-s905x-libretech-cc.dts
 # ------------------------------------------------------------------------------
 #
-# Copyright (C) 2020 Derald D. Woods
+# Copyright (C) 2020-2021 Derald D. Woods
 #
 # This file is made available under the Creative Commons CC0 1.0
 # Universal Public Domain Dedication.

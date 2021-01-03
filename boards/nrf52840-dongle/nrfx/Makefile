@@ -1,3 +1,12 @@
+#
+# This is the GNU Makefile for an 'etinker' nrfx project.
+#
+# Copyright (C) 2020-2021 Derald D. Woods
+#
+# This file is part of the Embedded Tinkerer Sandbox, and is made
+# available under the terms of the GNU General Public License version 3.
+#
+
 ET_BOARD := nrf52840-dongle
 
 TARGET_NAME := nrfx-$(ET_BOARD)

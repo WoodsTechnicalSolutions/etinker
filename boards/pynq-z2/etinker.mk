@@ -11,7 +11,7 @@
 # https://github.com/u-boot/u-boot/blob/master/configs/xilinx_zynq_virt_defconfig
 # ------------------------------------------------------------------------------
 #
-# Copyright (C) 2019 Derald D. Woods
+# Copyright (C) 2019-2021 Derald D. Woods
 #
 # This file is made available under the Creative Commons CC0 1.0
 # Universal Public Domain Dedication.

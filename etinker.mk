@@ -1,7 +1,7 @@
 #
 # This is the GNU Make include for 'etinker'.
 #
-# Copyright (C) 2018 Derald D. Woods
+# Copyright (C) 2018-2021 Derald D. Woods
 #
 # This file is part of the Embedded Tinkerer Sandbox, and is made
 # available under the terms of the GNU General Public License version 3.
