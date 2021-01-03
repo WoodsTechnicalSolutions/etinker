@@ -224,9 +224,7 @@ define kernel-build
 				-C $(ET_KERNEL_SOFTWARE_DIR) \
 				savedefconfig; \
 			if [ -f $(ET_KERNEL_BUILD_DEFCONFIG) ]; then \
-				if [ -n "$(shell diff -q $(ET_KERNEL_BUILD_DEFCONFIG) $(ET_KERNEL_DEFCONFIG) 2> /dev/null)" ]; then \
-					rsync $(ET_KERNEL_BUILD_DEFCONFIG) $(ET_KERNEL_DEFCONFIG); \
-				fi; \
+				rsync $(ET_KERNEL_BUILD_DEFCONFIG) $(ET_KERNEL_DEFCONFIG); \
 				$(RM) $(ET_KERNEL_BUILD_DEFCONFIG); \
 			fi; \
 		else \
