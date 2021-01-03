@@ -7,22 +7,27 @@ usage ()
 {
 	printf "\nusage: bootloader-bump <command>\n\n"
 	printf "<command>\n"
-	printf "\tbuild   - Purge and Build\n"
-	printf "\tupdate  - Clean and Build\n"
-	printf "\t*config - {g,menu,n,old}config\n\n"
+	printf "\tmake <target> - Direct make target\n"
+	printf "\tbuild         - Purge and Build\n"
+	printf "\tupdate        - Clean and Build\n"
+	printf "\t*config       - {g,menu,n,old}config\n\n"
 }
 
 do_make ()
 {
-	case $1 in
+	printf "\n[$1]\n"
+	case $2 in
+	make)
+		ET_BOARD=$1 make bootloader-$3
+		;;
 	*config)
-		ET_BOARD=$2 make bootloader-$1
+		ET_BOARD=$1 make bootloader-$2
 		;;
 	update)
-		ET_BOARD=$2 make bootloader-$1
+		ET_BOARD=$1 make bootloader-$2
 		;;
 	build)
-		ET_BOARD=$2 make bootloader-purge bootloader
+		ET_BOARD=$1 make bootloader-purge bootloader
 		;;
 	*)
 		;;
@@ -47,6 +52,13 @@ fi
 
 # validate first positional argument
 case $1 in
+make)
+	if [ -e $2 ]; then
+		printf "Missing 'make' arguments!\n"
+		usage
+		exit 1
+	fi
+	;;
 *config | update | build)
 	;;
 *)
@@ -75,7 +87,7 @@ for n in `ls boards`; do
 		case $b in
 		u-boot-*)
 			board=`echo $b | grep -Po 'u-boot-\K[^\n]*'`
-			if ! do_make $1 $board; then
+			if ! do_make $board "$@"; then
 				printf "etinker $0 failed!\n"
 				exit 1
 			fi

@@ -7,22 +7,27 @@ usage ()
 {
 	printf "\nusage: kernel-bump <command> [-rt]\n\n"
 	printf "<command>\n"
-	printf "\tbuild   - Purge and Build\n"
-	printf "\tupdate  - Clean and Build\n"
-	printf "\t*config - {g,menu,n,old}config\n\n"
+	printf "\tmake <target> - Direct make target\n"
+	printf "\tbuild         - Purge and Build\n"
+	printf "\tupdate        - Clean and Build\n"
+	printf "\t*config       - {g,menu,n,old}config\n\n"
 }
 
 do_make ()
 {
-	case $1 in
+	printf "\n[$1]\n"
+	case $2 in
+	make)
+		ET_BOARD=$1 make kernel-$3
+		;;
 	*config)
-		ET_BOARD=$2 make kernel-$1
+		ET_BOARD=$1 make kernel-$2
 		;;
 	update)
-		ET_BOARD=$2 make kernel-$1 overlay-$1
+		ET_BOARD=$1 make kernel-$2 overlay-$2
 		;;
 	build)
-		ET_BOARD=$2 make kernel-purge overlay-update
+		ET_BOARD=$1 make kernel-purge overlay-update
 		;;
 	*)
 		;;
@@ -38,6 +43,16 @@ is_virtual ()
 	fi
 }
 
+is_rt ()
+{
+	for param in $@; do
+		if [ "$param" = "-rt" ]; then
+			return 0
+		fi
+	done
+	return 1
+}
+
 # verify first positional argument
 if [ -e $1 ]; then
 	printf "Missing arguments!\n"
@@ -47,6 +62,13 @@ fi
 
 # validate first positional argument
 case $1 in
+make)
+	if [ -e $2 ]; then
+		printf "Missing 'make' arguments!\n"
+		usage
+		exit 1
+	fi
+	;;
 *config | update | build)
 	;;
 *)
@@ -74,10 +96,10 @@ for n in `ls boards`; do
 	fi
 
 	# realtime boards
-	if [ "$2" = "-rt" ]; then
+	if is_rt "$@"; then
 		case $n in
 		aml-s905x-cc-rt | ls1043ardb-rt)
-			if ! do_make $1 $n; then
+			if ! do_make $n "$@"; then
 				printf "etinker $0 failed!\n"
 				exit 1
 			fi
@@ -91,7 +113,7 @@ for n in `ls boards`; do
 	# baseline boards
 	case $n in
 	am335x-pocketbeagle | aml-s905x-cc | ls1043ardb | pynq-z2 | sama5d3-xpld)
-		if ! do_make $1 $n; then
+		if ! do_make $n "$@"; then
 			printf "etinker $0 failed!\n"
 			exit 1
 		fi
