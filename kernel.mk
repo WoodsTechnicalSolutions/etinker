@@ -16,7 +16,12 @@ ifndef ET_BOARD_KERNEL_TREE
 $(error [ 'etinker' kernel build requires ET_BOARD_KERNEL_TREE ] ***)
 endif
 
+ifndef ET_BOARD_KERNEL_TYPE
+export ET_BOARD_KERNEL_TYPE := $(ET_BOARD_TYPE)
+endif
+
 # embedded kernel, for application processors, is GNU Linux
+export ET_KERNEL_TYPE := $(ET_BOARD_KERNEL_TYPE)
 export ET_KERNEL_ARCH := $(ET_BOARD_KERNEL_ARCH)
 export ET_KERNEL_VENDOR := $(ET_BOARD_KERNEL_VENDOR)
 export ET_KERNEL_TREE := $(ET_BOARD_KERNEL_TREE)
@@ -30,7 +35,7 @@ export ET_KERNEL_HEADERS_DIR ?= $(ET_SYSROOT_DIR)/usr/include
 export ET_KERNEL_CACHED_VERSION := $(shell grep -Po 'kernel-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
 export ET_KERNEL_CROSS_PARAMS := ARCH=$(ET_KERNEL_ARCH) CROSS_COMPILE=$(ET_CROSS_COMPILE)
 
-kernel_defconfig := et_$(subst -,_,$(ET_BOARD_TYPE))_defconfig
+kernel_defconfig := et_$(subst -,_,$(ET_KERNEL_TYPE))_defconfig
 
 # [start] kernel version magic
 ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v | cut -d '-' -f 1)
@@ -74,14 +79,14 @@ export ET_KERNEL_VERSION
 export ET_KERNEL_LOCALVERSION
 # [end] kernel version magic
 
-export ET_KERNEL_BUILD_DIR := $(ET_DIR)/kernel/build/$(ET_BOARD_TYPE)/$(ET_CROSS_TUPLE)
+export ET_KERNEL_BUILD_DIR := $(ET_DIR)/kernel/build/$(ET_KERNEL_TYPE)/$(ET_CROSS_TUPLE)
 export ET_KERNEL_BUILD_BOOT_DIR := $(ET_KERNEL_BUILD_DIR)/arch/$(ET_KERNEL_ARCH)/boot
 export ET_KERNEL_BUILD_CONFIG := $(ET_KERNEL_BUILD_DIR)/.config
 export ET_KERNEL_BUILD_DEFCONFIG := $(ET_KERNEL_BUILD_DIR)/defconfig
 export ET_KERNEL_BUILD_SYSMAP := $(ET_KERNEL_BUILD_DIR)/System.map
 export ET_KERNEL_BUILD_DTB := $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$(ET_KERNEL_VENDOR)$(ET_KERNEL_DT).dtb
 export ET_KERNEL_DIR := $(ET_DIR)/kernel/$(ET_BOARD)/$(ET_CROSS_TUPLE)
-export ET_KERNEL_DEFCONFIG := $(ET_CONFIG_DIR)/$(ET_KERNEL_TREE)/$(kernel_defconfig)
+export ET_KERNEL_DEFCONFIG := $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config/$(ET_KERNEL_TREE)/$(kernel_defconfig)
 export ET_KERNEL_SYSMAP := $(ET_KERNEL_DIR)/boot/System.map
 export ET_KERNEL_DTB := $(ET_KERNEL_DIR)/boot/$(ET_KERNEL_DT).dtb
 

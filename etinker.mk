@@ -57,9 +57,6 @@ export ET_SCRIPTS_DIR := $(ET_DIR)/scripts
 
 export ET_BOARD_DIR ?= $(ET_DIR)/boards/$(ET_BOARD)
 
-# all configuration files for a given board are stored here
-export ET_CONFIG_DIR ?= $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config
-
 # pull in etinker component information
 include $(ET_DIR)/software.mk
 include $(ET_DIR)/toolchain.mk
