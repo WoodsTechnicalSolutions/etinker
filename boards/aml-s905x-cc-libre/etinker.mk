@@ -29,8 +29,10 @@
 # licensed Public Domain.
 #
 
-export ET_BOARD_TYPE := meson-libre
+export ET_BOARD_TYPE := meson
 
+ET_BOARD_KERNEL_TYPE ?= meson-libre
+ET_BOARD_BOOTLOADER_TYPE ?= meson
 ET_BOARD_TOOLCHAIN_TYPE ?= meson
 ET_BOARD_ROOTFS_TYPE ?= meson
 

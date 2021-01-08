@@ -1,1 +1,0 @@
-../zynq/bootloader.mk

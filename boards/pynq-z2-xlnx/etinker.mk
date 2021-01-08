@@ -28,8 +28,10 @@
 # licensed Public Domain.
 #
 
-export ET_BOARD_TYPE := zynq-xlnx
+export ET_BOARD_TYPE := zynq
 
+ET_BOARD_KERNEL_TYPE ?= zynq-xlnx
+ET_BOARD_BOOTLOADER_TYPE ?= zynq
 ET_BOARD_TOOLCHAIN_TYPE ?= zynq
 ET_BOARD_ROOTFS_TYPE ?= zynq
 

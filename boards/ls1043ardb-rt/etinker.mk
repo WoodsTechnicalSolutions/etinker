@@ -27,12 +27,13 @@
 # licensed Public Domain.
 #
 
-export ET_BOARD_TYPE := layerscape-rt
+export ET_BOARD_TYPE := layerscape
 
 ET_BOARD_ALIAS ?= ls1043ardb
 
-ET_BOARD_TOOLCHAIN_TYPE ?= meson
+ET_BOARD_KERNEL_TYPE ?= layerscape-rt
 ET_BOARD_BOOTLOADER_TYPE ?= layerscape
+ET_BOARD_TOOLCHAIN_TYPE ?= meson
 ET_BOARD_ROOTFS_TYPE ?= meson
 
 include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/etinker.mk

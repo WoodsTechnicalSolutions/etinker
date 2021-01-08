@@ -53,6 +53,7 @@ ET_KERNEL_LOCALVERSION :=
 endif
 # linux-rt
 ifeq ($(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,[0-9].*,,),-rt)
+ET_KERNEL_VERSION := $(ET_KERNEL_VERSION)$(shell cat $(ET_KERNEL_SOFTWARE_DIR)/localversion-rt | tr -d \\n)
 ET_KERNEL_LOCALVERSION :=
 endif
 ifeq ($(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,[0-9].*,,),-rc)

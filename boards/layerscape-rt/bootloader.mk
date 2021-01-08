@@ -1,1 +1,0 @@
-../layerscape/bootloader.mk
