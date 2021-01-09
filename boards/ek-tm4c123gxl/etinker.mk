@@ -18,7 +18,7 @@
 # licensed Public Domain.
 #
 
-export ET_BOARD_TYPE := ek-tm4c123gxl
+export ET_BOARD_TYPE := arm-cortex-m4
 
 export ET_BOARD_MCU := tm4c123gh6pm
 
@@ -28,5 +28,7 @@ ET_BOARD_ABI ?= eabihf
 ET_BOARD_CROSS_TUPLE := $(ET_BOARD_ARCH)-$(ET_BOARD_VENDOR)-$(ET_BOARD_ABI)
 
 ET_BOARD_TOOLCHAIN_TREE ?= crosstool-ng
+
+ET_BOARD_TOOLCHAIN_TYPE ?= ek-tm4c123gxl
 
 export CT_KERNEL = bare-metal

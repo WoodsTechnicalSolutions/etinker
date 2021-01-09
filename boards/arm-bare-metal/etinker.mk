@@ -18,7 +18,7 @@
 # licensed Public Domain.
 #
 
-export ET_BOARD_TYPE := $(ET_BOARD)
+export ET_BOARD_TYPE := arm-generic
 
 ET_BOARD_ARCH ?= arm
 ET_BOARD_VENDOR ?= none
@@ -27,4 +27,6 @@ ET_BOARD_CROSS_TUPLE := $(ET_BOARD_ARCH)-$(ET_BOARD_VENDOR)-$(ET_BOARD_ABI)
 
 ET_BOARD_TOOLCHAIN_TREE ?= crosstool-ng
 
-export CT_KERNEL = bare-metal
+ET_BOARD_TOOLCHAIN_TYPE ?= arm-bare-metal
+
+export CT_KERNEL = arm-bare-metal

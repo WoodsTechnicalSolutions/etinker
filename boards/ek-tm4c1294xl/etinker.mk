@@ -18,8 +18,6 @@
 # licensed Public Domain.
 #
 
-export ET_BOARD_TYPE := ek-tm4c123gxl
-
-include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/etinker.mk
+include $(ET_DIR)/boards/ek-tm4c123gxl/etinker.mk
 
 export ET_BOARD_MCU := tm4c1294ncpdt
