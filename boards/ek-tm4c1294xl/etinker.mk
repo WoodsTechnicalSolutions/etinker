@@ -1,5 +1,5 @@
 #
-# ek-tm4c1294gxl, ARM Cortex-M4F, board configuration file for 'etinker'
+# ek-tm4c1294xl, ARM Cortex-M4F, board configuration file for 'etinker'
 #
 # Copyright (C) 2018-2021 Derald D. Woods
 #
@@ -18,6 +18,17 @@
 # licensed Public Domain.
 #
 
-include $(ET_DIR)/boards/ek-tm4c123gxl/etinker.mk
+export ET_BOARD_TYPE := $(ET_BOARD)
 
 export ET_BOARD_MCU := tm4c1294ncpdt
+
+ET_BOARD_ARCH ?= arm
+ET_BOARD_VENDOR ?= none
+ET_BOARD_ABI ?= eabihf
+ET_BOARD_CROSS_TUPLE := $(ET_BOARD_ARCH)-$(ET_BOARD_VENDOR)-$(ET_BOARD_ABI)
+
+ET_BOARD_TOOLCHAIN_TREE ?= crosstool-ng
+
+ET_BOARD_TOOLCHAIN_TYPE ?= ek-tm4c123gxl
+
+export CT_KERNEL = bare-metal

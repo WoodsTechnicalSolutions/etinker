@@ -18,7 +18,7 @@
 # licensed Public Domain.
 #
 
-export ET_BOARD_TYPE := arm-cortex-m4
+export ET_BOARD_TYPE := $(ET_BOARD)
 
 export ET_BOARD_MCU := nrf52840
 export ET_BOARD_MCU_EXT := _xxaa
