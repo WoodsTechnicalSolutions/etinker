@@ -22,13 +22,6 @@ export ET_BOARD_TYPE := $(ET_BOARD)
 
 export ET_BOARD_MCU := tm4c1294ncpdt
 
-ET_BOARD_ARCH ?= arm
-ET_BOARD_VENDOR ?= none
-ET_BOARD_ABI ?= eabihf
-ET_BOARD_CROSS_TUPLE := $(ET_BOARD_ARCH)-$(ET_BOARD_VENDOR)-$(ET_BOARD_ABI)
-
-ET_BOARD_TOOLCHAIN_TREE ?= crosstool-ng
-
-ET_BOARD_TOOLCHAIN_TYPE ?= ek-tm4c123gxl
-
-export CT_KERNEL = bare-metal
+# pull in a board toolchain
+ET_BOARD_TOOLCHAIN_TYPE := arm-none-eabihf
+include $(ET_DIR)/boards/$(ET_BOARD_TOOLCHAIN_TYPE)/etinker.mk

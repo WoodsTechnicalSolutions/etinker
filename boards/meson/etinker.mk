@@ -30,20 +30,12 @@ ifneq ($(ET_BOARD_TYPE),meson)
 $(error [ ET_BOARD_TYPE is NOT 'meson' ] ***)
 endif
 
-ET_BOARD_ARCH ?= aarch64
-ET_BOARD_VENDOR ?= cortexa53
-ET_BOARD_OS ?= linux
-ET_BOARD_ABI ?= gnu
-ET_BOARD_CROSS_TUPLE := $(ET_BOARD_ARCH)-$(ET_BOARD_VENDOR)-$(ET_BOARD_OS)-$(ET_BOARD_ABI)
-
 ET_BOARD_KERNEL_ARCH := arm64
 ET_BOARD_KERNEL_VENDOR := amlogic/
 ET_BOARD_KERNEL_LOADADDR ?= 0x08080000
 
 ET_BOARD_BOOTLOADER_IMAGE := u-boot.bin
 
-# final item built for the configured toolchain
-ET_TOOLCHAIN_TARGET_FINAL := \
-	$(ET_DIR)/toolchain/$(ET_BOARD_CROSS_TUPLE)/$(ET_BOARD_CROSS_TUPLE)/debug-root/usr/bin/strace
-
-export CT_KERNEL = linux
+# pull in a board toolchain
+ET_BOARD_TOOLCHAIN_TYPE := aarch64-cortexa53-linux-gnu
+include $(ET_DIR)/boards/$(ET_BOARD_TOOLCHAIN_TYPE)/etinker.mk

@@ -1,7 +1,7 @@
 #
-# nrf52840 USB Dongle, ARM Cortex-M4F, board configuration file for 'etinker'
+# arm-none-eabi toolchain configuration file for 'etinker'
 #
-# Copyright (C) 2020-2021 Derald D. Woods
+# Copyright (C) 2021 Derald D. Woods
 #
 # This file is made available under the Creative Commons CC0 1.0
 # Universal Public Domain Dedication.
@@ -18,12 +18,15 @@
 # licensed Public Domain.
 #
 
-export ET_BOARD_TYPE := $(ET_BOARD)
+ET_BOARD_ARCH := arm
+ET_BOARD_VENDOR := none
+ET_BOARD_ABI := eabi
+ET_BOARD_CROSS_TUPLE := $(ET_BOARD_ARCH)-$(ET_BOARD_VENDOR)-$(ET_BOARD_ABI)
 
-export ET_BOARD_MCU := nrf52840
-export ET_BOARD_MCU_EXT := _xxaa
-export ET_BOARD_MCU_DEFINE := $(shell echo $(ET_BOARD_MCU)$(ET_BOARD_MCU_EXT) | tr '[:lower:]' '[:upper:]')
+ET_BOARD_TOOLCHAIN_TREE := crosstool-ng
 
-# pull in a board toolchain
-ET_BOARD_TOOLCHAIN_TYPE := arm-none-eabihf
-include $(ET_DIR)/boards/$(ET_BOARD_TOOLCHAIN_TYPE)/etinker.mk
+ifeq ($(ET_BOARD),$(ET_BOARD_CROSS_TUPLE))
+export ET_BOARD_TYPE := $(ET_BOARD_CROSS_TUPLE)
+endif
+
+export CT_KERNEL = arm-bare-metal
