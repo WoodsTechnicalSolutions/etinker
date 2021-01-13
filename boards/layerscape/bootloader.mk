@@ -10,6 +10,8 @@ define bootloader-prepare-$(ET_BOARD_TYPE)
 endef
 
 define bootloader-finalize-$(ET_BOARD_TYPE)
+	$(call bootloader-build,u-boot.pbl)
+	@cp -av $(ET_BOOTLOADER_BUILD_DIR)/u-boot.pbl $(ET_BOOTLOADER_DIR)/boot/
 endef
 
 define bootloader-info-$(ET_BOARD_TYPE)
