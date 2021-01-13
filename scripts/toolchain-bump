@@ -80,7 +80,7 @@ for n in `ls boards`; do
 
 	# baseline boards for supported toolchains
 	case $n in
-	ek-tm4c123gxl | arm-bare-metal | am335x-pocketbeagle | aml-s905x-cc | pynq-z2 | sama5d3-xpld)
+	aarch64-cortexa53-linux-gnu | arm-cortexa5-linux-gnueabihf | arm-cortexa8-linux-gnueabihf | arm-cortexa9-linux-gnueabihf | arm-none-eabi | arm-none-eabihf)
 		if ! do_make $n "$@"; then
 			printf "etinker $0 failed!\n"
 			exit 1
