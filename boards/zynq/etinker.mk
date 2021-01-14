@@ -30,7 +30,7 @@ ifneq ($(ET_BOARD_TYPE),zynq)
 $(error [ ET_BOARD_TYPE is NOT 'zynq' ] ***)
 endif
 
-ET_BOARD_KERNEL_ARCH := $(ET_BOARD_ARCH)
+ET_BOARD_KERNEL_ARCH := arm
 ET_BOARD_KERNEL_LOADADDR ?= 0x02080000
 
 ET_BOARD_BOOTLOADER_IMAGE ?= u-boot.img
