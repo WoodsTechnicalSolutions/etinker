@@ -23,6 +23,35 @@ suggests, this is about tinkering.
 - pynq-z2 [Xilinx Zynq-7020 ARM Cortex-A9]
 - sama5d3-xpld [ARM Cortex-A5]
 
+### Special Boards
+
+#### Virtual Boards
+
+These boards are not directly built, but rather provide common SOC
+definitions used by higher level real boards. This tracks the Linux
+kernel view of what is common to a given platform. Configuration
+files for Linux, U-Boot, and Buildroot reside in the virtual boards.
+
+- layerscape [ls1043ardb, ls1043ardb-rt]
+- meson [aml-s905x-cc, aml-s905x-cc-rt]
+- omap2plus [am335x-pocketbeagle, am3517-evm, omap3-beagle, omap3-beagle-xm, omap3-evm]
+- sama5 [sama5d3-xpld]
+- zynq [pynq-z2, pynq-z2-xlnx]
+
+#### Toolchain Boards
+
+These boards allow building toolchains in the same manner as a
+higher level board. The configuratoin files for crosstool-ng reside
+with the toolchain boards. This concept is useful for testing new
+and/or variant toolchains.
+
+- aarch64-cortexa53-linux-gnu [layerscape]
+- arm-none-eabi
+- arm-none-eabihf [ek-tm4c123gxl, ek-tm4c1294xl, nrf52840-dongle]
+- arm-cortexa5-linux-gnueabihf [sama5]
+- arm-cortexa8-linux-gnueabihf [omap2plus]
+- arm-cortexa9-linux-gnueabihf [zynq]
+
 ## Quick Start Guide
 
 1. Clone etinker
