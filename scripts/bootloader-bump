@@ -20,10 +20,7 @@ do_make ()
 	make)
 		ET_BOARD=$1 make bootloader-$3
 		;;
-	*config)
-		ET_BOARD=$1 make bootloader-$2
-		;;
-	update)
+	*config | update)
 		ET_BOARD=$1 make bootloader-$2
 		;;
 	build)
