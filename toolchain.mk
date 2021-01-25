@@ -26,7 +26,7 @@ export ET_TOOLCHAIN_CACHED_VERSION := $(shell grep -Po 'toolchain-ref:\K[^\n]*' 
 export ET_TOOLCHAIN_DIR := $(ET_DIR)/toolchain/$(ET_CROSS_TUPLE)
 export ET_TOOLCHAIN_BUILD_DIR := $(ET_DIR)/toolchain/build/$(ET_CROSS_TUPLE)
 export ET_TOOLCHAIN_TARBALLS_DIR := $(ET_TARBALLS_DIR)/toolchain
-export ET_TOOLCHAIN_GENERATOR_DIR := $(ET_DIR)/toolchain/generator
+export ET_TOOLCHAIN_GENERATOR_DIR := $(ET_TOOLCHAIN_BUILD_DIR)/generator
 export ET_TOOLCHAIN_GENERATOR := $(ET_TOOLCHAIN_GENERATOR_DIR)/bin/ct-ng
 export ET_TOOLCHAIN_BUILD_CONFIG := $(ET_TOOLCHAIN_BUILD_DIR)/.config
 export ET_TOOLCHAIN_BUILD_DEFCONFIG := $(ET_TOOLCHAIN_BUILD_DIR)/defconfig
@@ -139,7 +139,7 @@ define toolchain-generator
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-generator *****\n\n"
 	@(cd $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE); \
 		./bootstrap; \
-		./configure --prefix=$(ET_DIR)/toolchain/generator; \
+		./configure --prefix=$(ET_TOOLCHAIN_GENERATOR_DIR); \
 		$(MAKE); \
 		$(MAKE) install)
 	@if ! [ -f $(ET_TOOLCHAIN_GENERATOR) ]; then \
@@ -158,7 +158,6 @@ define toolchain-purge
 	printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-purge *****\n\n"
 	$(RM) -r $(ET_TOOLCHAIN_DIR)
 	$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)
-	$(RM) -r $(ET_TOOLCHAIN_GENERATOR_DIR)
 endef
 
 define toolchain-info
