@@ -27,9 +27,13 @@ ifneq ($(shell lsb_release -r|cut -f 2|tr -d \\n),$(ET_HOST_OS_RELEASE))
 $(error $(ET_HOST_OS_MESSAGE))
 endif
 
-# export 'etinker' items that get used in other make and shell contexts
+ifndef ET_BOARD
+$(info *** [ 'etinker' requires ET_BOARD definition ] ***)
+$(info *** [ USAGE: ET_BOARD=<board> make <target>  ] ***)
+$(error ABORTING ***)
+endif
 
-export ET_BOARD ?= arm-bare-metal
+# export 'etinker' items that get used in other make and shell contexts
 
 export ET_DIR ?= $(shell readlink -e $(CURDIR))
 
