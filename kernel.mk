@@ -224,11 +224,13 @@ define kernel-build
 		;; \
 	*config) \
 		if [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
-			$(MAKE) --no-print-directory \
-				$(ET_KERNEL_CROSS_PARAMS) \
-				O=$(ET_KERNEL_BUILD_DIR) \
-				-C $(ET_KERNEL_SOFTWARE_DIR) \
-				savedefconfig; \
+			if ! [ "$1" = "savedefconfig" ]; then \
+				$(MAKE) --no-print-directory \
+					$(ET_KERNEL_CROSS_PARAMS) \
+					O=$(ET_KERNEL_BUILD_DIR) \
+					-C $(ET_KERNEL_SOFTWARE_DIR) \
+					savedefconfig; \
+			fi; \
 			if [ -f $(ET_KERNEL_BUILD_DEFCONFIG) ]; then \
 				rsync $(ET_KERNEL_BUILD_DEFCONFIG) $(ET_KERNEL_DEFCONFIG); \
 				$(RM) $(ET_KERNEL_BUILD_DEFCONFIG); \

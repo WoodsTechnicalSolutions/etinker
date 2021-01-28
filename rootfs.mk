@@ -102,11 +102,13 @@ define rootfs-build
 		;; \
 	*config) \
 		if [ -f $(ET_ROOTFS_BUILD_CONFIG) ]; then \
-			$(MAKE) --no-print-directory \
-				CROSS_COMPILE=$(ET_CROSS_COMPILE) \
-				O=$(ET_ROOTFS_BUILD_DIR) \
-				-C $(ET_ROOTFS_SOFTWARE_DIR) \
-				savedefconfig; \
+			if ! [ "$1" = "savedefconfig" ]; then \
+				$(MAKE) --no-print-directory \
+					CROSS_COMPILE=$(ET_CROSS_COMPILE) \
+					O=$(ET_ROOTFS_BUILD_DIR) \
+					-C $(ET_ROOTFS_SOFTWARE_DIR) \
+					savedefconfig; \
+			fi; \
 			if [ -f $(ET_ROOTFS_BUILD_DEFCONFIG) ]; then \
 				rsync $(ET_ROOTFS_BUILD_DEFCONFIG) $(ET_ROOTFS_DEFCONFIG); \
 				$(RM) $(ET_ROOTFS_BUILD_DEFCONFIG); \

@@ -84,9 +84,10 @@ define toolchain-build
 		fi; \
 		;; \
 	esac
-	@(cd $(ET_TOOLCHAIN_BUILD_DIR) && \
+	(cd $(ET_TOOLCHAIN_BUILD_DIR) && \
 		CT_ARCH=$(ET_ARCH) \
 		$(ET_TOOLCHAIN_GENERATOR) \
+		--no-print-directory \
 		$1)
 	@case "$1" in \
 	build) \
@@ -106,10 +107,13 @@ define toolchain-build
 		;; \
 	*config) \
 		if [ -f $(ET_TOOLCHAIN_BUILD_CONFIG) ]; then \
-			(cd $(ET_TOOLCHAIN_BUILD_DIR) && \
-				CT_ARCH=$(ET_ARCH) \
-				$(ET_TOOLCHAIN_GENERATOR) \
-				savedefconfig); \
+			if ! [ "$1" = "savedefconfig" ]; then \
+				(cd $(ET_TOOLCHAIN_BUILD_DIR) && \
+					CT_ARCH=$(ET_ARCH) \
+					$(ET_TOOLCHAIN_GENERATOR) \
+					--no-print-directory \
+					savedefconfig); \
+			fi; \
 			if [ -f $(ET_TOOLCHAIN_BUILD_DEFCONFIG) ]; then \
 				rsync $(ET_TOOLCHAIN_BUILD_DEFCONFIG) $(ET_TOOLCHAIN_DEFCONFIG); \
 				$(RM) $(ET_TOOLCHAIN_BUILD_DEFCONFIG); \

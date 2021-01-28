@@ -156,11 +156,13 @@ define bootloader-build
 		;; \
 	*config) \
 		if [ -f $(ET_BOOTLOADER_BUILD_CONFIG) ]; then \
-			$(MAKE) --no-print-directory \
-				CROSS_COMPILE=$(ET_CROSS_COMPILE) \
-				O=$(ET_BOOTLOADER_BUILD_DIR) \
-				-C $(ET_BOOTLOADER_SOFTWARE_DIR) \
-				savedefconfig; \
+			if ! [ "$1" = "savedefconfig" ]; then \
+				$(MAKE) --no-print-directory \
+					CROSS_COMPILE=$(ET_CROSS_COMPILE) \
+					O=$(ET_BOOTLOADER_BUILD_DIR) \
+					-C $(ET_BOOTLOADER_SOFTWARE_DIR) \
+					savedefconfig; \
+			fi; \
 			if [ -f $(ET_BOOTLOADER_BUILD_DEFCONFIG) ]; then \
 				rsync $(ET_BOOTLOADER_BUILD_DEFCONFIG) $(ET_BOOTLOADER_DEFCONFIG); \
 				$(RM) $(ET_BOOTLOADER_BUILD_DEFCONFIG); \
