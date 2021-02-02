@@ -17,8 +17,11 @@ do_make ()
 {
 	printf "\n[$1]\n"
 	case $2 in
-	*config | make)
+	make)
 		ET_BOARD=$1 make rootfs-$3
+		;;
+	*config)
+		ET_BOARD=$1 make rootfs-$2
 		;;
 	update)
 		ET_BOARD=$1 make rootfs-$2 kernel-$2 overlay-$2
