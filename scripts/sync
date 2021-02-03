@@ -79,12 +79,30 @@ case "${destination}" in
 					sudo rsync -aP  ${target_dir}/../../../firmware/* ${media}/rootfs/lib/firmware/ && sync
 				fi
 				sudo rsync -P  ${target_dir}/boot/* ${media}/BOOT/ && sync
-				if [ "`printf ${ET_BOARD_TYPE}|grep -Po meson`" = "meson" ]; then
-					blkdev="`df ${media}/BOOT | tail -1 | cut -d ' ' -f 1 | cut -d 1 -f 1 | tr -d \\n`"
-					printf "\n*** 'dd' ${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin -> ${blkdev} ***\n\n"
-					sudo dd if=${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin of=${blkdev} conv=fsync,notrunc bs=1 count=444
-					sudo dd if=${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin of=${blkdev} conv=fsync,notrunc bs=512 skip=1 seek=1
-				fi
+				sudo sync
+
+				[ "${taget}" = "kernel" ] && exit 0
+
+				blkdev="`df ${media}/BOOT | tail -1 | cut -d ' ' -f 1 | cut -d 1 -f 1 | tr -d \\n`"
+				case "${ET_BOARD_TYPE}" in
+					meson)
+						printf "\n*** write ${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin to ${blkdev} ***\n\n"
+						sudo dd if=${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin of=${blkdev} conv=fsync,notrunc bs=1 count=444
+						sudo dd if=${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin of=${blkdev} conv=fsync,notrunc bs=512 skip=1 seek=1
+						;;
+					layerscape)
+						printf "\n*** zero 4 MiB of ${blkdev} @ 8 block offset ***\n\n"
+						sudo dd if=/dev/zero of=${blkdev} conv=fsync,notrunc bs=512 seek=8 count=8192
+						printf "\n*** write BL2 image to ${blkdev} @ 8 block offset ***\n\n"
+						sudo dd if=${ET_BOOTLOADER_DIR}/boot/bl2_sd.pbl of=${blkdev} conv=fsync,notrunc bs=512 seek=8
+						printf "\n*** write FIP image to ${blkdev} @ 2048 block offset ***\n\n"
+						sudo dd if=${ET_BOOTLOADER_DIR}/boot/fip.bin of=${blkdev} conv=fsync,notrunc bs=512 seek=2048
+						;;
+					*)
+						# NOOP
+						;;
+				esac
+				sudo sync
 				;;
 			overlay)
 				sudo rsync --exclude-from=${target_dir}/exclude \
@@ -123,6 +141,10 @@ case "${destination}" in
 					root@${ipv4}:/
 				;;
 			rootfs)
+				if ! [ "`printf ${ET_ROOTFS_TYPE}|grep -Po meson`" = "meson" ]; then
+					printf "Synching '%s' is unsupported for '%s'\n" ${target} ${ET_ROOTFS_TYPE}
+					exit 0
+				fi
 				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
 					-aP ${target_dir}/images/rootfs.tar \
 					root@${ipv4}:

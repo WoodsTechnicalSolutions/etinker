@@ -58,10 +58,14 @@ omap2plus*|sama5d3-xpld*|zynq*|meson*|layerscape*)
 	# Board Common
 	mkdir -p ${TARGET}/media/BOOT
 	mkdir -p ${TARGET}/media/rootfs
+	mkdir -p ${TARGET}/media/backup
+	mkdir -p ${TARGET}/media/data
 	sed -i s,ext2,ext4, ${TARGET}/etc/fstab
 	# mmc0 is the SD/MMC card
 	printf "/dev/mmcblk0p1 /media/BOOT auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 	printf "/dev/mmcblk0p2 /media/rootfs auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+	printf "/dev/mmcblk0p3 /media/backup auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+	printf "/dev/mmcblk0p4 /media/data auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 	# Board Firmware
 	case "${ET_BOARD}" in
 	am335x-pocketbeagle*)
@@ -79,6 +83,15 @@ omap2plus*|sama5d3-xpld*|zynq*|meson*|layerscape*)
 		printf "dd if=/media/BOOT/u-boot.bin.sd.bin of=/dev/mmcblk1 conv=fsync,notrunc bs=512 skip=1 seek=1\n" >> ${TARGET}/usr/sbin/aml-update
 		printf "sync\n" >> ${TARGET}/usr/sbin/aml-update
 		chmod +x ${TARGET}/usr/sbin/aml-update
+		;;
+	ls1043ardb*)
+		# Build '/usr/sbin/rdb-update' file for on-target updates of SD
+		printf "#!/bin/bash\n" > ${TARGET}/usr/sbin/rdb-update
+		printf "dd if=/dev/zero of=/dev/mmcblk0 conv=fsync,notrunc bs=512 seek=8 count=8192\n" >> ${TARGET}/usr/sbin/rdb-update
+		printf "dd if=/media/BOOT/bl2_sd.pbl of=/dev/mmcblk0 conv=fsync,notrunc bs=512 seek=8\n" >> ${TARGET}/usr/sbin/rdb-update
+		printf "dd if=/media/BOOT/fip.bin of=/dev/mmcblk0 conv=fsync,notrunc bs=512 seek=2048\n" >> ${TARGET}/usr/sbin/rdb-update
+		printf "sync\n" >> ${TARGET}/usr/sbin/rdb-update
+		chmod +x ${TARGET}/usr/sbin/rdb-update
 		;;
 	*)
 		# DEFAULT NO-OP
