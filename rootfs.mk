@@ -41,7 +41,7 @@ export ET_ROOTFS_VERSION
 
 export ET_ROOTFS_BUILD_DIR := $(ET_DIR)/rootfs/build/$(ET_ROOTFS_TYPE)/$(ET_CROSS_TUPLE)
 export ET_ROOTFS_BUILD_CONFIG := $(ET_ROOTFS_BUILD_DIR)/.config
-export ET_ROOTFS_BUILD_DEFCONFIG := $(ET_ROOTFS_BUILD_DIR)/defconfig
+export ET_ROOTFS_BUILD_DEFCONFIG := $(ET_ROOTFS_SOFTWARE_DIR)/configs/$(rootfs_defconfig)
 export ET_ROOTFS_BUILD_IMAGE := $(ET_ROOTFS_BUILD_DIR)/images/rootfs.tar
 export ET_ROOTFS_TARBALLS_DIR := $(ET_TARBALLS_DIR)/rootfs
 export ET_ROOTFS_DIR := $(ET_DIR)/rootfs/$(ET_BOARD)/$(ET_CROSS_TUPLE)
@@ -110,8 +110,8 @@ define rootfs-build
 					savedefconfig; \
 			fi; \
 			if [ -f $(ET_ROOTFS_BUILD_DEFCONFIG) ]; then \
-				rsync $(ET_ROOTFS_BUILD_DEFCONFIG) $(ET_ROOTFS_DEFCONFIG); \
-				$(RM) $(ET_ROOTFS_BUILD_DEFCONFIG); \
+				echo; \
+				cp -av $(ET_ROOTFS_BUILD_DEFCONFIG) $(ET_ROOTFS_DEFCONFIG); \
 			fi; \
 		else \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_ROOTFS_TREE) .config MISSING! *****\n"; \
