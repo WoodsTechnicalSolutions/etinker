@@ -51,6 +51,14 @@ purge:
 	$(call rootfs-$@)
 	$(call overlay-$@)
 
+# For partitioned and empty SD/MMC devices
+.PHONY: sync
+sync:
+	@$(MAKE) --no-print-directory -C $(ET_DIR) rootfs-sync-mmc
+	@$(MAKE) --no-print-directory -C $(ET_DIR) bootloader-sync-mmc
+	@$(MAKE) --no-print-directory -C $(ET_DIR) kernel-sync-mmc
+	@$(MAKE) --no-print-directory -C $(ET_DIR) overlay-sync-mmc
+
 .PHONY: update
 update: clean sandbox rootfs-update
 

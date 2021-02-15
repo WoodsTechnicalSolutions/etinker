@@ -8,6 +8,13 @@ usage()
 	printf "       sync <bootloader|kernel|rootfs>         net:<ipv4-address>\n"
 }
 
+wait_on_sync()
+{
+	printf "[%s][%s] waiting on %s filesystem 'sync' ... " $1 $2 $3
+	sudo sync
+	printf "[done]\n"
+}
+
 if ! [ -n "${2}" ]; then
 	printf "Missing sync destination!\n"
 	usage
@@ -49,6 +56,8 @@ if ! [ -d ${target_dir} ]; then
 	exit 1
 fi
 
+printf "[%s][%s] Synching to %s has started.\n" ${ET_BOARD} ${target} ${destination}
+
 case "${destination}" in
 	mmc)
 		if [ -d /media/$USER ]; then
@@ -67,6 +76,7 @@ case "${destination}" in
 			printf "Unmounted media directory! [%s/rootfs]\n" ${media}
 			exit 1
 		fi
+		printf "[%s][%s] populating %s data.\n" ${ET_BOARD} ${target} ${destination}
 		case "${target}" in
 			kernel|bootloader)
 				if ! [ -d ${media}/BOOT ]; then
@@ -74,14 +84,15 @@ case "${destination}" in
 					exit 1
 				fi
 				sudo mkdir -p ${media}/rootfs/lib/firmware
-				sudo rsync -aP ${target_dir}/* ${media}/rootfs/ && sync
+				sudo rsync -aP ${target_dir}/* ${media}/rootfs/
 				if [ "${target}" = "kernel" ]; then
-					sudo rsync -aP  ${target_dir}/../../../firmware/* ${media}/rootfs/lib/firmware/ && sync
+					sudo rsync -aP  ${target_dir}/../../../firmware/* ${media}/rootfs/lib/firmware/
 				fi
-				sudo rsync -P  ${target_dir}/boot/* ${media}/BOOT/ && sync
-				sudo sync
+				sudo rsync -P  ${target_dir}/boot/* ${media}/BOOT/
 
-				[ "${taget}" = "kernel" ] && exit 0
+				if [ "${target}" = "bootloader" ]; then
+					printf "[%s][%s] writing raw %s data.\n" ${ET_BOARD} ${target} ${destination}
+				fi
 
 				blkdev="`df ${media}/BOOT | tail -1 | cut -d ' ' -f 1 | cut -d 1 -f 1 | tr -d \\n`"
 				case "${ET_BOARD_TYPE}" in
@@ -102,21 +113,27 @@ case "${destination}" in
 						# NOOP
 						;;
 				esac
-				sudo sync
 				;;
 			overlay)
-				sudo rsync --exclude-from=${target_dir}/exclude \
+				sudo rsync --exclude-from=${ET_OVERLAY_DIR}/exclude \
 					-aP ${target_dir}/* \
-					${media}/rootfs/ && sync
+					${media}/rootfs/
 				;;
 			rootfs)
-				sudo tar -xf ${target_dir}/images/rootfs.tar -C ${media}/rootfs/ && sync
+				if [ -n "`ls ${media}/rootfs/`" ]; then
+					if ! [ "`ls ${media}/rootfs/`" = "lost+found" ]; then
+						printf "non-empty rootfs detected! [ ${media}/rootfs ]\n"
+						exit 1
+					fi
+				fi
+				sudo tar -xf ${target_dir}/images/rootfs.tar -C ${media}/rootfs/
 				;;
 			*)
 				printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}
 				exit 1
 				;;
 		esac
+		wait_on_sync ${ET_BOARD} ${target} ${destination}
 		;;
 	net:*)
 		ipv4="`printf ${destination} | cut -d ':' -f 2`"
@@ -163,3 +180,5 @@ case "${destination}" in
 		usage
 		exit 1
 esac
+
+printf "[%s][%s] Synching to %s has completed.\n" ${ET_BOARD} ${target} ${destination}
