@@ -7,7 +7,7 @@ fi
 
 function usage()
 {
-	printf "USAGE: mksdcard <board> <block-device> [tiny]\n"
+	printf "USAGE: mksdcard <board> <block-device>\n"
 }
 
 if [ "${1}" = "" ]; then
@@ -48,12 +48,6 @@ if [ "${2}" = "" ]; then
 fi
 
 disk=$2
-
-if [ "$3" = "tiny" ]; then
-	layout=$3
-else
-	layout="normal"
-fi
 
 controller="unknown"
 
@@ -101,52 +95,29 @@ printf "[${board}] Preparing ${controller} @ ${disk}\n"
 
 dd if=/dev/zero of=${disk} bs=1M count=65
 
-parted -a optimal -s ${disk} mklabel msdos
+# NOTE: use higher quality SD/MMC cards (Class 10, UHS-1 or better)
+#
+# MINIMUM MEDIA SIZE: 16 GiB
+# +--------------------+------------+----------+----------+----------+
+# | RAW                | (1) FAT 16 | (2) EXT4 | (3) EXT4 | (4) EXT4 |
+# +--------------------+------------+----------+----------+----------+
+# | MBR/GPT + FIRMWARE | BOOT       | rootfs   | backup   | data     |
+# +--------------------+------------+----------+----------+----------+
+# | 68 MiB             | 128 MiB    | 2048 MiB | 5120 MiB | (fill)   |
+# +--------------------+------------+----------+----------+----------+
+#
+# Filesystem 1K-blocks Used  Available Use% Mounted on
+# /dev/sdX1   130798       0  130798   0%   /media/<user>/BOOT
+# /dev/sdX2  1998672    6144 1871288   1%   /media/<user>/rootfs
+# /dev/sdX3  5095040   20472 4796040   1%   /media/<user>/backup
+# /dev/sdX4  7929288   35700 7471088   1%   /media/<user>/data
+printf "[${board}] Partitioning ${disk} [ 68 MiB RAW / 128 MiB (BOOT) / 2 GiB (rootfs) / 5 GiB (backup) / <fill> (data) ]\n"
 
-if [ "${layout}" = "tiny" ]; then
-	# MINIMUM MEDIA SIZE: 943 MiB
-	# +--------------------+------------+----------+----------+----------+
-	# | RAW                | (1) FAT 16 | (2) EXT4 | (3) EXT4 | (4) EXT4 |
-	# +--------------------+------------+----------+----------+----------+
-	# | MBR/GPT + FIRMWARE | BOOT       | rootfs   | backup   | data     |
-	# +--------------------+------------+----------+----------+----------+
-	# | 68 MiB             | 128 MiB    | 360 MiB  | 360 MiB  | (fill)   |
-	# +--------------------+------------+----------+----------+----------+
-	#
-	# Filesystem 1K-blocks Used Available Use% Mounted on
-	# /dev/sdX1  130798       0 130798    0%   /media/<user>/BOOT
-	# /dev/sdX2  348805    2062 324215    1%   /media/<user>/rootfs
-	# /dev/sdX3  348805    2062 324215    1%   /media/<user>/backup
-	# /dev/sdX4   24753     635  22255    3%   /media/<user>/data
-
-	printf "[${board}] Partitioning ${disk} [ 68 MiB RAW / 128 MiB (BOOT) / 360 MiB (rootfs) / 360 MiB (backup) / <fill> (data) ]\n"
-	parted -a optimal -s ${disk} mkpart primary fat16 68MiB 196MiB
-	parted -a optimal -s ${disk} mkpart primary ext4 196MiB 556MiB
-	parted -a optimal -s ${disk} mkpart primary ext4 556MiB 916MiB
-	parted -a optimal -s ${disk} mkpart primary ext4 916MiB 100%
-else
-	# MINIMUM MEDIA SIZE: 16 GiB
-	# +--------------------+------------+----------+----------+----------+
-	# | RAW                | (1) FAT 16 | (2) EXT4 | (3) EXT4 | (4) EXT4 |
-	# +--------------------+------------+----------+----------+----------+
-	# | MBR/GPT + FIRMWARE | BOOT       | rootfs   | backup   | data     |
-	# +--------------------+------------+----------+----------+----------+
-	# | 68 MiB             | 128 MiB    | 2048 MiB | 5120 MiB | (fill)   |
-	# +--------------------+------------+----------+----------+----------+
-	#
-	# Filesystem 1K-blocks Used  Available Use% Mounted on
-	# /dev/sdX1   130798       0  130798   0%   /media/<user>/BOOT
-	# /dev/sdX2  1998672    6144 1871288   1%   /media/<user>/rootfs
-	# /dev/sdX3  5095040   20472 4796040   1%   /media/<user>/backup
-	# /dev/sdX4  7929288   35700 7471088   1%   /media/<user>/data
-
-	printf "[${board}] Partitioning ${disk} [ 68 MiB RAW / 128 MiB (BOOT) / 2 GiB (rootfs) / 5 GiB (backup) / <fill> (data) ]\n"
-	parted -a optimal -s ${disk} mkpart primary fat16 68MiB 196MiB
-	parted -a optimal -s ${disk} mkpart primary ext4 196MiB 2244MiB
-	parted -a optimal -s ${disk} mkpart primary ext4 2244MiB 7364MiB
-	parted -a optimal -s ${disk} mkpart primary ext4 7364MiB 100%
-fi
-
+parted -a optimal -s ${disk} mklabel msdos && partprobe -s ${disk}
+parted -a optimal -s ${disk} mkpart primary fat16 68MiB 196MiB && partprobe -s ${disk}
+parted -a optimal -s ${disk} mkpart primary ext4 196MiB 2244MiB && partprobe -s ${disk}
+parted -a optimal -s ${disk} mkpart primary ext4 2244MiB 7364MiB && partprobe -s ${disk}
+parted -a optimal -s ${disk} mkpart primary ext4 7364MiB 100% && partprobe -s ${disk}
 parted -a optimal -s ${disk} toggle 1 boot
 
 case "${controller}" in
