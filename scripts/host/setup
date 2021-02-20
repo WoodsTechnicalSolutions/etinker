@@ -57,6 +57,7 @@ if [ -f /usr/bin/apt ]; then
 		libfreetype6-dev \
 		libglade2-dev \
 		libglib2.0-dev \
+		libgmp-dev \
 		libgpiod-dev \
 		libgtk2.0-dev \
 		libhidapi-dev \
@@ -66,6 +67,7 @@ if [ -f /usr/bin/apt ]; then
 		liblua5.2-dev \
 		liblua5.3-dev \
 		libluajit-5.1-dev \
+		libmpc-dev \
 		libncurses-dev \
 		libreadline-dev \
 		libsdl1.2-dev \
@@ -96,6 +98,7 @@ if [ -f /usr/bin/apt ]; then
 		netpbm \
 		net-tools \
 		openssh-client \
+		patchelf \
 		pax \
 		pkg-config \
 		python-dev \
@@ -107,6 +110,7 @@ if [ -f /usr/bin/apt ]; then
 		screen \
 		socat \
 		sshfs \
+		stow \
 		subversion \
 		sudo \
 		swig \
