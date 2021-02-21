@@ -56,6 +56,13 @@ if ! [ -d ${target_dir} ]; then
 	exit 1
 fi
 
+if [ -z "${ET_IFACE}" ]; then
+	net_if="`ip route | grep -m 1 default | cut -d ' ' -f 5`"
+else
+	net_if="${ET_IFACE}"
+fi
+net_addr="`ip addr show ${net_if} | grep 'inet ' | cut -d '/' -f 1 | cut -d ' ' -f 6`"
+
 printf "[%s][%s] Synching to %s has started.\n" ${ET_BOARD} ${target} ${destination}
 
 case "${destination}" in
@@ -137,37 +144,38 @@ case "${destination}" in
 		;;
 	net:*)
 		ipv4="`printf ${destination} | cut -d ':' -f 2`"
+		printf "[%s][%s] Using %s [%s] -> %s\n" ${ET_BOARD} ${target} ${net_if} ${net_addr} ${ipv4}
 		case "${target}" in
 			kernel|bootloader)
-				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
+				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
 					-aP ${target_dir}/* \
-					root@${ipv4}:/
+					root@${ipv4}:/ 2> /dev/null
 				if [ "${target}" = "kernel" ]; then
-					rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
+					rsync -e 'ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
 						-aP ${target_dir}/../../../firmware/* \
-						root@${ipv4}:/lib/firmware/
+						root@${ipv4}:/lib/firmware/ 2> /dev/null
 				fi
-				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
+				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
 					-P ${target_dir}/boot/* \
-					root@${ipv4}:/media/BOOT/
+					root@${ipv4}:/media/BOOT/ 2> /dev/null
 				;;
 			overlay)
-				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
+				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
 					--exclude-from=${target_dir}/exclude \
 					-aP ${target_dir}/* \
-					root@${ipv4}:/
+					root@${ipv4}:/ 2> /dev/null
 				;;
 			rootfs)
 				if ! [ "`printf ${ET_ROOTFS_TYPE}|grep -Po meson`" = "meson" ]; then
 					printf "Synching '%s' is unsupported for '%s'\n" ${target} ${ET_ROOTFS_TYPE}
 					exit 0
 				fi
-				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
+				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
 					-aP ${target_dir}/images/rootfs.tar \
-					root@${ipv4}:
-				rsync -e 'ssh -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
+					root@${ipv4}:/media/data/ 2> /dev/null
+				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
 					-aP ${target_dir}/../../../common/rootfs/* \
-					root@${ipv4}:/
+					root@${ipv4}:/ 2> /dev/null
 				;;
 			*)
 				printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}
