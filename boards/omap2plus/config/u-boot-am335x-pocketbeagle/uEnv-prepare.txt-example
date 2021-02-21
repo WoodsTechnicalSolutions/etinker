@@ -1,1 +1,0 @@
-uenv_prepare=echo Preparing custom environment ...;setenv fdtfile am335x-pocketbeagle-etinker.dtb;setenv args_mmc 'run finduuid;setenv bootargs console=ttyS0,115200n8 ${optargs} root=/dev/mmcblk${mmcdev}p2 rw rootfstype=${mmcrootfstype}'

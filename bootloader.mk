@@ -115,6 +115,9 @@ define bootloader-finalize
 	@if [ -f $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(et_board)/uEnv.txt ]; then \
 		cp -av $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(et_board)/uEnv*.txt $(ET_BOOTLOADER_DIR)/boot/; \
 	fi
+	@if [ -f $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(et_board)/extlinux ]; then \
+		cp -av $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(et_board)/extlinux $(ET_BOOTLOADER_DIR)/boot/; \
+	fi
 	@cp -av $(ET_BOOTLOADER_BUILD_IMAGE) $(ET_BOOTLOADER_DIR)/boot/
 	$(call bootloader-finalize-$(et_board))
 endef
@@ -153,6 +156,7 @@ define bootloader-build
 		$(RM) $(ET_BOOTLOADER_DIR)/boot/boot*; \
 		$(RM) $(ET_BOOTLOADER_DIR)/boot/u-boot*; \
 		$(RM) $(ET_BOOTLOADER_DIR)/boot/uEnv*; \
+		$(RM) -r $(ET_BOOTLOADER_DIR)/boot/extlinux; \
 		;; \
 	*config) \
 		if [ -f $(ET_BOOTLOADER_BUILD_CONFIG) ]; then \
@@ -196,6 +200,7 @@ define bootloader-clean
 	$(RM) $(ET_BOOTLOADER_DIR)/boot/boot*
 	$(RM) $(ET_BOOTLOADER_DIR)/boot/u-boot*
 	$(RM) $(ET_BOOTLOADER_DIR)/boot/uEnv*
+	$(RM) -r $(ET_BOOTLOADER_DIR)/boot/extlinux
 endef
 
 define bootloader-purge

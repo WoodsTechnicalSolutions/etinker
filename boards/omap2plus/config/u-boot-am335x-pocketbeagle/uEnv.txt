@@ -1,1 +1,0 @@
-uenvcmd=mmc rescan; if fatload mmc ${mmcdev} ${loadaddr} uEnv-prepare.txt; then env import -t ${loadaddr} ${filesize}; run uenv_prepare; fi; run distro_bootcmd
