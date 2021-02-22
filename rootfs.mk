@@ -41,15 +41,17 @@ export ET_ROOTFS_VERSION
 
 export ET_ROOTFS_BUILD_DIR := $(ET_DIR)/rootfs/build/$(ET_ROOTFS_TYPE)/$(ET_CROSS_TUPLE)
 export ET_ROOTFS_BUILD_CONFIG := $(ET_ROOTFS_BUILD_DIR)/.config
-export ET_ROOTFS_BUILD_DEFCONFIG := $(ET_ROOTFS_SOFTWARE_DIR)/configs/$(rootfs_defconfig)
 export ET_ROOTFS_BUILD_IMAGE := $(ET_ROOTFS_BUILD_DIR)/images/rootfs.tar
 export ET_ROOTFS_TARBALLS_DIR := $(ET_TARBALLS_DIR)/rootfs
 export ET_ROOTFS_DIR := $(ET_DIR)/rootfs/$(ET_BOARD)/$(ET_CROSS_TUPLE)
 export ET_ROOTFS_DEFCONFIG := $(ET_DIR)/boards/$(ET_ROOTFS_TYPE)/config/$(ET_ROOTFS_TREE)/$(rootfs_defconfig)
+export ET_ROOTFS_BUSYBOX_CONFIG := $(ET_DIR)/boards/$(ET_ROOTFS_TYPE)/config/$(ET_ROOTFS_TREE)/busybox.config
 export ET_ROOTFS_IMAGE := $(ET_ROOTFS_DIR)/images/rootfs.tar
 export ET_ROOTFS_TARGET_FINAL ?= $(ET_ROOTFS_IMAGE)
 
 export ET_ROOTFS_SYSROOT_DIR := $(ET_ROOTFS_BUILD_DIR)/host/$(ET_ARCH)-buildroot-$(ET_OS)-$(ET_ABI)/sysroot
+
+export BR_DEFCONFIG := $(ET_ROOTFS_DEFCONFIG)
 
 define rootfs-version
 	@printf "ET_ROOTFS_VERSION: \033[0;33m[$(ET_ROOTFS_CACHED_VERSION)]\033[0m $(ET_ROOTFS_VERSION)\n"
@@ -109,14 +111,11 @@ define rootfs-build
 					-C $(ET_ROOTFS_SOFTWARE_DIR) \
 					savedefconfig; \
 			fi; \
-			if [ -f $(ET_ROOTFS_BUILD_DEFCONFIG) ]; then \
-				echo; \
-				cp -av $(ET_ROOTFS_BUILD_DEFCONFIG) $(ET_ROOTFS_DEFCONFIG); \
-			fi; \
 		else \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_ROOTFS_TREE) .config MISSING! *****\n"; \
 			exit 2; \
 		fi; \
+		cp -av $(ET_ROOTFS_BUILD_DIR)/build/busybox-*/.config $(ET_ROOTFS_BUSYBOX_CONFIG); \
 		;; \
 	*) \
 		;; \
@@ -128,6 +127,7 @@ define rootfs-build
 		fi; \
 		$(RM) -r $(ET_ROOTFS_DIR)/images; \
 		cp -av $(ET_ROOTFS_BUILD_DIR)/images $(ET_ROOTFS_DIR)/; \
+		cp -av $(ET_ROOTFS_BUILD_DIR)/build/busybox-*/.config $(ET_ROOTFS_BUSYBOX_CONFIG); \
 	fi
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] rootfs-build 'make $1' done. *****\n\n"
 endef
@@ -146,7 +146,6 @@ endef
 define rootfs-clean
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rootfs-clean *****\n\n"
 	$(RM) $(ET_ROOTFS_BUILD_CONFIG)
-	$(RM) $(ET_ROOTFS_BUILD_DEFCONFIG)
 	$(RM) -r $(ET_ROOTFS_DIR)/images
 endef
 
@@ -167,9 +166,9 @@ define rootfs-info
 	@printf "ET_ROOTFS_TARBALLS_DIR: $(ET_ROOTFS_TARBALLS_DIR)\n"
 	@printf "ET_ROOTFS_BUILD_DIR: $(ET_ROOTFS_BUILD_DIR)\n"
 	@printf "ET_ROOTFS_BUILD_CONFIG: $(ET_ROOTFS_BUILD_CONFIG)\n"
-	@printf "ET_ROOTFS_BUILD_DEFCONFIG: $(ET_ROOTFS_BUILD_DEFCONFIG)\n"
 	@printf "ET_ROOTFS_BUILD_IMAGE: $(ET_ROOTFS_BUILD_IMAGE)\n"
 	@printf "ET_ROOTFS_DEFCONFIG: $(ET_ROOTFS_DEFCONFIG)\n"
+	@printf "ET_ROOTFS_BUSYBOX_CONFIG: $(ET_ROOTFS_BUSYBOX_CONFIG)\n"
 	@printf "ET_ROOTFS_DIR: $(ET_ROOTFS_DIR)\n"
 	@printf "ET_ROOTFS_IMAGE: $(ET_ROOTFS_IMAGE)\n"
 	@printf "ET_ROOTFS_TARGET_FINAL: $(ET_ROOTFS_TARGET_FINAL)\n"
