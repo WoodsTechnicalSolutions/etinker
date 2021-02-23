@@ -95,7 +95,7 @@ case "${destination}" in
 				if [ "${target}" = "kernel" ]; then
 					sudo rsync -aP  ${target_dir}/../../../firmware/* ${media}/rootfs/lib/firmware/
 				fi
-				sudo rsync -P  ${target_dir}/boot/* ${media}/BOOT/
+				sudo rsync -aP  ${target_dir}/boot/* ${media}/BOOT/
 
 				if [ "${target}" = "bootloader" ]; then
 					printf "[%s][%s] writing raw %s data.\n" ${ET_BOARD} ${target} ${destination}

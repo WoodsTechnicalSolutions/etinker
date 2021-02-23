@@ -115,7 +115,7 @@ define bootloader-finalize
 	@if [ -f $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(et_board)/uEnv.txt ]; then \
 		cp -av $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(et_board)/uEnv*.txt $(ET_BOOTLOADER_DIR)/boot/; \
 	fi
-	@if [ -f $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(et_board)/extlinux ]; then \
+	@if [ -d $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(et_board)/extlinux ]; then \
 		cp -av $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(et_board)/extlinux $(ET_BOOTLOADER_DIR)/boot/; \
 	fi
 	@cp -av $(ET_BOOTLOADER_BUILD_IMAGE) $(ET_BOOTLOADER_DIR)/boot/
