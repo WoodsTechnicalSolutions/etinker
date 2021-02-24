@@ -1,3 +1,0 @@
-mmc_kernel=load mmc 0:1 ${kernel_load_address} ${kernel_image}
-mmc_devicetree=load mmc 0:1 ${devicetree_load_address} system.dtb
-uenvcmd=echo && echo '***** Running etinker uenvcmd *****' && echo && run mmc_loadbit && run mmc_kernel && run mmc_devicetree && bootm ${kernel_load_address} - ${devicetree_load_address}

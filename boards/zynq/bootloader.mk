@@ -31,12 +31,12 @@ define bootloader-finalize-$(ET_BOARD_TYPE)
 		exit 2; \
 	fi
 	@cp -av $(ET_BOOTLOADER_BUILD_SPL) $(ET_BOOTLOADER_DIR)/boot/
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Generating Xilinx 'system.bit.bin' *****\n\n"
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Generating Xilinx 'fpga.bin' *****\n\n"
 	@(cd $(ET_BOARD_DIR)/fpga && \
 		$(ET_SCRIPTS_DIR)/fpga-bit-to-bin.py -f "`ls sdk/*.bit | tr -d \\\n`" \
-		$(ET_BOOTLOADER_DIR)/boot/system.bit.bin)
-	@if ! [ -f $(ET_BOOTLOADER_DIR)/boot/system.bit.bin ]; then \
-		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Xilinx 'system.bit.bin' build FAILED! *****\n\n"; \
+		$(ET_BOOTLOADER_DIR)/boot/fpga.bin)
+	@if ! [ -f $(ET_BOOTLOADER_DIR)/boot/fpga.bin ]; then \
+		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Xilinx 'fpga.bin' build FAILED! *****\n\n"; \
 		exit 2; \
 	fi
 endef
