@@ -27,7 +27,7 @@ CONFIG_SPL_LOAD_FIT=y
 CONFIG_SPL_LOAD_FIT_ADDRESS=0x10000000
 # CONFIG_USE_SPL_FIT_GENERATOR is not set
 CONFIG_LEGACY_IMAGE_FORMAT=y
-CONFIG_BOOTCOMMAND="env set mmc_fpga 'echo && echo Loading FPGA bitstream ... && mmc rescan && load mmc 0:1 ${kernel_addr_r} fpga.bin && fpga load 0 ${kernel_addr_r} ${filesize}';env set mmc_kernel 'echo && echo Loading kernel ... && load mmc 0:1 ${kernel_addr_r} zImage';env set mmc_devicetree 'echo && echo Loading devicetree ... && load mmc 0:1 ${fdt_addr_r} system.dtb';env set bootcmd_uenv 'echo && echo Booting 'etinker' environment ... && run mmc_fpga && run mmc_kernel && run mmc_devicetree && echo && bootz ${kernel_addr_r} - ${fdt_addr_r}';env set bootcmd 'run bootcmd_uenv';run bootcmd_uenv"
+CONFIG_BOOTCOMMAND="mmc rescan && fatload mmc 0 ${scriptaddr} uEnv.txt && echo && echo Importing uEnv.txt ... && env import -t ${scriptaddr} ${filesize} && run uenvcmd || run distro_bootcmd"
 CONFIG_USE_PREBOOT=y
 CONFIG_PREBOOT="usb start"
 CONFIG_SPL_LEGACY_IMAGE_SUPPORT=y
