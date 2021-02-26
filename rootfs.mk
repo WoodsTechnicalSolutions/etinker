@@ -111,11 +111,12 @@ define rootfs-build
 					-C $(ET_ROOTFS_SOFTWARE_DIR) \
 					savedefconfig; \
 			fi; \
+			echo; \
+			cp -av $(ET_ROOTFS_SOFTWARE_DIR)/configs/$(rootfs_defconfig) $(ET_ROOTFS_DEFCONFIG); \
 		else \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_ROOTFS_TREE) .config MISSING! *****\n"; \
 			exit 2; \
 		fi; \
-		cp -av $(ET_ROOTFS_BUILD_DIR)/build/busybox-*/.config $(ET_ROOTFS_BUSYBOX_CONFIG); \
 		;; \
 	*) \
 		;; \
@@ -127,7 +128,15 @@ define rootfs-build
 		fi; \
 		$(RM) -r $(ET_ROOTFS_DIR)/images; \
 		cp -av $(ET_ROOTFS_BUILD_DIR)/images $(ET_ROOTFS_DIR)/; \
+	fi
+	@if [ -n "$(shell diff $(ET_ROOTFS_BUILD_DIR)/build/busybox-*/.config $(ET_ROOTFS_BUSYBOX_CONFIG))" ] || \
+							[ "$(shell echo $1 | grep -Po busybox)" = "busybox" ]; then \
+		echo; \
 		cp -av $(ET_ROOTFS_BUILD_DIR)/build/busybox-*/.config $(ET_ROOTFS_BUSYBOX_CONFIG); \
+	fi
+	@if [ -n "$(shell diff $(ET_ROOTFS_SOFTWARE_DIR)/configs/$(rootfs_defconfig) $(ET_ROOTFS_DEFCONFIG))" ]; then \
+		echo; \
+		cp -av $(ET_ROOTFS_SOFTWARE_DIR)/configs/$(rootfs_defconfig) $(ET_ROOTFS_DEFCONFIG); \
 	fi
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] rootfs-build 'make $1' done. *****\n\n"
 endef
