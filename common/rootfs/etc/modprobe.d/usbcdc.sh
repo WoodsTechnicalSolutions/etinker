@@ -64,7 +64,11 @@ if [ -f $ko ]; then
 			ln -s functions/acm.gs$i configs/c.1/
 		done
 
-		udevadm settle -t 5 || :
+		if [ -n "`which udevadm`" ]; then
+			udevadm settle -t 5 || :
+		else
+			sleep 3
+		fi
 
 		# Startup
 		ls /sys/class/udc > UDC
