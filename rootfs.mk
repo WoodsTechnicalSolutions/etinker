@@ -154,6 +154,7 @@ endef
 
 define rootfs-clean
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rootfs-clean *****\n\n"
+	$(RM) $(ET_ROOTFS_BUILD_DIR)/build/busybox-*/.config
 	$(RM) $(ET_ROOTFS_BUILD_CONFIG)
 	$(RM) -r $(ET_ROOTFS_DIR)/images
 endef
