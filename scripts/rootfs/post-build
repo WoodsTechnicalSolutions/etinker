@@ -100,7 +100,7 @@ omap2plus*|sama5*|zynq*|meson*|layerscape*)
 	esac
 	# Boards capable of using UBI on NAND
 	case "${ET_BOARD}" in
-	omap3-beagle*|omap3-evm*|sama5d3-xpld*|ls1043ardb*)
+	am3517-evm|omap3-beagle|omap3-evm*|sama5d3-xpld*|ls1043ardb*)
 		mkdir -p ${TARGET}/media/ubifs
 		printf "ubi0:rootfs /media/ubifs ubifs defaults 0 0\n" >> ${TARGET}/etc/fstab
 		;;
