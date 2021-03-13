@@ -85,7 +85,7 @@ define bootloader-depends
 	@mkdir -p $(ET_BOOTLOADER_DIR)/boot
 	@mkdir -p $(ET_BOOTLOADER_BUILD_DIR)
 	@mkdir -p $(shell dirname $(ET_BOOTLOADER_DEFCONFIG))
-	$(call bootloader-depends-$(et_board))
+	$(call bootloader-depends-$(ET_BOARD))
 	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.dts* 2> /dev/null`" ]; then \
 		rsync -rP $(ET_BOARD_DIR)/dts/*.dts* \
 			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_BOOTLOADER_ARCH)/dts/; \
@@ -102,7 +102,7 @@ endef
 define bootloader-prepare
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_TREE) $(ET_BOOTLOADER_VERSION) *****\n\n"
 	$(call bootloader-depends)
-	$(call bootloader-prepare-$(et_board))
+	$(call bootloader-prepare-$(ET_BOARD))
 endef
 
 define bootloader-finalize
@@ -119,7 +119,7 @@ define bootloader-finalize
 		cp -av $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(et_board)/extlinux $(ET_BOOTLOADER_DIR)/boot/; \
 	fi
 	@cp -av $(ET_BOOTLOADER_BUILD_IMAGE) $(ET_BOOTLOADER_DIR)/boot/
-	$(call bootloader-finalize-$(et_board))
+	$(call bootloader-finalize-$(ET_BOARD))
 endef
 
 define bootloader-build
@@ -225,7 +225,7 @@ define bootloader-info
 	@printf "ET_BOOTLOADER_DIR: $(ET_BOOTLOADER_DIR)\n"
 	@printf "ET_BOOTLOADER_IMAGE: $(ET_BOOTLOADER_IMAGE)\n"
 	@printf "ET_BOOTLOADER_TARGET_FINAL: $(ET_BOOTLOADER_TARGET_FINAL)\n"
-	$(call bootloader-info-$(et_board))
+	$(call bootloader-info-$(ET_BOARD))
 endef
 
 define bootloader-sync
