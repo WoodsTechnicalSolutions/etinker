@@ -67,12 +67,6 @@ define rootfs-depends
 	fi
 endef
 
-define rootfs-targets
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_ROOTFS_TREE) $(ET_ROOTFS_VERSION) *****\n\n"
-	$(call rootfs-depends)
-	$(call rootfs-build)
-endef
-
 define rootfs-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rootfs-build 'make $1' *****\n\n"
 	$(call rootfs-depends)
@@ -103,20 +97,19 @@ define rootfs-build
 		$(RM) -r $(ET_ROOTFS_DIR)/images; \
 		;; \
 	*config) \
-		if [ -f $(ET_ROOTFS_BUILD_CONFIG) ]; then \
-			if ! [ "$1" = "savedefconfig" ]; then \
-				$(MAKE) --no-print-directory \
-					CROSS_COMPILE=$(ET_CROSS_COMPILE) \
-					O=$(ET_ROOTFS_BUILD_DIR) \
-					-C $(ET_ROOTFS_SOFTWARE_DIR) \
-					savedefconfig; \
-			fi; \
-			echo; \
-			cp -av $(ET_ROOTFS_SOFTWARE_DIR)/configs/$(rootfs_defconfig) $(ET_ROOTFS_DEFCONFIG); \
-		else \
+		if ! [ -f $(ET_ROOTFS_BUILD_CONFIG) ]; then \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_ROOTFS_TREE) .config MISSING! *****\n"; \
 			exit 2; \
 		fi; \
+		if ! [ "$1" = "savedefconfig" ]; then \
+			$(MAKE) --no-print-directory \
+				CROSS_COMPILE=$(ET_CROSS_COMPILE) \
+				O=$(ET_ROOTFS_BUILD_DIR) \
+				-C $(ET_ROOTFS_SOFTWARE_DIR) \
+				savedefconfig; \
+		fi; \
+		echo; \
+		cp -av $(ET_ROOTFS_SOFTWARE_DIR)/configs/$(rootfs_defconfig) $(ET_ROOTFS_DEFCONFIG); \
 		;; \
 	*) \
 		;; \
@@ -155,6 +148,8 @@ endef
 define rootfs-clean
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rootfs-clean *****\n\n"
 	$(RM) $(ET_ROOTFS_BUILD_DIR)/build/busybox-*/.config
+	$(RM) $(ET_ROOTFS_BUILD_DIR)/build/busybox-*/.stamp_built
+	$(RM) $(ET_ROOTFS_BUILD_DIR)/build/busybox-*/.stamp*installed
 	$(RM) $(ET_ROOTFS_BUILD_CONFIG)
 	$(RM) -r $(ET_ROOTFS_DIR)/images
 endef
@@ -191,7 +186,7 @@ endef
 .PHONY: rootfs
 rootfs: $(ET_ROOTFS_TARGET_FINAL)
 $(ET_ROOTFS_TARGET_FINAL): $(ET_ROOTFS_BUILD_CONFIG)
-	$(call rootfs-targets)
+	$(call rootfs-build)
 
 rootfs-%: $(ET_ROOTFS_BUILD_CONFIG)
 	$(call rootfs-build,$(*F))

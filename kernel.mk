@@ -109,7 +109,6 @@ define kernel-depends
 	@mkdir -p $(ET_KERNEL_DIR)/lib/modules
 	@mkdir -p $(ET_KERNEL_BUILD_BOOT_DIR)
 	@mkdir -p $(shell dirname $(ET_KERNEL_DEFCONFIG))
-	$(call kernel-depends-$(ET_BOARD))
 	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.dts* 2> /dev/null`" ]; then \
 		rsync -r $(ET_BOARD_DIR)/dts/*.dts* \
 			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/boot/dts/$(ET_KERNEL_VENDOR) > /dev/null; \
@@ -121,6 +120,7 @@ define kernel-depends
 	@if [ -f $(ET_KERNEL_DEFCONFIG) ]; then \
 		rsync $(ET_KERNEL_DEFCONFIG) $(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/configs/ > /dev/null; \
 	fi
+	$(call kernel-depends-$(ET_BOARD))
 endef
 
 define kernel-prepare
@@ -223,21 +223,20 @@ define kernel-build
 		$(RM) -r $(ET_KERNEL_DIR)/lib/modules/*; \
 		;; \
 	*config) \
-		if [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
-			if ! [ "$1" = "savedefconfig" ]; then \
-				$(MAKE) --no-print-directory \
-					$(ET_KERNEL_CROSS_PARAMS) \
-					O=$(ET_KERNEL_BUILD_DIR) \
-					-C $(ET_KERNEL_SOFTWARE_DIR) \
-					savedefconfig; \
-			fi; \
-			if [ -f $(ET_KERNEL_BUILD_DEFCONFIG) ]; then \
-				rsync $(ET_KERNEL_BUILD_DEFCONFIG) $(ET_KERNEL_DEFCONFIG); \
-				$(RM) $(ET_KERNEL_BUILD_DEFCONFIG); \
-			fi; \
-		else \
+		if ! [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) .config MISSING! *****\n"; \
 			exit 2; \
+		fi; \
+		if ! [ "$1" = "savedefconfig" ]; then \
+			$(MAKE) --no-print-directory \
+				$(ET_KERNEL_CROSS_PARAMS) \
+				O=$(ET_KERNEL_BUILD_DIR) \
+				-C $(ET_KERNEL_SOFTWARE_DIR) \
+				savedefconfig; \
+		fi; \
+		if [ -f $(ET_KERNEL_BUILD_DEFCONFIG) ]; then \
+			rsync $(ET_KERNEL_BUILD_DEFCONFIG) $(ET_KERNEL_DEFCONFIG); \
+			$(RM) $(ET_KERNEL_BUILD_DEFCONFIG); \
 		fi; \
 		;; \
 	*) \

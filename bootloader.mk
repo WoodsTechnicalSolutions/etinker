@@ -85,7 +85,6 @@ define bootloader-depends
 	@mkdir -p $(ET_BOOTLOADER_DIR)/boot
 	@mkdir -p $(ET_BOOTLOADER_BUILD_DIR)
 	@mkdir -p $(shell dirname $(ET_BOOTLOADER_DEFCONFIG))
-	$(call bootloader-depends-$(ET_BOARD))
 	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.dts* 2> /dev/null`" ]; then \
 		rsync -rP $(ET_BOARD_DIR)/dts/*.dts* \
 			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_BOOTLOADER_ARCH)/dts/; \
@@ -97,6 +96,7 @@ define bootloader-depends
 	@if [ -f $(ET_BOOTLOADER_DEFCONFIG) ]; then \
 		rsync $(ET_BOOTLOADER_DEFCONFIG) $(ET_BOOTLOADER_SOFTWARE_DIR)/configs/ > /dev/null; \
 	fi
+	$(call bootloader-depends-$(ET_BOARD))
 endef
 
 define bootloader-prepare
@@ -159,21 +159,20 @@ define bootloader-build
 		$(RM) -r $(ET_BOOTLOADER_DIR)/boot/extlinux; \
 		;; \
 	*config) \
-		if [ -f $(ET_BOOTLOADER_BUILD_CONFIG) ]; then \
-			if ! [ "$1" = "savedefconfig" ]; then \
-				$(MAKE) --no-print-directory \
-					CROSS_COMPILE=$(ET_CROSS_COMPILE) \
-					O=$(ET_BOOTLOADER_BUILD_DIR) \
-					-C $(ET_BOOTLOADER_SOFTWARE_DIR) \
-					savedefconfig; \
-			fi; \
-			if [ -f $(ET_BOOTLOADER_BUILD_DEFCONFIG) ]; then \
-				rsync $(ET_BOOTLOADER_BUILD_DEFCONFIG) $(ET_BOOTLOADER_DEFCONFIG); \
-				$(RM) $(ET_BOOTLOADER_BUILD_DEFCONFIG); \
-			fi; \
-		else \
+		if ! [ -f $(ET_BOOTLOADER_BUILD_CONFIG) ]; then \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_TREE) .config MISSING! *****\n"; \
 			exit 2; \
+		fi; \
+		if ! [ "$1" = "savedefconfig" ]; then \
+			$(MAKE) --no-print-directory \
+				CROSS_COMPILE=$(ET_CROSS_COMPILE) \
+				O=$(ET_BOOTLOADER_BUILD_DIR) \
+				-C $(ET_BOOTLOADER_SOFTWARE_DIR) \
+				savedefconfig; \
+		fi; \
+		if [ -f $(ET_BOOTLOADER_BUILD_DEFCONFIG) ]; then \
+			rsync $(ET_BOOTLOADER_BUILD_DEFCONFIG) $(ET_BOOTLOADER_DEFCONFIG); \
+			$(RM) $(ET_BOOTLOADER_BUILD_DEFCONFIG); \
 		fi; \
 		;; \
 	*) \

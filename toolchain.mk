@@ -60,11 +60,6 @@ define toolchain-depends
 	fi
 endef
 
-define toolchain-targets
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) $(ET_TOOLCHAIN_VERSION) *****\n\n"
-	$(call toolchain-build,build)
-endef
-
 define toolchain-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain 'ct-ng $1' *****\n\n"
 	$(call toolchain-depends)
@@ -106,21 +101,20 @@ define toolchain-build
 		$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/$(ET_CROSS_TUPLE); \
 		;; \
 	*config) \
-		if [ -f $(ET_TOOLCHAIN_BUILD_CONFIG) ]; then \
-			if ! [ "$1" = "savedefconfig" ]; then \
-				(cd $(ET_TOOLCHAIN_BUILD_DIR) && \
-					CT_ARCH=$(ET_ARCH) \
-					$(ET_TOOLCHAIN_GENERATOR) \
-					--no-print-directory \
-					savedefconfig); \
-			fi; \
-			if [ -f $(ET_TOOLCHAIN_BUILD_DEFCONFIG) ]; then \
-				rsync $(ET_TOOLCHAIN_BUILD_DEFCONFIG) $(ET_TOOLCHAIN_DEFCONFIG); \
-				$(RM) $(ET_TOOLCHAIN_BUILD_DEFCONFIG); \
-			fi; \
-		else \
+		if ! [ -f $(ET_TOOLCHAIN_BUILD_CONFIG) ]; then \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) .config MISSING! *****\n"; \
 			exit 2; \
+		fi; \
+		if ! [ "$1" = "savedefconfig" ]; then \
+			(cd $(ET_TOOLCHAIN_BUILD_DIR) && \
+				CT_ARCH=$(ET_ARCH) \
+				$(ET_TOOLCHAIN_GENERATOR) \
+				--no-print-directory \
+				savedefconfig); \
+		fi; \
+		if [ -f $(ET_TOOLCHAIN_BUILD_DEFCONFIG) ]; then \
+			rsync $(ET_TOOLCHAIN_BUILD_DEFCONFIG) $(ET_TOOLCHAIN_DEFCONFIG); \
+			$(RM) $(ET_TOOLCHAIN_BUILD_DEFCONFIG); \
 		fi; \
 		;; \
 	*) \
@@ -192,7 +186,7 @@ endef
 .PHONY: toolchain
 toolchain: $(ET_TOOLCHAIN_TARGET_FINAL)
 $(ET_TOOLCHAIN_TARGET_FINAL): $(ET_TOOLCHAIN_BUILD_CONFIG)
-	$(call toolchain-targets)
+	$(call toolchain-build,build)
 
 toolchain-%: $(ET_TOOLCHAIN_BUILD_CONFIG)
 	$(call toolchain-build,$(*F))
