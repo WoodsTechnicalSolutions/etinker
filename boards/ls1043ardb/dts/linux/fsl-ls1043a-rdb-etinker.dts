@@ -221,3 +221,11 @@
 &usb1 {
 	status = "okay";
 };
+
+&pcie2 {
+	status = "okay";
+};
+
+&pcie3 {
+	status = "okay";
+};

@@ -179,9 +179,6 @@ case "${destination}" in
 				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
 					-aP ${target_dir}/images/rootfs.tar \
 					root@${ipv4}:/media/data/ 2> /dev/null
-				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
-					-aP ${target_dir}/../../../common/rootfs/* \
-					root@${ipv4}:/ 2> /dev/null
 				;;
 			*)
 				printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}

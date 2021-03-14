@@ -87,6 +87,11 @@ omap2plus*|sama5*|zynq*|meson*|layerscape*)
 		chmod +x ${TARGET}/usr/sbin/firmware-update
 		;;
 	ls1043ardb*)
+		# nvme0n1 is a NVMe memory attached to the Mini-PCIe connector
+		# [1] https://www.amazon.com/Sintech-NGFF-nVME-Adapter-Cable/dp/B07DZ8SB8X [Sintech M.2 SSD to Mini PCIe adapter]
+		# [2] https://www.amazon.com/gp/product/B06XSXX3NS [MEMPEK1W032GAXT]
+		mkdir -p ${TARGET}/media/nvme
+		printf "/dev/nvme0n1p1 /media/nvme auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 		# Build '/usr/sbin/firmware-update' file for on-target updates of SD
 		printf "#!/bin/bash\n" > ${TARGET}/usr/sbin/firmware-update
 		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
