@@ -7,10 +7,10 @@ export LSDK_VERSION ?= LSDK-20.12
 export LSDK_VERSION_URL ?= lsdk2012
 export LSDK_MACHINE ?= ls1043ardb
 export LSDK_BOOTTYPE ?= sd
-export LSDK_FIRMWARE_BIN ?= $(ET_SOFTWARE_DIR)/qoriq/firmware_$(LSDK_MACHINE)_uboot_$(LSDK_BOOTTYPE)boot-$(LSDK_VERSION_URL).img
-export LSDK_SRK_HASH ?= $(ET_SOFTWARE_DIR)/qoriq/srk_hash-$(LSDK_VERSION_URL).txt
-export LSDK_SRK_PRI ?= $(ET_SOFTWARE_DIR)/qoriq/srk-$(LSDK_VERSION_URL).pri
-export LSDK_SRK_PUB ?= $(ET_SOFTWARE_DIR)/qoriq/srk-$(LSDK_VERSION_URL).pub
+export LSDK_FIRMWARE_BIN ?= $(ET_SOFTWARE_DIR)/qoriq/firmware/firmware_$(LSDK_MACHINE)_uboot_$(LSDK_BOOTTYPE)boot-$(LSDK_VERSION_URL).img
+export LSDK_SRK_HASH ?= $(ET_SOFTWARE_DIR)/qoriq/firmware/srk_hash-$(LSDK_VERSION_URL).txt
+export LSDK_SRK_PRI ?= $(ET_SOFTWARE_DIR)/qoriq/firmware/srk-$(LSDK_VERSION_URL).pri
+export LSDK_SRK_PUB ?= $(ET_SOFTWARE_DIR)/qoriq/firmware/srk-$(LSDK_VERSION_URL).pub
 
 define bootloader-depends-$(ET_BOARD_TYPE)
 endef
@@ -20,33 +20,34 @@ endef
 
 define bootloader-finalize-$(ET_BOARD_TYPE)
 	@echo
-	@mkdir -p $(ET_SOFTWARE_DIR)/qoriq
+	@mkdir -p $(ET_SOFTWARE_DIR)/qoriq/firmware
 	@if ! [ -f $(LSDK_FIRMWARE_BIN) ]; then \
 		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Getting $(LSDK_VERSION) QorIQ Composite Firmware Image *****\n\n"; \
-		wget -O $(LSDK_FIRMWARE_BIN) \
+		wget -c -O $(LSDK_FIRMWARE_BIN) \
 			https://www.nxp.com/lgfiles/sdk/$(LSDK_VERSION_URL)/firmware_$(LSDK_MACHINE)_uboot_$(LSDK_BOOTTYPE)boot.img; \
 		if ! [ -f $(LSDK_FIRMWARE_BIN) ]; then \
 			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Getting $(LSDK_VERSION) QorIQ Firmware FAILED! *****\n\n"; \
 			exit 2; \
 		fi; \
 	fi
+	@cp -av $(LSDK_FIRMWARE_BIN) $(ET_BOOTLOADER_DIR)/boot/firmware.img
 	@if ! [ -f $(LSDK_SRK_HASH) ]; then \
 		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Getting $(LSDK_VERSION) QorIQ Security Files *****\n\n"; \
-		wget -O $(LSDK_SRK_HASH) https://www.nxp.com/lgfiles/sdk/$(LSDK_VERSION_URL)/srk_hash.txt; \
+		wget -c -O $(LSDK_SRK_HASH) https://www.nxp.com/lgfiles/sdk/$(LSDK_VERSION_URL)/srk_hash.txt; \
 		if ! [ -f $(LSDK_SRK_HASH) ]; then \
 			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Getting $(LSDK_VERSION) $(LSDK_SRK_HASH) FAILED! *****\n\n"; \
 			exit 2; \
 		fi; \
 	fi
 	@if ! [ -f $(LSDK_SRK_PRI) ]; then \
-		wget -O $(LSDK_SRK_PRI) https://www.nxp.com/lgfiles/sdk/$(LSDK_VERSION_URL)/srk.pri; \
+		wget -c -O $(LSDK_SRK_PRI) https://www.nxp.com/lgfiles/sdk/$(LSDK_VERSION_URL)/srk.pri; \
 		if ! [ -f $(LSDK_SRK_PRI) ]; then \
 			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Getting $(LSDK_VERSION) $(LSDK_SRK_PRI) FAILED! *****\n\n"; \
 			exit 2; \
 		fi; \
 	fi
 	@if ! [ -f $(LSDK_SRK_PUB) ]; then \
-		wget -O $(LSDK_SRK_PUB) https://www.nxp.com/lgfiles/sdk/$(LSDK_VERSION_URL)/srk.pub; \
+		wget -c -O $(LSDK_SRK_PUB) https://www.nxp.com/lgfiles/sdk/$(LSDK_VERSION_URL)/srk.pub; \
 		if ! [ -f $(LSDK_SRK_PUB) ]; then \
 			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Getting $(LSDK_VERSION) $(LSDK_SRK_PUB) FAILED! *****\n\n"; \
 			exit 2; \
