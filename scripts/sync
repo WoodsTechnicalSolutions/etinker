@@ -99,33 +99,33 @@ case "${destination}" in
 
 				if [ "${target}" = "bootloader" ]; then
 					printf "[%s][%s] if required, write raw %s data.\n" ${ET_BOARD} ${target} ${destination}
-				fi
 
-				blkdev="`df ${media}/BOOT | tail -1 | cut -d ' ' -f 1 | cut -d 1 -f 1 | tr -d \\n`"
-				case "${ET_BOARD_TYPE}" in
-					meson)
-						printf "\n*** write ${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin to ${blkdev} ***\n\n"
-						sudo dd if=${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin of=${blkdev} conv=fsync,notrunc bs=1 count=444
-						sudo dd if=${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin of=${blkdev} conv=fsync,notrunc bs=512 skip=1 seek=1
-						;;
-					layerscape)
-						if [ -f ${LSDK_FIRMWARE_BIN} ]; then
-							# load LSDK firmware
-							printf "\n*** write ${LSDK_VERSION} firmware image to ${blkdev} @ 8 block offset ***\n\n"
-							sudo dd if=${LSDK_FIRMWARE_BIN} of=${blkdev} conv=fsync,notrunc bs=512 seek=8
-							sync
-							printf "\n*** write BL2 image to ${blkdev} @ 8 block offset ***\n\n"
-							sudo dd if=${ET_BOOTLOADER_DIR}/boot/bl2_sd.pbl of=${blkdev} conv=fsync,notrunc bs=512 seek=8
-							printf "\n*** write FIP image to ${blkdev} @ 2048 block offset ***\n\n"
-							sudo dd if=${ET_BOOTLOADER_DIR}/boot/fip.bin of=${blkdev} conv=fsync,notrunc bs=512 seek=2048
-						else
-							printf "\nMissing ${LSDK_VERSION} Firmware Image! [ ${LSDK_FIRMWARE_BIN} ]\n\n"
-						fi
-						;;
-					*)
-						# NOOP
-						;;
-				esac
+					blkdev="`df ${media}/BOOT | tail -1 | cut -d ' ' -f 1 | cut -d 1 -f 1 | tr -d \\n`"
+					case "${ET_BOARD_TYPE}" in
+						meson)
+							printf "\n*** write ${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin to ${blkdev} ***\n\n"
+							sudo dd if=${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin of=${blkdev} conv=fsync,notrunc bs=1 count=444
+							sudo dd if=${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin of=${blkdev} conv=fsync,notrunc bs=512 skip=1 seek=1
+							;;
+						layerscape)
+							if [ -f ${LSDK_FIRMWARE_BIN} ]; then
+								# load LSDK firmware
+								printf "\n*** write ${LSDK_VERSION} firmware image to ${blkdev} @ 8 block offset ***\n\n"
+								sudo dd if=${LSDK_FIRMWARE_BIN} of=${blkdev} conv=fsync,notrunc bs=512 seek=8
+								sync
+								printf "\n*** write BL2 image to ${blkdev} @ 8 block offset ***\n\n"
+								sudo dd if=${ET_BOOTLOADER_DIR}/boot/bl2_sd.pbl of=${blkdev} conv=fsync,notrunc bs=512 seek=8
+								printf "\n*** write FIP image to ${blkdev} @ 2048 block offset ***\n\n"
+								sudo dd if=${ET_BOOTLOADER_DIR}/boot/fip.bin of=${blkdev} conv=fsync,notrunc bs=512 seek=2048
+							else
+								printf "\nMissing ${LSDK_VERSION} Firmware Image! [ ${LSDK_FIRMWARE_BIN} ]\n\n"
+							fi
+							;;
+						*)
+							# NOOP
+							;;
+					esac
+				fi
 				;;
 			overlay)
 				sudo rsync --exclude-from=${ET_OVERLAY_DIR}/exclude \
