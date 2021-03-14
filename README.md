@@ -86,31 +86,43 @@ time penalty is paid only at the time of initial builds and upgrades.
 4. Verify build artifacts
 
 ```
-$ tree -L 1 toolchain bootloader kernel rootfs
+$ tree -L 2 toolchain bootloader kernel rootfs
 toolchain
 ├── arm-cortexa8-linux-gnueabihf
+│   ├── arm-cortexa8-linux-gnueabihf
+│   ├── bin
+│   ├── build.log.bz2
+│   ├── include
+│   ├── lib
+│   ├── libexec
+│   └── share
 ├── build
+│   └── arm-cortexa8-linux-gnueabihf
 └── generator
+
 bootloader
 ├── am335x-pocketbeagle
+│   └── arm-cortexa8-linux-gnueabihf
 └── build
+    └── am335x-pocketbeagle
+
 kernel
 ├── am335x-pocketbeagle
+│   └── arm-cortexa8-linux-gnueabihf
 └── build
+    └── omap2plus
+
 rootfs
 ├── am335x-pocketbeagle
+│   └── arm-cortexa8-linux-gnueabihf
 └── build
+    └── omap2plus
 
-9 directories, 0 files
-
-$ tree rootfs/am335x-pocketbeagle/
+$ tree -L 3 rootfs/am335x-pocketbeagle/
 rootfs/am335x-pocketbeagle/
 └── arm-cortexa8-linux-gnueabihf
     └── images
-        ├── rootfs.tar
-        └── rootfs.ubifs
-
-2 directories, 2 files
+        └── rootfs.tar
 
 $ du -chs etinker
 84G     etinker
@@ -124,8 +136,11 @@ preferred disk layout:
 
 Partition | Type  | Size (MiB) | Label  | Mount Point
 ----------|-------|------------|--------|------------
-1         | fat16 | 256        | BOOT   | /media/user/BOOT
-2         | ext4  | remaining  | rootfs | /media/user/rootfs
+MBR/GPT   |       | 68         |        |
+1         | fat16 | 128        | BOOT   | /media/user/BOOT
+2         | ext4  | 2048       | rootfs | /media/user/rootfs
+3         | ext4  | 5120       | backup | /media/user/backup
+4         | ext4  | remaining  | data   | /media/user/data
 
 Makefile tooling and scripts expect this arrangement.
 
@@ -135,20 +150,23 @@ $ sudo ./scripts/mksdcard am335x-pocketbeagle /dev/sdX
 
 The **/dev/sdX** depends on the media that you have chosen. It can
 be an MMC block device also. ( i.e. **/dev/mmcblkX**) The resultant
-SD/MMC will have two partitions. [1 GiB SD/MMC used as example]
+SD/MMC will have four partitions. [64 GiB SD/MMC used as example]
+**NOTE:** Use higher quality SD/MMC cards (Class 10, UHS-1 or better)
 
 ```
 $ sudo parted --list
 [...]
-Model: Mass Storage Device (scsi)
-Disk /dev/sdX: 988MB
+Model: SD SR64G (sd/mmc)
+Disk /dev/mmcblk0: 63.9GB
 Sector size (logical/physical): 512B/512B
 Partition Table: msdos
-Disk Flags: 
+Disk Flags:
 
-Number  Start   End    Size   Type     File system  Flags
- 1      2097kB  271MB  268MB  primary  fat16        boot, lba
- 2      271MB   988MB  718MB  primary  ext4
+Number  Start   End     Size    Type     File system  Flags
+ 1      71.3MB  206MB   134MB   primary  fat16        boot, lba
+ 2      206MB   2353MB  2147MB  primary  ext4
+ 3      2353MB  7722MB  5369MB  primary  ext4
+ 4      7722MB  63.9GB  56.1GB  primary  ext4
 [...]
 ```
 
@@ -157,20 +175,30 @@ verify partitions were created correctly.
 
 ```
 $ df
-Filesystem     1K-blocks      Used Available Use% Mounted on
+Filesystem  1K-blocks  Used Available Use% Mounted on
 [...]
-/dev/sdX2         674520      1384    624004   1% /media/<user>/rootfs
-/dev/sdX1         261868         0    261868   0% /media/<user>/BOOT
-
+/dev/sdX1      130798     0    130798   0% /media/<user>/BOOT
+/dev/sdX2     1998672  6144   1871288   1% /media/<user>/rootfs
+/dev/sdX3     5095040 20472   4796040   1% /media/<user>/backup
+/dev/sdX4    53702984 53272  50891980   1% /media/<user>/data
+[...]
 ```
 
 6. Setup SD/MMC card for booting
+
+The media is expected to be partitioned, formatted, and have
+'/media/<user>/BOOT' and '/media/<user>/rootfs' mounted. The
+following make commands will populate the media:
 
 ```
 $ ET_BOARD=am335x-pocketbeagle make rootfs-sync-mmc
 $ ET_BOARD=am335x-pocketbeagle make bootloader-sync-mmc
 $ ET_BOARD=am335x-pocketbeagle make kernel-sync-mmc
 $ ET_BOARD=am335x-pocketbeagle make overlay-sync-mmc
+
+OR simply
+
+$ ET_BOARD=am335x-pocketbeagle make sync
 ```
 
 Each make command, shown above, results in a 'sync' of the fileystem.
