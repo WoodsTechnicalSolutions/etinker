@@ -32,11 +32,8 @@ fi
 if [ -d ${ET_BOOTLOADER_DIR}/boot ]; then
 	rsync -av ${ET_BOOTLOADER_DIR}/* ${TARGET}/ 2>/dev/null
 fi
-if [ -d ${ET_OVERLAY_DIR} ]; then
-	rsync -av \
-		--exclude 'usr/include' \
-		--exclude 'usr/lib/pkgconfig' \
-		--exclude 'usr/lib/*.a' \
+if [ -d ${ET_OVERLAY_DIR} ] && [ -f ${ET_OVERLAY_DIR}/exclude ]; then
+	rsync -av --exclude-from=${ET_OVERLAY_DIR}/exclude \
 		${ET_OVERLAY_DIR}/ \
 		${TARGET}/ 2>/dev/null
 fi
@@ -44,8 +41,9 @@ printf "\n%s\n\n" "`cat ${TARGET}/etc/issue`" > ${TARGET}/etc/issue
 printf "\n::sysinit:/bin/mount -t debugfs none /sys/kernel/debug\n" >> ${TARGET}/etc/inittab
 printf "\n::sysinit:/bin/mount -t configfs none /sys/kernel/config\n" >> ${TARGET}/etc/inittab
 sed -i s,::sysinit:/etc/init.d/rcS,#::sysinit:/etc/init.d/rcS, ${TARGET}/etc/inittab
+sed -i s,${ET_ROOTFS_GETTY_PORT}::respawn:,#${ET_ROOTFS_GETTY_PORT}::respawn:, ${TARGET}/etc/inittab
 printf "\n::sysinit:/etc/init.d/rcS\n" >> ${TARGET}/etc/inittab
-printf "\n#ttyGS0::respawn:/sbin/getty -L ttyGS0 115200 screen-256color\n" >> ${TARGET}/etc/inittab
+printf "\n${ET_ROOTFS_GETTY_PORT}::respawn:/sbin/getty -L ${ET_ROOTFS_GETTY_PORT} 115200 screen-256color\n" >> ${TARGET}/etc/inittab
 sed -i s,ET_ROOTFS_GETTY_PORT,${ET_ROOTFS_GETTY_PORT}, ${TARGET}/etc/profile.d/prompt.sh
 # Google DNS
 rm -f ${TARGET}/etc/resolv.conf
@@ -54,7 +52,7 @@ printf "nameserver 8.8.4.4\n" >> ${TARGET}/etc/resolv.conf
 
 # Board Specific Modifications
 case "${ET_BOARD_TYPE}" in
-omap2plus*|sama5*|zynq*|meson*|layerscape*)
+omap2plus|sama5|zynq|meson|layerscape)
 	printf "\n***** [${ET_BOARD}][${ET_BOARD_TYPE}] custom modifications *****\n\n"
 	# Board Common
 	mkdir -p ${TARGET}/media/BOOT
@@ -62,6 +60,7 @@ omap2plus*|sama5*|zynq*|meson*|layerscape*)
 	mkdir -p ${TARGET}/media/backup
 	mkdir -p ${TARGET}/media/data
 	sed -i s,ext2,ext4, ${TARGET}/etc/fstab
+	echo "${ET_ROOTFS_GETTY_PORT}" > ${TARGET}/etc/securetty
 	# mmc0 is the SD/MMC card
 	printf "/dev/mmcblk0p1 /media/BOOT auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 	printf "/dev/mmcblk0p2 /media/rootfs auto defaults 0 0\n" >> ${TARGET}/etc/fstab
@@ -120,10 +119,22 @@ omap2plus*|sama5*|zynq*|meson*|layerscape*)
 		# DEFAULT NO-OP
 		;;
 	esac
-	# Board with larger, and different, user-space
+	# Boards with larger, and different, user-space
 	case "${ET_BOARD_TYPE}" in
-	meson*|layerscape*)
+	meson|layerscape)
 		sed -i s,\#PermitRootLogin\ prohibit-password,PermitRootLogin\ yes, ${TARGET}/etc/ssh/sshd_config
+		mv ${TARGET}/etc/modprobe.d/usbcdc.sh ${TARGET}/etc/modprobe.d/_usbcdc.sh_
+		mv ${TARGET}/etc/dnsmasq.conf ${TARGET}/etc/_dnsmasq.conf_
+		;;
+	*)
+		# DEFAULT NO-OP
+		;;
+	esac
+	# Last Fixup
+	case "${ET_BOARD}" in
+	am335x-pocketbeagle*|am3517-evm*|omap3-beagle*|omap3-evm*|sama5d3-xpld*)
+		printf "\nttyGS0::respawn:/sbin/getty -L ttyGS0 115200 screen-256color\n" >> ${TARGET}/etc/inittab
+		echo "ttyGS0" >> ${TARGET}/etc/securetty
 		;;
 	*)
 		# DEFAULT NO-OP

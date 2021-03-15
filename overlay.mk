@@ -19,6 +19,14 @@ include $(ET_DIR)/packages/cryptodev-linux.mk
 include $(ET_DIR)/packages/openssl.mk
 include $(ET_DIR)/packages/wireless-regdb.mk
 
+define overlay-depends
+	@mkdir -p $(ET_OVERLAY_DIR)
+	@printf "exclude\n"            > $(ET_OVERLAY_DIR)/exclude
+	@printf "usr/include\n"       >> $(ET_OVERLAY_DIR)/exclude
+	@printf "usr/lib/pkgconfig\n" >> $(ET_OVERLAY_DIR)/exclude
+	@printf "usr/lib/*.a\n"       >> $(ET_OVERLAY_DIR)/exclude
+endef
+
 define overlay-version
 	$(call cadence-ttc-pwm-version)
 	$(call cryptodev-linux-version)
@@ -51,9 +59,7 @@ define overlay-info
 endef
 
 define overlay-sync
-	@printf "exclude\n"            > $(ET_OVERLAY_DIR)/exclude
-	@printf "usr/include\n"       >> $(ET_OVERLAY_DIR)/exclude
-	@printf "usr/lib/pkgconfig\n" >> $(ET_OVERLAY_DIR)/exclude
+	$(call overlay-depends)
 	@$(ET_DIR)/scripts/sync overlay $1
 endef
 
@@ -62,6 +68,7 @@ ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -Po zynq),zynq)
 overlay: cadence-ttc-pwm 
 endif
 overlay: cryptodev-linux openssl wireless-regdb
+	$(call overlay-depends)
 
 .PHONY: overlay-clean
 overlay-clean:
