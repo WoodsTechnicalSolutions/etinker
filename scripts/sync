@@ -172,10 +172,6 @@ case "${destination}" in
 					root@${ipv4}:/ 2> /dev/null
 				;;
 			rootfs)
-				if ! [ "`printf ${ET_ROOTFS_TYPE}|grep -Po meson`" = "meson" ]; then
-					printf "Synching '%s' is unsupported for '%s'\n" ${target} ${ET_ROOTFS_TYPE}
-					exit 0
-				fi
 				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
 					-aP ${target_dir}/images/rootfs.tar \
 					root@${ipv4}:/media/data/ 2> /dev/null
