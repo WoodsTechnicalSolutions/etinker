@@ -154,6 +154,7 @@ case "${destination}" in
 		case "${target}" in
 			kernel|bootloader)
 				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
+					--exclude 'boot/extlinux' \
 					-aP ${target_dir}/* \
 					root@${ipv4}:/ 2> /dev/null
 				if [ "${target}" = "kernel" ] && [ "${ET_BOARD_TYPE}" = "omap2plus" ]; then
@@ -162,7 +163,8 @@ case "${destination}" in
 						root@${ipv4}:/lib/firmware/ 2> /dev/null
 				fi
 				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
-					-P ${target_dir}/boot/* \
+					--exclude 'extlinux' \
+					-aP ${target_dir}/boot/* \
 					root@${ipv4}:/media/BOOT/ 2> /dev/null
 				;;
 			overlay)
