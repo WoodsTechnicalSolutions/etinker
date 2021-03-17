@@ -156,27 +156,27 @@ case "${destination}" in
 				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
 					--exclude 'boot/extlinux' \
 					-aP ${target_dir}/* \
-					root@${ipv4}:/ 2> /dev/null
+					root@${ipv4}:/
 				if [ "${target}" = "kernel" ] && [ "${ET_BOARD_TYPE}" = "omap2plus" ]; then
 					rsync -e 'ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
 						-aP ${target_dir}/../../../firmware/* \
-						root@${ipv4}:/lib/firmware/ 2> /dev/null
+						root@${ipv4}:/lib/firmware/
 				fi
 				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
 					--exclude 'extlinux' \
 					-aP ${target_dir}/boot/* \
-					root@${ipv4}:/media/BOOT/ 2> /dev/null
+					root@${ipv4}:/media/BOOT/
 				;;
 			overlay)
 				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
 					--exclude-from=${target_dir}/exclude \
 					-aP ${target_dir}/* \
-					root@${ipv4}:/ 2> /dev/null
+					root@${ipv4}:/
 				;;
 			rootfs)
 				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
 					-aP ${target_dir}/images/rootfs.tar \
-					root@${ipv4}:/media/data/ 2> /dev/null
+					root@${ipv4}:/media/data/
 				;;
 			*)
 				printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}
