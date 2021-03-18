@@ -164,7 +164,7 @@ case "${destination}" in
 				fi
 				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
 					--exclude 'extlinux' \
-					-aP ${target_dir}/boot/* \
+					-rP ${target_dir}/boot/* \
 					root@${ipv4}:/media/BOOT/
 				;;
 			overlay)
