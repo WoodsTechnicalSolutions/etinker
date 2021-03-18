@@ -58,6 +58,7 @@ export ET_PATCH_DIR := $(ET_DIR)/patches
 export ET_SOFTWARE_DIR := $(ET_DIR)/software
 export ET_TARBALLS_DIR := $(ET_DIR)/tarballs
 export ET_SCRIPTS_DIR := $(ET_DIR)/scripts
+export ET_CUSTOM_DIR :=
 
 export ET_BOARD_DIR ?= $(ET_DIR)/boards/$(ET_BOARD)
 

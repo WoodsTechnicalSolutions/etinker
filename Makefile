@@ -92,6 +92,9 @@ info:
 	@if [ -n "$(ET_SYSROOT_DIR)" ]; then \
 		printf "ET_SYSROOT_DIR: $(ET_SYSROOT_DIR)\n"; \
 	fi
+	@if [ -n "$(ET_CUSTOM_DIR)" ]; then \
+		printf "ET_CUSTOM_DIR: $(ET_CUSTOM_DIR)\n"; \
+	fi
 	$(call toolchain-$@)
 	$(call kernel-$@)
 	$(call bootloader-$@)
