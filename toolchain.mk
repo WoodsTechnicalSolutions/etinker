@@ -153,7 +153,7 @@ define toolchain-clean
 endef
 
 define toolchain-purge
-	printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-purge *****\n\n"
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-purge *****\n\n"
 	$(RM) -r $(ET_TOOLCHAIN_DIR)
 	$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)
 endef

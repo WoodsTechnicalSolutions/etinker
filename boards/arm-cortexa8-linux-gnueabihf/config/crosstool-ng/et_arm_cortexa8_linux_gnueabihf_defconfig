@@ -21,7 +21,7 @@ CT_ARCH_ARCH="armv7-a"
 CT_ARCH_FPU="neon"
 CT_ARCH_FLOAT_HW=y
 # CT_SHOW_CT_VERSION is not set
-CT_TOOLCHAIN_PKGVERSION="ARM Cortex-A8 gnueabihf"
+CT_TOOLCHAIN_PKGVERSION="Arm® Cortex®-A8 Linux GNU EABI Hard Float"
 CT_TOOLCHAIN_BUGURL="https://www.woodsts.org/contact.html"
 CT_TARGET_VENDOR="cortexa8"
 CT_TARGET_ALIAS="arm-linux"
@@ -37,14 +37,19 @@ CT_LIBC_GLIBC=y
 CT_GLIBC_USE_LIBIDN_ADDON=y
 # CT_GLIBC_ENABLE_OBSOLETE_RPC is not set
 # CT_GLIBC_ENABLE_WERROR is not set
+CT_CC_GCC_EXTRA_CONFIG_ARRAY="--enable-gnu-indirect-function --enable-checking=release --enable-clocale=gnu --enable-install-libiberty --enable-plugin --with-isl"
 # CT_CC_GCC_STATIC_LIBSTDCXX is not set
+CT_CC_GCC_SYSTEM_ZLIB=y
 # CT_CC_GCC_ENABLE_TARGET_OPTSPACE is not set
 CT_CC_GCC_LIBSSP=y
 CT_CC_GCC_LIBQUADMATH=y
+# CT_CC_GCC_SJLJ_EXCEPTIONS is not set
+CT_CC_GCC_BUILD_ID=y
+CT_CC_GCC_LNK_HASH_STYLE_GNU=y
 CT_CC_LANG_CXX=y
 CT_DEBUG_GDB=y
 # CT_GDB_CROSS_PYTHON is not set
 CT_DEBUG_STRACE=y
 CT_COMP_LIBS_LIBELF=y
 CT_NCURSES_TARGET_DISABLE_DB=y
-CT_NCURSES_TARGET_FALLBACKS="linux,xterm,xterm-color,xterm-256color,vt100"
+CT_NCURSES_TARGET_FALLBACKS="linux,screen-256color,xterm,xterm-color,xterm-256color,vt100"

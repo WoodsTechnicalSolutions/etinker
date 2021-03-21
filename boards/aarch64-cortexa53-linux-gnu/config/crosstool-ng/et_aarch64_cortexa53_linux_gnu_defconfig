@@ -18,7 +18,7 @@ CT_ARCH_ARM=y
 CT_ARCH_CPU="cortex-a53"
 CT_ARCH_64=y
 # CT_SHOW_CT_VERSION is not set
-CT_TOOLCHAIN_PKGVERSION="AArch64 Cortex-A53 Linux GNU"
+CT_TOOLCHAIN_PKGVERSION="AArch64 Arm® Cortex®-A53 Linux GNU"
 CT_TOOLCHAIN_BUGURL="https://www.woodsts.org/contact.html"
 CT_TARGET_VENDOR="cortexa53"
 CT_TARGET_ALIAS="aarch64-linux"
@@ -49,4 +49,4 @@ CT_DEBUG_GDB=y
 CT_DEBUG_STRACE=y
 CT_COMP_LIBS_LIBELF=y
 CT_NCURSES_TARGET_DISABLE_DB=y
-CT_NCURSES_TARGET_FALLBACKS="linux,xterm,xterm-color,xterm-256color,vt100"
+CT_NCURSES_TARGET_FALLBACKS="linux,screen-256color,xterm,xterm-color,xterm-256color,vt100"
