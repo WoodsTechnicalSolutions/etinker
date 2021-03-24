@@ -92,6 +92,7 @@ if [ -f /usr/bin/apt ]; then
 		manpages-posix-dev \
 		mc \
 		mercurial \
+		meson \
 		moreutils \
 		mtd-utils \
 		mtools \
@@ -101,6 +102,7 @@ if [ -f /usr/bin/apt ]; then
 		patchelf \
 		pax \
 		pkg-config \
+		python3-pip \
 		python-dev \
 		qemu \
 		rlwrap \
