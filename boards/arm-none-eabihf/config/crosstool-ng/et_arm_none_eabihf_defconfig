@@ -16,9 +16,10 @@ CT_LOCAL_PATCH_DIR="${ET_DIR}/patches"
 CT_ARCH_ARM=y
 CT_ARCH_ARM_MODE_THUMB=y
 CT_MULTILIB=y
+CT_ARCH_FPU="fpv4-sp-d16"
 CT_ARCH_FLOAT_HW=y
-CT_TARGET_CFLAGS="-ftls-model=local-exec -fno-builtin -fno-strict-aliasing -ffunction-sections -fdata-sections -mabi=aapcs -mthumb -mfloat-abi=hard"
-CT_TARGET_LDFLAGS="-mabi=aapcs -mthumb -mfloat-abi=hard"
+CT_TARGET_CFLAGS="-ftls-model=local-exec -mabi=aapcs -mthumb -march=armv7e-m+fp -mfpu=fpv4-sp-d16 -mfloat-abi=hard"
+CT_TARGET_LDFLAGS="-mabi=aapcs -mthumb -march=armv7e-m+fp -mfpu=fpv4-sp-d16 -mfloat-abi=hard"
 # CT_SHOW_CT_VERSION is not set
 CT_TOOLCHAIN_PKGVERSION="Arm® Cortex®-M4 EABI Hardware Floating Point"
 CT_TOOLCHAIN_BUGURL="https://www.woodsts.org/contact.html"
@@ -29,6 +30,7 @@ CT_BINUTILS_GOLD_THREADS=y
 CT_BINUTILS_LD_WRAPPER=y
 CT_BINUTILS_PLUGINS=y
 CT_LIBC_NONE=y
+CT_CC_GCC_EXTRA_CONFIG_ARRAY="--enable-plugins --with-mode=thumb --with-arch=armv7e-m+fp --with-fpu=fpv4-sp-d16 --with-float=hard"
 # CT_CC_GCC_STATIC_LIBSTDCXX is not set
 CT_CC_GCC_SYSTEM_ZLIB=y
 CT_CC_GCC_CONFIG_TLS=y
@@ -44,6 +46,7 @@ CT_NCURSES_HOST_FALLBACKS="linux,screen-256color,xterm,xterm-color,xterm-256colo
 CT_NCURSES_TARGET_DISABLE_DB=y
 CT_NCURSES_TARGET_FALLBACKS="linux,screen-256color,xterm,xterm-color,xterm-256color,vt100"
 CT_COMP_LIBS_NEWLIB_NANO=y
+CT_LIBC_NEWLIB_NANO_TARGET_CFLAGS="-fno-builtin -fno-strict-aliasing -ffunction-sections -fdata-sections"
 CT_LIBC_NEWLIB_NANO_IO_C99FMT=y
 CT_LIBC_NEWLIB_NANO_IO_LL=y
 CT_LIBC_NEWLIB_NANO_IO_FLOAT=y
@@ -54,5 +57,6 @@ CT_LIBC_NEWLIB_NANO_IO_POS_ARGS=y
 CT_LIBC_NEWLIB_NANO_RETARGETABLE_LOCKING=y
 CT_LIBC_NEWLIB_NANO_EXTRA_SECTIONS=y
 CT_COMP_LIBS_PICOLIBC=y
+CT_LIBC_PICOLIBC_TARGET_CFLAGS="-fno-builtin -fno-strict-aliasing -ffunction-sections -fdata-sections"
 CT_LIBC_PICOLIBC_GLOBAL_ATEXIT=y
 CT_LIBC_PICOLIBC_EXTRA_SECTIONS=y

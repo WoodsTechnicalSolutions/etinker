@@ -15,8 +15,7 @@ CT_LOCAL_PATCH_DIR="${ET_DIR}/patches"
 # CT_LOG_PROGRESS_BAR is not set
 CT_ARCH_ARM=y
 CT_MULTILIB=y
-CT_TARGET_CFLAGS="-ftls-model=local-exec -fno-builtin -fno-strict-aliasing -ffunction-sections -fdata-sections -mabi=aapcs -mfloat-abi=softfp"
-CT_TARGET_LDFLAGS="-mabi=aapcs -mfloat-abi=softfp"
+CT_TARGET_CFLAGS="-ftls-model=local-exec"
 # CT_SHOW_CT_VERSION is not set
 CT_TOOLCHAIN_PKGVERSION="Arm® Cortex®-M4 EABI Software Floating Point"
 CT_TOOLCHAIN_BUGURL="https://www.woodsts.org/contact.html"
@@ -42,6 +41,7 @@ CT_NCURSES_HOST_FALLBACKS="linux,screen-256color,xterm,xterm-color,xterm-256colo
 CT_NCURSES_TARGET_DISABLE_DB=y
 CT_NCURSES_TARGET_FALLBACKS="linux,screen-256color,xterm,xterm-color,xterm-256color,vt100"
 CT_COMP_LIBS_NEWLIB_NANO=y
+CT_LIBC_NEWLIB_NANO_TARGET_CFLAGS="-fno-builtin -fno-strict-aliasing -ffunction-sections -fdata-sections"
 CT_LIBC_NEWLIB_NANO_IO_C99FMT=y
 CT_LIBC_NEWLIB_NANO_IO_LL=y
 CT_LIBC_NEWLIB_NANO_IO_FLOAT=y
@@ -52,5 +52,6 @@ CT_LIBC_NEWLIB_NANO_IO_POS_ARGS=y
 CT_LIBC_NEWLIB_NANO_RETARGETABLE_LOCKING=y
 CT_LIBC_NEWLIB_NANO_EXTRA_SECTIONS=y
 CT_COMP_LIBS_PICOLIBC=y
+CT_LIBC_PICOLIBC_TARGET_CFLAGS="-fno-builtin -fno-strict-aliasing -ffunction-sections -fdata-sections"
 CT_LIBC_PICOLIBC_GLOBAL_ATEXIT=y
 CT_LIBC_PICOLIBC_EXTRA_SECTIONS=y
