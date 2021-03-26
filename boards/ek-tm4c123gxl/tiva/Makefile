@@ -15,7 +15,8 @@ include $(ET_DIR)/etinker.mk
 
 TIVAWARE := $(ET_SOFTWARE_DIR)/tivaware
 
-CFLAGS = -march=armv7e-m -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb
+CFLAGS = --specs=nano.specs
+CFLAGS += -mthumb -march=armv7e-m+fp -mfpu=fpv4-sp-d16 -mfloat-abi=hard
 CFLAGS += -MD -std=c99 -Wall -ffunction-sections -fdata-sections -pedantic
 CFLAGS += -DPART_$(shell echo $(ET_BOARD_MCU) | tr '[:lower:]' '[:upper:]') -DTARGET_IS_TM4C123_RB1
 CFLAGS += -I$(TIVAWARE)
@@ -37,7 +38,8 @@ MKDIR = mkdir -p
 
 OUTPUT = build
 
-LDFLAGS = -Wl,-T$(ET_BOARD_MCU).ld \
+LDFLAGS = --specs=nano.specs --sysroot=$(ET_TOOLCHAIN_DIR)/newlib-nano/$(ET_CROSS_TUPLE) \
+	  -Wl,-T$(ET_BOARD_MCU).ld \
 	  -Wl,--entry=ResetISR \
 	  -Wl,--static \
 	  -Wl,--gc-sections \
