@@ -29,4 +29,4 @@ ifeq ($(ET_BOARD),$(ET_BOARD_CROSS_TUPLE))
 export ET_BOARD_TYPE := $(ET_BOARD_CROSS_TUPLE)
 endif
 
-export CT_KERNEL = arm-bare-metal
+export CT_KERNEL = bare-metal
