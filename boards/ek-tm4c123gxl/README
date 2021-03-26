@@ -1,29 +1,35 @@
 TivaWare(tm) for C Series Libraries
 ===================================
 
-1. Download "SW-EK-TM4C123GXL-2.1.4.178.exe" from http://www.ti.com/tool/sw-tm4c
+1. Download "SW-TM4C-2.2.0.295.exe" from https://www.ti.com/tool/SW-TM4C
 
-2. Use 'wine' install to /home/<user>/.wine/drive_c/ti/TivaWare_C_Series-2.1.4.178
+   NOTE: You will need a TI account to download software [Accept License Agreement(s)]
+
+2. Use 'wine' install to /home/<user>/.wine/drive_c/ti/TivaWare_C_Series-2.2.0.295
 
 3. Archive the source code
 
-   $ tar -zcf ~/Downloads/TivaWare_C_Series-2.1.4.178.tar.gz /home/<user>/.wine/drive_c/ti/TivaWare_C_Series-2.1.4.178
+   $ tar -C /home/<user>/.wine/drive_c/ti -zcf ~/Downloads/TivaWare_C_Series-2.2.0.295.tar.gz TivaWare_C_Series-2.2.0.295/
 
 4. Place TivaWare in 'etinker' software directory
 
-   $ cp -a /home/<user>/.wine/drive_c/ti/TivaWare_C_Series-2.1.4.178 /path/to/etinker/software/tivaware
+   $ cp -a /home/<user>/.wine/drive_c/ti/TivaWare_C_Series-2.2.0.295 /path/to/etinker/software/tivaware
 
 5. Build TivaWare
 
-   a. Modify PATH in 'tivaware/makedefs' to include '/path/to/etinker/toolchain/arm-none-eabihf/bin'
+   a. Modify PREFIX in 'tivaware/makedefs' to fall back to 'arm-none-eabihf' as the default cross-compile tuple
 
-   b. Modify PREFIX in 'tivaware/makedefs' to fall back to 'arm-none-eabihf' as the default
+   b. Modify CFLAGS in 'tivaware/makedefs' to include '--specs=nano.specs'
 
-   c. Export PATH in shell
+   c. Modify LDFLAGS in 'tivaware/makedefs' to include '--specs=nano.specs --sysroot=/path/to/etinker/toolchain/arm-none-eabihf/newlib-nano/arm-none-eabihf'
+
+   d. Modify DIRS in 'tivaware/Makefile' to remove 'examples' from list (you only need the libraries)
+
+   e. Export PATH in shell
 
       $ export PATH="/path/to/etinker/toolchain/arm-none-eabihf/bin:${PATH}"
 
-   d. Build
+   f. Build
 
       $ cd /path/to/etinker/software/tivaware
       $ make clean all
