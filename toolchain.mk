@@ -41,7 +41,8 @@ export ET_TOOLCHAIN_GLIBC_VERSION := $(shell grep -oP 'CT_GLIBC_VERSION=[^"]*"\K
 export ET_TOOLCHAIN_LINUX_VERSION := $(shell grep -oP 'CT_LINUX_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_BUILD_CONFIG) 2>/dev/null)
 endif
 ifeq ($(CT_KERNEL),bare-metal)
-export ET_TOOLCHAIN_NEWLIB_VERSION := $(shell grep -oP 'CT_NEWLIB_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_BUILD_CONFIG) 2>/dev/null)
+export ET_TOOLCHAIN_NEWLIB_NANO_VERSION := $(shell grep -oP 'CT_NEWLIB_NANO_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_BUILD_CONFIG) 2>/dev/null)
+export ET_TOOLCHAIN_PICOLIBC_VERSION := $(shell grep -oP 'CT_PICOLIBC_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_BUILD_CONFIG) 2>/dev/null)
 endif
 
 define toolchain-version
@@ -169,7 +170,8 @@ define toolchain-info
 		printf "ET_TOOLCHAIN_LINUX_VERSION: $(ET_TOOLCHAIN_LINUX_VERSION)\n"; \
 	fi
 	@if [ "$(CT_KERNEL)" = "bare-metal" ]; then \
-		printf "ET_TOOLCHAIN_NEWLIB_VERSION: $(ET_TOOLCHAIN_NEWLIB_VERSION)\n"; \
+		printf "ET_TOOLCHAIN_NEWLIB_NANO_VERSION: $(ET_TOOLCHAIN_NEWLIB_NANO_VERSION)\n"; \
+		printf "ET_TOOLCHAIN_PICOLIBC_VERSION: $(ET_TOOLCHAIN_PICOLIBC_VERSION)\n"; \
 	fi
 	@printf "ET_TOOLCHAIN_SOFTWARE_DIR: $(ET_TOOLCHAIN_SOFTWARE_DIR)\n"
 	@printf "ET_TOOLCHAIN_GENERATOR: $(ET_TOOLCHAIN_GENERATOR)\n"
