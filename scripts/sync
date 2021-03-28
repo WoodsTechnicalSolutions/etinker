@@ -158,7 +158,7 @@ case "${destination}" in
 					-aP ${target_dir}/* \
 					root@${ipv4}:/
 				if [ "${target}" = "kernel" ] && [ "${ET_BOARD_TYPE}" = "omap2plus" ]; then
-					rsync -e 'ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no' \
+					rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
 						-aP ${target_dir}/../../../firmware/* \
 						root@${ipv4}:/lib/firmware/
 				fi
