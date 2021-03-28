@@ -12,6 +12,8 @@ CONFIG_SPL_SIZE_LIMIT=0x20000
 CONFIG_SPL=y
 CONFIG_IDENT_STRING=" Xilinx Zynq Pynq-Z2"
 CONFIG_ZYNQ_MAC_IN_EEPROM=y
+CONFIG_CMD_FRU=y
+CONFIG_CMD_ZYNQ_AES=y
 CONFIG_SPL_PAYLOAD="u-boot.img"
 CONFIG_DEFAULT_DEVICE_TREE="zynq-pynq-z2"
 # CONFIG_LOCALVERSION_AUTO is not set
@@ -27,7 +29,7 @@ CONFIG_SPL_LOAD_FIT=y
 CONFIG_SPL_LOAD_FIT_ADDRESS=0x10000000
 # CONFIG_USE_SPL_FIT_GENERATOR is not set
 CONFIG_LEGACY_IMAGE_FORMAT=y
-CONFIG_BOOTCOMMAND="mmc rescan && fatload mmc 0 ${scriptaddr} uEnv.txt && echo && echo Importing uEnv.txt ... && env import -t ${scriptaddr} ${filesize} && run uenvcmd || run distro_bootcmd"
+CONFIG_BOOTCOMMAND="mmc rescan && load mmc 0:1 ${kernel_addr_r} fpga.bin && fpga load 0 ${kernel_addr_r} ${filesize} && run distro_bootcmd"
 CONFIG_USE_PREBOOT=y
 CONFIG_PREBOOT="usb start"
 CONFIG_SPL_LEGACY_IMAGE_SUPPORT=y

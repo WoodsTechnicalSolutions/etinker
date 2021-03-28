@@ -1,6 +1,0 @@
-uenvcmd=env set mmc_fpga 'echo && echo Loading FPGA bitstream ... && load mmc 0:1 ${kernel_addr_r} fpga.bin && fpga load 0 ${kernel_addr_r} ${filesize}' && \
-env set mmc_kernel 'echo && echo Loading kernel ... && load mmc 0:1 ${kernel_addr_r} zImage' && \
-env set mmc_devicetree 'echo && echo Loading devicetree ... && load mmc 0:1 ${fdt_addr_r} system.dtb' && \
-env set bootcmd_uenv 'echo && echo Booting 'etinker' environment ... && run mmc_fpga && run mmc_kernel && run mmc_devicetree && echo && bootz ${kernel_addr_r} - ${fdt_addr_r}' && \
-env set bootcmd 'run bootcmd_uenv' && \
-run bootcmd
