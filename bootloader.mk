@@ -119,6 +119,11 @@ define bootloader-finalize
 		cp -av $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(et_board)/extlinux $(ET_BOOTLOADER_DIR)/boot/; \
 	fi
 	@cp -av $(ET_BOOTLOADER_BUILD_IMAGE) $(ET_BOOTLOADER_DIR)/boot/
+	@if [ -d $(ET_TFTP_DIR) ]; then \
+		sudo mkdir -p $(ET_TFTP_DIR)/$(ET_BOARD); \
+		sudo chown $(USER).$(USER) $(ET_TFTP_DIR)/$(ET_BOARD); \
+		rsync -r $(ET_BOOTLOADER_DIR)/boot/* $(ET_TFTP_DIR)/$(ET_BOARD)/; \
+	fi
 	$(call bootloader-finalize-$(ET_BOARD))
 endef
 
