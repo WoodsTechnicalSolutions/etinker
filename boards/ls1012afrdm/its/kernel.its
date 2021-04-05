@@ -1,0 +1,41 @@
+/*
+ * Based on the following:
+ * https://gitlab.denx.de/u-boot/u-boot/-/blob/master/doc/uImage.FIT/kernel_fdt.its
+ */
+
+/dts-v1/;
+
+/ {
+	description = "LS1012A Linux kernel and FDT blob";
+	#address-cells = <1>;
+
+	images {
+		kernel {
+			description = "ARM64 LS1043A Linux kernel";
+			data = /incbin/("./Image.gz");
+			type = "kernel";
+			arch = "arm64";
+			os = "linux";
+			compression = "gzip";
+			load = <0x80080000>;
+			entry = <0x80080000>;
+		};
+		fdt-1 {
+			description = "Flattened Device Tree blob";
+			data = /incbin/("./fsl-ls1012a-frdm.dtb");
+			type = "flat_dt";
+			arch = "arm64";
+			compression = "none";
+			load = <0x90000000>;
+		};
+	};
+
+	configurations {
+		default = "config-1";
+		config-1 {
+			description = "Boot Linux kernel with FDT blob";
+			kernel = "kernel";
+			fdt = "fdt-1";
+		};
+	};
+};
