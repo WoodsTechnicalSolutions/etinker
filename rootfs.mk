@@ -30,6 +30,11 @@ export ET_ROOTFS_ISSUE := $(shell printf "etinker: $(ET_BOARD)")
 export ET_ROOTFS_CACHED_VERSION := $(shell grep -Po 'rootfs-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
 
 rootfs_defconfig := et_$(subst -,_,$(ET_ROOTFS_TYPE))_defconfig
+rootfs_type := $(ET_ROOTFS_TYPE)
+ifeq ($(ET_INITRAMFS),yes)
+rootfs_type := $(subst -initramfs,,$(ET_ROOTFS_TYPE))
+rootfs_dir := /initramfs
+endif
 
 # [start] rootfs version magic
 ET_ROOTFS_VERSION := $(shell cd $(ET_ROOTFS_SOFTWARE_DIR) 2>/dev/null && git describe --long --dirty 2>/dev/null | tr -d v)
@@ -43,9 +48,9 @@ export ET_ROOTFS_BUILD_DIR := $(ET_DIR)/rootfs/build/$(ET_ROOTFS_TYPE)/$(ET_CROS
 export ET_ROOTFS_BUILD_CONFIG := $(ET_ROOTFS_BUILD_DIR)/.config
 export ET_ROOTFS_BUILD_IMAGE := $(ET_ROOTFS_BUILD_DIR)/images/rootfs.tar
 export ET_ROOTFS_TARBALLS_DIR := $(ET_TARBALLS_DIR)/rootfs
-export ET_ROOTFS_DIR := $(ET_DIR)/rootfs/$(ET_BOARD)/$(ET_CROSS_TUPLE)
-export ET_ROOTFS_DEFCONFIG := $(ET_DIR)/boards/$(ET_ROOTFS_TYPE)/config/$(ET_ROOTFS_TREE)/$(rootfs_defconfig)
-export ET_ROOTFS_BUSYBOX_CONFIG := $(ET_DIR)/boards/$(ET_ROOTFS_TYPE)/config/$(ET_ROOTFS_TREE)/busybox.config
+export ET_ROOTFS_DIR := $(ET_DIR)/rootfs/$(ET_BOARD)/$(ET_CROSS_TUPLE)$(rootfs_dir)
+export ET_ROOTFS_DEFCONFIG := $(ET_DIR)/boards/$(rootfs_type)/config/$(ET_ROOTFS_TREE)/$(rootfs_defconfig)
+export ET_ROOTFS_BUSYBOX_CONFIG := $(ET_DIR)/boards/$(rootfs_type)/config/$(ET_ROOTFS_TREE)/busybox.config
 export ET_ROOTFS_IMAGE := $(ET_ROOTFS_DIR)/images/rootfs.tar
 export ET_ROOTFS_TARGET_FINAL ?= $(ET_ROOTFS_IMAGE)
 
@@ -121,6 +126,11 @@ define rootfs-build
 		fi; \
 		$(RM) -r $(ET_ROOTFS_DIR)/images; \
 		cp -av $(ET_ROOTFS_BUILD_DIR)/images $(ET_ROOTFS_DIR)/; \
+		if [ -d $(ET_TFTP_DIR) ]; then \
+			sudo mkdir -p $(ET_TFTP_DIR)/$(ET_BOARD); \
+			sudo chown $(USER).$(USER) $(ET_TFTP_DIR)/$(ET_BOARD); \
+			rsync -r $(ET_ROOTFS_DIR)/images/* $(ET_TFTP_DIR)/$(ET_BOARD)/; \
+		fi; \
 	fi
 	@if [ -n "$(shell diff $(ET_ROOTFS_BUILD_DIR)/build/busybox-*/.config $(ET_ROOTFS_BUSYBOX_CONFIG) 2> /dev/null)" ] || \
 							[ "$(shell echo $1 | grep -Po busybox)" = "busybox" ]; then \

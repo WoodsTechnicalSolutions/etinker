@@ -17,11 +17,15 @@ ifndef ET_BOARD_ROOTFS_TREE
 $(error [ 'etinker' packages requires buildroot rootfs ] ***)
 endif
 
+ifeq ($(ET_INITRAMFS),yes)
+rootfs_type := $(subst -initramfs,,$(ET_ROOTFS_TYPE))
+endif
+
 export ET_OPENSSL_TREE := openssl
 export ET_OPENSSL_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_OPENSSL_TREE)
 export ET_OPENSSL_VERSION := $(shell cd $(ET_OPENSSL_SOFTWARE_DIR) 2>/dev/null && git describe --long --dirty 2>/dev/null)
 export ET_OPENSSL_CACHED_VERSION := $(shell grep -Po 'openssl-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
-export ET_OPENSSL_BUILD_DIR := $(ET_DIR)/overlay/build/$(ET_ROOTFS_TYPE)/$(ET_CROSS_TUPLE)/openssl
+export ET_OPENSSL_BUILD_DIR := $(ET_DIR)/overlay/build/$(rootfs_type)/$(ET_CROSS_TUPLE)/openssl
 export ET_OPENSSL_BUILD_CONFIG := $(ET_OPENSSL_BUILD_DIR)/configdata.pm
 export ET_OPENSSL_BUILD_CRYPTO_SO := $(ET_OPENSSL_BUILD_DIR)/libcrypto.so
 export ET_OPENSSL_BUILD_SSL_SO := $(ET_OPENSSL_BUILD_DIR)/libssl.so

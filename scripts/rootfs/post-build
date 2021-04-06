@@ -65,7 +65,7 @@ omap2plus|sama5|zynq|meson|layerscape)
 	mkdir -p ${TARGET}/media/rootfs
 	mkdir -p ${TARGET}/media/backup
 	mkdir -p ${TARGET}/media/data
-	sed -i s,ext2,ext4, ${TARGET}/etc/fstab
+	sed -i s,ext2,auto, ${TARGET}/etc/fstab
 	echo "${ET_ROOTFS_GETTY_PORT}" > ${TARGET}/etc/securetty
 	# mmc0 is the SD/MMC card
 	printf "/dev/mmcblk0p1 /media/BOOT auto defaults 0 0\n" >> ${TARGET}/etc/fstab
@@ -130,7 +130,6 @@ omap2plus|sama5|zynq|meson|layerscape)
 	meson|layerscape)
 		sed -i s,\#PermitRootLogin\ prohibit-password,PermitRootLogin\ yes, ${TARGET}/etc/ssh/sshd_config
 		mv ${TARGET}/etc/modprobe.d/usbcdc.sh ${TARGET}/etc/modprobe.d/_usbcdc.sh_
-		mv ${TARGET}/etc/dnsmasq.conf ${TARGET}/etc/_dnsmasq.conf_
 		;;
 	*)
 		# DEFAULT NO-OP
@@ -154,4 +153,11 @@ esac
 
 if [ -n "${ET_CUSTOM_DIR}" ] && [ -d ${ET_CUSTOM_DIR} ]; then
 	rsync ${rsync_opts} ${ET_CUSTOM_DIR}/* ${TARGET}/ 2>/dev/null
+fi
+
+if [ "${ET_INITRAMFS}" = "yes" ]; then
+	# reduce size of rootfs.cpio
+	rm -rf ${TARGET}/boot
+	rm -f ${TARGET}/usr/lib/lib*.a
+	sed -i s,\/dev\/mmc,\#\/dev\/mmc, ${TARGET}/etc/fstab
 fi
