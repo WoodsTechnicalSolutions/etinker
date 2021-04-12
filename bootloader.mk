@@ -67,7 +67,11 @@ export ET_BOOTLOADER_BUILD_SYSMAP := $(ET_BOOTLOADER_BUILD_DIR)/System.map
 export ET_BOOTLOADER_DIR := $(ET_DIR)/bootloader/$(ET_BOARD)/$(ET_CROSS_TUPLE)
 export ET_BOOTLOADER_DEFCONFIG := $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(et_board)/$(bootloader_defconfig)
 
-export DEVICE_TREE := $(ET_BOARD_KERNEL_DT)
+export DEVICE_TREE := $(ET_BOARD_BOOTLOADER_DT)
+# Handle out-of-tree devicetree build (i.e. dtb-y += custom-board.dtb)
+ifneq ($(shell ls $(ET_BOARD_DIR)/dts/u-boot/Makefile 2> /dev/null),)
+export DEVICE_TREE_MAKEFILE := -f $(ET_BOARD_DIR)/dts/u-boot/Makefile
+endif
 
 # Get board specific definitions
 include $(ET_DIR)/boards/$(et_board)/bootloader.mk

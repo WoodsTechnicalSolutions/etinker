@@ -8,9 +8,6 @@ endif
 export ET_BOOTLOADER_BUILD_SPL := $(ET_BOOTLOADER_BUILD_DIR)/spl/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
 export ET_BOOTLOADER_SPL := $(ET_BOOTLOADER_DIR)/boot/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
 
-# Handle out-of-tree devicetree build (i.e. dtb-y += zynq-custom-board.dtb)
-export DEVICE_TREE_MAKEFILE := -f $(ET_BOARD_DIR)/dts/u-boot/Makefile
-
 define bootloader-depends-$(ET_BOARD_TYPE)
 	@if [ -d $(ET_BOARD_DIR)/fpga/sdk ]; then \
 		rsync -r $(ET_BOARD_DIR)/fpga/dts $(ET_BOARD_DIR)/; \

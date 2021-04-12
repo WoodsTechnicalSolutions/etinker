@@ -1,8 +1,5 @@
 export ET_BOOTLOADER_ARCH := arm
 
-# Handle out-of-tree devicetree build (i.e. dtb-y += fsl-ls1043a-custom-board.dtb)
-export DEVICE_TREE_MAKEFILE := -f $(ET_BOARD_DIR)/dts/u-boot/Makefile
-
 export LSDK_VERSION ?= LSDK-20.12
 export LSDK_VERSION_URL ?= lsdk2012
 export LSDK_MACHINE ?= ls1043ardb

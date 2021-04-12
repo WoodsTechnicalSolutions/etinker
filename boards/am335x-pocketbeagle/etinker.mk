@@ -51,3 +51,5 @@ ET_BOARD_HOSTNAME ?= $(ET_BOARD)
 ET_BOARD_GETTY_PORT ?= ttyS0
 
 ET_BOARD_KERNEL_DT ?= am335x-pocketbeagle
+
+ET_BOARD_BOOTLOADER_DT ?= am335x-pocketbeagle-etinker

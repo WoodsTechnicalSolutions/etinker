@@ -43,3 +43,5 @@ ET_BOARD_GETTY_PORT ?= ttyS0
 
 ET_BOARD_KERNEL_DT ?= fsl-ls1043a-rdb
 ET_BOARD_KERNEL_DT_ETINKER ?= fsl-ls1043a-rdb-etinker
+
+ET_BOARD_BOOTLOADER_DT ?= fsl-ls1043a-rdb-etinker
