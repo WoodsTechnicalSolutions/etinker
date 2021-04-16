@@ -141,6 +141,9 @@ omap2plus|sama5|zynq|meson|layerscape)
 		printf "\nttyGS0::respawn:/sbin/getty -L ttyGS0 115200 screen-256color\n" >> ${TARGET}/etc/inittab
 		echo "ttyGS0" >> ${TARGET}/etc/securetty
 		;;
+	ls1012afrdm*)
+		sed -i s,\/dev\/mmc,\#\/dev\/mmc, ${TARGET}/etc/fstab
+		;;
 	*)
 		# DEFAULT NO-OP
 		;;

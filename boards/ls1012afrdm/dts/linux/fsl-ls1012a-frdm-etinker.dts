@@ -24,7 +24,6 @@
 		gpio1 = &gpio1;
 		spi0 = &qspi;
 		spi1 = &dspi;
-		mmc0 = &esdhc0;
 		serial = &duart0;
 		ethernet0 = &pfe_mac0;
 		ethernet1 = &pfe_mac1;
@@ -178,15 +177,4 @@
 
 &gpio1 {
 	status = "okay";
-};
-
-&dspi {
-	status = "okay";
-};
-
-&esdhc0 {
-	status = "okay";
-
-	cd-gpios = <&gpio1 2 GPIO_ACTIVE_LOW>;
-	wp-gpios = <&gpio1 3 GPIO_ACTIVE_LOW>;
 };

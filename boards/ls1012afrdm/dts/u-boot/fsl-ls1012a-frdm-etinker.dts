@@ -10,7 +10,6 @@
 
 / {
 	aliases {
-		mmc0 = &esdhc0;
 		spi1 = &dspi0;
 	};
 
@@ -20,9 +19,5 @@
 };
 
 &dspi0 {
-	status = "okay";
-};
-
-&esdhc0 {
 	status = "okay";
 };
