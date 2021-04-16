@@ -132,8 +132,10 @@ endef
 define kernel-finalize
 	$(call kernel-finalize-$(ET_BOARD))
 	@if [ -d $(ET_TFTP_DIR) ]; then \
-		sudo mkdir -p $(ET_TFTP_DIR)/$(ET_BOARD); \
-		sudo chown $(USER).$(USER) $(ET_TFTP_DIR)/$(ET_BOARD); \
+		if ! [ -d $(ET_TFTP_DIR)/$(ET_BOARD) ]; then \
+			sudo mkdir -p $(ET_TFTP_DIR)/$(ET_BOARD); \
+			sudo chown $(USER).$(USER) $(ET_TFTP_DIR)/$(ET_BOARD); \
+		fi; \
 		rsync -r $(ET_KERNEL_DIR)/boot/* $(ET_TFTP_DIR)/$(ET_BOARD)/; \
 	fi
 endef
