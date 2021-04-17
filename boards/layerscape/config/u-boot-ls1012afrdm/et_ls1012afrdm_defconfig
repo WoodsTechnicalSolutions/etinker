@@ -18,7 +18,7 @@ CONFIG_QSPI_BOOT=y
 CONFIG_BOOTDELAY=10
 CONFIG_USE_BOOTARGS=y
 CONFIG_BOOTARGS="console=ttyS0,115200 root=/dev/ram0 earlycon=uart8250,mmio,0x21c0500 quiet lpj=250000"
-CONFIG_BOOTCOMMAND="setenv autoload off && dhcp && tftpboot ${load_addr} ${tftpip}:ls1012afrdm/kernel.itb && setenv bootargs console=ttyS0,115200n8 rw root=/dev/nfs rootfstype=nfs nfsroot=10.1.0.84:/nfs/ls1012afrdm,vers=3,tcp ip=dhcp nfsrootdebug && pfe stop && bootm ${load_addr}"
+CONFIG_BOOTCOMMAND="setenv autoload off && dhcp && tftpboot ${load_addr} ${tftpip}:ls1012afrdm/kernel.itb && setenv bootargs console=ttyS0,115200n8 rw root=/dev/nfs rootfstype=nfs nfsroot=${tftpip}:/nfs/ls1012afrdm,vers=3,tcp ip=dhcp nfsrootdebug && pfe stop && bootm ${load_addr}"
 # CONFIG_DISPLAY_BOARDINFO is not set
 CONFIG_DISPLAY_BOARDINFO_LATE=y
 CONFIG_CMD_CONFIG=y
@@ -33,7 +33,6 @@ CONFIG_CMD_MEMINFO=y
 CONFIG_CMD_MEMTEST=y
 CONFIG_CMD_GPT=y
 CONFIG_CMD_I2C=y
-CONFIG_CMD_MMC=y
 CONFIG_CMD_USB=y
 # CONFIG_CMD_SETEXPR is not set
 CONFIG_CMD_TFTPPUT=y
