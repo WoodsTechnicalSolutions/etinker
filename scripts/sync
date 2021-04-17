@@ -1,6 +1,8 @@
 #!/bin/bash
 #
 
+rsync_opts="-rlptgDP"
+
 usage()
 {
 	printf "USAGE: sync <target> <destination>\n"
@@ -91,11 +93,11 @@ case "${destination}" in
 					exit 1
 				fi
 				sudo mkdir -p ${media}/rootfs/lib/firmware
-				sudo rsync -aP ${target_dir}/* ${media}/rootfs/
+				sudo rsync ${rsync_opts} ${target_dir}/* ${media}/rootfs/
 				if [ "${target}" = "kernel" ]; then
-					sudo rsync -aP  ${target_dir}/../../../firmware/* ${media}/rootfs/lib/firmware/
+					sudo rsync ${rsync_opts}  ${target_dir}/../../../firmware/* ${media}/rootfs/lib/firmware/
 				fi
-				sudo rsync -aP  ${target_dir}/boot/* ${media}/BOOT/
+				sudo rsync ${rsync_opts}  ${target_dir}/boot/* ${media}/BOOT/
 
 				if [ "${target}" = "bootloader" ]; then
 					printf "[%s][%s] if required, write raw %s data.\n" ${ET_BOARD} ${target} ${destination}
@@ -129,7 +131,7 @@ case "${destination}" in
 				;;
 			overlay)
 				sudo rsync --exclude-from=${ET_OVERLAY_DIR}/exclude \
-					-aP ${target_dir}/* \
+					${rsync_opts} ${target_dir}/* \
 					${media}/rootfs/
 				;;
 			rootfs)
@@ -155,27 +157,27 @@ case "${destination}" in
 			kernel|bootloader)
 				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
 					--exclude 'boot/extlinux' \
-					-aP ${target_dir}/* \
+					${rsync_opts} ${target_dir}/* \
 					root@${ipv4}:/
 				if [ "${target}" = "kernel" ] && [ "${ET_BOARD_TYPE}" = "omap2plus" ]; then
 					rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
-						-aP ${target_dir}/../../../firmware/* \
+						${rsync_opts} ${target_dir}/../../../firmware/* \
 						root@${ipv4}:/lib/firmware/
 				fi
 				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
 					--exclude 'extlinux' \
-					-rP ${target_dir}/boot/* \
+					${rsync_opts} ${target_dir}/boot/* \
 					root@${ipv4}:/media/BOOT/
 				;;
 			overlay)
 				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
 					--exclude-from=${target_dir}/exclude \
-					-aP ${target_dir}/* \
+					${rsync_opts} ${target_dir}/* \
 					root@${ipv4}:/
 				;;
 			rootfs)
 				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
-					-aP ${target_dir}/images/rootfs.tar \
+					${rsync_opts} ${target_dir}/images/rootfs.tar \
 					root@${ipv4}:/media/data/
 				;;
 			*)
