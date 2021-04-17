@@ -124,7 +124,7 @@ define bootloader-finalize
 	fi
 	@cp -av $(ET_BOOTLOADER_BUILD_IMAGE) $(ET_BOOTLOADER_DIR)/boot/
 	$(call bootloader-finalize-$(ET_BOARD))
-	@if [ -d $(ET_TFTP_DIR) ]; then \
+	@if [ "$(ET_TFTP)" = "yes" ] && [ -d $(ET_TFTP_DIR) ]; then \
 		if ! [ -d $(ET_TFTP_DIR)/$(ET_BOARD) ]; then \
 			sudo mkdir -p $(ET_TFTP_DIR)/$(ET_BOARD); \
 			sudo chown $(USER).$(USER) $(ET_TFTP_DIR)/$(ET_BOARD); \

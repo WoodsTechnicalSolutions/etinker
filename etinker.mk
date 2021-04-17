@@ -39,6 +39,7 @@ export ET_DIR ?= $(shell readlink -e $(CURDIR))
 
 export ET_CPUS := $(shell nproc --all | tr -d \\n)
 
+export ET_TFTP ?= no
 export ET_TFTP_DIR ?= /srv/tftp
 
 export ET_INITRAMFS ?= no

@@ -131,7 +131,7 @@ endef
 
 define kernel-finalize
 	$(call kernel-finalize-$(ET_BOARD))
-	@if [ -d $(ET_TFTP_DIR) ]; then \
+	@if [ "$(ET_TFTP)" = "yes" ] && [ -d $(ET_TFTP_DIR) ]; then \
 		if ! [ -d $(ET_TFTP_DIR)/$(ET_BOARD) ]; then \
 			sudo mkdir -p $(ET_TFTP_DIR)/$(ET_BOARD); \
 			sudo chown $(USER).$(USER) $(ET_TFTP_DIR)/$(ET_BOARD); \
