@@ -40,3 +40,5 @@ ET_BOARD_HOSTNAME ?= $(ET_BOARD)
 ET_BOARD_GETTY_PORT ?= ttyS2
 
 ET_BOARD_KERNEL_DT ?= omap3-beagle-xm
+
+ET_BOARD_BOOTLOADER_DT ?= omap3-beagle-xm

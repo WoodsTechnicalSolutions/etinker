@@ -40,3 +40,5 @@ ET_BOARD_HOSTNAME ?= $(ET_BOARD)
 ET_BOARD_GETTY_PORT ?= ttyAML0
 
 ET_BOARD_KERNEL_DT ?= meson-gxl-s905x-libretech-cc
+
+ET_BOARD_BOOTLOADER_DT ?= meson-gxl-s905x-libretech-cc
