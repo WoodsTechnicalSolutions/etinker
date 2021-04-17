@@ -127,8 +127,10 @@ define rootfs-build
 		$(RM) -r $(ET_ROOTFS_DIR)/images; \
 		cp -av $(ET_ROOTFS_BUILD_DIR)/images $(ET_ROOTFS_DIR)/; \
 		if [ -d $(ET_TFTP_DIR) ]; then \
-			sudo mkdir -p $(ET_TFTP_DIR)/$(ET_BOARD); \
-			sudo chown $(USER).$(USER) $(ET_TFTP_DIR)/$(ET_BOARD); \
+			if ! [ -d $(ET_TFTP_DIR)/$(ET_BOARD) ]; then \
+				sudo mkdir -p $(ET_TFTP_DIR)/$(ET_BOARD); \
+				sudo chown $(USER).$(USER) $(ET_TFTP_DIR)/$(ET_BOARD); \
+			fi; \
 			rsync -r $(ET_ROOTFS_DIR)/images/* $(ET_TFTP_DIR)/$(ET_BOARD)/; \
 		fi; \
 	fi
