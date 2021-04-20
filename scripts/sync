@@ -18,6 +18,8 @@ wait_on_sync()
 	printf "[done]\n"
 }
 
+echo
+
 if ! [ -n "${2}" ]; then
 	printf "Missing sync destination!\n"
 	usage
@@ -156,30 +158,45 @@ case "${destination}" in
 		printf "[%s][%s] Using %s [%s] -> %s\n" ${ET_BOARD} ${target} ${net_if} ${net_addr} ${ipv4}
 		case "${target}" in
 			kernel|bootloader)
-				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
-					--exclude 'boot/extlinux' \
-					${rsync_opts_x} ${target_dir}/* \
+				printf "[%s][%s] Completing transfer to '/' on %s ... " ${ET_BOARD} ${target} ${ipv4}
+				GLOBIGNORE='extlinux' scp -pqr \
+					-o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
+					${target_dir}/* \
 					root@${ipv4}:/
+				printf "Done\n"
 				if [ "${target}" = "kernel" ] && [ "${ET_BOARD_TYPE}" = "omap2plus" ]; then
-					rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
-						${rsync_opts_x} ${target_dir}/../../../firmware/* \
+					printf "[%s][%s] Completing transfer to '/lib/firmware/' on %s ... " ${ET_BOARD} ${target} ${ipv4}
+					scp -pqr -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
+						${target_dir}/../../../firmware/* \
 						root@${ipv4}:/lib/firmware/
+					printf "Done\n"
 				fi
-				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
-					--exclude 'extlinux' \
-					${rsync_opts} ${target_dir}/boot/* \
+				printf "[%s][%s] Completing transfer to '/media/BOOT/' on %s ... " ${ET_BOARD} ${target} ${ipv4}
+				GLOBIGNORE='extlinux' scp -pqr \
+					-o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
+					${target_dir}/boot/* \
 					root@${ipv4}:/media/BOOT/
+				printf "Done\n"
 				;;
 			overlay)
-				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
+				mkdir /tmp/overlay
+				rsync -rlptD \
 					--exclude-from=${target_dir}/exclude \
-					${rsync_opts_x} ${target_dir}/* \
+					${target_dir}/* /tmp/overlay/
+				printf "[%s][%s] Completing transfer to '/' on %s ... " ${ET_BOARD} ${target} ${ipv4}
+				scp -pqr -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
+					/tmp/overlay/* \
 					root@${ipv4}:/
+				printf "Done\n"
+				rm -rf /tmp/overlay
 				;;
 			rootfs)
-				rsync -e "ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" \
-					${rsync_opts_x} ${target_dir}/images/rootfs.tar \
+				printf "[%s][%s] Completing transfer to '/media/data/' on %s ... " ${ET_BOARD} ${target} ${ipv4}
+				scp -pq -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
+					${target_dir}/images/rootfs.tar \
 					root@${ipv4}:/media/data/
+				printf "Done\n"
+				echo
 				;;
 			*)
 				printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}
@@ -194,3 +211,5 @@ case "${destination}" in
 esac
 
 printf "[%s][%s] Synching to %s has completed.\n" ${ET_BOARD} ${target} ${destination}
+
+echo
