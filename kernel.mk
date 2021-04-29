@@ -51,11 +51,6 @@ nextlocalversion := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git desc
 ET_KERNEL_VERSION := $(nextversion)-$(nextlocalversion)
 ET_KERNEL_LOCALVERSION :=
 endif
-# linux-rt
-ifeq ($(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,[0-9].*,,),-rt)
-ET_KERNEL_VERSION := $(ET_KERNEL_VERSION)$(shell cat $(ET_KERNEL_SOFTWARE_DIR)/localversion-rt | tr -d \\n)
-ET_KERNEL_LOCALVERSION :=
-endif
 ifeq ($(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,[0-9].*,,),-rc)
 # RC version (i.e. v4.14-rc1)
 rcversion := $(shell printf "%s" $(ET_KERNEL_LOCALVERSION) | cut -d '-' -f 2)
@@ -67,6 +62,11 @@ endif
 ifeq ($(ET_KERNEL_LOCALVERSION),-$(rcversion))
 ET_KERNEL_LOCALVERSION :=
 endif
+endif
+ifeq ($(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,[0-9].*,,),-rt)
+# linux-rt
+ET_KERNEL_VERSION := $(ET_KERNEL_VERSION)$(shell cat $(ET_KERNEL_SOFTWARE_DIR)/localversion-rt | tr -d \\n)
+ET_KERNEL_LOCALVERSION :=
 endif
 ifeq ($(ET_KERNEL_LOCALVERSION),-v$(ET_KERNEL_VERSION))
 # exact tag in series (i.e. v4.14.1)
