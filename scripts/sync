@@ -98,9 +98,10 @@ case "${destination}" in
 				sudo mkdir -p ${media}/rootfs/lib/firmware
 				sudo rsync ${rsync_opts_x} ${target_dir}/* ${media}/rootfs/
 				if [ "${target}" = "kernel" ]; then
-					sudo rsync ${rsync_opts_x}  ${target_dir}/../../../firmware/* ${media}/rootfs/lib/firmware/
+					sudo rsync ${rsync_opts_x} ${target_dir}/../../../firmware/* ${media}/rootfs/lib/firmware/
 				fi
-				sudo rsync ${rsync_opts}  ${target_dir}/boot/* ${media}/BOOT/
+				rm -f ${media}/BOOT/firmware.img
+				sudo rsync ${rsync_opts} ${target_dir}/boot/* ${media}/BOOT/
 
 				if [ "${target}" = "bootloader" ]; then
 					printf "[%s][%s] if required, write raw %s data.\n" ${ET_BOARD} ${target} ${destination}
