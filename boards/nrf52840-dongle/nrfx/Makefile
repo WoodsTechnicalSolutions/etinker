@@ -57,7 +57,6 @@ endif
 
 CFLAGS = $(OPTIMIZE)
 CFLAGS += $(ET_CFLAGS)
-CFLAGS += --specs=nano.specs
 CFLAGS += -std=c11 -Wall -Werror
 CFLAGS += -MD
 CFLAGS += -D$(ET_BOARD_MCU_DEFINE)
@@ -84,10 +83,11 @@ CFLAGS += -I $(NRFX_DIR)/drivers/include
 CFLAGS += -I $(CMSIS_DIR)/CMSIS/Core/Include
 CFLAGS += -I $(FREERTOS_DIR)/include
 CFLAGS += -I $(FREERTOS_DIR)/portable/GCC/ARM_CM4F
+CFLAGS += -I $(ET_TOOLCHAIN_DIR)/newlib-nano/$(ET_CROSS_TUPLE)/include
 
 LDFLAGS = $(OPTIMIZE)
 LDFLAGS += $(ET_LDFLAGS)
-LDFLAGS += --specs=nano.specs --sysroot=$(ET_TOOLCHAIN_DIR)/newlib-nano/$(ET_CROSS_TUPLE)
+LDFLAGS += --sysroot=$(ET_TOOLCHAIN_DIR)/newlib-nano/$(ET_CROSS_TUPLE)
 LDFLAGS += -D$(ET_BOARD_MCU_DEFINE)
 LDFLAGS += -mthumb
 LDFLAGS += -mabi=aapcs
