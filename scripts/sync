@@ -7,8 +7,8 @@ rsync_opts_x="-rlptDP"
 usage()
 {
 	printf "USAGE: sync <target> <destination>\n"
-	printf "       sync <bootloader|kernel|rootfs|overlay> mmc\n"
-	printf "       sync <bootloader|kernel|rootfs>         net:<ipv4-address>\n"
+	printf "       sync <bootloader|kernel|library|rootfs|overlay> mmc\n"
+	printf "       sync <bootloader|kernel|library|rootfs|overlay> net:<ipv4/hostname>\n"
 }
 
 wait_on_sync()
@@ -42,6 +42,9 @@ case "${target}" in
 		;;
 	kernel)
 		target_dir="${ET_KERNEL_DIR}"
+		;;
+	library)
+		target_dir="${ET_LIBRARY_DIR}"
 		;;
 	overlay)
 		target_dir="${ET_OVERLAY_DIR}"
@@ -133,6 +136,9 @@ case "${destination}" in
 					esac
 				fi
 				;;
+			library)
+				sudo rsync ${rsync_opts_x} ${target_dir}/* ${media}/rootfs/
+				;;
 			overlay)
 				sudo rsync --exclude-from=${ET_OVERLAY_DIR}/exclude \
 					${rsync_opts_x} ${target_dir}/* \
@@ -178,6 +184,14 @@ case "${destination}" in
 					${target_dir}/boot/* \
 					root@${ipv4}:/media/BOOT/
 				printf "Done\n"
+				;;
+			library)
+				printf "[%s][%s] Completing transfer to '/' on %s ... " ${ET_BOARD} ${target} ${ipv4}
+				scp -pqr -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
+					${target_dir}/* \
+					root@${ipv4}:/
+				printf "Done\n"
+				echo
 				;;
 			overlay)
 				mkdir /tmp/overlay

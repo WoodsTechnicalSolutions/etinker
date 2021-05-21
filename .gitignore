@@ -1,5 +1,6 @@
 /bootloader
 /kernel
+/library
 /overlay
 /rootfs
 /software

@@ -15,16 +15,19 @@ include etinker.mk
 
 .PHONY: sandbox
 sandbox:
-	@$(MAKE) --no-print-directory -C $(ET_DIR) toolchain
+	@$(ET_MAKE) -C $(ET_DIR) toolchain
 ifdef ET_BOARD_KERNEL_TREE
-	@$(MAKE) --no-print-directory -C $(ET_DIR) kernel
+	@$(ET_MAKE) -C $(ET_DIR) kernel
 endif
 ifdef ET_BOARD_BOOTLOADER_TREE
-	@$(MAKE) --no-print-directory -C $(ET_DIR) bootloader
+	@$(ET_MAKE) -C $(ET_DIR) bootloader
 endif
 ifdef ET_BOARD_ROOTFS_TREE
-	@$(MAKE) --no-print-directory -C $(ET_DIR) rootfs
-	@$(MAKE) --no-print-directory -C $(ET_DIR) overlay
+	@$(ET_MAKE) -C $(ET_DIR) rootfs
+endif
+	@$(ET_MAKE) -C $(ET_DIR) library
+ifdef ET_BOARD_ROOTFS_TREE
+	@$(ET_MAKE) -C $(ET_DIR) overlay
 endif
 
 .PHONY: version
@@ -33,6 +36,7 @@ version:
 	$(call kernel-$@)
 	$(call bootloader-$@)
 	$(call rootfs-$@)
+	$(call library-$@)
 	$(call overlay-$@)
 
 .PHONY: clean
@@ -41,6 +45,7 @@ clean:
 	$(call kernel-$@)
 	$(call bootloader-$@)
 	$(call rootfs-$@)
+	$(call library-$@)
 	$(call overlay-$@)
 
 .PHONY: purge
@@ -49,15 +54,17 @@ purge:
 	$(call kernel-$@)
 	$(call bootloader-$@)
 	$(call rootfs-$@)
+	$(call library-$@)
 	$(call overlay-$@)
 
 # For partitioned and empty SD/MMC devices
 .PHONY: sync
 sync:
-	@$(MAKE) --no-print-directory -C $(ET_DIR) rootfs-sync-mmc
-	@$(MAKE) --no-print-directory -C $(ET_DIR) bootloader-sync-mmc
-	@$(MAKE) --no-print-directory -C $(ET_DIR) kernel-sync-mmc
-	@$(MAKE) --no-print-directory -C $(ET_DIR) overlay-sync-mmc
+	@$(ET_MAKE) -C $(ET_DIR) rootfs-sync-mmc
+	@$(ET_MAKE) -C $(ET_DIR) bootloader-sync-mmc
+	@$(ET_MAKE) -C $(ET_DIR) kernel-sync-mmc
+	@$(ET_MAKE) -C $(ET_DIR) library-sync-mmc
+	@$(ET_MAKE) -C $(ET_DIR) overlay-sync-mmc
 
 .PHONY: update
 update: clean sandbox rootfs-update
@@ -99,6 +106,7 @@ info:
 	$(call kernel-$@)
 	$(call bootloader-$@)
 	$(call rootfs-$@)
+	$(call library-$@)
 	$(call overlay-$@)
 	@printf "========================================================================\n"
 	@printf "PATH: $(PATH)\n"

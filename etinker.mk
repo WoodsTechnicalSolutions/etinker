@@ -48,6 +48,8 @@ export ET_CLEAN ?= no
 export ET_PURGE ?= no
 export ET_RELEASE ?= no
 
+export ET_MAKE := $(MAKE) --no-print-directory
+
 # pull in board specific information
 include $(ET_DIR)/boards/$(ET_BOARD)/etinker.mk
 
@@ -81,6 +83,7 @@ ifdef ET_BOARD_ROOTFS_TREE
 include $(ET_DIR)/rootfs.mk
 include $(ET_DIR)/overlay.mk
 endif
+include $(ET_DIR)/library.mk
 
 # allow users to find cross-compiler
 export PATH := $(ET_TOOLCHAIN_DIR)/bin:$(PATH)
