@@ -7,8 +7,10 @@
 # available under the terms of the GNU General Public License version 3.
 #
 
+ifneq ($(ET_BOARD_VENDOR),$(ET_HOST_OS_ID))
 ifneq ($(shell ls $(ET_BOARD_DIR)/software.conf 2> /dev/null),$(ET_BOARD_DIR)/software.conf)
 $(error [ 'etinker' requires '$(ET_BOARD_DIR)/software.conf' ***)
+endif
 endif
 
 # check for existence of a source tree

@@ -18,6 +18,11 @@ endif
 
 # embedded toolchain (GCC, GDB, and LIBC) is built using crosstool-NG
 export ET_TOOLCHAIN_TYPE := $(ET_BOARD_TOOLCHAIN_TYPE)
+ifeq ($(ET_BOARD_VENDOR),$(ET_HOST_OS_ID))
+export ET_TOOLCHAIN_VERSION := $(ET_HOST_OS_ID)-$(ET_HOST_OS_RELEASE)
+export ET_TOOLCHAIN_CACHED_VERSION := $(ET_HOST_OS_ID)-$(ET_HOST_OS_RELEASE)
+export ET_TOOLCHAIN_DIR := /usr
+else
 export ET_TOOLCHAIN_TREE := $(ET_BOARD_TOOLCHAIN_TREE)
 export ET_TOOLCHAIN_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE)
 toolchain_version = $(shell cd $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE)/ 2>/dev/null && git describe --tags 2>/dev/null)
@@ -43,6 +48,7 @@ endif
 ifeq ($(CT_KERNEL),bare-metal)
 export ET_TOOLCHAIN_NEWLIB_NANO_VERSION := $(shell grep -oP 'CT_NEWLIB_NANO_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_BUILD_CONFIG) 2>/dev/null)
 export ET_TOOLCHAIN_PICOLIBC_VERSION := $(shell grep -oP 'CT_PICOLIBC_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_BUILD_CONFIG) 2>/dev/null)
+endif
 endif
 
 define toolchain-version
@@ -161,59 +167,76 @@ endef
 
 define toolchain-info
 	@printf "========================================================================\n"
-	@printf "ET_TOOLCHAIN_TREE: $(ET_TOOLCHAIN_TREE)\n"
-	@printf "ET_TOOLCHAIN_VERSION: $(ET_TOOLCHAIN_VERSION)\n"
-	@printf "ET_TOOLCHAIN_GCC_VERSION: $(ET_TOOLCHAIN_GCC_VERSION)\n"
-	@printf "ET_TOOLCHAIN_GDB_VERSION: $(ET_TOOLCHAIN_GDB_VERSION)\n"
-	@if [ "$(CT_KERNEL)" = "linux" ]; then \
-		printf "ET_TOOLCHAIN_GLIBC_VERSION: $(ET_TOOLCHAIN_GLIBC_VERSION)\n"; \
-		printf "ET_TOOLCHAIN_LINUX_VERSION: $(ET_TOOLCHAIN_LINUX_VERSION)\n"; \
+	@if [ "$(ET_BOARD_VENDOR)" = "$(ET_HOST_OS_ID)" ]; then \
+		printf "ET_TOOLCHAIN_VERSION: $(ET_TOOLCHAIN_VERSION)\n"; \
+		printf "ET_TOOLCHAIN_DIR: $(ET_TOOLCHAIN_DIR)\n"; \
+	else \
+		printf "ET_TOOLCHAIN_TREE: $(ET_TOOLCHAIN_TREE)\n"; \
+		printf "ET_TOOLCHAIN_VERSION: $(ET_TOOLCHAIN_VERSION)\n"; \
+		printf "ET_TOOLCHAIN_GCC_VERSION: $(ET_TOOLCHAIN_GCC_VERSION)\n"; \
+		printf "ET_TOOLCHAIN_GDB_VERSION: $(ET_TOOLCHAIN_GDB_VERSION)\n"; \
+		if [ "$(CT_KERNEL)" = "linux" ]; then \
+			printf "ET_TOOLCHAIN_GLIBC_VERSION: $(ET_TOOLCHAIN_GLIBC_VERSION)\n"; \
+			printf "ET_TOOLCHAIN_LINUX_VERSION: $(ET_TOOLCHAIN_LINUX_VERSION)\n"; \
+		fi; \
+		if [ "$(CT_KERNEL)" = "bare-metal" ]; then \
+			printf "ET_TOOLCHAIN_NEWLIB_NANO_VERSION: $(ET_TOOLCHAIN_NEWLIB_NANO_VERSION)\n"; \
+			printf "ET_TOOLCHAIN_PICOLIBC_VERSION: $(ET_TOOLCHAIN_PICOLIBC_VERSION)\n"; \
+		fi; \
+		printf "ET_TOOLCHAIN_SOFTWARE_DIR: $(ET_TOOLCHAIN_SOFTWARE_DIR)\n"; \
+		printf "ET_TOOLCHAIN_GENERATOR: $(ET_TOOLCHAIN_GENERATOR)\n"; \
+		printf "ET_TOOLCHAIN_GENERATOR_DIR: $(ET_TOOLCHAIN_GENERATOR_DIR)\n"; \
+		printf "ET_TOOLCHAIN_TARBALLS_DIR: $(ET_TOOLCHAIN_TARBALLS_DIR)\n"; \
+		printf "ET_TOOLCHAIN_BUILD_DIR: $(ET_TOOLCHAIN_BUILD_DIR)\n"; \
+		printf "ET_TOOLCHAIN_BUILD_CONFIG: $(ET_TOOLCHAIN_BUILD_CONFIG)\n"; \
+		printf "ET_TOOLCHAIN_BUILD_DEFCONFIG: $(ET_TOOLCHAIN_BUILD_DEFCONFIG)\n"; \
+		printf "ET_TOOLCHAIN_DEFCONFIG: $(ET_TOOLCHAIN_DEFCONFIG)\n"; \
+		printf "ET_TOOLCHAIN_DIR: $(ET_TOOLCHAIN_DIR)\n"; \
+		printf "ET_TOOLCHAIN_TARGET_FINAL: $(ET_TOOLCHAIN_TARGET_FINAL)\n"; \
 	fi
-	@if [ "$(CT_KERNEL)" = "bare-metal" ]; then \
-		printf "ET_TOOLCHAIN_NEWLIB_NANO_VERSION: $(ET_TOOLCHAIN_NEWLIB_NANO_VERSION)\n"; \
-		printf "ET_TOOLCHAIN_PICOLIBC_VERSION: $(ET_TOOLCHAIN_PICOLIBC_VERSION)\n"; \
-	fi
-	@printf "ET_TOOLCHAIN_SOFTWARE_DIR: $(ET_TOOLCHAIN_SOFTWARE_DIR)\n"
-	@printf "ET_TOOLCHAIN_GENERATOR: $(ET_TOOLCHAIN_GENERATOR)\n"
-	@printf "ET_TOOLCHAIN_GENERATOR_DIR: $(ET_TOOLCHAIN_GENERATOR_DIR)\n"
-	@printf "ET_TOOLCHAIN_TARBALLS_DIR: $(ET_TOOLCHAIN_TARBALLS_DIR)\n"
-	@printf "ET_TOOLCHAIN_BUILD_DIR: $(ET_TOOLCHAIN_BUILD_DIR)\n"
-	@printf "ET_TOOLCHAIN_BUILD_CONFIG: $(ET_TOOLCHAIN_BUILD_CONFIG)\n"
-	@printf "ET_TOOLCHAIN_BUILD_DEFCONFIG: $(ET_TOOLCHAIN_BUILD_DEFCONFIG)\n"
-	@printf "ET_TOOLCHAIN_DEFCONFIG: $(ET_TOOLCHAIN_DEFCONFIG)\n"
-	@printf "ET_TOOLCHAIN_DIR: $(ET_TOOLCHAIN_DIR)\n"
-	@printf "ET_TOOLCHAIN_TARGET_FINAL: $(ET_TOOLCHAIN_TARGET_FINAL)\n"
 endef
 
 .PHONY: toolchain
 toolchain: $(ET_TOOLCHAIN_TARGET_FINAL)
 $(ET_TOOLCHAIN_TARGET_FINAL): $(ET_TOOLCHAIN_BUILD_CONFIG)
+ifneq ($(ET_BOARD_VENDOR),$(ET_HOST_OS_ID))
 	$(call toolchain-build,build)
+endif
 
 toolchain-%: $(ET_TOOLCHAIN_BUILD_CONFIG)
+ifneq ($(ET_BOARD_VENDOR),$(ET_HOST_OS_ID))
 	$(call toolchain-build,$(*F))
+endif
 
 .PHONY: toolchain-config
 toolchain-config: $(ET_TOOLCHAIN_BUILD_CONFIG)
 $(ET_TOOLCHAIN_BUILD_CONFIG): $(ET_TOOLCHAIN_GENERATOR)
+ifneq ($(ET_BOARD_VENDOR),$(ET_HOST_OS_ID))
 	$(call toolchain-config)
+endif
 
 .PHONY: toolchain-generator
 toolchain-generator: $(ET_TOOLCHAIN_GENERATOR)
 $(ET_TOOLCHAIN_GENERATOR):
+ifneq ($(ET_BOARD_VENDOR),$(ET_HOST_OS_ID))
 	$(call toolchain-generator)
+endif
 
 .PHONY: toolchain-clean
 toolchain-clean:
+ifneq ($(ET_BOARD_VENDOR),$(ET_HOST_OS_ID))
 ifeq ($(ET_CLEAN),yes)
 	$(call toolchain-build,clean)
 endif
 	$(call $@)
+endif
 
 .PHONY: toolchain-purge
+ifneq ($(ET_BOARD_VENDOR),$(ET_HOST_OS_ID))
 toolchain-purge:
 ifeq ($(ET_PURGE),yes)
 	$(call $@)
+endif
 endif
 
 .PHONY: toolchain-version
