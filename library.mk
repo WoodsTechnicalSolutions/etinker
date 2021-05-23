@@ -69,11 +69,17 @@ OBJECTS := $(SOURCES:$(ET_DIR)/lib/%.c=$(ET_LIBRARY_BUILD_DIR)/%.o)
 DEPENDS := $(OBJECTS:.o=.d)
 
 CC := $(ET_CROSS_COMPILE)gcc
-AR := $(ET_CROSS_COMPILE)ar
-NM := $(ET_CROSS_COMPILE)nm
+AR := $(ET_CROSS_COMPILE)gcc-ar
+NM := $(ET_CROSS_COMPILE)gcc-nm
+ifeq ($(shell which $(ET_CROSS_COMPILE)size 2> /dev/null),)
+SIZE := size
+OBJCOPY := objcopy
+OBJDUMP := objdump
+else
 SIZE := $(ET_CROSS_COMPILE)size
 OBJCOPY := $(ET_CROSS_COMPILE)objcopy
 OBJDUMP := $(ET_CROSS_COMPILE)objdump
+endif
 
 CFLAGS = -Wall -Wextra
 CFLAGS_TEST = -Wall -Wextra
