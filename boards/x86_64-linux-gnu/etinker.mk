@@ -1,7 +1,7 @@
 #
 # x86_64-linux-gnu toolchain configuration file for 'etinker'
 #
-# NOTE: This is just a wrapper for the host OS toolchain
+# NOTE: This is just a wrapper for the host OS toolchain [Ubuntu]
 #
 # Copyright (C) 2021 Derald D. Woods
 #
@@ -25,6 +25,10 @@ ET_BOARD_VENDOR ?= $(ET_HOST_OS_ID)
 ET_BOARD_OS ?= linux
 ET_BOARD_ABI ?= gnu
 ET_BOARD_CROSS_TUPLE := $(ET_BOARD_ARCH)-$(ET_BOARD_OS)-$(ET_BOARD_ABI)
+
+ifeq ($(shell which $(ET_BOARD_CROSS_TUPLE)-gcc 2> /dev/null),)
+$(error [ ET_BOARD=$(ET_BOARD) requires desktop compiler $(ET_BOARD_CROSS_TUPLE)-gcc ] ***)
+endif
 
 ifeq ($(ET_BOARD),$(ET_BOARD_CROSS_TUPLE))
 export ET_BOARD_TYPE := $(ET_BOARD_CROSS_TUPLE)
