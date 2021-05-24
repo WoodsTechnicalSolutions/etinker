@@ -10,3 +10,8 @@
 #pragma once
 
 const char *etinker_version_string(void);
+
+// Third-Party routines
+
+// GPLv2: from libiberty
+unsigned int xcrc32 (const unsigned char *buf, int len, unsigned int init);
