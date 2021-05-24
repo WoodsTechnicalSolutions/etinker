@@ -1,5 +1,5 @@
 /*
- * This is the C source file for the 'etinker' library
+ * This is a C source file for the 'etinker' library
  *
  * Copyright (C) 2021 Derald D. Woods
  *

@@ -1,3 +1,12 @@
+/*
+ * This is a C source file for the 'etinker' library
+ *
+ * Copyright (C) 2021 Derald D. Woods
+ *
+ * This file is part of the Embedded Tinkerer Sandbox, and is made
+ * available under the terms of the GNU General Public License version 3.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
