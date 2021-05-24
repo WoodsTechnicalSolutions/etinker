@@ -83,6 +83,7 @@ CFLAGS += -I $(NRFX_DIR)/drivers/include
 CFLAGS += -I $(CMSIS_DIR)/CMSIS/Core/Include
 CFLAGS += -I $(FREERTOS_DIR)/include
 CFLAGS += -I $(FREERTOS_DIR)/portable/GCC/ARM_CM4F
+CFLAGS += -I $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/sys-include
 CFLAGS += -I $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/include
 
 LDFLAGS = $(OPTIMIZE)
@@ -95,9 +96,10 @@ LDFLAGS += -mcpu=cortex-m4
 LDFLAGS += -mfloat-abi=hard
 LDFLAGS += -mfpu=fpv4-sp-d16
 LDFLAGS += -Wl,--gc-sections
-LDFLAGS += -Wl,-Map=$(BUILD_DIR)/$(TARGET_MAP)
+LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/lib
 LDFLAGS += -Wl,-L $(NRFX_DIR)/mdk
 LDFLAGS += -Wl,-T $(NRFX_DIR)/mdk/$(ET_BOARD_MCU)_xxaa.ld
+LDFLAGS += -Wl,-Map=$(BUILD_DIR)/$(TARGET_MAP)
 
 LDLIBS  = -Wl,--start-group -lm -lc -lgcc -lnosys -Wl,--end-group
 LDLIBS += $(ET_LDLIBS)

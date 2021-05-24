@@ -18,6 +18,7 @@ TIVAWARE := $(ET_SOFTWARE_DIR)/tivaware
 CFLAGS = -mthumb -march=armv7e-m+fp -mfpu=fpv4-sp-d16 -mfloat-abi=hard
 CFLAGS += -MD -std=c99 -Wall -ffunction-sections -fdata-sections -pedantic
 CFLAGS += -DPART_$(shell echo $(ET_BOARD_MCU) | tr '[:lower:]' '[:upper:]') -DTARGET_IS_TM4C129_RA1
+CFLAGS += -I $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/sys-include
 CFLAGS += -I $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/include
 CFLAGS += -I $(TIVAWARE)
 CFLAGS += $(ET_CFLAGS)
@@ -39,10 +40,11 @@ MKDIR = mkdir -p
 OUTPUT = build
 
 LDFLAGS = --sysroot=$(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE) \
-	  -Wl,-T$(ET_BOARD_MCU).ld \
 	  -Wl,--entry=ResetISR \
 	  -Wl,--static \
 	  -Wl,--gc-sections \
+	  -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/lib \
+	  -Wl,-T$(ET_BOARD_MCU).ld \
 	  -Wl,-Map=$(OUTPUT)/$(TARGET_MAP)
 
 LDLIBS = $(ET_SOFTWARE_DIR)/tivaware/driverlib/gcc/libdriver.a
