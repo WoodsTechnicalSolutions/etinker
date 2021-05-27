@@ -82,9 +82,9 @@ for n in `ls boards`; do
 		continue
 	fi
 
-	# boards with a Linux root filesystem
+	# boards with a Linux root filesystem (meson, omap2plus, sama5, zynq)
 	case $n in
-	am335x-pocketbeagle* | aml-s905x-cc* | ls1043ardb* | pynq-z2* | sama5d3-xpld*)
+	am335x-pocketbeagle | aml-s905x-cc | pynq-z2 | sama5d3-xpld)
 		if ! do_make $n "$@"; then
 			printf "etinker $0 failed!\n"
 			exit 1
