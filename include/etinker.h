@@ -9,7 +9,15 @@
 
 #pragma once
 
+#include <stdbool.h>
+
+enum etinker_enum {
+	ETINKER_CRC32_INIT = 0xffffffff,
+};
+
 const char *etinker_version_string(void);
+
+unsigned int etinker_crc32(const unsigned char *buf, int len, unsigned int init, bool *err);
 
 // Third-Party routines
 
