@@ -121,8 +121,8 @@ define library-info
 	@printf "ET_LIBRARY_ARCHIVE: $(ET_LIBRARY_ARCHIVE)\n"
 	@if [ -n "$(ET_LIBRARY_SO)" ]; then \
 		printf "ET_LIBRARY_SO: $(ET_LIBRARY_SO)\n"; \
-		printf "ET_LIBRARY_TEST: $(ET_LIBRARY_TEST)\n"; \
 	fi
+	@printf "ET_LIBRARY_TEST: $(ET_LIBRARY_TEST)\n"
 	@printf "ET_LIBRARY_TARGET_FINAL: $(ET_LIBRARY_TARGET_FINAL)\n"
 	@printf "ET_LIBRARY ENVIRONMENT:\n"
 	@printf " ├── AR: $(AR)\n"
@@ -131,7 +131,9 @@ define library-info
 	@printf " ├── OBJCOPY: $(OBJCOPY)\n"
 	@printf " ├── OBJDUMP: $(OBJDUMP)\n"
 	@printf " ├── CFLAGS: $(CFLAGS)\n"
+	@printf " ├── CFLAGS_TEST: $(CFLAGS_TEST)\n"
 	@printf " ├── LDFLAGS: $(LDFLAGS)\n"
+	@printf " ├── LDFLAGS_TEST: $(LDFLAGS_TEST)\n"
 	@printf " ├── OBJECTS: $(OBJECTS)\n"
 	@printf " ├── SOURCES: $(SOURCES)\n"
 	@printf " └── DEPENDS: $(DEPENDS)\n"
