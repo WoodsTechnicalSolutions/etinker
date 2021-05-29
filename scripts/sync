@@ -152,6 +152,7 @@ case "${destination}" in
 					fi
 				fi
 				sudo tar -xf ${target_dir}/images/rootfs.tar -C ${media}/rootfs/
+				sudo cp ${target_dir}/images/rootfs.tar ${media}/data/
 				;;
 			*)
 				printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}
