@@ -21,6 +21,7 @@ include $(ET_DIR)/packages/cadence-ttc-pwm.mk
 include $(ET_DIR)/packages/cryptodev-linux.mk
 include $(ET_DIR)/packages/openssl.mk
 include $(ET_DIR)/packages/wireless-regdb.mk
+include $(ET_DIR)/packages/rt-tests.mk
 
 define overlay-depends
 	@mkdir -p $(ET_OVERLAY_DIR)
@@ -35,6 +36,7 @@ define overlay-version
 	$(call cryptodev-linux-version)
 	$(call openssl-version)
 	$(call wireless-regdb-version)
+	$(call rt-tests-version)
 endef
 
 define overlay-clean
@@ -42,6 +44,7 @@ define overlay-clean
 	$(call cryptodev-linux-clean)
 	$(call openssl-clean)
 	$(call wireless-regdb-clean)
+	$(call rt-tests-clean)
 endef
 
 define overlay-purge
@@ -49,6 +52,7 @@ define overlay-purge
 	$(call cryptodev-linux-purge)
 	$(call openssl-purge)
 	$(call wireless-regdb-purge)
+	$(call rt-tests-purge)
 endef
 
 define overlay-info
@@ -59,6 +63,7 @@ define overlay-info
 	$(call cryptodev-linux-info)
 	$(call openssl-info)
 	$(call wireless-regdb-info)
+	$(call rt-tests-info)
 endef
 
 define overlay-sync
@@ -70,7 +75,7 @@ endef
 ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -Po zynq),zynq)
 overlay: cadence-ttc-pwm 
 endif
-overlay: cryptodev-linux openssl wireless-regdb
+overlay: cryptodev-linux openssl wireless-regdb rt-tests
 	$(call overlay-depends)
 
 .PHONY: overlay-clean
