@@ -85,12 +85,14 @@ endef
 define rt-tests-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rt-tests-build 'make $1' *****\n\n"
 	$(call rt-tests-depends)
-	$(ET_MAKE) -C $(ET_RT_TESTS_BUILD_DIR) \
-		prefix=$(ET_OVERLAY_DIR)/usr \
-		CROSS_COMPILE=$(ET_CROSS_COMPILE) \
-		CFLAGS="-Wall -Wno-nonnull -I$(ET_ROOTFS_BUILD_DIR)/staging/usr/include" \
-		LDFLAGS="-L$(ET_ROOTFS_BUILD_DIR)/staging/usr/lib" \
-		$1
+	if [ -d $(ET_RT_TESTS_BUILD_DIR) ]; then \
+		$(ET_MAKE) -C $(ET_RT_TESTS_BUILD_DIR) \
+			prefix=$(ET_OVERLAY_DIR)/usr \
+			CROSS_COMPILE=$(ET_CROSS_COMPILE) \
+			CFLAGS="-Wall -Wno-nonnull -I$(ET_ROOTFS_BUILD_DIR)/staging/usr/include" \
+			LDFLAGS="-L$(ET_ROOTFS_BUILD_DIR)/staging/usr/lib" \
+			$1; \
+	fi
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] rt-tests-build 'make $1' done. *****\n\n"
 endef
 
@@ -148,11 +150,11 @@ ifeq ($(shell test -f $(ET_RT_TESTS_BUILD_CONFIG) && printf "DONE" || printf "CO
 endif
 
 .PHONY: rt-tests-clean
-rt-tests-clean: $(ET_RT_TESTS_BUILD_CONFIG)
+rt-tests-clean:
 	$(call $@)
 
 .PHONY: rt-tests-purge
-rt-tests-purge: $(ET_RT_TESTS_BUILD_CONFIG)
+rt-tests-purge:
 	$(call $@)
 
 .PHONY: rt-tests-version
