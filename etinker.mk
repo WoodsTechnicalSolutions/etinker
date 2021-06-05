@@ -81,9 +81,11 @@ include $(ET_DIR)/bootloader.mk
 endif
 ifdef ET_BOARD_ROOTFS_TREE
 include $(ET_DIR)/rootfs.mk
-include $(ET_DIR)/overlay.mk
 endif
 include $(ET_DIR)/library.mk
+ifdef ET_BOARD_ROOTFS_TREE
+include $(ET_DIR)/overlay.mk
+endif
 
 # allow users to find cross-compiler
 export PATH := $(ET_TOOLCHAIN_DIR)/bin:$(PATH)
