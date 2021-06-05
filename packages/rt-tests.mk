@@ -100,7 +100,7 @@ define rt-tests-config
 	$(call software-check,$(ET_RT_TESTS_TREE),rt-tests)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] rt-tests-config *****\n\n"
 	$(call rt-tests-depends)
-	@if ! [ -d $(ET_RT_TESTS_BUILD_DIR) ] || ![ -f $(ET_RT_TESTS_BUILD_CONFIG) ]; then \
+	@if ! [ -d $(ET_RT_TESTS_BUILD_DIR) ] || ! [ -f $(ET_RT_TESTS_BUILD_CONFIG) ]; then \
 		rsync -aP $(ET_RT_TESTS_SOFTWARE_DIR) $(shell dirname $(ET_RT_TESTS_BUILD_DIR))/; \
 		printf "%s\n" "$(shell date)" > $(ET_RT_TESTS_BUILD_CONFIG); \
 	fi
