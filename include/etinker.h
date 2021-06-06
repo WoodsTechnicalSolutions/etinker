@@ -1,6 +1,9 @@
 /*
  * This is the public C header file for the 'etinker' library
  *
+ * Uses similar library concepts as found in 'libgpiod' here:
+ * - https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git
+ *
  * Copyright (C) 2021 Derald D. Woods
  *
  * This file is part of the Embedded Tinkerer Sandbox, and is made
