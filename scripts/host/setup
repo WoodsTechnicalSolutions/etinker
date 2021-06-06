@@ -70,6 +70,7 @@ if [ -f /usr/bin/apt ]; then
 		libluajit-5.1-dev \
 		libmpc-dev \
 		libncurses-dev \
+		libnuma-dev \
 		libreadline-dev \
 		libsdl1.2-dev \
 		libselinux1 \
@@ -99,7 +100,9 @@ if [ -f /usr/bin/apt ]; then
 		mtools \
 		netpbm \
 		net-tools \
+		nfs-kernel-server \
 		openssh-client \
+		openssh-server \
 		patchelf \
 		pax \
 		pkg-config \
