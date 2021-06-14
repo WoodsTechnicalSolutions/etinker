@@ -163,8 +163,8 @@ $(ET_LIBRARY_BUILD_ARCHIVE): $(OBJECTS) $(DEPENDS)
 	$(AR) cr -o $@ $(OBJECTS)
 	@$(NM) -g $@ && echo
 	@$(SIZE) $@ && echo
+	cp -a $(ET_DIR)/include/* $(ET_LIBRARY_DIR)/usr/include/
 	cp -a $@ $(ET_LIBRARY_DIR)/usr/lib/
-	cp -a $(ET_DIR)/include/$(ET_LIBRARY_NAME).h $(ET_LIBRARY_DIR)/usr/include/
 
 ifdef ET_LIBRARY_SO
 $(ET_LIBRARY_BUILD_SO): $(ET_LIBRARY_BUILD_ARCHIVE)
@@ -175,6 +175,8 @@ $(ET_LIBRARY_BUILD_SO): $(ET_LIBRARY_BUILD_ARCHIVE)
 		ln -s lib$(ET_LIBRARY_NAME).so.$(ET_LIBRARY_VERSION) lib$(ET_LIBRARY_NAME).so)
 
 $(ET_LIBRARY_TEST): $(ET_LIBRARY_ARCHIVE)
+	@mkdir -p $(ET_LIBRARY_DIR)/usr/include
+	@cp -a $(ET_DIR)/include/* $(ET_LIBRARY_DIR)/usr/include/
 	$(CC) $(CFLAGS_TEST) $(ET_DIR)/lib/test.c -o $@ $(LDFLAGS_TEST)
 endif
 
