@@ -3,16 +3,24 @@
 
 usage ()
 {
-	printf "\nusage: sandbox <command> [-rt]\n\n"
+	printf "\nusage: sandbox <command>\n\n"
 	printf "<command>\n"
-	printf "\tupdate  - Clean and Build\n\n"
+	printf "\tmake <targets> - Build specified targets\n"
+	printf "\tinfo           - Show build variables for all boards\n"
+	printf "\tupdate         - Clean and build all boards\n"
+	printf "\tversion        - Show version information for all boards\n\n"
 }
 
 do_make ()
 {
-	case $1 in
-	update)
-		ET_BOARD=$2 make update
+	printf "\n[$1]\n"
+	case $2 in
+	make)
+		args="`echo $@ | cut -d ' ' -f 3-9`"
+		ET_BOARD=$1 make $args
+		;;
+	info | update | version)
+		ET_BOARD=$1 make $2
 		;;
 	*)
 		;;
@@ -37,7 +45,14 @@ fi
 
 # validate first positional argumement
 case $1 in
-update)
+make)
+	if [ -e $2 ]; then
+		printf "Missing 'make' arguments!\n"
+		usage
+		exit 1
+	fi
+	;;
+info | update | version)
 	;;
 *)
 	printf "Invalid argument list!\n"
@@ -65,8 +80,8 @@ for n in `ls boards`; do
 
 	# baseline boards
 	case $n in
-	aml-s905x-cc* | ls1043ardb* | am335x-pocketbeagle | sama5d3-xpld | pynq-z2*)
-		if ! do_make $1 $n; then
+	aml-s905x-cc* | am335x-pocketbeagle* | ls1012afrdm* | ls1043ardb* | pynq-z2* | sama5d3-xpld*)
+		if ! do_make $n "$@"; then
 			printf "etinker $0 failed!\n"
 			exit 1
 		fi
