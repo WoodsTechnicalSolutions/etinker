@@ -18,8 +18,7 @@ define kernel-finalize-$(ET_BOARD_TYPE)
 	@if [ -d $(ET_BOARD_DIR)/its ] && [ -f $(ET_BOARD_DIR)/its/kernel.its ]; then \
 		cp $(ET_BOARD_DIR)/its/kernel.its $(ET_KERNEL_DIR)/boot/; \
 		(cd $(ET_KERNEL_DIR)/boot/ && \
-			gzip -k Image && \
-			mkimage -f kernel.its kernel.itb); \
+			mkimage -f kernel.its fitImage); \
 	fi
 endef
 
