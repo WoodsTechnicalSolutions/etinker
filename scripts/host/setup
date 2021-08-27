@@ -100,6 +100,7 @@ if [ -f /usr/bin/apt ]; then
 		mtools \
 		netpbm \
 		net-tools \
+		ninja-build \
 		nfs-kernel-server \
 		openssh-client \
 		openssh-server \
