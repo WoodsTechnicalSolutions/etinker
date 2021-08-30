@@ -82,6 +82,7 @@ if [ -f /usr/bin/apt ]; then
 		libx11-dev \
 		libxext-dev \
 		libxml2-utils \
+		libzstd-dev \
 		lua5.1 \
 		lua5.2 \
 		lua5.3 \
