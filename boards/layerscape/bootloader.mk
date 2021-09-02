@@ -1,10 +1,11 @@
 export ET_BOOTLOADER_ARCH := arm
 
-export LSDK_VERSION ?= LSDK-20.12
-export LSDK_VERSION_URL ?= lsdk2012
+export LSDK_VERSION ?= LSDK-21.08
+export LSDK_VERSION_URL ?= lsdk2108
 export LSDK_MACHINE ?= ls1043ardb
 export LSDK_BOOTTYPE ?= sd
-export LSDK_FIRMWARE_BIN ?= $(ET_SOFTWARE_DIR)/qoriq/firmware/firmware_$(LSDK_MACHINE)_uboot_$(LSDK_BOOTTYPE)boot-$(LSDK_VERSION_URL).img
+export LSDK_FIRMWARE_URL ?= https://www.nxp.com/lgfiles/sdk/$(LSDK_VERSION_URL)/firmware_$(LSDK_MACHINE)_$(LSDK_BOOTTYPE)boot.img
+export LSDK_FIRMWARE_BIN ?= $(ET_SOFTWARE_DIR)/qoriq/firmware/firmware_$(LSDK_MACHINE)_$(LSDK_BOOTTYPE)boot-$(LSDK_VERSION_URL).img
 export LSDK_SRK_HASH ?= $(ET_SOFTWARE_DIR)/qoriq/firmware/srk_hash-$(LSDK_VERSION_URL).txt
 export LSDK_SRK_PRI ?= $(ET_SOFTWARE_DIR)/qoriq/firmware/srk-$(LSDK_VERSION_URL).pri
 export LSDK_SRK_PUB ?= $(ET_SOFTWARE_DIR)/qoriq/firmware/srk-$(LSDK_VERSION_URL).pub
@@ -20,8 +21,7 @@ define bootloader-finalize-$(ET_BOARD_TYPE)
 	@mkdir -p $(ET_SOFTWARE_DIR)/qoriq/firmware
 	@if ! [ -f $(LSDK_FIRMWARE_BIN) ]; then \
 		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Getting $(LSDK_VERSION) QorIQ Composite Firmware Image *****\n\n"; \
-		wget -c -O $(LSDK_FIRMWARE_BIN) \
-			https://www.nxp.com/lgfiles/sdk/$(LSDK_VERSION_URL)/firmware_$(LSDK_MACHINE)_uboot_$(LSDK_BOOTTYPE)boot.img; \
+		wget -c -O $(LSDK_FIRMWARE_BIN) $(LSDK_FIRMWARE_URL); \
 		if ! [ -f $(LSDK_FIRMWARE_BIN) ]; then \
 			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Getting $(LSDK_VERSION) QorIQ Firmware FAILED! *****\n\n"; \
 			exit 2; \
