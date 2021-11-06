@@ -1,0 +1,29 @@
+diff --git a/src/kernel/pwm-cadence.c b/src/kernel/pwm-cadence.c
+index fe3f5bf..1da21e2 100644
+--- a/src/kernel/pwm-cadence.c
++++ b/src/kernel/pwm-cadence.c
+@@ -308,7 +308,9 @@ static int cadence_pwm_remove(struct platform_device *pdev)
+ 	for (i = 0; i < cpwm->chip.npwm; i ++)
+ 		pwm_disable(&cpwm->chip.pwms[i]);
+ 
+-	return pwmchip_remove(&cpwm->chip);
++	pwmchip_remove(&cpwm->chip);
++
++	return 0;
+ }
+ 
+ static const struct of_device_id cadence_pwm_of_match[] = {
+@@ -331,12 +333,7 @@ static struct platform_driver cadence_pwm_driver = {
+ 
+ static int __init cadence_pwm_init(void)
+ {
+-	int ret;
+-
+-	printk(KERN_INFO "cadence_pwm: Compiled on "
+-		__DATE__ " at " __TIME__ "\n");
+-	ret = platform_driver_register(&cadence_pwm_driver);
+-	return ret;
++	return platform_driver_register(&cadence_pwm_driver);
+ }
+ 
+ static void __exit cadence_pwm_exit(void)
