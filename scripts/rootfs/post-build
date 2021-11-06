@@ -101,9 +101,8 @@ omap2plus|sama5|zynq|meson|layerscape)
 		printf "#!/bin/bash\n" > ${TARGET}/usr/sbin/firmware-update
 		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "if [ -f /media/BOOT/firmware.img ]; then\n" >> ${TARGET}/usr/sbin/firmware-update
-		printf "  dd if=/media/BOOT/firmware.img of=/dev/mmcblk0 conv=fsync,notrunc bs=512 seek=8\n" >> ${TARGET}/usr/sbin/firmware-update
-		printf "else\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "  dd if=/dev/zero of=/dev/mmcblk0 conv=fsync,notrunc bs=512 seek=8 count=8192\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "  dd if=/media/BOOT/firmware.img of=/dev/mmcblk0 conv=fsync,notrunc bs=512 seek=8\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "fi\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "dd if=/media/BOOT/bl2_sd.pbl of=/dev/mmcblk0 conv=fsync,notrunc bs=512 seek=8\n" >> ${TARGET}/usr/sbin/firmware-update
