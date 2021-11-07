@@ -74,8 +74,8 @@ $ ET_BOARD=am335x-pocketbeagle make sandbox rootfs-update
 ```
 
 Depending on your workstation hardware, the build time could be 1.5
-hours or greater. The GNU C/C++ compiler, library, and debugger
-(toolchain) are built, from source, using **crosstool-ng**. This will
+hours or greater. The GNU toolchain (C/C++ compiler, C library, and
+debugger) is built, from source, by **crosstool-ng**. This will
 account for at least half the build time typically. The build tools
 need access to a network with a route to the Internet. All of the
 source code will be pulled from online locations. Slow network
