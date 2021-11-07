@@ -104,9 +104,9 @@ endef
 define openssl-config
 	$(call software-check,$(ET_OPENSSL_TREE),openssl)
 	$(call openssl-depends)
+	@cp -a $(ET_SOFTWARE_DIR)/cryptodev-linux/crypto/cryptodev.h $(ET_OPENSSL_SOFTWARE_DIR)/crypto/
 	@if [ -z "$1" ] || ! [ -f $(ET_OPENSSL_BUILD_DIR)/Makefile ]; then \
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl-config *****\n\n"; \
-		cp -av $(ET_SOFTWARE_DIR)/cryptodev-linux/crypto/cryptodev.h $(ET_OPENSSL_SOFTWARE_DIR)/crypto/; \
 		(cd $(ET_OPENSSL_BUILD_DIR) && \
 			$(ET_OPENSSL_SOFTWARE_DIR)/Configure \
 				$(ET_OPENSSL_ARCH) \
@@ -124,9 +124,10 @@ define openssl-config
 				no-tests \
 				no-fuzz-libfuzzer \
 				no-fuzz-afl \
-				zlib-dynamic && \
-			$(MAKE) --no-print-directory depend); \
+				zlib-dynamic); \
 	fi
+	@(cd $(ET_OPENSSL_BUILD_DIR) && \
+		$(MAKE) --no-print-directory depend)
 endef
 
 define openssl-clean
