@@ -24,7 +24,7 @@ define software-check
 			case $2 in \
 			toolchain | bootloader | kernel | rootfs) \
 				if [ -d $1 ]; then \
-					(cd $1 && git fetch --all && git fetch --tags); \
+					(cd $1 && git restore . && git clean -df && git fetch --all && git fetch --tags); \
 				else \
 					git clone $$url $1; \
 				fi; \
@@ -39,7 +39,7 @@ define software-check
 				;; \
 			*) \
 				if [ -d $2 ]; then \
-					(cd $2 && git fetch --all && git fetch --tags); \
+					(cd $2 && git restore . && git clean -df && git fetch --all && git fetch --tags); \
 				else \
 					git clone $$url $2; \
 				fi; \
