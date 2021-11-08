@@ -74,7 +74,7 @@ omap2plus|sama5|zynq|meson|layerscape)
 	printf "/dev/mmcblk0p4 /media/data auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 	# Board Firmware
 	case "${ET_BOARD}" in
-	am335x-pocketbeagle*)
+	am335x-*)
 		rsync ${rsync_opts} ${ET_DIR}/firmware/am335x* ${TARGET}/lib/firmware/
 		;;
 	aml-s905x-cc*)
@@ -136,7 +136,7 @@ omap2plus|sama5|zynq|meson|layerscape)
 	esac
 	# Last Fixup
 	case "${ET_BOARD}" in
-	am335x-pocketbeagle*|am3517-evm*|omap3-beagle*|omap3-evm*|sama5d3-xpld*)
+	am335x-*|am3517-evm*|omap3-beagle*|omap3-evm*|sama5d3-xpld*)
 		printf "\nttyGS0::respawn:/sbin/getty -L ttyGS0 115200 screen-256color\n" >> ${TARGET}/etc/inittab
 		echo "ttyGS0" >> ${TARGET}/etc/securetty
 		;;
