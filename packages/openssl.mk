@@ -115,6 +115,7 @@ define openssl-config
 				--cross-compile-prefix=$(ET_CROSS_COMPILE) \
 				-I$(ET_ROOTFS_SYSROOT_DIR)/usr/include \
 				-DOPENSSL_THREADS \
+				-latomic \
 				-lpthread threads \
 				shared \
 				enable-devcryptoeng \
