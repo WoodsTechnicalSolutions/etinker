@@ -31,9 +31,9 @@ export ET_ROOTFS_CACHED_VERSION := $(shell grep -Po 'rootfs-ref:\K[^\n]*' $(ET_B
 
 rootfs_defconfig := et_$(subst -,_,$(ET_ROOTFS_TYPE))_defconfig
 rootfs_type := $(ET_ROOTFS_TYPE)
-ifeq ($(ET_INITRAMFS),yes)
-rootfs_type := $(subst -initramfs,,$(ET_ROOTFS_TYPE))
-rootfs_dir := /initramfs
+ifneq ($(ET_ROOTFS_VARIANT),)
+rootfs_type := $(subst $(ET_ROOTFS_VARIANT),,$(ET_ROOTFS_TYPE))
+rootfs_dir := /$(subst -,,$(ET_ROOTFS_VARIANT))
 endif
 
 # [start] rootfs version magic

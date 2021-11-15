@@ -16,10 +16,6 @@ ifndef ET_BOARD_ROOTFS_TREE
 $(error [ 'etinker' packages requires buildroot rootfs ] ***)
 endif
 
-ifeq ($(ET_INITRAMFS),yes)
-rootfs_type := $(subst -initramfs,,$(ET_ROOTFS_TYPE))
-endif
-
 export ET_RT_TESTS_TREE := rt-tests
 export ET_RT_TESTS_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_RT_TESTS_TREE)
 export ET_RT_TESTS_VERSION := $(shell cd $(ET_RT_TESTS_SOFTWARE_DIR) 2>/dev/null && git describe --long --dirty 2>/dev/null)

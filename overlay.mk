@@ -11,10 +11,7 @@ ifndef ET_BOARD_ROOTFS_TREE
 $(error [ 'etinker' overlay packages require buildroot rootfs ] ***)
 endif
 
-ifeq ($(ET_INITRAMFS),yes)
-rootfs_type := $(subst -initramfs,,$(ET_ROOTFS_TYPE))
-endif
-export ET_OVERLAY_BUILD_DIR := $(ET_DIR)/overlay/build/$(rootfs_type)/$(ET_CROSS_TUPLE)
+export ET_OVERLAY_BUILD_DIR := $(ET_DIR)/overlay/build/$(ET_ROOTFS_TYPE)/$(ET_CROSS_TUPLE)
 export ET_OVERLAY_DIR := $(ET_DIR)/overlay/$(ET_BOARD)/$(ET_CROSS_TUPLE)
 
 include $(ET_DIR)/packages/cadence-ttc-pwm.mk
