@@ -49,7 +49,7 @@ sed -i s,::sysinit:/etc/init.d/rcS,#::sysinit:/etc/init.d/rcS, ${TARGET}/etc/ini
 sed -i s,${ET_ROOTFS_GETTY_PORT}::respawn:,#${ET_ROOTFS_GETTY_PORT}::respawn:, ${TARGET}/etc/inittab
 printf "\n::sysinit:/etc/init.d/rcS\n" >> ${TARGET}/etc/inittab
 printf "\n${ET_ROOTFS_GETTY_PORT}::respawn:/sbin/getty -L ${ET_ROOTFS_GETTY_PORT} 115200 screen-256color\n" >> ${TARGET}/etc/inittab
-sed -i s,ET_ROOTFS_GETTY_PORT,${ET_ROOTFS_GETTY_PORT}, ${TARGET}/etc/profile.d/prompt.sh
+sed -i s,ET_ROOTFS_GETTY_PORT,${ET_ROOTFS_GETTY_PORT}, ${TARGET}/etc/profile.d/tty.sh
 sed -i s,ET_BOARD,${ET_BOARD}, ${TARGET}/etc/dhcp/dhcpd.conf
 # Google DNS
 rm -f ${TARGET}/etc/resolv.conf
