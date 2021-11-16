@@ -33,7 +33,6 @@ rootfs_defconfig := et_$(subst -,_,$(ET_ROOTFS_TYPE))_defconfig
 rootfs_type := $(ET_ROOTFS_TYPE)
 ifneq ($(ET_ROOTFS_VARIANT),)
 rootfs_type := $(subst $(ET_ROOTFS_VARIANT),,$(ET_ROOTFS_TYPE))
-rootfs_dir := /$(subst -,,$(ET_ROOTFS_VARIANT))
 endif
 
 # [start] rootfs version magic
@@ -48,7 +47,7 @@ export ET_ROOTFS_BUILD_DIR := $(ET_DIR)/rootfs/build/$(ET_ROOTFS_TYPE)/$(ET_CROS
 export ET_ROOTFS_BUILD_CONFIG := $(ET_ROOTFS_BUILD_DIR)/.config
 export ET_ROOTFS_BUILD_IMAGE := $(ET_ROOTFS_BUILD_DIR)/images/rootfs.tar
 export ET_ROOTFS_TARBALLS_DIR := $(ET_TARBALLS_DIR)/rootfs
-export ET_ROOTFS_DIR := $(ET_DIR)/rootfs/$(ET_BOARD)/$(ET_CROSS_TUPLE)$(rootfs_dir)
+export ET_ROOTFS_DIR := $(ET_DIR)/rootfs/$(ET_BOARD)$(ET_ROOTFS_VARIANT)/$(ET_CROSS_TUPLE)
 export ET_ROOTFS_DEFCONFIG := $(ET_DIR)/boards/$(rootfs_type)/config/$(ET_ROOTFS_TREE)/$(rootfs_defconfig)
 export ET_ROOTFS_BUSYBOX_CONFIG := $(ET_DIR)/boards/$(rootfs_type)/config/$(ET_ROOTFS_TREE)/busybox.config
 export ET_ROOTFS_IMAGE := $(ET_ROOTFS_DIR)/images/rootfs.tar

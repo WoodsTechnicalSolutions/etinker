@@ -12,7 +12,7 @@ $(error [ 'etinker' overlay packages require buildroot rootfs ] ***)
 endif
 
 export ET_OVERLAY_BUILD_DIR := $(ET_DIR)/overlay/build/$(ET_ROOTFS_TYPE)/$(ET_CROSS_TUPLE)
-export ET_OVERLAY_DIR := $(ET_DIR)/overlay/$(ET_BOARD)/$(ET_CROSS_TUPLE)
+export ET_OVERLAY_DIR := $(ET_DIR)/overlay/$(ET_BOARD)$(ET_ROOTFS_VARIANT)/$(ET_CROSS_TUPLE)
 
 include $(ET_DIR)/packages/cadence-ttc-pwm.mk
 include $(ET_DIR)/packages/cryptodev-linux.mk
