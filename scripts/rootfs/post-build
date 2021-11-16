@@ -44,12 +44,14 @@ if [ -d ${ET_OVERLAY_DIR} ] && [ -f ${ET_OVERLAY_DIR}/exclude ]; then
 		${TARGET}/ 2>/dev/null
 fi
 printf "\n%s\n\n" "`cat ${TARGET}/etc/issue`" > ${TARGET}/etc/issue
-printf "\n::sysinit:/bin/mount -t debugfs none /sys/kernel/debug\n" >> ${TARGET}/etc/inittab
-printf "\n::sysinit:/bin/mount -t configfs none /sys/kernel/config\n" >> ${TARGET}/etc/inittab
-sed -i s,::sysinit:/etc/init.d/rcS,#::sysinit:/etc/init.d/rcS, ${TARGET}/etc/inittab
-sed -i s,${ET_ROOTFS_GETTY_PORT}::respawn:,#${ET_ROOTFS_GETTY_PORT}::respawn:, ${TARGET}/etc/inittab
-printf "\n::sysinit:/etc/init.d/rcS\n" >> ${TARGET}/etc/inittab
-printf "\n${ET_ROOTFS_GETTY_PORT}::respawn:/sbin/getty -L ${ET_ROOTFS_GETTY_PORT} 115200 screen-256color\n" >> ${TARGET}/etc/inittab
+if [ -f ${TARGET}/etc/inittab ]; then
+	printf "\n::sysinit:/bin/mount -t debugfs none /sys/kernel/debug\n" >> ${TARGET}/etc/inittab
+	printf "\n::sysinit:/bin/mount -t configfs none /sys/kernel/config\n" >> ${TARGET}/etc/inittab
+	sed -i s,::sysinit:/etc/init.d/rcS,#::sysinit:/etc/init.d/rcS, ${TARGET}/etc/inittab
+	sed -i s,${ET_ROOTFS_GETTY_PORT}::respawn:,#${ET_ROOTFS_GETTY_PORT}::respawn:, ${TARGET}/etc/inittab
+	printf "\n::sysinit:/etc/init.d/rcS\n" >> ${TARGET}/etc/inittab
+	printf "\n${ET_ROOTFS_GETTY_PORT}::respawn:/sbin/getty -L ${ET_ROOTFS_GETTY_PORT} 115200 screen-256color\n" >> ${TARGET}/etc/inittab
+fi
 sed -i s,ET_ROOTFS_GETTY_PORT,${ET_ROOTFS_GETTY_PORT}, ${TARGET}/etc/profile.d/tty.sh
 sed -i s,ET_BOARD,${ET_BOARD}, ${TARGET}/etc/dhcp/dhcpd.conf
 # Google DNS
@@ -138,7 +140,9 @@ omap2plus|sama5|zynq|meson|layerscape)
 	# Last Fixup
 	case "${ET_BOARD}" in
 	am335x-*|am3517-evm*|omap3-beagle*|omap3-evm*|sama5d3-xpld*)
-		printf "\nttyGS0::respawn:/sbin/getty -L ttyGS0 115200 screen-256color\n" >> ${TARGET}/etc/inittab
+		if [ -f ${TARGET}/etc/inittab ]; then
+			printf "\nttyGS0::respawn:/sbin/getty -L ttyGS0 115200 screen-256color\n" >> ${TARGET}/etc/inittab
+		fi
 		echo "ttyGS0" >> ${TARGET}/etc/securetty
 		;;
 	ls1012afrdm*)
