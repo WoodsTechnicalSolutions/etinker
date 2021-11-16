@@ -28,8 +28,8 @@ export ET_WIRELESS_REGDB_BUILD_BIN := $(ET_WIRELESS_REGDB_SOFTWARE_DIR)/regulato
 export ET_WIRELESS_REGDB_BUILD_CONFIG := $(ET_WIRELESS_REGDB_BUILD_BIN)
 export ET_WIRELESS_REGDB_X509_PEM := $(ET_OVERLAY_DIR)/etc/wireless-regdb/pubkeys/sforshee.x509.pem
 export ET_WIRELESS_REGDB_PUB_PEM := $(ET_OVERLAY_DIR)/etc/wireless-regdb/pubkeys/sforshee.key.pub.pem
-export ET_WIRELESS_REGDB_DB_P7S := $(ET_OVERLAY_DIR)/lib/firmware/regulatory.db.p7s
-export ET_WIRELESS_REGDB_DB := $(ET_OVERLAY_DIR)/lib/firmware/regulatory.db
+export ET_WIRELESS_REGDB_DB_P7S := $(ET_OVERLAY_DIR)/usr/lib/firmware/regulatory.db.p7s
+export ET_WIRELESS_REGDB_DB := $(ET_OVERLAY_DIR)/usr/lib/firmware/regulatory.db
 export ET_WIRELESS_REGDB_BIN := $(ET_OVERLAY_DIR)/usr/lib/crda/regulatory.bin
 export ET_WIRELESS_REGDB_TARGET_FINAL ?= $(ET_WIRELESS_REGDB_BIN)
 
@@ -38,7 +38,7 @@ define wireless-regdb-version
 endef
 
 define wireless-regdb-depends
-	@mkdir -p $(ET_OVERLAY_DIR)/lib/firmware
+	@mkdir -p $(ET_OVERLAY_DIR)/usr/lib/firmware
 	@mkdir -p $(ET_OVERLAY_DIR)/usr/lib/crda
 	@mkdir -p $(ET_OVERLAY_DIR)/etc/wireless-regdb/pubkeys
 endef

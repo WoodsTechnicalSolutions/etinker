@@ -16,7 +16,7 @@ else
 fi
 
 # Update target file system
-mkdir -p ${TARGET}/lib/firmware
+mkdir -p ${TARGET}/usr/lib/firmware
 # Preserve some target directory items with '-buildroot'
 cp -fv ${TARGET}/etc/dhcp/dhcpd.conf ${TARGET}/etc/dhcp/dhcpd.conf-buildroot
 # Copy common files to target
@@ -32,7 +32,8 @@ if [ -d ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/debug-root ]; then
 	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/debug-root/* ${TARGET}/ 2>/dev/null
 fi
 if [ -d ${ET_KERNEL_DIR}/boot ]; then
-	rsync ${rsync_opts} ${ET_KERNEL_DIR}/* ${TARGET}/ 2>/dev/null
+	rsync ${rsync_opts} ${ET_KERNEL_DIR}/boot ${TARGET}/ 2>/dev/null
+	rsync ${rsync_opts} ${ET_KERNEL_DIR}/lib/modules ${TARGET}/usr/lib/ 2>/dev/null
 fi
 if [ -d ${ET_BOOTLOADER_DIR}/boot ]; then
 	rsync ${rsync_opts} ${ET_BOOTLOADER_DIR}/* ${TARGET}/ 2>/dev/null
@@ -75,7 +76,7 @@ omap2plus|sama5|zynq|meson|layerscape)
 	# Board Firmware
 	case "${ET_BOARD}" in
 	am335x-*)
-		rsync ${rsync_opts} ${ET_DIR}/firmware/am335x* ${TARGET}/lib/firmware/
+		rsync ${rsync_opts} ${ET_DIR}/firmware/am335x* ${TARGET}/usr/lib/firmware/
 		;;
 	aml-s905x-cc*)
 		# mmc1 is the eMMC chip

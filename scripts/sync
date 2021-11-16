@@ -98,10 +98,10 @@ case "${destination}" in
 					printf "Unmounted media directory! [%s/BOOT]\n" ${media}
 					exit 1
 				fi
-				sudo mkdir -p ${media}/rootfs/lib/firmware
-				sudo rsync ${rsync_opts_x} ${target_dir}/* ${media}/rootfs/
+				sudo rsync ${rsync_opts_x} ${target_dir}/boot ${media}/rootfs/
 				if [ "${target}" = "kernel" ]; then
-					sudo rsync ${rsync_opts_x} ${target_dir}/../../../firmware/* ${media}/rootfs/lib/firmware/
+					sudo rsync ${rsync_opts_x} ${target_dir}/lib/modules ${media}/rootfs/usr/lib/
+					sudo rsync ${rsync_opts_x} ${ET_DIR}/firmware ${media}/rootfs/usr/lib/
 				fi
 				rm -f ${media}/BOOT/firmware.img
 				sudo rsync ${rsync_opts} ${target_dir}/boot/* ${media}/BOOT/
@@ -174,12 +174,12 @@ case "${destination}" in
 						'( cd / && tar xf - && sync )')
 				printf "Done\n"
 				if [ "${target}" = "kernel" ] && [ "${ET_BOARD_TYPE}" = "omap2plus" ]; then
-					printf "[%s][%s] Completing transfer to '/lib/firmware/' on %s ... " ${ET_BOARD} ${target} ${ipv4}
-					(cd ${target_dir}/../../../firmware && \
-						fakeroot tar --exclude='boot/extlinux' -cf - * | \
+					printf "[%s][%s] Completing transfer to '/usr/lib/firmware/' on %s ... " ${ET_BOARD} ${target} ${ipv4}
+					(cd ${ET_DIR}/firmware && \
+						fakeroot tar -cf - * | \
 						ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
 							root@${ipv4} \
-							'( cd /lib/firmware/ && tar xf - && sync )')
+							'( cd /usr/lib/firmware/ && tar xf - && sync )')
 					printf "Done\n"
 				fi
 				printf "[%s][%s] Completing transfer to '/media/BOOT/' on %s ... " ${ET_BOARD} ${target} ${ipv4}
