@@ -21,6 +21,10 @@ mkdir -p ${TARGET}/usr/lib/firmware
 cp -fv ${TARGET}/etc/dhcp/dhcpd.conf ${TARGET}/etc/dhcp/dhcpd.conf-buildroot
 # Copy common files to target
 rsync ${rsync_opts} ${ET_DIR}/common/rootfs/* ${TARGET}/ 2>/dev/null
+# Copy board specific files to target
+if [ -d ${ET_DIR}/boards/${ET_BOARD}/rootfs ]; then
+	rsync ${rsync_opts} ${ET_DIR}/boards/${ET_BOARD}/rootfs/* ${TARGET}/ 2>/dev/null
+fi
 if [ -d ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib ]; then
 	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libssp.so* ${TARGET}/lib/ 2>/dev/null
 	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libSegFault.so ${TARGET}/lib/ 2>/dev/null
