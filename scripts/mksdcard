@@ -118,7 +118,7 @@ parted -a optimal -s ${disk} mkpart primary fat16 68MiB 196MiB && partprobe -s $
 parted -a optimal -s ${disk} mkpart primary ext4 196MiB 2244MiB && partprobe -s ${disk}
 parted -a optimal -s ${disk} mkpart primary ext4 2244MiB 7364MiB && partprobe -s ${disk}
 parted -a optimal -s ${disk} mkpart primary ext4 7364MiB 100% && partprobe -s ${disk}
-parted -a optimal -s ${disk} toggle 1 boot
+parted -a optimal -s ${disk} set 1 boot on
 
 case "${controller}" in
 	MMC)
