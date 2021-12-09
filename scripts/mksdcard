@@ -93,7 +93,7 @@ echo
 
 printf "[${board}] Preparing ${controller} @ ${disk}\n"
 
-dd if=/dev/zero of=${disk} bs=1M count=65
+dd if=/dev/zero of=${disk} conv=notrunc bs=1M count=196
 
 # NOTE: use higher quality SD/MMC cards (Class 10, UHS-1 or better)
 #
