@@ -112,9 +112,8 @@ case "${destination}" in
 					blkdev="`df ${media}/BOOT | tail -1 | cut -d ' ' -f 1 | cut -d 1 -f 1 | tr -d \\n`"
 					case "${ET_BOARD_TYPE}" in
 						meson)
-							printf "\n*** write ${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin to ${blkdev} ***\n\n"
-							sudo dd if=${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin of=${blkdev} conv=fsync,notrunc bs=1 count=444
-							sudo dd if=${ET_BOOTLOADER_DIR}/boot/u-boot.bin.sd.bin of=${blkdev} conv=fsync,notrunc bs=512 skip=1 seek=1
+							printf "\n*** write ${ET_BOOTLOADER_DIR}/boot/gxl-boot.bin to ${blkdev} ***\n\n"
+							sudo dd if=${ET_BOOTLOADER_DIR}/boot/gxl-boot.bin of=${blkdev} conv=fsync,notrunc bs=512 seek=1
 							;;
 						layerscape)
 							if [ -f ${LSDK_FIRMWARE_BIN} ]; then
