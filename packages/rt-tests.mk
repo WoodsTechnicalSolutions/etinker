@@ -50,6 +50,7 @@ define rt-tests-depends
 	@mkdir -p $(ET_OVERLAY_DIR)
 	@mkdir -p $(ET_OVERLAY_DIR)/usr/bin
 	@mkdir -p $(ET_OVERLAY_DIR)/usr/lib
+	$(call software-check,$(ET_RT_TESTS_TREE),rt-tests)
 endef
 
 define rt-tests-targets
@@ -93,7 +94,6 @@ define rt-tests-build
 endef
 
 define rt-tests-config
-	$(call software-check,$(ET_RT_TESTS_TREE),rt-tests)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] rt-tests-config *****\n\n"
 	$(call rt-tests-depends)
 	@if ! [ -d $(ET_RT_TESTS_BUILD_DIR) ] || ! [ -f $(ET_RT_TESTS_BUILD_CONFIG) ]; then \
