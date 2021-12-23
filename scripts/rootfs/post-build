@@ -21,6 +21,7 @@ mkdir -p ${TARGET}/usr/lib/firmware
 cp -fv ${TARGET}/etc/dhcp/dhcpd.conf ${TARGET}/etc/dhcp/dhcpd.conf-buildroot
 # Copy common files to target
 rsync ${rsync_opts} ${ET_DIR}/common/rootfs/* ${TARGET}/ 2>/dev/null
+cp -fv ${ET_DIR}/scripts/mksdcard ${TARGET}/usr/sbin/ 2>/dev/null
 # Copy board specific files to target
 if [ -d ${ET_DIR}/boards/${ET_BOARD}/rootfs ]; then
 	rsync ${rsync_opts} ${ET_DIR}/boards/${ET_BOARD}/rootfs/* ${TARGET}/ 2>/dev/null
@@ -77,8 +78,8 @@ omap2plus|sama5|zynq|meson|layerscape)
 	# mmc0 is the SD/MMC card
 	printf "/dev/mmcblk0p1 /media/BOOT auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 	printf "/dev/mmcblk0p2 /media/rootfs auto defaults 0 0\n" >> ${TARGET}/etc/fstab
-	printf "/dev/mmcblk0p3 /media/backup auto defaults 0 0\n" >> ${TARGET}/etc/fstab
-	printf "/dev/mmcblk0p4 /media/data auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+	printf "#/dev/mmcblk0p3 /media/backup auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+	printf "#/dev/mmcblk0p4 /media/data auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 	# Board Firmware
 	case "${ET_BOARD}" in
 	am335x-*)
@@ -86,15 +87,20 @@ omap2plus|sama5|zynq|meson|layerscape)
 		;;
 	aml-s905x-cc*)
 		# mmc1 is the eMMC chip
-		mkdir -p ${TARGET}/media/emmc
-		printf "/dev/mmcblk1p1 /media/emmc auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+		mkdir -p ${TARGET}/media/mmcblk1p1
+		mkdir -p ${TARGET}/media/mmcblk1p2
+		mkdir -p ${TARGET}/media/mmcblk1p3
+		mkdir -p ${TARGET}/media/mmcblk1p4
+		printf "/dev/mmcblk1p1 /media/mmcblk1p1 auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+		printf "/dev/mmcblk1p2 /media/mmcblk1p2 auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+		printf "/dev/mmcblk1p3 /media/mmcblk1p3 auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+		printf "/dev/mmcblk1p4 /media/mmcblk1p4 auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 		# Build '/usr/sbin/firmware-update' file for on-target updates of SD and eMMC
 		printf "#!/bin/bash\n" > ${TARGET}/usr/sbin/firmware-update
 		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
-		printf "dd if=/media/BOOT/u-boot.bin of=/dev/mmcblk0 bs=512 seek=1\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "dd if=/media/BOOT/gxl-boot.bin of=/dev/mmcblk0 bs=512 seek=1\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
-		printf "dd if=/media/BOOT/u-boot.bin.sd.bin of=/dev/mmcblk1 conv=fsync,notrunc bs=1 count=444\n" >> ${TARGET}/usr/sbin/firmware-update
-		printf "dd if=/media/BOOT/u-boot.bin.sd.bin of=/dev/mmcblk1 conv=fsync,notrunc bs=512 skip=1 seek=1\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "dd if=/media/BOOT/gxl-boot.bin of=/dev/mmcblk1 bs=512 seek=1\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
 		chmod +x ${TARGET}/usr/sbin/firmware-update
 		;;

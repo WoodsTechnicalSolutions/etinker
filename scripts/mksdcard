@@ -77,6 +77,15 @@ if [ "$?" = "0" ]; then
 	exit 1
 fi
 
+disk_sz="`blockdev --getsize64 ${disk}`"
+
+printf "[${board}] ${disk} is $((${disk_sz} / 1000000000)) GB\n"
+
+if [[ ${disk_sz} -lt 2000000000 ]]; then
+	printf "***** DISK SIZE LESS THAN 2 GB IS NOT SUPPORTED *****\n"
+	exit 1
+fi
+
 printf "[${board}] ALL DATA ON ${disk} WILL BE LOST. Are you sure? (yes or no) : "
 read proceed
 
@@ -97,7 +106,7 @@ dd if=/dev/zero of=${disk} conv=notrunc bs=1M count=196
 
 # NOTE: use higher quality SD/MMC cards (Class 10, UHS-1 or better)
 #
-# MINIMUM MEDIA SIZE: 16 GiB
+# TYPICAL MEDIA SIZE: 16 GiB+
 # +--------------------+------------+----------+----------+----------+
 # | RAW                | (1) FAT 16 | (2) EXT4 | (3) EXT4 | (4) EXT4 |
 # +--------------------+------------+----------+----------+----------+
@@ -111,13 +120,22 @@ dd if=/dev/zero of=${disk} conv=notrunc bs=1M count=196
 # /dev/sdX2  1998672    6144 1871288   1%   /media/<user>/rootfs
 # /dev/sdX3  5095040   20472 4796040   1%   /media/<user>/backup
 # /dev/sdX4  7929288   35700 7471088   1%   /media/<user>/data
-printf "[${board}] Partitioning ${disk} [ 68 MiB RAW / 128 MiB (BOOT) / 2 GiB (rootfs) / 5 GiB (backup) / <fill> (data) ]\n"
+
+if [[ ${disk_sz} -ge 16000000000 ]]; then
+	printf "[${board}] Partitioning ${disk} [ 68 MiB RAW / 128 MiB (BOOT) / 2 GiB (rootfs) / 5 GiB (backup) / <fill> (data) ]\n"
+else
+	printf "[${board}] Partitioning ${disk} [ 68 MiB RAW / 128 MiB (BOOT) / <fill> (rootfs) ]\n"
+fi
 
 parted -a optimal -s ${disk} mklabel msdos && partprobe -s ${disk}
 parted -a optimal -s ${disk} mkpart primary fat16 68MiB 196MiB && partprobe -s ${disk}
-parted -a optimal -s ${disk} mkpart primary ext4 196MiB 2244MiB && partprobe -s ${disk}
-parted -a optimal -s ${disk} mkpart primary ext4 2244MiB 7364MiB && partprobe -s ${disk}
-parted -a optimal -s ${disk} mkpart primary ext4 7364MiB 100% && partprobe -s ${disk}
+if [[ ${disk_sz} -ge 16000000000 ]]; then
+	parted -a optimal -s ${disk} mkpart primary ext4 196MiB 2244MiB && partprobe -s ${disk}
+	parted -a optimal -s ${disk} mkpart primary ext4 2244MiB 7364MiB && partprobe -s ${disk}
+	parted -a optimal -s ${disk} mkpart primary ext4 7364MiB 100% && partprobe -s ${disk}
+else
+	parted -a optimal -s ${disk} mkpart primary ext4 196MiB 100% && partprobe -s ${disk}
+fi
 parted -a optimal -s ${disk} set 1 boot on
 
 case "${controller}" in
@@ -125,21 +143,25 @@ case "${controller}" in
 		printf "[${board}] Formatting ${disk}p1 as vfat\n"
 		mkfs.vfat -F 16 ${disk}p1 -n BOOT
 		printf "[${board}] Formatting ${disk}p2 as ext4\n"
-		mkfs.ext4 ${disk}p2 -F -L rootfs
-		printf "[${board}] Formatting ${disk}p3 as ext4\n"
-		mkfs.ext4 ${disk}p3 -F -L backup
-		printf "[${board}] Formatting ${disk}p4 as ext4\n"
-		mkfs.ext4 ${disk}p4 -F -L data
+		mkfs.ext4 ${disk}p2 -F -m 1 -L rootfs
+		if [[ ${disk_sz} -ge 16000000000 ]]; then
+			printf "[${board}] Formatting ${disk}p3 as ext4\n"
+			mkfs.ext4 ${disk}p3 -F -m 1 -L backup
+			printf "[${board}] Formatting ${disk}p4 as ext4\n"
+			mkfs.ext4 ${disk}p4 -F -m 1 -L data
+		fi
 		;;
 	ATA)
 		printf "[${board}] Formatting ${disk}1 as vfat\n"
 		mkfs.vfat -F 16 ${disk}1 -n BOOT
 		printf "[${board}] Formatting ${disk}2 as ext4\n"
-		mkfs.ext4 ${disk}2 -F -L rootfs
-		printf "[${board}] Formatting ${disk}3 as ext4\n"
-		mkfs.ext4 ${disk}3 -F -L backup
-		printf "[${board}] Formatting ${disk}4 as ext4\n"
-		mkfs.ext4 ${disk}4 -F -L data
+		mkfs.ext4 ${disk}2 -F -m 1 -L rootfs
+		if [[ ${disk_sz} -ge 16000000000 ]]; then
+			printf "[${board}] Formatting ${disk}3 as ext4\n"
+			mkfs.ext4 ${disk}3 -F -m 1 -L backup
+			printf "[${board}] Formatting ${disk}4 as ext4\n"
+			mkfs.ext4 ${disk}4 -F -m 1 -L data
+		fi
 		;;
 	*)
 		;;
