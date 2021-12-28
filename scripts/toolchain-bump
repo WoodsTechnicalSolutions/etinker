@@ -20,6 +20,9 @@ do_make ()
 		ET_BOARD=$1 make toolchain-$3
 		;;
 	*config)
+		# update 'ct-ng'
+		rm -rf toolchain/build/$1/generator
+		ET_BOARD=$1 make toolchain-generator
 		ET_BOARD=$1 make toolchain-$2
 		;;
 	build)
