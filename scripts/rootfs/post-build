@@ -86,22 +86,30 @@ omap2plus|sama5|zynq|meson|layerscape)
 		rsync ${rsync_opts} ${ET_DIR}/firmware/am335x* ${TARGET}/usr/lib/firmware/
 		;;
 	aml-s905x-cc*)
+		# My boards use both the 32 GiB eMMC and SD/MMC card
+		sed -i s,\#\/dev\/mmc,\/dev\/mmc, ${TARGET}/etc/fstab
 		# mmc1 is the eMMC chip
-		mkdir -p ${TARGET}/media/mmcblk1p1
-		mkdir -p ${TARGET}/media/mmcblk1p2
-		mkdir -p ${TARGET}/media/mmcblk1p3
-		mkdir -p ${TARGET}/media/mmcblk1p4
-		printf "/dev/mmcblk1p1 /media/mmcblk1p1 auto defaults 0 0\n" >> ${TARGET}/etc/fstab
-		printf "/dev/mmcblk1p2 /media/mmcblk1p2 auto defaults 0 0\n" >> ${TARGET}/etc/fstab
-		printf "/dev/mmcblk1p3 /media/mmcblk1p3 auto defaults 0 0\n" >> ${TARGET}/etc/fstab
-		printf "/dev/mmcblk1p4 /media/mmcblk1p4 auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+		sed -i s,mmcblk0,mmcblk1, ${TARGET}/etc/fstab
+		# mount points for SD/MMC card
+		mkdir -p ${TARGET}/media/mmcblk0p1
+		mkdir -p ${TARGET}/media/mmcblk0p2
+		mkdir -p ${TARGET}/media/mmcblk0p3
+		mkdir -p ${TARGET}/media/mmcblk0p4
+		printf "/dev/mmcblk0p1 /media/mmcblk0p1 auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+		printf "/dev/mmcblk0p2 /media/mmcblk0p2 auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+		printf "/dev/mmcblk0p3 /media/mmcblk0p3 auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+		printf "/dev/mmcblk0p4 /media/mmcblk0p4 auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 		# Build '/usr/sbin/firmware-update' file for on-target updates of SD and eMMC
 		printf "#!/bin/bash\n" > ${TARGET}/usr/sbin/firmware-update
 		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "if [ -b /dev/mmcblk0 ]; then\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "dd if=/media/BOOT/gxl-boot.bin of=/dev/mmcblk0 bs=512 seek=1\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "fi\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "if [ -b /dev/mmcblk1 ]; then\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "dd if=/media/BOOT/gxl-boot.bin of=/dev/mmcblk1 bs=512 seek=1\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "fi\n" >> ${TARGET}/usr/sbin/firmware-update
 		chmod +x ${TARGET}/usr/sbin/firmware-update
 		;;
 	ls1043ardb*)
