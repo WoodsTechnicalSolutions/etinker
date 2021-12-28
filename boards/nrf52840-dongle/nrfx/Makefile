@@ -20,7 +20,7 @@ TARGET_DIR := $(shell realpath -e $(CURDIR))
 
 all: $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
 
-ET_DIR ?= $(shell realpath ../../..)
+ET_DIR ?= $(shell realpath -e ../../..)
 
 include $(ET_DIR)/etinker.mk
 

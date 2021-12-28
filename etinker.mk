@@ -35,7 +35,7 @@ endif
 
 # export 'etinker' items that get used in other make and shell contexts
 
-export ET_DIR ?= $(shell readlink -e $(CURDIR))
+export ET_DIR ?= $(shell realpath -e $(CURDIR))
 
 export ET_CPUS := $(shell nproc --all | tr -d \\n)
 

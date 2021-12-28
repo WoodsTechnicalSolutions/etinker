@@ -3,6 +3,8 @@
 # This script ONLY used when bumping the U-Boot versions
 #
 
+ET_DIR="`realpath -e $(dirname $0)/..`"
+
 usage ()
 {
 	printf "\nusage: bootloader-bump <command>\n\n"
@@ -33,7 +35,7 @@ do_make ()
 
 is_virtual ()
 {
-	if [ "`grep -Po -e 'is virtual' boards/$1/etinker.mk 2> /dev/null`" = "is virtual" ]; then
+	if [ "`grep -Po -e 'is virtual' ${ET_DIR}/boards/$1/etinker.mk 2> /dev/null`" = "is virtual" ]; then
 		return 0
 	else
 		return 1
@@ -66,21 +68,21 @@ make)
 esac
 
 # check state of boards directory
-for n in `ls boards`; do
-	if ! [ -f boards/$n/etinker.mk ]; then
+for n in `ls ${ET_DIR}/boards`; do
+	if ! [ -f ${ET_DIR}/boards/$n/etinker.mk ]; then
 		printf "'$n' is not a valid etinker board!\n" $n
 		exit 1
 	fi
 done
 
 # operate on valid virtual boards
-for n in `ls boards`; do
+for n in `ls ${ET_DIR}/boards`; do
 	if ! is_virtual $n; then
 		continue
 	fi
 
 	# select boards with U-Boot config
-	for b in `ls boards/$n/config/`; do
+	for b in `ls ${ET_DIR}/boards/$n/config/`; do
 		case $b in
 		u-boot-*)
 			board=`echo $b | grep -Po 'u-boot-\K[^\n]*'`
