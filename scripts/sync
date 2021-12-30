@@ -144,14 +144,17 @@ case "${destination}" in
 					${media}/rootfs/
 				;;
 			rootfs)
-				if [ -n "`ls ${media}/rootfs/`" ]; then
-					if ! [ "`ls ${media}/rootfs/`" = "lost+found" ]; then
-						printf "non-empty rootfs detected! [ ${media}/rootfs ]\n"
-						exit 1
-					fi
+				if [ -n "`find ${media}/rootfs -maxdepth 0 -empty`" ]; then
+					printf "non-empty rootfs detected! [ ${media}/rootfs ]\n"
+					exit 1
 				fi
 				sudo tar -xf ${target_dir}/images/rootfs.tar -C ${media}/rootfs/
-				sudo cp ${target_dir}/images/rootfs.tar ${media}/data/
+				if [ -d ${media}/backup ] && [ -z "`find ${media}/backup -maxdepth 0 -empty`" ]; then
+					sudo tar -xf ${target_dir}/images/rootfs.tar -C ${media}/backup/
+				fi
+				if [ -d ${media}/data ]; then
+					sudo cp ${target_dir}/images/rootfs.tar ${media}/data/
+				fi
 				;;
 			*)
 				printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}
