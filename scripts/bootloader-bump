@@ -26,7 +26,7 @@ do_make ()
 		ET_BOARD=$1 make bootloader-$2
 		;;
 	build)
-		ET_BOARD=$1 make bootloader-purge bootloader
+		time ET_BOARD=$1 make bootloader-purge bootloader
 		;;
 	*)
 		;;

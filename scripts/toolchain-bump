@@ -28,7 +28,7 @@ do_make ()
 		ET_BOARD=$1 make toolchain-$2
 		;;
 	build)
-		ET_BOARD=$1 ET_PURGE=yes make toolchain-purge toolchain
+		time ET_BOARD=$1 ET_PURGE=yes make toolchain-purge toolchain
 		;;
 	*)
 		;;
