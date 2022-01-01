@@ -28,7 +28,7 @@ export ET_CADENCE_TTC_PWM_CACHED_VERSION := $(shell grep -Po 'cadence-ttc-pwm-re
 export ET_CADENCE_TTC_PWM_BUILD_DIR := $(ET_OVERLAY_BUILD_DIR)/$(ET_CADENCE_TTC_PWM_TREE)
 export ET_CADENCE_TTC_PWM_BUILD_CONFIG := $(ET_CADENCE_TTC_PWM_BUILD_DIR)/Makefile
 export ET_CADENCE_TTC_PWM_BUILD_KO := $(ET_CADENCE_TTC_PWM_BUILD_DIR)/pwm-cadence.ko
-export ET_CADENCE_TTC_PWM_KO := $(ET_KERNEL_DIR)/lib/modules/$(ET_KERNEL_VERSION)$(ET_KERNEL_LOCALVERSION)/extra/pwm-cadence.ko
+export ET_CADENCE_TTC_PWM_KO := $(ET_KERNEL_DIR)/usr/lib/modules/$(ET_KERNEL_VERSION)$(ET_KERNEL_LOCALVERSION)/extra/pwm-cadence.ko
 export ET_CADENCE_TTC_PWM_TARGET_FINAL ?= $(ET_CADENCE_TTC_PWM_KO)
 
 define cadence-ttc-pwm-version

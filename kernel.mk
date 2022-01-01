@@ -94,7 +94,7 @@ export ET_KERNEL_DTB := $(ET_KERNEL_DIR)/boot/$(ET_KERNEL_DT).dtb
 # get board specific definitions
 include $(ET_DIR)/boards/$(ET_BOARD)/kernel.mk
 
-export ET_KERNEL_MODULES := $(ET_KERNEL_DIR)/lib/modules/$(ET_KERNEL_VERSION)$(ET_KERNEL_LOCALVERSION)/modules.dep
+export ET_KERNEL_MODULES := $(ET_KERNEL_DIR)/usr/lib/modules/$(ET_KERNEL_VERSION)$(ET_KERNEL_LOCALVERSION)/modules.dep
 export ET_KERNEL_TARGET_FINAL ?= $(ET_KERNEL_MODULES)
 
 export CT_LINUX_CUSTOM_LOCATION := ${ET_KERNEL_SOFTWARE_DIR}
@@ -106,7 +106,7 @@ endef
 
 define kernel-depends
 	@mkdir -p $(ET_KERNEL_DIR)/boot
-	@mkdir -p $(ET_KERNEL_DIR)/lib/modules
+	@mkdir -p $(ET_KERNEL_DIR)/usr/lib/modules
 	@mkdir -p $(ET_KERNEL_BUILD_BOOT_DIR)
 	@mkdir -p $(shell dirname $(ET_KERNEL_DEFCONFIG))
 	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.dts* 2> /dev/null`" ]; then \
@@ -221,13 +221,13 @@ define kernel-build
 		fi; \
 		;; \
 	modules_install) \
-		if [ -d $(ET_KERNEL_DIR)/lib/modules ]; then \
-			find $(ET_KERNEL_DIR)/lib/modules -type l -exec rm -f {} \; ; \
+		if [ -d $(ET_KERNEL_DIR)/usr/lib/modules ]; then \
+			find $(ET_KERNEL_DIR)/usr/lib/modules -type l -exec rm -f {} \; ; \
 		fi; \
 		;; \
 	*clean) \
 		$(RM) $(ET_KERNEL_DIR)/boot/*; \
-		$(RM) -r $(ET_KERNEL_DIR)/lib/modules/*; \
+		$(RM) -r $(ET_KERNEL_DIR)/usr/lib/modules/*; \
 		;; \
 	*config) \
 		if ! [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
@@ -268,7 +268,7 @@ define kernel-clean
 	$(RM) $(ET_KERNEL_BUILD_CONFIG)
 	$(RM) $(ET_KERNEL_BUILD_DEFCONFIG)
 	$(RM) $(ET_KERNEL_DIR)/boot/*
-	$(RM) -r $(ET_KERNEL_DIR)/lib/modules/*
+	$(RM) -r $(ET_KERNEL_DIR)/usr/lib/modules/*
 endef
 
 define kernel-purge

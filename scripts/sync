@@ -100,7 +100,7 @@ case "${destination}" in
 				fi
 				sudo rsync ${rsync_opts_x} ${target_dir}/boot ${media}/rootfs/
 				if [ "${target}" = "kernel" ]; then
-					sudo rsync ${rsync_opts_x} ${target_dir}/lib/modules ${media}/rootfs/usr/lib/
+					sudo rsync ${rsync_opts_x} ${target_dir}/usr/lib/modules ${media}/rootfs/usr/lib/
 					sudo rsync ${rsync_opts_x} ${ET_DIR}/firmware ${media}/rootfs/usr/lib/
 				fi
 				rm -f ${media}/BOOT/firmware.img
