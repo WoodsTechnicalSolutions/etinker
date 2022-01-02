@@ -1,7 +1,7 @@
 #
 # aarch64-cortexa53-linux-gnu toolchain configuration file for 'etinker'
 #
-# Copyright (C) 2021 Derald D. Woods
+# Copyright (C) 2021-2022 Derald D. Woods
 #
 # This file is made available under the Creative Commons CC0 1.0
 # Universal Public Domain Dedication.

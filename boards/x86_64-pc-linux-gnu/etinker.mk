@@ -3,7 +3,7 @@
 #
 # NOTE: This is just a wrapper for the host OS toolchain [Arch Linux]
 #
-# Copyright (C) 2021 Derald D. Woods
+# Copyright (C) 2021-2022 Derald D. Woods
 #
 # This file is made available under the Creative Commons CC0 1.0
 # Universal Public Domain Dedication.
