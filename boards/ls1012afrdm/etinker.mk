@@ -64,3 +64,5 @@ LSDK_FIRMWARE_BIN := $(ET_DIR)/software/qoriq/firmware/firmware_$(LSDK_MACHINE)_
 
 # fixup kernel version
 export USE_KERNEL_TREE_VERSION := -qoriq
+# fixup bootloader version
+export USE_BOOTLOADER_TREE_VERSION := -qoriq

@@ -50,3 +50,5 @@ ET_BOARD_BOOTLOADER_DT ?= zynq-pynq-z2
 
 # fixup kernel version
 export USE_KERNEL_TREE_VERSION := -xlnx
+# fixup bootloader version
+export USE_BOOTLOADER_TREE_VERSION := -xlnx

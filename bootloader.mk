@@ -34,6 +34,15 @@ export ET_BOOTLOADER_CACHED_VERSION := $(shell grep -Po 'bootloader-ref:\K[^\n]*
 
 bootloader_defconfig := et_$(subst -,_,$(et_board))_defconfig
 
+bversion := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && make -s ubootversion | tr -d \\n)
+bgithash := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git rev-parse --short HEAD)
+bgitdirty := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --dirty|grep -Po -e '-dirty')
+blocalversion := -g$(bgithash)$(bgitdirty)
+
+ifdef USE_BOOTLOADER_TREE_VERSION
+ET_BOOTLOADER_VERSION := $(bversion)
+ET_BOOTLOADER_LOCALVERSION := $(USE_BOOTLOADER_TREE_VERSION)$(blocalversion)
+else
 # [start] bootloader version magic
 ET_BOOTLOADER_VERSION := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v)
 ET_BOOTLOADER_LOCALVERSION := -$(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | cut -d '-' -f 2-5)
@@ -56,9 +65,16 @@ ifeq ($(ET_BOOTLOADER_LOCALVERSION),-v$(ET_BOOTLOADER_VERSION))
 # exact tag in series (i.e. v2018.09)
 ET_BOOTLOADER_LOCALVERSION :=
 endif
+ifneq ($(ET_BOOTLOADER_LOCALVERSION),)
+ifeq ($(ET_BOOTLOADER_LOCALVERSION),$(shell echo $(ET_BOOTLOADER_VERSION) | grep -Po -e '$(ET_BOOTLOADER_LOCALVERSION)'))
+# split out localversion
+ET_BOOTLOADER_VERSION := $(shell echo $(ET_BOOTLOADER_VERSION) | sed s,$(ET_BOOTLOADER_LOCALVERSION),,)
+endif
+endif
 export ET_BOOTLOADER_VERSION
 export ET_BOOTLOADER_LOCALVERSION
 # [end] bootloader version magic
+endif
 
 export ET_BOOTLOADER_BUILD_DIR := $(ET_DIR)/bootloader/build/$(et_board)/$(ET_CROSS_TUPLE)
 export ET_BOOTLOADER_BUILD_CONFIG := $(ET_BOOTLOADER_BUILD_DIR)/.config
