@@ -47,3 +47,6 @@ ET_BOARD_GETTY_PORT ?= ttyPS0
 ET_BOARD_KERNEL_DT ?= zynq-pynq-z2
 
 ET_BOARD_BOOTLOADER_DT ?= zynq-pynq-z2
+
+# fixup kernel version
+export USE_KERNEL_TREE_VERSION := -xlnx

@@ -61,3 +61,6 @@ LSDK_MACHINE := ls1012afrdm
 LSDK_BOOTTYPE := qspi
 LSDK_FIRMWARE_URL := https://www.nxp.com/lgfiles/sdk/$(LSDK_VERSION_URL)/firmware_$(LSDK_MACHINE)_uboot_$(LSDK_BOOTTYPE)boot.img
 LSDK_FIRMWARE_BIN := $(ET_DIR)/software/qoriq/firmware/firmware_$(LSDK_MACHINE)_uboot_$(LSDK_BOOTTYPE)boot-$(LSDK_VERSION_URL).img
+
+# fixup kernel version
+export USE_KERNEL_TREE_VERSION := -qoriq
