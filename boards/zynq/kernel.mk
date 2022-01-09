@@ -26,6 +26,9 @@ define kernel-build-$(ET_BOARD_TYPE)
 endef
 
 define kernel-finalize-$(ET_BOARD_TYPE)
+	$(call cadence-ttc-pwm-config)
+	$(call cadence-ttc-pwm-clean)
+	$(call cadence-ttc-pwm-targets)
 	@if [ -d $(ET_BOARD_DIR)/its ] && [ -f $(ET_BOARD_DIR)/its/kernel.its ]; then \
 		cp $(ET_BOARD_DIR)/its/kernel.its $(ET_KERNEL_DIR)/boot/; \
 		(cd $(ET_KERNEL_DIR)/boot/ && \

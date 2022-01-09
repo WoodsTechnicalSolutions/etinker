@@ -26,10 +26,10 @@ do_make ()
 		ET_BOARD=$1 make kernel-$2
 		;;
 	update)
-		ET_BOARD=$1 make kernel-$2 overlay-$2
+		ET_BOARD=$1 make kernel-$2
 		;;
 	build)
-		time ET_BOARD=$1 make kernel-purge overlay-update
+		time ET_BOARD=$1 make kernel-purge kernel
 		;;
 	*)
 		;;

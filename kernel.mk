@@ -148,6 +148,9 @@ define kernel-finalize
 		fi; \
 		rsync -r $(ET_KERNEL_DIR)/boot/* $(ET_TFTP_DIR)/$(ET_BOARD)/; \
 	fi
+	$(call cryptodev-linux-config)
+	$(call cryptodev-linux-clean)
+	$(call cryptodev-linux-targets)
 endef
 
 define kernel-build
