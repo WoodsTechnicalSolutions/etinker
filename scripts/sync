@@ -101,7 +101,15 @@ case "${destination}" in
 				sudo rsync ${rsync_opts_x} ${target_dir}/boot ${media}/rootfs/
 				if [ "${target}" = "kernel" ]; then
 					sudo rsync ${rsync_opts_x} ${target_dir}/usr/lib/modules ${media}/rootfs/usr/lib/
-					sudo rsync ${rsync_opts_x} ${ET_DIR}/firmware ${media}/rootfs/usr/lib/
+					case "${ET_BOARD}" in
+					am335x-*)
+						sudo mkdir ${media}/rootfs/usr/lib/firmware
+						sudo rsync ${rsync_opts_x} ${ET_DIR}/firmware/am* ${media}/rootfs/usr/lib/firmware/
+						;;
+					*)
+						# NOOP
+						;;
+					esac
 				fi
 				rm -f ${media}/BOOT/firmware.img
 				sudo rsync ${rsync_opts} ${target_dir}/boot/* ${media}/BOOT/
@@ -175,7 +183,7 @@ case "${destination}" in
 						root@${ipv4} \
 						'( cd / && tar xf - && sync )')
 				printf "Done\n"
-				if [ "${target}" = "kernel" ] && [ "${ET_BOARD_TYPE}" = "omap2plus" ]; then
+				if [ "${target}" = "kernel" ] && [ "`echo ${ET_BOARD}|grep -Po am335x`" = "am335x" ]; then
 					printf "[%s][%s] Completing transfer to '/usr/lib/firmware/' on %s ... " ${ET_BOARD} ${target} ${ipv4}
 					(cd ${ET_DIR}/firmware && \
 						fakeroot tar -cf - * | \
