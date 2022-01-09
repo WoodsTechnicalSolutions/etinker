@@ -35,6 +35,7 @@ ifneq ($(ET_ROOTFS_VARIANT),)
 rootfs_type := $(subst $(ET_ROOTFS_VARIANT),,$(ET_ROOTFS_TYPE))
 endif
 
+ifneq ($(shell ls $(ET_ROOTFS_SOFTWARE_DIR) 2>/dev/null),)
 # [start] rootfs version magic
 ET_ROOTFS_VERSION := $(shell cd $(ET_ROOTFS_SOFTWARE_DIR) 2>/dev/null && git describe --long --dirty 2>/dev/null | tr -d v)
 ifeq ($(shell echo $(ET_ROOTFS_VERSION) | cut -d '-' -f 2),0)
@@ -42,6 +43,7 @@ ET_ROOTFS_VERSION := $(shell cd $(ET_ROOTFS_SOFTWARE_DIR) 2>/dev/null && git des
 endif
 export ET_ROOTFS_VERSION
 # [end] rootfs version magic
+endif
 
 export ET_ROOTFS_BUILD_DIR := $(ET_DIR)/rootfs/build/$(ET_ROOTFS_TYPE)/$(ET_CROSS_TUPLE)
 export ET_ROOTFS_BUILD_CONFIG := $(ET_ROOTFS_BUILD_DIR)/.config

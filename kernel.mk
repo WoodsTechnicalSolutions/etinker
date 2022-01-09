@@ -37,6 +37,7 @@ export ET_KERNEL_CROSS_PARAMS := ARCH=$(ET_KERNEL_ARCH) CROSS_COMPILE=$(ET_CROSS
 
 kernel_defconfig := et_$(subst -,_,$(ET_KERNEL_TYPE))_defconfig
 
+ifneq ($(shell ls $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null),)
 kversion := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && make kernelversion | tr -d \\n)
 kgithash := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git rev-parse --short HEAD)
 kgitdirty := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty|grep -Po -e '-dirty')
@@ -86,6 +87,7 @@ endif
 export ET_KERNEL_VERSION
 export ET_KERNEL_LOCALVERSION
 # [end] kernel version magic
+endif
 endif
 
 export ET_KERNEL_BUILD_DIR := $(ET_DIR)/kernel/build/$(ET_KERNEL_TYPE)/$(ET_CROSS_TUPLE)

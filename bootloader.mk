@@ -34,6 +34,7 @@ export ET_BOOTLOADER_CACHED_VERSION := $(shell grep -Po 'bootloader-ref:\K[^\n]*
 
 bootloader_defconfig := et_$(subst -,_,$(et_board))_defconfig
 
+ifneq ($(shell ls $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null),)
 bversion := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && make -s ubootversion | tr -d \\n)
 bgithash := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git rev-parse --short HEAD)
 bgitdirty := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --dirty|grep -Po -e '-dirty')
@@ -74,6 +75,7 @@ endif
 export ET_BOOTLOADER_VERSION
 export ET_BOOTLOADER_LOCALVERSION
 # [end] bootloader version magic
+endif
 endif
 
 export ET_BOOTLOADER_BUILD_DIR := $(ET_DIR)/bootloader/build/$(et_board)/$(ET_CROSS_TUPLE)
