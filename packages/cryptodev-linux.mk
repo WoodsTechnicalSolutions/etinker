@@ -51,7 +51,7 @@ define cryptodev-linux-build
 		ARCH=$(ET_BOARD_KERNEL_ARCH) CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 		$1 \
 		prefix=$(ET_ROOTFS_SYSROOT_DIR)/usr \
-		INSTALL_MOD_PATH=$(ET_KERNEL_DIR) \
+		INSTALL_MOD_PATH=$(ET_KERNEL_DIR)/usr \
 		KERNEL_DIR=$(ET_KERNEL_BUILD_DIR)
 	@if [ "$1" = "build" ]; then \
 		if ! [ -f $(ET_CRYPTODEV_LINUX_BUILD_KO) ]; then \

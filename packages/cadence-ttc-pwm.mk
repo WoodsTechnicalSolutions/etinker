@@ -74,7 +74,7 @@ define cadence-ttc-pwm-config
 		printf "\tmake -C $(ET_KERNEL_BUILD_DIR) "  >> $(ET_CADENCE_TTC_PWM_BUILD_CONFIG); \
 		printf "M=$(ET_CADENCE_TTC_PWM_BUILD_DIR) " >> $(ET_CADENCE_TTC_PWM_BUILD_CONFIG); \
 		printf "$(ET_CROSS_PARAMS) "                >> $(ET_CADENCE_TTC_PWM_BUILD_CONFIG); \
-		printf "INSTALL_MOD_PATH=$(ET_KERNEL_DIR) " >> $(ET_CADENCE_TTC_PWM_BUILD_CONFIG); \
+		printf "INSTALL_MOD_PATH=$(ET_KERNEL_DIR)/usr " >> $(ET_CADENCE_TTC_PWM_BUILD_CONFIG); \
 		printf "modules_install\n\n"                >> $(ET_CADENCE_TTC_PWM_BUILD_CONFIG); \
 		printf "modules:\n"                         >> $(ET_CADENCE_TTC_PWM_BUILD_CONFIG); \
 		printf "\tmake -C $(ET_KERNEL_BUILD_DIR) "  >> $(ET_CADENCE_TTC_PWM_BUILD_CONFIG); \
