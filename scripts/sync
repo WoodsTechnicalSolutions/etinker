@@ -103,7 +103,7 @@ case "${destination}" in
 					sudo rsync ${rsync_opts_x} ${target_dir}/usr/lib/modules ${media}/rootfs/usr/lib/
 					case "${ET_BOARD}" in
 					am335x-*)
-						sudo mkdir ${media}/rootfs/usr/lib/firmware
+						sudo mkdir -p ${media}/rootfs/usr/lib/firmware
 						sudo rsync ${rsync_opts_x} ${ET_DIR}/firmware/am* ${media}/rootfs/usr/lib/firmware/
 						;;
 					*)
