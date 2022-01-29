@@ -152,12 +152,19 @@ case "${destination}" in
 					${media}/rootfs/
 				;;
 			rootfs)
-				if [ -n "`find ${media}/rootfs -maxdepth 0 -empty`" ]; then
-					printf "non-empty rootfs detected! [ ${media}/rootfs ]\n"
-					exit 1
+				if ! [ "${media}/rootfs" = "`find ${media}/rootfs -maxdepth 0 -empty`" ]; then
+					printf "[%s][%s] non-empty rootfs detected! [ ${media}/rootfs ]\n" ${ET_BOARD} ${target}
+					for ((i=3; i > 0; i--)); do
+						printf "\r[%s][%s] Deleting in %2d ... \t\t[Ctrl-C to abort]" ${ET_BOARD} ${target} $i
+						sleep 1
+					done
+					echo
+					sudo rm -rf ${media}/rootfs/*
 				fi
+				printf "[%s][%s] Extracting ${target_dir}/images/rootfs.tar into [ ${media}/rootfs ]\n" ${ET_BOARD} ${target}
 				sudo tar -xf ${target_dir}/images/rootfs.tar -C ${media}/rootfs/
-				if [ -d ${media}/backup ] && [ -z "`find ${media}/backup -maxdepth 0 -empty`" ]; then
+				if [ -d ${media}/backup ]; then
+					sudo rm -rf ${media}/backup/{bin,boot,dev,etc,lib32,libexec,lib,linuxrc,media,mnt,opt,proc,root,run,sbin,src,sys,tmp,usr}
 					sudo tar -xf ${target_dir}/images/rootfs.tar -C ${media}/backup/
 				fi
 				if [ -d ${media}/data ]; then
