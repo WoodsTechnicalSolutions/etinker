@@ -116,6 +116,11 @@ define rootfs-build
 		fi; \
 		echo; \
 		cp -av $(ET_ROOTFS_SOFTWARE_DIR)/configs/$(rootfs_defconfig) $(ET_ROOTFS_DEFCONFIG); \
+		$(MAKE) --no-print-directory \
+			CROSS_COMPILE=$(ET_CROSS_COMPILE) \
+			O=$(ET_ROOTFS_BUILD_DIR) \
+			-C $(ET_ROOTFS_SOFTWARE_DIR) \
+			busybox-update-config; \
 		;; \
 	*) \
 		;; \
@@ -134,11 +139,6 @@ define rootfs-build
 			fi; \
 			rsync -r $(ET_ROOTFS_DIR)/images/* $(ET_TFTP_DIR)/$(ET_BOARD)/; \
 		fi; \
-	fi
-	@if [ -n "$(shell diff $(ET_ROOTFS_BUILD_DIR)/build/busybox-*/.config $(ET_ROOTFS_BUSYBOX_CONFIG) 2> /dev/null)" ] || \
-							[ "$(shell echo $1 | grep -Po busybox)" = "busybox" ]; then \
-		echo; \
-		cp -av $(ET_ROOTFS_BUILD_DIR)/build/busybox-*/.config $(ET_ROOTFS_BUSYBOX_CONFIG); \
 	fi
 	@if [ -n "$(shell diff $(ET_ROOTFS_SOFTWARE_DIR)/configs/$(rootfs_defconfig) $(ET_ROOTFS_DEFCONFIG) 2> /dev/null)" ]; then \
 		echo; \
