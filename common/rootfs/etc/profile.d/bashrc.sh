@@ -9,6 +9,7 @@ export HISTSIZE=5000
 export HISTIGNORE=$'[ \t]*:&:[fb]g:exit:ls:history:cd ~:cd ..'
 
 dynamic_prompt () {
+	resize > /dev/null
 	# cleanup bracketed paste stuff
 	printf '\e[?2004l'
 	# color settings
