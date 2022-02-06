@@ -161,6 +161,7 @@ endif
 $(BUILD_DIR):
 	$(call software-check,nrfx,nrfx)
 	$(call software-check,cmsis,cmsis)
+	$(call software-check,freertos-kernel,freertos-kernel)
 	@$(MKDIR) $(BUILD_DIR)/asm
 
 program: $(BUILD_DIR)/$(TARGET_BIN)
