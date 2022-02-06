@@ -270,6 +270,88 @@ static inline bool _NRFX_IRQ_IS_PENDING(IRQn_Type irq_number)
  */
 #define NRFX_ATOMIC_FETCH_SUB(p_data, value) nrfx_atomic_u32_fetch_sub(p_data, value)
 
+/**
+ * taken from nrfx/helpers/nrfx_flag32_allocator.c
+ */
+static inline bool flag32_atomic_cas(nrfx_atomic_t * p_data, uint32_t old_value, uint32_t new_value)
+{
+	bool status = false;
+
+	NRFX_CRITICAL_SECTION_ENTER();
+
+	if (*p_data == old_value) {
+		*p_data = new_value;
+		status = true;
+	}
+
+	NRFX_CRITICAL_SECTION_EXIT();
+
+	return status;
+}
+
+/**
+ * @brief Macro for running compare and swap on an atomic object.
+ *
+ * Value is updated to the new value only if it previously equaled old value.
+ *
+ * @param[in,out] p_data    Atomic memory pointer.
+ * @param[in]     old_value Expected old value.
+ * @param[in]     new_value New value.
+ *
+ * @retval true  If value was updated.
+ * @retval false If value was not updated because location was not equal to @p old_value.
+ */
+#define NRFX_ATOMIC_CAS(p_data, old_value, new_value) flag32_atomic_cas(p_data, old_value, new_value)
+
+#include <stdint.h>
+#include <stdbool.h>
+
+enum {
+	ZEROS_LEADING = true,
+	ZEROS_TRAILING = false,
+};
+
+static inline int zero_count(uint32_t value, bool leading)
+{
+	uint8_t bit = 32;
+	uint8_t z = 0;
+
+	if (leading) {
+		while (--bit) {
+			if (((1 << bit) & value) == (1 << bit))
+				return z;
+			z++;
+		}
+	} else {
+		while (--bit) {
+			if ((1 << z++) & value)
+				return --z;
+		}
+	}
+
+	return 0;
+}
+
+/**
+ * @brief Macro for counting leading zeros.
+ *
+ * @param[in] value A word value.
+ *
+ * @return Number of leading 0-bits in @p value, starting at the most significant bit position.
+ *         If x is 0, the result is undefined.
+ */
+#define NRFX_CLZ(value) zero_count(value, ZEROS_LEADING)
+
+/**
+ * @brief Macro for counting trailing zeros.
+ *
+ * @param[in] value A word value.
+ *
+ * @return Number of trailing 0-bits in @p value, starting at the least significant bit position.
+ *         If x is 0, the result is undefined.
+ */
+#define NRFX_CTZ(value) zero_count(value, ZEROS_TRAILING)
+
 //------------------------------------------------------------------------------
 
 /**

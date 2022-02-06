@@ -80,6 +80,7 @@ CFLAGS += -I $(NRFX_DIR)/hal
 CFLAGS += -I $(NRFX_DIR)/mdk
 CFLAGS += -I $(NRFX_DIR)/drivers
 CFLAGS += -I $(NRFX_DIR)/drivers/include
+CFLAGS += -I $(NRFX_DIR)/helpers
 CFLAGS += -I $(CMSIS_DIR)/CMSIS/Core/Include
 CFLAGS += -I $(FREERTOS_DIR)/include
 CFLAGS += -I $(FREERTOS_DIR)/portable/GCC/ARM_CM4F
@@ -123,6 +124,7 @@ SOURCES += $(NRFX_DIR)/drivers/src/nrfx_twi_twim.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_twim.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_uarte.c
 SOURCES += $(NRFX_DIR)/drivers/src/prs/nrfx_prs.c
+SOURCES += $(NRFX_DIR)/helpers/nrfx_flag32_allocator.c
 SOURCES += $(NRFX_DIR)/mdk/system_$(ET_BOARD_MCU).c
 
 OBJECTS = $(addprefix $(BUILD_DIR)/,$(SOURCES:.c=.o))
