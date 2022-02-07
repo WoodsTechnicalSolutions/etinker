@@ -175,7 +175,7 @@ flash: program
 gdb: $(BUILD_DIR)/$(TARGET_ELF)
 	@if [ -n "`which openocd 2> /dev/null | tr -d \\n`" ]; then \
 		$(GDB) \
-		-ex 'target remote | openocd -p -f $(OPENOCD_CONFIG) -c "gdb_port pipe; log_output $(OPENOCD_GDB_LOG)"' \
+		-ex 'target remote | openocd -f $(OPENOCD_CONFIG) -c "gdb_port pipe; log_output $(OPENOCD_GDB_LOG)"' \
 		$<; \
 	fi
 
