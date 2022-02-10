@@ -9,6 +9,7 @@ usage()
 	printf "USAGE: sync <target> <destination>\n"
 	printf "       sync <bootloader|kernel|library|rootfs|overlay> mmc\n"
 	printf "       sync <bootloader|kernel|library|rootfs|overlay> net:<ipv4/hostname>\n"
+	printf "       sync <bootloader|kernel> nfs ET_NFS_MOUNT=<nfs-mount-path>\n"
 }
 
 wait_on_sync()
@@ -239,10 +240,63 @@ case "${destination}" in
 				;;
 		esac
 		;;
+	nfs)
+		nfs="${ET_NFS_MOUNT}"
+		if [ -z "${nfs}" ] || ! [ -d ${nfs} ]; then
+			printf "NFS Mount '${nfs}' not exist!\n\n"
+			printf "1. Create an NFS entry for etinker board in '/etc/fstab'\n"
+			printf "[snip]-----------------------------------\n"
+			printf "<board-ipv4>:/ ${nfs} nfs rw,hard,intr,user,noauto 0 0\n"
+			printf "[snip]-----------------------------------\n\n"
+			printf "2. Create the NFS mount point directory\n"
+			printf "$ sudo mkdir -p ${nfs}\n\n"
+			printf "3. Create '/etc/exports' on etinker board\n"
+			printf "[snip]-----------------------------------\n"
+			printf "/             <ipv4-subnet>/24(rw,async,no_root_squash,no_subtree_check,insecure)\n"
+			printf "/media/BOOT   <ipv4-subnet>/24(rw,async,no_root_squash,no_subtree_check,insecure)\n"
+			printf "/media/rootfs <ipv4-subnet>/24(rw,async,no_root_squash,no_subtree_check,insecure)\n"
+			printf "/media/backup <ipv4-subnet>/24(rw,async,no_root_squash,no_subtree_check,insecure)\n"
+			printf "/media/data   <ipv4-subnet>/24(rw,async,no_root_squash,no_subtree_check,insecure)\n"
+			printf "[snip]-----------------------------------\n\n"
+			printf "4. Restart etinker board\n\n"
+			printf "5. Try etinker NFS sync again\n"
+			exit 1
+		fi
+		mount ${nfs}
+		if [ -z "`mount | grep ${nfs} 2> /dev/null`" ] || ! [ -f ${nfs}/usr/bin/busybox ]; then
+			printf "Unmounted NFS directory! [ %s ]\n" ${nfs}
+			exit 1
+		fi
+		printf "[%s][%s] populating NFS @ [ %s ]\n" ${ET_BOARD} ${target} ${nfs}
+		case "${target}" in
+			kernel|bootloader)
+				sudo rsync ${rsync_opts_x} ${target_dir}/boot ${nfs}/
+				if [ "${target}" = "kernel" ]; then
+					sudo rsync ${rsync_opts_x} ${target_dir}/usr/lib/modules ${nfs}/usr/lib/
+					case "${ET_BOARD}" in
+					am335x-*)
+						sudo mkdir -p ${nfs}/usr/lib/firmware
+						sudo rsync ${rsync_opts_x} ${ET_DIR}/firmware/am* ${nfs}/usr/lib/firmware/
+						;;
+					*)
+						# NOOP
+						;;
+					esac
+				fi
+				rm -f ${nfs}/media/BOOT/firmware.img
+				sudo rsync ${rsync_opts} ${target_dir}/boot/* ${nfs}/media/BOOT/
+				;;
+			*)
+				printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}
+				exit 1
+				;;
+		esac
+		;;
 	*)
 		printf "Sync destination [%s] not implemented!\n" ${destination}
 		usage
 		exit 1
+		;;
 esac
 
 printf "[%s][%s] Synching to %s has completed.\n" ${ET_BOARD} ${target} ${destination}
