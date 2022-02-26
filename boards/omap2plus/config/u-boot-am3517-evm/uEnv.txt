@@ -1,1 +1,6 @@
-uenvcmd=echo no uenvcmd provided
+bootfile=zImage
+mmcroot=/dev/mmcblk0p2 rw
+uenvcmd=echo && echo [ etinker: am3517-evm ] && echo && \
+run loadimage && \
+run loadfdt && \
+run mmcboot
