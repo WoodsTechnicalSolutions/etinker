@@ -1,5 +1,6 @@
 bootfile=zImage
 mmcroot=/dev/mmcblk0p2 rw
+ethaddr=c0:ff:ee:ca:fe:55
 uenvcmd=echo && echo [ etinker: am3517-evm ] && echo && \
 run loadimage && \
 run loadfdt && \
