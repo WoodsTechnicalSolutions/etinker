@@ -1,0 +1,13 @@
+--- a/package/libopenssl/libopenssl.mk	2022-03-13 16:58:35.703048222 -0500
++++ b/package/libopenssl/libopenssl.mk	2022-03-13 17:01:54.018869226 -0500
+@@ -5,8 +5,8 @@
+ ################################################################################
+ 
+ LIBOPENSSL_VERSION = 1.1.1m
+-LIBOPENSSL_SITE = https://www.openssl.org/source
+-LIBOPENSSL_SOURCE = openssl-$(LIBOPENSSL_VERSION).tar.gz
++LIBOPENSSL_SITE = $(ET_OPENSSL_SOFTWARE_DIR)
++LIBOPENSSL_SITE_METHOD = local
+ LIBOPENSSL_LICENSE = OpenSSL or SSLeay
+ LIBOPENSSL_LICENSE_FILES = LICENSE
+ LIBOPENSSL_INSTALL_STAGING = YES
