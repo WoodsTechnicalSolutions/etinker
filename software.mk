@@ -32,9 +32,13 @@ define software-check
 					printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] ERROR MISSING $(ET_SOFTWARE_DIR)/$1 DIRECTORY *****\n\n"; \
 					exit 2; \
 				fi; \
-				(cd $1 && git checkout $$ref); \
-				if [ -d $(ET_PATCH_DIR)/$2 ]; then \
-					(cd $1 && patch -p1 -i $(ET_PATCH_DIR)/$2/*.patch 2> /dev/null); \
+				(cd $1 && git checkout $$ref) || exit 2; \
+				if [ -d $(ET_PATCH_DIR)/$(notdir $1) ]; then \
+					(cd $1 && \
+						git branch -D patched -f 2> /dev/null; \
+						git switch -c patched; \
+						patch -p1 -i $(ET_PATCH_DIR)/$(notdir $1)/*.patch && \
+						git commit -a -m "etinker: patches applied @ $$ref") || exit 2; \
 				fi; \
 				;; \
 			*) \
@@ -47,13 +51,17 @@ define software-check
 					printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] ERROR MISSING $(ET_SOFTWARE_DIR)/$2 DIRECTORY *****\n\n"; \
 					exit 2; \
 				fi; \
-				(cd $2 && git checkout $$ref); \
-				if [ -d $(ET_PATCH_DIR)/$2 ]; then \
-					(cd $2 && patch -p1 -i $(ET_PATCH_DIR)/$2/*.patch 2> /dev/null); \
+				(cd $2 && git checkout $$ref) || exit 2; \
+				if [ -d $(ET_PATCH_DIR)/$(notdir $2) ]; then \
+					(cd $2 && \
+						git branch -D patched -f 2> /dev/null; \
+						git switch -c patched; \
+						patch -p1 -i $(ET_PATCH_DIR)/$(notdir $2)/*.patch && \
+						git commit -a -m "etinker: patches applied @ $$ref") || exit 2; \
 				fi; \
 				;; \
 			esac; \
-		); \
+		) || exit 2; \
 		printf "\n"; \
 	fi
 endef
