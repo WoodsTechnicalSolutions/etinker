@@ -1,7 +1,7 @@
-# SD/MMC on MMC 0
+# SD/MMC @ MMC 0
 uenvcmd=mmc rescan; mmc dev 0 && \
-echo && echo Booting 'etinker' environment ... && echo && \
-setenv bootargs console=ttyAML0,115200 root=/dev/mmcblk0p1 rw rootfstype=ext4 rootwait && \
-ext2load mmc 0:2 $kernel_addr_r boot/Image && \
-ext2load mmc 0:2 $fdt_addr_r boot/meson-gxl-s905x-libretech-cc.dtb && \
+echo && echo Booting etinker [aml-s905x-cc] environment ... && echo && \
+setenv bootargs console=ttyAML0,115200 root=/dev/mmcblk0p2 rw rootfstype=ext4 rootwait && \
+fatload mmc 0:1 $kernel_addr_r Image && \
+fatload mmc 0:1 $fdt_addr_r meson-gxl-s905x-libretech-cc.dtb && \
 booti $kernel_addr_r - $fdt_addr_r
