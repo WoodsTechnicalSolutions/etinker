@@ -45,8 +45,11 @@ export ET_ROOTFS_VERSION
 # [end] rootfs version magic
 endif
 
+export ET_ROOTFS_BUSYBOX_VERSION := $(shell grep -e "BUSYBOX_VERSION =" $(ET_ROOTFS_SOFTWARE_DIR)/package/busybox/busybox.mk | cut -d ' ' -f 3)
+
 export ET_ROOTFS_BUILD_DIR := $(ET_DIR)/rootfs/build/$(ET_ROOTFS_TYPE)/$(ET_CROSS_TUPLE)
 export ET_ROOTFS_BUILD_CONFIG := $(ET_ROOTFS_BUILD_DIR)/.config
+export ET_ROOTFS_BUILD_BUSYBOX_CONFIG := $(ET_ROOTFS_BUILD_DIR)/build/busybox-$(busybox_version)/.config
 export ET_ROOTFS_BUILD_IMAGE := $(ET_ROOTFS_BUILD_DIR)/images/rootfs.tar
 export ET_ROOTFS_TARBALLS_DIR := $(ET_TARBALLS_DIR)/rootfs
 export ET_ROOTFS_DIR := $(ET_DIR)/rootfs/$(ET_BOARD)$(ET_ROOTFS_VARIANT)/$(ET_CROSS_TUPLE)
@@ -61,6 +64,7 @@ export BR_DEFCONFIG := $(ET_ROOTFS_DEFCONFIG)
 
 define rootfs-version
 	@printf "ET_ROOTFS_VERSION: \033[0;33m[$(ET_ROOTFS_CACHED_VERSION)]\033[0m $(ET_ROOTFS_VERSION)\n"
+	@printf "ET_ROOTFS_BUSYBOX_VERSION: $(ET_ROOTFS_BUSYBOX_VERSION)\n"
 endef
 
 define rootfs-depends
@@ -116,11 +120,13 @@ define rootfs-build
 		fi; \
 		echo; \
 		cp -av $(ET_ROOTFS_SOFTWARE_DIR)/configs/$(rootfs_defconfig) $(ET_ROOTFS_DEFCONFIG); \
-		$(MAKE) --no-print-directory \
-			CROSS_COMPILE=$(ET_CROSS_COMPILE) \
-			O=$(ET_ROOTFS_BUILD_DIR) \
-			-C $(ET_ROOTFS_SOFTWARE_DIR) \
-			busybox-update-config; \
+		if [ -f $(ET_ROOTFS_BUILD_BUSYBOX_CONFIG) ]; then \
+			$(MAKE) --no-print-directory \
+				CROSS_COMPILE=$(ET_CROSS_COMPILE) \
+				O=$(ET_ROOTFS_BUILD_DIR) \
+				-C $(ET_ROOTFS_SOFTWARE_DIR) \
+				busybox-update-config; \
+		fi; \
 		;; \
 	*) \
 		;; \
@@ -176,6 +182,7 @@ define rootfs-info
 	@printf "========================================================================\n"
 	@printf "ET_ROOTFS_TREE: $(ET_ROOTFS_TREE)\n"
 	@printf "ET_ROOTFS_VERSION: $(ET_ROOTFS_VERSION)\n"
+	@printf "ET_ROOTFS_BUSYBOX_VERSION: $(ET_ROOTFS_BUSYBOX_VERSION)\n"
 	@printf "ET_ROOTFS_HOSTNAME: $(ET_ROOTFS_HOSTNAME)\n"
 	@printf "ET_ROOTFS_GETTY_PORT: $(ET_ROOTFS_GETTY_PORT)\n"
 	@printf "ET_ROOTFS_ISSUE: $(ET_ROOTFS_ISSUE)\n"
