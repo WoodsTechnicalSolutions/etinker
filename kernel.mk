@@ -42,7 +42,6 @@ kversion := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && make kernelversi
 kgithash := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git rev-parse --short HEAD)
 kgitdirty := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty|grep -Po -e '-dirty')
 klocalversion := -g$(kgithash)$(kgitdirty)
-
 ifdef USE_KERNEL_TREE_VERSION
 ET_KERNEL_VERSION := $(kversion)
 ET_KERNEL_LOCALVERSION := $(USE_KERNEL_TREE_VERSION)$(klocalversion)
@@ -71,11 +70,6 @@ ifeq ($(ET_KERNEL_LOCALVERSION),-$(rcversion))
 ET_KERNEL_LOCALVERSION :=
 endif
 endif
-ifeq ($(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,[0-9].*,,),-rt)
-# linux-rt
-ET_KERNEL_VERSION := $(ET_KERNEL_VERSION)$(shell cat $(ET_KERNEL_SOFTWARE_DIR)/localversion-rt | tr -d \\n)
-ET_KERNEL_LOCALVERSION :=
-endif
 ifeq ($(ET_KERNEL_LOCALVERSION),-v$(ET_KERNEL_VERSION))
 # exact tag in series (i.e. v4.14.1)
 ET_KERNEL_LOCALVERSION :=
@@ -84,11 +78,16 @@ ifeq ($(shell printf "%s" $(ET_KERNEL_VERSION)|cut -d '.' -f 3),)
 # first in release series (i.e. v4.14)
 ET_KERNEL_VERSION := $(ET_KERNEL_VERSION).0
 endif
-export ET_KERNEL_VERSION
-export ET_KERNEL_LOCALVERSION
+ifeq ($(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,[0-9].*,,),-rt)
+# linux-rt
+ET_KERNEL_LOCALVERSION := $(subst $(shell cat $(ET_KERNEL_SOFTWARE_DIR)/localversion-rt | tr -d \\n),,$(ET_KERNEL_LOCALVERSION))
+endif
 # [end] kernel version magic
 endif
 endif
+
+export ET_KERNEL_VERSION
+export ET_KERNEL_LOCALVERSION
 
 export ET_KERNEL_BUILD_DIR := $(ET_DIR)/kernel/build/$(ET_KERNEL_TYPE)/$(ET_CROSS_TUPLE)
 export ET_KERNEL_BUILD_BOOT_DIR := $(ET_KERNEL_BUILD_DIR)/arch/$(ET_KERNEL_ARCH)/boot
