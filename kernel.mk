@@ -45,6 +45,7 @@ klocalversion := -g$(kgithash)$(kgitdirty)
 ifdef USE_KERNEL_TREE_VERSION
 ET_KERNEL_VERSION := $(kversion)
 ET_KERNEL_LOCALVERSION := $(USE_KERNEL_TREE_VERSION)$(klocalversion)
+localversion := $(ET_KERNEL_LOCALVERSION)
 else
 # [start] kernel version magic
 ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v | cut -d '-' -f 1)
@@ -78,9 +79,10 @@ ifeq ($(shell printf "%s" $(ET_KERNEL_VERSION)|cut -d '.' -f 3),)
 # first in release series (i.e. v4.14)
 ET_KERNEL_VERSION := $(ET_KERNEL_VERSION).0
 endif
+localversion := $(ET_KERNEL_LOCALVERSION)
 ifeq ($(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,[0-9].*,,),-rt)
 # linux-rt
-ET_KERNEL_LOCALVERSION := $(subst $(shell cat $(ET_KERNEL_SOFTWARE_DIR)/localversion-rt | tr -d \\n),,$(ET_KERNEL_LOCALVERSION))
+localversion := $(subst $(shell cat $(ET_KERNEL_SOFTWARE_DIR)/localversion-rt | tr -d \\n),,$(ET_KERNEL_LOCALVERSION))
 endif
 # [end] kernel version magic
 endif
@@ -173,7 +175,7 @@ define kernel-build
 		;; \
 	esac
 	$(MAKE) --no-print-directory -j $(ET_CPUS) $(ET_KERNEL_CROSS_PARAMS) \
-		LOCALVERSION=$(ET_KERNEL_LOCALVERSION) \
+		LOCALVERSION=$(localversion) \
 		LOADADDR=$(ET_KERNEL_LOADADDR) \
 		INSTALL_MOD_PATH=$(ET_KERNEL_DIR)/usr \
 		INSTALL_HDR_PATH=$(ET_KERNEL_HEADERS_DIR) \
