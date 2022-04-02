@@ -5,8 +5,11 @@ This is a basic embedded software sandbox that can be used to experiment
 with some of the essential open source components used in low-level
 development. Generating production quality software BSP images is
 **NOT** a goal here. Gaining some understanding of how things are really
-built, or can be built, is the purpose behind the work. As the name
-suggests, this is about tinkering.
+built, or can be built, is the purpose behind the work. It is used to
+evaluate upstream changes to toolchain components, Linux, U-Boot, and
+Buildroot. Being close to upstream development helps with the task of
+contributing back to those projects. As the name suggests, this is
+about tinkering.
 
 ## Development Boards
 
@@ -15,6 +18,7 @@ suggests, this is about tinkering.
 - aml-s905x-cc [Amlogic ARM Cortex-A53]
 - ek-tm4c123gxl [TI TivaC ARM Cortex-M4]
 - ek-tm4c1294xl [TI TivaC ARM Cortex-M4]
+- ls1012afrdm [NXP Layerscape ARM Cortex-A53]
 - ls1043ardb [NXP Layerscape ARM Cortex-A53]
 - nrf52840-dongle [Nordic ARM Cortex-M4]
 - omap3-beagle-xm [TI ARM Cortex-A8]
@@ -41,11 +45,11 @@ files for Linux, U-Boot, and Buildroot reside in the virtual boards.
 #### Toolchain Boards
 
 These boards allow building toolchains in the same manner as a
-higher level board. The configuratoin files for crosstool-ng reside
+higher level board. The configuration files for crosstool-ng reside
 with the toolchain boards. This concept is useful for testing new
 and/or variant toolchains.
 
-- aarch64-cortexa53-linux-gnu [layerscape]
+- aarch64-cortexa53-linux-gnu [layerscape, meson]
 - arm-none-eabi
 - arm-none-eabihf [ek-tm4c123gxl, ek-tm4c1294xl, nrf52840-dongle]
 - arm-cortexa5-linux-gnueabihf [sama5]
@@ -60,7 +64,7 @@ and/or variant toolchains.
 $ git clone https://github.com/WoodsTechnicalSolutions/etinker
 ```
 
-2. Install build dependencies (Assumes Ubuntu 18.04 LTS or newer)
+2. Install build dependencies (Assumes Ubuntu 20.04 LTS or newer)
 
 ```
 $ cd etinker
