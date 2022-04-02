@@ -54,11 +54,6 @@ ifeq ($(ET_KERNEL_LOCALVERSION),-)
 # empty local version
 ET_KERNEL_LOCALVERSION :=
 endif
-ifeq ($(ET_KERNEL_VERSION),next)
-# linux-next
-ET_KERNEL_VERSION := $(kversion)
-ET_KERNEL_LOCALVERSION := -next$(ET_KERNEL_LOCALVERSION)
-endif
 ifeq ($(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,[0-9].*,,),-rc)
 # RC version (i.e. v4.14-rc1)
 rcversion := $(shell printf "%s" $(ET_KERNEL_LOCALVERSION) | cut -d '-' -f 2)
@@ -83,6 +78,12 @@ localversion := $(ET_KERNEL_LOCALVERSION)
 ifeq ($(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,[0-9].*,,),-rt)
 # linux-rt
 localversion := $(subst $(shell cat $(ET_KERNEL_SOFTWARE_DIR)/localversion-rt | tr -d \\n),,$(ET_KERNEL_LOCALVERSION))
+endif
+ifeq ($(ET_KERNEL_VERSION),next)
+# linux-next
+ET_KERNEL_VERSION := $(kversion)
+ET_KERNEL_LOCALVERSION := -next$(ET_KERNEL_LOCALVERSION)
+localversion :=
 endif
 # [end] kernel version magic
 endif
