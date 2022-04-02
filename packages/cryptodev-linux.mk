@@ -23,7 +23,7 @@ endif
 export ET_CRYPTODEV_LINUX_TREE := cryptodev-linux
 export ET_CRYPTODEV_LINUX_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_CRYPTODEV_LINUX_TREE)
 export ET_CRYPTODEV_LINUX_VERSION := $(shell cd $(ET_CRYPTODEV_LINUX_SOFTWARE_DIR) 2>/dev/null && git describe --long --dirty 2>/dev/null)
-export ET_CRYPTODEV_LINUX_CACHED_VERSION := $(shell grep -Po 'cryptodev-linux-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
+export ET_CRYPTODEV_LINUX_CACHED_VERSION := $(shell sed -n 's/cryptodev-linux-ref://p' $(ET_BOARD_DIR)/software.conf)
 export ET_CRYPTODEV_LINUX_BUILD_DIR := $(ET_OVERLAY_BUILD_DIR)/$(ET_CRYPTODEV_LINUX_TREE)
 export ET_CRYPTODEV_LINUX_BUILD_CONFIG := $(ET_CRYPTODEV_LINUX_BUILD_DIR)/.configured
 export ET_CRYPTODEV_LINUX_BUILD_KO := $(ET_CRYPTODEV_LINUX_BUILD_DIR)/cryptodev.ko
@@ -35,6 +35,7 @@ define cryptodev-linux-version
 endef
 
 define cryptodev-linux-depends
+	$(call software-check,$(ET_CRYPTODEV_LINUX_TREE),cryptodev-linux)
 	@mkdir -p $(shell dirname $(ET_CRYPTODEV_LINUX_BUILD_DIR))
 endef
 
@@ -45,8 +46,8 @@ define cryptodev-linux-targets
 endef
 
 define cryptodev-linux-build
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call cryptodev-linux-build 'make $1' *****\n\n"
 	$(call cryptodev-linux-depends)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call cryptodev-linux-build 'make $1' *****\n\n"
 	@$(MAKE) -C $(ET_CRYPTODEV_LINUX_BUILD_DIR) \
 		ARCH=$(ET_BOARD_KERNEL_ARCH) CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 		$1 \
@@ -67,9 +68,8 @@ define cryptodev-linux-build
 endef
 
 define cryptodev-linux-config
-	$(call software-check,$(ET_CRYPTODEV_LINUX_TREE),cryptodev-linux)
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] cryptodev-linux-config *****\n\n"
 	$(call cryptodev-linux-depends)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] cryptodev-linux-config *****\n\n"
 	@if ! [ -d $(ET_CRYPTODEV_LINUX_BUILD_DIR) ]; then \
 		cp -a $(ET_CRYPTODEV_LINUX_SOFTWARE_DIR) $(shell dirname $(ET_CRYPTODEV_LINUX_BUILD_DIR))/; \
 		printf "%s\n" "$(shell date)" > $(ET_CRYPTODEV_LINUX_BUILD_CONFIG); \

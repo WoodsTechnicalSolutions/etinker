@@ -11,7 +11,7 @@
 # - https://github.com/XiphosSystemsCorp/cadence-ttc-pwm
 #
 
-ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -Po zynq),zynq)
+ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -o zynq),zynq)
 
 ifndef ET_BOARD_ROOTFS_TREE
 $(error [ 'etinker' packages requires buildroot rootfs ] ***)
@@ -24,7 +24,7 @@ endif
 export ET_CADENCE_TTC_PWM_TREE := cadence-ttc-pwm
 export ET_CADENCE_TTC_PWM_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_CADENCE_TTC_PWM_TREE)
 export ET_CADENCE_TTC_PWM_VERSION := $(shell cd $(ET_CADENCE_TTC_PWM_SOFTWARE_DIR) 2>/dev/null && git describe --always --long --dirty 2>/dev/null)
-export ET_CADENCE_TTC_PWM_CACHED_VERSION := $(shell grep -Po 'cadence-ttc-pwm-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
+export ET_CADENCE_TTC_PWM_CACHED_VERSION := $(shell sed -n 's/cadence-ttc-pwm-ref://p' $(ET_BOARD_DIR)/software.conf)
 export ET_CADENCE_TTC_PWM_BUILD_DIR := $(ET_OVERLAY_BUILD_DIR)/$(ET_CADENCE_TTC_PWM_TREE)
 export ET_CADENCE_TTC_PWM_BUILD_CONFIG := $(ET_CADENCE_TTC_PWM_BUILD_DIR)/Makefile
 export ET_CADENCE_TTC_PWM_BUILD_KO := $(ET_CADENCE_TTC_PWM_BUILD_DIR)/pwm-cadence.ko
@@ -36,6 +36,7 @@ define cadence-ttc-pwm-version
 endef
 
 define cadence-ttc-pwm-depends
+	$(call software-check,$(ET_CADENCE_TTC_PWM_TREE),cadence-ttc-pwm)
 	@mkdir -p $(shell dirname $(ET_CADENCE_TTC_PWM_BUILD_DIR))
 endef
 
@@ -46,6 +47,7 @@ define cadence-ttc-pwm-targets
 endef
 
 define cadence-ttc-pwm-build
+	$(call cadence-ttc-pwm-depends)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call cadence-ttc-pwm-build 'make $1' *****\n\n"
 	@$(MAKE) -C $(ET_CADENCE_TTC_PWM_BUILD_DIR) $1
 	@if ! [ -f $(ET_CADENCE_TTC_PWM_BUILD_KO) ]; then \
@@ -59,9 +61,8 @@ define cadence-ttc-pwm-build
 endef
 
 define cadence-ttc-pwm-config
-	$(call software-check,$(ET_CADENCE_TTC_PWM_TREE),cadence-ttc-pwm)
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] cadence-ttc-pwm-config *****\n\n"
 	$(call cadence-ttc-pwm-depends)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] cadence-ttc-pwm-config *****\n\n"
 	@if ! [ -d $(ET_CADENCE_TTC_PWM_BUILD_DIR) ]; then \
 		mkdir $(ET_CADENCE_TTC_PWM_BUILD_DIR); \
 		cp -a $(ET_CADENCE_TTC_PWM_SOFTWARE_DIR)/src/kernel/pwm-cadence.c $(ET_CADENCE_TTC_PWM_BUILD_DIR)/; \

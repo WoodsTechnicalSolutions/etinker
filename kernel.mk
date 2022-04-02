@@ -32,7 +32,7 @@ endif
 export ET_KERNEL_LOADADDR := $(ET_BOARD_KERNEL_LOADADDR)
 export ET_KERNEL_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_KERNEL_TREE)
 export ET_KERNEL_HEADERS_DIR ?= $(ET_SYSROOT_DIR)/usr/include
-export ET_KERNEL_CACHED_VERSION := $(shell grep -Po 'kernel-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
+export ET_KERNEL_CACHED_VERSION := $(shell sed -n 's/kernel-ref://p' $(ET_BOARD_DIR)/software.conf)
 export ET_KERNEL_CROSS_PARAMS := ARCH=$(ET_KERNEL_ARCH) CROSS_COMPILE=$(ET_CROSS_COMPILE)
 
 kernel_defconfig := et_$(subst -,_,$(ET_KERNEL_TYPE))_defconfig
@@ -41,7 +41,7 @@ kernel_defconfig := et_$(subst -,_,$(ET_KERNEL_TYPE))_defconfig
 ifneq ($(shell ls $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null),)
 kversion := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && make kernelversion | tr -d \\n)
 kgithash := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git rev-parse --short HEAD)
-kgitdirty := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty|grep -Po -e '-dirty')
+kgitdirty := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty | grep -oe '-dirty')
 klocalversion := -g$(kgithash)$(kgitdirty)
 ifdef USE_KERNEL_TREE_VERSION
 ET_KERNEL_VERSION := $(kversion)
@@ -117,6 +117,7 @@ define kernel-version
 endef
 
 define kernel-depends
+	$(call software-check,$(ET_KERNEL_TREE),kernel)
 	@mkdir -p $(ET_KERNEL_DIR)/boot
 	@mkdir -p $(ET_KERNEL_DIR)/usr/lib/modules
 	@mkdir -p $(ET_KERNEL_BUILD_BOOT_DIR)
@@ -136,8 +137,8 @@ define kernel-depends
 endef
 
 define kernel-prepare
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION)$(ET_KERNEL_LOCALVERSION) *****\n\n"
 	$(call kernel-depends)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) $(ET_KERNEL_VERSION)$(ET_KERNEL_LOCALVERSION) *****\n\n"
 	$(call kernel-prepare-$(ET_BOARD))
 endef
 
@@ -156,8 +157,8 @@ define kernel-finalize
 endef
 
 define kernel-build
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-build 'make $1' *****\n\n"
 	$(call kernel-depends)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-build 'make $1' *****\n\n"
 	@case "$1" in \
 	*config) \
 		;; \
@@ -268,9 +269,8 @@ define kernel-build
 endef
 
 define kernel-config
-	$(call software-check,$(ET_KERNEL_TREE),kernel)
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-config *****\n\n"
 	$(call kernel-depends)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-config *****\n\n"
 	$(MAKE) --no-print-directory \
 		$(ET_KERNEL_CROSS_PARAMS) \
 		O=$(ET_KERNEL_BUILD_DIR) \

@@ -27,7 +27,7 @@ export ET_TOOLCHAIN_TREE := $(ET_BOARD_TOOLCHAIN_TREE)
 export ET_TOOLCHAIN_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE)
 toolchain_version = $(shell cd $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE)/ 2>/dev/null && git describe --tags 2>/dev/null)
 export ET_TOOLCHAIN_VERSION := $(shell printf "%s" $(toolchain_version) | sed s,crosstool-ng-,,)
-export ET_TOOLCHAIN_CACHED_VERSION := $(shell grep -Po 'toolchain-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
+export ET_TOOLCHAIN_CACHED_VERSION := $(shell sed -n 's/toolchain-ref://p' $(ET_BOARD_DIR)/software.conf)
 export ET_TOOLCHAIN_DIR := $(ET_DIR)/toolchain/$(ET_CROSS_TUPLE)
 export ET_TOOLCHAIN_BUILD_DIR := $(ET_DIR)/toolchain/build/$(ET_CROSS_TUPLE)
 export ET_TOOLCHAIN_TARBALLS_DIR := $(ET_TARBALLS_DIR)/toolchain
@@ -66,6 +66,7 @@ define toolchain-version
 endef
 
 define toolchain-depends
+	$(call software-check,$(ET_TOOLCHAIN_TREE),toolchain)
 	@mkdir -p $(ET_TOOLCHAIN_TARBALLS_DIR)
 	@mkdir -p $(shell dirname $(ET_TOOLCHAIN_DEFCONFIG))
 	@mkdir -p $(ET_TOOLCHAIN_BUILD_DIR)/samples/$(ET_CROSS_TUPLE)
@@ -78,8 +79,8 @@ define toolchain-depends
 endef
 
 define toolchain-build
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain 'ct-ng $1' *****\n\n"
 	$(call toolchain-depends)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain 'ct-ng $1' *****\n\n"
 	@case "$1" in \
 	*config) \
 		;; \
@@ -141,8 +142,8 @@ define toolchain-build
 endef
 
 define toolchain-config
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-config *****\n\n"
 	$(call toolchain-depends)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-config *****\n\n"
 	@(cd $(ET_TOOLCHAIN_BUILD_DIR) && \
 		CT_ARCH=$(ET_ARCH) \
 		$(ET_TOOLCHAIN_GENERATOR) \
@@ -150,7 +151,7 @@ define toolchain-config
 endef
 
 define toolchain-generator
-	$(call software-check,$(ET_TOOLCHAIN_TREE),toolchain)
+	$(call toolchain-depends)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-generator *****\n\n"
 	@(cd $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE); \
 		./bootstrap; \

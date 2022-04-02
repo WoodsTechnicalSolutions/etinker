@@ -1,4 +1,4 @@
-ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -Po xlnx),xlnx)
+ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -o xlnx),xlnx)
 # Xilinx 'linux-xlnx' tree
 export ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && make kernelversion | tr -d \\n)
 export ET_KERNEL_LOCALVERSION := -$(ET_KERNEL_CACHED_VERSION)

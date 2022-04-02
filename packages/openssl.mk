@@ -20,7 +20,7 @@ endif
 export ET_OPENSSL_TREE := openssl
 export ET_OPENSSL_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_OPENSSL_TREE)
 export ET_OPENSSL_VERSION := $(shell cd $(ET_OPENSSL_SOFTWARE_DIR) 2>/dev/null && git describe --long --dirty 2>/dev/null)
-export ET_OPENSSL_CACHED_VERSION := $(shell grep -Po 'openssl-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
+export ET_OPENSSL_CACHED_VERSION := $(shell sed -n 's/openssl-ref://p' $(ET_BOARD_DIR)/software.conf)
 export ET_OPENSSL_BUILD_DIR := $(ET_OVERLAY_BUILD_DIR)/$(ET_OPENSSL_TREE)
 export ET_OPENSSL_BUILD_CONFIG := $(ET_OPENSSL_BUILD_DIR)/configdata.pm
 export ET_OPENSSL_BUILD_CRYPTO_SO := $(ET_OPENSSL_BUILD_DIR)/libcrypto.so
@@ -41,6 +41,7 @@ define openssl-version
 endef
 
 define openssl-depends
+	$(call software-check,$(ET_OPENSSL_TREE),openssl)
 	@mkdir -p $(ET_OVERLAY_DIR)
 	@mkdir -p $(ET_OVERLAY_DIR)/usr/bin
 	@mkdir -p $(ET_OVERLAY_DIR)/usr/lib
@@ -55,10 +56,10 @@ define openssl-targets
 endef
 
 define openssl-build
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call openssl-build 'make $1' *****\n\n"
 	$(call openssl-depends)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call openssl-build 'make $1' *****\n\n"
 	$(call openssl-config,$1)
-	@if [ -z "`grep -m 1 -Po ET_OVERLAY_DIR $(ET_OPENSSL_BUILD_DIR)/Makefile`" ]; then \
+	@if [ -z "`grep -m 1 -o ET_OVERLAY_DIR $(ET_OPENSSL_BUILD_DIR)/Makefile`" ]; then \
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl DESTDIR=$(ET_OVERLAY_DIR) *****\n\n"; \
 		sed -e 's,DESTDIR=,DESTDIR=$$\(ET_OVERLAY_DIR\),' -i $(ET_OPENSSL_BUILD_DIR)/Makefile; \
 	fi
@@ -98,7 +99,6 @@ define openssl-build
 endef
 
 define openssl-config
-	$(call software-check,$(ET_OPENSSL_TREE),openssl)
 	$(call openssl-depends)
 	@cp -a $(ET_SOFTWARE_DIR)/cryptodev-linux/crypto/cryptodev.h $(ET_OPENSSL_SOFTWARE_DIR)/crypto/
 	@if [ -z "$1" ] || ! [ -f $(ET_OPENSSL_BUILD_DIR)/Makefile ]; then \

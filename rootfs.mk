@@ -27,7 +27,7 @@ export ET_ROOTFS_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_ROOTFS_TREE)
 export ET_ROOTFS_HOSTNAME := $(ET_BOARD_HOSTNAME)
 export ET_ROOTFS_GETTY_PORT := $(ET_BOARD_GETTY_PORT)
 export ET_ROOTFS_ISSUE := $(shell printf "etinker: $(ET_BOARD)")
-export ET_ROOTFS_CACHED_VERSION := $(shell grep -Po 'rootfs-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
+export ET_ROOTFS_CACHED_VERSION := $(shell sed -n 's/rootfs-ref://p' $(ET_BOARD_DIR)/software.conf)
 
 rootfs_defconfig := et_$(subst -,_,$(ET_ROOTFS_TYPE))_defconfig
 rootfs_type := $(ET_ROOTFS_TYPE)
@@ -46,7 +46,7 @@ endif
 
 export ET_ROOTFS_VERSION
 
-export ET_ROOTFS_BUSYBOX_VERSION := $(shell grep -e "BUSYBOX_VERSION =" $(ET_ROOTFS_SOFTWARE_DIR)/package/busybox/busybox.mk | cut -d ' ' -f 3)
+export ET_ROOTFS_BUSYBOX_VERSION := $(shell sed -n 's/BUSYBOX_VERSION\ =\ //p' $(ET_ROOTFS_SOFTWARE_DIR)/package/busybox/busybox.mk 2> /dev/null)
 
 export ET_ROOTFS_BUILD_DIR := $(ET_DIR)/rootfs/build/$(ET_ROOTFS_TYPE)/$(ET_CROSS_TUPLE)
 export ET_ROOTFS_BUILD_CONFIG := $(ET_ROOTFS_BUILD_DIR)/.config
@@ -69,6 +69,7 @@ define rootfs-version
 endef
 
 define rootfs-depends
+	$(call software-check,$(ET_ROOTFS_TREE),rootfs)
 	@mkdir -p $(ET_ROOTFS_DIR)
 	@mkdir -p $(ET_ROOTFS_BUILD_DIR)
 	@mkdir -p $(ET_ROOTFS_TARBALLS_DIR)
@@ -79,8 +80,8 @@ define rootfs-depends
 endef
 
 define rootfs-build
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rootfs-build 'make $1' *****\n\n"
 	$(call rootfs-depends)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rootfs-build 'make $1' *****\n\n"
 	@case "$1" in \
 	*config) \
 		;; \
@@ -155,9 +156,8 @@ define rootfs-build
 endef
 
 define rootfs-config
-	$(call software-check,$(ET_ROOTFS_TREE),rootfs)
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rootfs-config *****\n\n"
 	$(call rootfs-depends)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rootfs-config *****\n\n"
 	$(MAKE) --no-print-directory \
 		CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 		O=$(ET_ROOTFS_BUILD_DIR) \

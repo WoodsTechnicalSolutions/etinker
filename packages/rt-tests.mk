@@ -19,7 +19,7 @@ endif
 export ET_RT_TESTS_TREE := rt-tests
 export ET_RT_TESTS_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_RT_TESTS_TREE)
 export ET_RT_TESTS_VERSION := $(shell cd $(ET_RT_TESTS_SOFTWARE_DIR) 2>/dev/null && git describe --long --dirty 2>/dev/null)
-export ET_RT_TESTS_CACHED_VERSION := $(shell grep -Po 'rt-tests-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
+export ET_RT_TESTS_CACHED_VERSION := $(shell sed -n 's/rt-tests-ref://p' $(ET_BOARD_DIR)/software.conf)
 export ET_RT_TESTS_BUILD_DIR := $(ET_OVERLAY_BUILD_DIR)/$(ET_RT_TESTS_TREE)
 export ET_RT_TESTS_BUILD_CONFIG := $(ET_RT_TESTS_BUILD_DIR)/.configured
 export ET_RT_TESTS_BUILD_BIN := $(ET_RT_TESTS_BUILD_DIR)/bld/oslat
@@ -47,10 +47,10 @@ define rt-tests-version
 endef
 
 define rt-tests-depends
+	$(call software-check,$(ET_RT_TESTS_TREE),rt-tests)
 	@mkdir -p $(ET_OVERLAY_DIR)
 	@mkdir -p $(ET_OVERLAY_DIR)/usr/bin
 	@mkdir -p $(ET_OVERLAY_DIR)/usr/lib
-	$(call software-check,$(ET_RT_TESTS_TREE),rt-tests)
 endef
 
 define rt-tests-targets
@@ -80,8 +80,8 @@ define rt-tests-targets
 endef
 
 define rt-tests-build
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rt-tests-build 'make $1' *****\n\n"
 	$(call rt-tests-depends)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rt-tests-build 'make $1' *****\n\n"
 	if [ -d $(ET_RT_TESTS_BUILD_DIR) ]; then \
 		$(ET_MAKE) -C $(ET_RT_TESTS_BUILD_DIR) \
 			prefix=$(ET_OVERLAY_DIR)/usr \
@@ -94,8 +94,8 @@ define rt-tests-build
 endef
 
 define rt-tests-config
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] rt-tests-config *****\n\n"
 	$(call rt-tests-depends)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] rt-tests-config *****\n\n"
 	@if ! [ -d $(ET_RT_TESTS_BUILD_DIR) ] || ! [ -f $(ET_RT_TESTS_BUILD_CONFIG) ]; then \
 		rsync -aP $(ET_RT_TESTS_SOFTWARE_DIR) $(shell dirname $(ET_RT_TESTS_BUILD_DIR))/; \
 		printf "%s\n" "$(shell date)" > $(ET_RT_TESTS_BUILD_CONFIG); \

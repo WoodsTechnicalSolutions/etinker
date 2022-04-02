@@ -30,7 +30,7 @@ endif
 export ET_BOOTLOADER_TYPE := $(ET_BOARD_BOOTLOADER_TYPE)
 export ET_BOOTLOADER_TREE := $(ET_BOARD_BOOTLOADER_TREE)
 export ET_BOOTLOADER_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_BOOTLOADER_TREE)
-export ET_BOOTLOADER_CACHED_VERSION := $(shell grep -Po 'bootloader-ref:\K[^\n]*' $(ET_BOARD_DIR)/software.conf)
+export ET_BOOTLOADER_CACHED_VERSION := $(shell sed -n 's/bootloader-ref://p' $(ET_BOARD_DIR)/software.conf)
 
 bootloader_defconfig := et_$(subst -,_,$(et_board))_defconfig
 
@@ -38,7 +38,7 @@ bootloader_defconfig := et_$(subst -,_,$(et_board))_defconfig
 ifneq ($(shell ls $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null),)
 bversion := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && make -s ubootversion | tr -d \\n)
 bgithash := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git rev-parse --short HEAD)
-bgitdirty := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --dirty|grep -Po -e '-dirty')
+bgitdirty := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --dirty|grep -oe '-dirty')
 blocalversion := -g$(bgithash)$(bgitdirty)
 ifdef USE_BOOTLOADER_TREE_VERSION
 ET_BOOTLOADER_VERSION := $(bversion)
@@ -67,7 +67,7 @@ ET_BOOTLOADER_LOCALVERSION :=
 endif
 ifneq ($(ET_BOOTLOADER_LOCALVERSION),)
 # split out localversion
-ifeq ($(ET_BOOTLOADER_LOCALVERSION),$(shell echo $(ET_BOOTLOADER_VERSION) | grep -Po -e '$(ET_BOOTLOADER_LOCALVERSION)'))
+ifeq ($(ET_BOOTLOADER_LOCALVERSION),$(shell echo $(ET_BOOTLOADER_VERSION) | grep -oe '$(ET_BOOTLOADER_LOCALVERSION)'))
 ET_BOOTLOADER_VERSION := $(shell echo $(ET_BOOTLOADER_VERSION) | sed s,$(ET_BOOTLOADER_LOCALVERSION),,)
 endif
 endif
@@ -104,6 +104,7 @@ define bootloader-version
 endef
 
 define bootloader-depends
+	$(call software-check,$(ET_BOOTLOADER_TREE),bootloader)
 	@mkdir -p $(ET_BOOTLOADER_DIR)/boot
 	@mkdir -p $(ET_BOOTLOADER_BUILD_DIR)
 	@mkdir -p $(shell dirname $(ET_BOOTLOADER_DEFCONFIG))
@@ -122,8 +123,8 @@ define bootloader-depends
 endef
 
 define bootloader-prepare
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_TREE) $(ET_BOOTLOADER_VERSION) *****\n\n"
 	$(call bootloader-depends)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_TREE) $(ET_BOOTLOADER_VERSION) *****\n\n"
 	$(call bootloader-prepare-$(ET_BOARD))
 endef
 
@@ -152,8 +153,8 @@ define bootloader-finalize
 endef
 
 define bootloader-build
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-build 'make $1' *****\n\n"
 	$(call bootloader-depends)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-build 'make $1' *****\n\n"
 	@case "$1" in \
 	*config) \
 		;; \
@@ -211,9 +212,8 @@ define bootloader-build
 endef
 
 define bootloader-config
-	$(call software-check,$(ET_BOOTLOADER_TREE),bootloader)
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-config *****\n\n"
 	$(call bootloader-depends)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-config *****\n\n"
 	$(MAKE) --no-print-directory \
 		CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 		O=$(ET_BOOTLOADER_BUILD_DIR) \

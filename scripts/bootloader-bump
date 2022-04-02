@@ -35,7 +35,7 @@ do_make ()
 
 is_virtual ()
 {
-	if [ "`grep -Po -e 'is virtual' ${ET_DIR}/boards/$1/etinker.mk 2> /dev/null`" = "is virtual" ]; then
+	if [ "`grep -oe 'is virtual' ${ET_DIR}/boards/$1/etinker.mk 2> /dev/null`" = "is virtual" ]; then
 		return 0
 	else
 		return 1

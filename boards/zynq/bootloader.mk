@@ -1,6 +1,6 @@
 export ET_BOOTLOADER_ARCH := $(ET_BOARD_ARCH)
 
-ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -Po xlnx),xlnx)
+ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -o xlnx),xlnx)
 # Xilinx 'u-boot-xlnx' tree
 export ET_BOOTLOADER_VERSION := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && make -s ubootversion | tr -d \\n)
 export ET_BOOTLOADER_LOCALVERSION := -$(ET_BOOTLOADER_CACHED_VERSION)

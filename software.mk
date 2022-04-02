@@ -19,8 +19,8 @@ define software-check
 	@if ! [ -d $(ET_SOFTWARE_DIR)/$1 ] || [ "$(ET_SOFTWARE_SYNC)" = "yes" ]; then \
 		mkdir -p $(ET_SOFTWARE_DIR); \
 		(cd $(ET_SOFTWARE_DIR) && \
-			url="`grep $2-url $(ET_BOARD_DIR)/software.conf | cut -d ':' -f 2-3 | tr -d \\\\n`" && \
-			ref="`grep $2-ref $(ET_BOARD_DIR)/software.conf | cut -d ':' -f 2-3 | tr -d \\\\n`" && \
+			url="$(shell sed -n 's/$2-url://p' $(ET_BOARD_DIR)/software.conf)" && \
+			ref="$(shell sed -n 's/$2-ref://p' $(ET_BOARD_DIR)/software.conf)" && \
 			case $2 in \
 			toolchain | bootloader | kernel | rootfs) \
 				if [ -d $1 ]; then \
