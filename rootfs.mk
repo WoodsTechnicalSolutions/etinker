@@ -35,15 +35,16 @@ ifneq ($(ET_ROOTFS_VARIANT),)
 rootfs_type := $(subst $(ET_ROOTFS_VARIANT),,$(ET_ROOTFS_TYPE))
 endif
 
-ifneq ($(shell ls $(ET_ROOTFS_SOFTWARE_DIR) 2>/dev/null),)
 # [start] rootfs version magic
+ifneq ($(shell ls $(ET_ROOTFS_SOFTWARE_DIR) 2>/dev/null),)
 ET_ROOTFS_VERSION := $(shell cd $(ET_ROOTFS_SOFTWARE_DIR) 2>/dev/null && git describe --long --dirty 2>/dev/null | tr -d v)
 ifeq ($(shell echo $(ET_ROOTFS_VERSION) | cut -d '-' -f 2),0)
 ET_ROOTFS_VERSION := $(shell cd $(ET_ROOTFS_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v)
 endif
-export ET_ROOTFS_VERSION
-# [end] rootfs version magic
 endif
+# [end] rootfs version magic
+
+export ET_ROOTFS_VERSION
 
 export ET_ROOTFS_BUSYBOX_VERSION := $(shell grep -e "BUSYBOX_VERSION =" $(ET_ROOTFS_SOFTWARE_DIR)/package/busybox/busybox.mk | cut -d ' ' -f 3)
 
