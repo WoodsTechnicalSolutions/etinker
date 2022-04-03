@@ -5,11 +5,11 @@ usage ()
 {
 	printf "\nusage: sandbox <command>\n\n"
 	printf "<command>\n"
-	printf "\tmake <targets> - Build specified Linux board targets\n"
-	printf "\tbuild          - Build all Linux boards\n"
-	printf "\tinfo           - Show build variables for all Linux boards\n"
-	printf "\tupdate         - Clean and build all Linux boards\n"
-	printf "\tversion        - Show version information for all Linux boards\n\n"
+	printf "\tmake <targets> - Build specified board targets\n"
+	printf "\tbuild          - Build all boards\n"
+	printf "\tinfo           - Show build variables for all boards\n"
+	printf "\tupdate         - Clean and build all boards\n"
+	printf "\tversion        - Show version information for all boards\n\n"
 }
 
 do_make ()
@@ -84,7 +84,7 @@ for n in `ls boards`; do
 
 	# baseline boards
 	case $n in
-	aml-s905x-cc* | am335x-* | ls1012afrdm* | ls1043ardb* | pynq-z2* | sama5d3-xpld*)
+	ek-tm4c* | nrf* | aml-s905x-cc* | am335x-* | ls1012afrdm* | ls1043ardb* | pynq-z2* | sama5d3-xpld*)
 		if ! do_make $n "$@"; then
 			printf "etinker $0 failed!\n"
 			exit 1
