@@ -191,13 +191,13 @@ $(ET_LIBRARY_BUILD_DIR)/%.d: $(ET_DIR)/lib/%.c
 
 .PHONY: library-clean
 library-clean:
-	$(RM) $(OBJECTS) $(ET_LIBRARY_BUILD_ARCHIVE)
-	$(RM) $(ET_LIBRARY_TARGET_FINAL)
+	$(RM) $(OBJECTS) $(ET_LIBRARY_BUILD_ARCHIVE) $(ET_LIBRARY_BUILD_SO)
+	$(RM) $(ET_LIBRARY_SO) $(ET_LIBRARY_TEST) $(ET_LIBRARY_TARGET_FINAL)
+	$(RM) -r $(ET_LIBRARY_DIR)
 
 .PHONY: library-purge
-library-purge:
+library-purge: library-clean
 	$(RM) -r $(ET_LIBRARY_BUILD_DIR)
-	$(RM) -r $(ET_LIBRARY_DIR)
 
 .PHONY: library-version
 library-version:
