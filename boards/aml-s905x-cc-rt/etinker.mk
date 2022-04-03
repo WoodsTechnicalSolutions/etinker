@@ -29,11 +29,12 @@
 
 export ET_BOARD_TYPE := meson
 
-ET_BOARD_ALIAS ?= aml-s905x-cc
-
 ET_BOARD_KERNEL_TYPE ?= meson-rt
 ET_BOARD_BOOTLOADER_TYPE ?= meson
 ET_BOARD_ROOTFS_TYPE ?= meson
+
+# Use this board's bootloader
+ET_BOARD_ALIAS ?= aml-s905x-cc
 
 include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/etinker.mk
 

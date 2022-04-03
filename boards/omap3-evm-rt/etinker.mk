@@ -30,10 +30,11 @@
 
 export ET_BOARD_TYPE := omap2plus
 
-ET_BOARD_ALIAS ?= omap3-evm
-
 ET_BOARD_KERNEL_TYPE ?= omap2plus-rt
 ET_BOARD_BOOTLOADER_TYPE ?= omap2plus
+
+# Use this board's bootloader
+ET_BOARD_ALIAS ?= omap3-evm
 
 include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/etinker.mk
 
