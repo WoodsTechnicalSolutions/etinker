@@ -174,7 +174,8 @@ $(ET_LIBRARY_BUILD_SO): $(ET_LIBRARY_BUILD_ARCHIVE)
 		$(RM) lib$(ET_LIBRARY_NAME).so && \
 		ln -s lib$(ET_LIBRARY_NAME).so.$(ET_LIBRARY_VERSION) lib$(ET_LIBRARY_NAME).so)
 
-$(ET_LIBRARY_TEST): $(ET_LIBRARY_ARCHIVE)
+$(ET_LIBRARY_TEST): $(ET_LIBRARY_SO)
+	@mkdir -p $(@D)
 	@mkdir -p $(ET_LIBRARY_DIR)/usr/include
 	@cp -a $(ET_DIR)/include/* $(ET_LIBRARY_DIR)/usr/include/
 	$(CC) $(CFLAGS_TEST) $(ET_DIR)/lib/test.c -o $@ $(LDFLAGS_TEST)
