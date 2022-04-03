@@ -56,7 +56,7 @@ is_rt ()
 }
 
 # verify first positional argument
-if [ -e $1 ]; then
+if [ -z "$1" ]; then
 	printf "Missing arguments!\n"
 	usage
 	exit 1

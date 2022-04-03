@@ -5,10 +5,11 @@ usage ()
 {
 	printf "\nusage: sandbox <command>\n\n"
 	printf "<command>\n"
-	printf "\tmake <targets> - Build specified targets\n"
-	printf "\tinfo           - Show build variables for all boards\n"
-	printf "\tupdate         - Clean and build all boards\n"
-	printf "\tversion        - Show version information for all boards\n\n"
+	printf "\tmake <targets> - Build specified Linux board targets\n"
+	printf "\tbuild          - Build all Linux boards\n"
+	printf "\tinfo           - Show build variables for all Linux boards\n"
+	printf "\tupdate         - Clean and build all Linux boards\n"
+	printf "\tversion        - Show version information for all Linux boards\n\n"
 }
 
 do_make ()
@@ -21,6 +22,9 @@ do_make ()
 		;;
 	info | update | version)
 		ET_BOARD=$1 make $2
+		;;
+	build)
+		ET_BOARD=$1 make sandbox
 		;;
 	*)
 		;;
@@ -37,7 +41,7 @@ is_virtual ()
 }
 
 # verify first positional argumement
-if [ -e $1 ]; then
+if [ -z "$1" ]; then
 	printf "Missing arguments!\n"
 	usage
 	exit 1
