@@ -37,6 +37,10 @@ define wireless-regdb-version
 	@printf "ET_WIRELESS_REGDB_VERSION: \033[0;33m[$(ET_WIRELESS_REGDB_CACHED_VERSION)]\033[0m $(ET_WIRELESS_REGDB_VERSION)\n"
 endef
 
+define wireless-regdb-software
+	$(call software-check,$(ET_WIRELESS_REGDB_TREE),wireless-regdb,fetch)
+endef
+
 define wireless-regdb-depends
 	$(call software-check,$(ET_WIRELESS_REGDB_TREE),wireless-regdb)
 	@mkdir -p $(ET_OVERLAY_DIR)/usr/lib/firmware
@@ -155,6 +159,10 @@ wireless-regdb-purge:
 
 .PHONY: wireless-regdb-version
 wireless-regdb-version:
+	$(call $@)
+
+.PHONY: wireless-regdb-software
+wireless-regdb-software:
 	$(call $@)
 
 .PHONY: wireless-regdb-info

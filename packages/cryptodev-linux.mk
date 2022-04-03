@@ -34,6 +34,10 @@ define cryptodev-linux-version
 	@printf "ET_CRYPTODEV_LINUX_VERSION: \033[0;33m[$(ET_CRYPTODEV_LINUX_CACHED_VERSION)]\033[0m $(ET_CRYPTODEV_LINUX_VERSION)\n"
 endef
 
+define cryptodev-linux-software
+	$(call software-check,$(ET_CRYPTODEV_LINUX_TREE),cryptodev-linux,fetch)
+endef
+
 define cryptodev-linux-depends
 	$(call software-check,$(ET_CRYPTODEV_LINUX_TREE),cryptodev-linux)
 	@mkdir -p $(shell dirname $(ET_CRYPTODEV_LINUX_BUILD_DIR))
@@ -130,6 +134,10 @@ cryptodev-linux-purge:
 
 .PHONY: cryptodev-linux-version
 cryptodev-linux-version:
+	$(call $@)
+
+.PHONY: cryptodev-linux-software
+cryptodev-linux-software:
 	$(call $@)
 
 .PHONY: cryptodev-linux-info

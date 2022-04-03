@@ -116,6 +116,10 @@ define kernel-version
 	@printf "ET_KERNEL_LOCALVERSION: $(ET_KERNEL_LOCALVERSION)\n"
 endef
 
+define kernel-software
+	$(call software-check,$(ET_KERNEL_TREE),kernel,fetch)
+endef
+
 define kernel-depends
 	$(call software-check,$(ET_KERNEL_TREE),kernel)
 	@mkdir -p $(ET_KERNEL_DIR)/boot
@@ -353,6 +357,10 @@ kernel-purge:
 
 .PHONY: kernel-version
 kernel-version:
+	$(call $@)
+
+.PHONY: kernel-software
+kernel-software:
 	$(call $@)
 
 .PHONY: kernel-info

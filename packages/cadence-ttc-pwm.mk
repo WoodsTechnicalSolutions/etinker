@@ -35,6 +35,10 @@ define cadence-ttc-pwm-version
 	@printf "ET_CADENCE_TTC_PWM_VERSION: \033[0;33m[$(ET_CADENCE_TTC_PWM_CACHED_VERSION)]\033[0m $(ET_CADENCE_TTC_PWM_VERSION)\n"
 endef
 
+define cadence-ttc-pwm-software
+	$(call software-check,$(ET_CADENCE_TTC_PWM_TREE),cadence-ttc-pwm,fetch)
+endef
+
 define cadence-ttc-pwm-depends
 	$(call software-check,$(ET_CADENCE_TTC_PWM_TREE),cadence-ttc-pwm)
 	@mkdir -p $(shell dirname $(ET_CADENCE_TTC_PWM_BUILD_DIR))
@@ -147,6 +151,10 @@ cadence-ttc-pwm-purge:
 
 .PHONY: cadence-ttc-pwm-version
 cadence-ttc-pwm-version:
+	$(call $@)
+
+.PHONY: cadence-ttc-pwm-software
+cadence-ttc-pwm-software:
 	$(call $@)
 
 .PHONY: cadence-ttc-pwm-info

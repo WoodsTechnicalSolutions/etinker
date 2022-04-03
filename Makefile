@@ -30,6 +30,14 @@ ifdef ET_BOARD_ROOTFS_TREE
 	@$(ET_MAKE) -C $(ET_DIR) overlay
 endif
 
+.PHONY: software
+software:
+	$(call toolchain-$@)
+	$(call kernel-$@)
+	$(call bootloader-$@)
+	$(call rootfs-$@)
+	$(call overlay-$@)
+
 .PHONY: version
 version:
 	$(call toolchain-$@)

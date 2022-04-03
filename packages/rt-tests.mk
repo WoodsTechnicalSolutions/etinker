@@ -46,6 +46,10 @@ define rt-tests-version
 	@printf "ET_RT_TESTS_VERSION: \033[0;33m[$(ET_RT_TESTS_CACHED_VERSION)]\033[0m $(ET_RT_TESTS_VERSION)\n"
 endef
 
+define rt-tests-software
+	$(call software-check,$(ET_RT_TESTS_TREE),rt-tests,fetch)
+endef
+
 define rt-tests-depends
 	$(call software-check,$(ET_RT_TESTS_TREE),rt-tests)
 	@mkdir -p $(ET_OVERLAY_DIR)
@@ -155,6 +159,10 @@ rt-tests-purge:
 
 .PHONY: rt-tests-version
 rt-tests-version: $(ET_RT_TESTS_BUILD_CONFIG)
+	$(call $@)
+
+.PHONY: rt-tests-software
+rt-tests-software: $(ET_RT_TESTS_BUILD_CONFIG)
 	$(call $@)
 
 .PHONY: rt-tests-info

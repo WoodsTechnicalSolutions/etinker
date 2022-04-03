@@ -16,7 +16,7 @@ endif
 # check for existence of a source tree
 define software-check
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] USING $(ET_SOFTWARE_DIR)/$1 for $2 *****\n\n"
-	@if ! [ -d $(ET_SOFTWARE_DIR)/$1 ] || [ "$(ET_SOFTWARE_SYNC)" = "yes" ]; then \
+	@if ! [ -d $(ET_SOFTWARE_DIR)/$1 ] || [ "fetch" = "$3" ]; then \
 		mkdir -p $(ET_SOFTWARE_DIR); \
 		(cd $(ET_SOFTWARE_DIR) && \
 			url="$(shell sed -n 's/$2-url://p' $(ET_BOARD_DIR)/software.conf)" && \

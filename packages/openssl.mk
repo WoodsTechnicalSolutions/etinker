@@ -40,6 +40,10 @@ define openssl-version
 	@printf "ET_OPENSSL_VERSION: \033[0;33m[$(ET_OPENSSL_CACHED_VERSION)]\033[0m $(ET_OPENSSL_VERSION)\n"
 endef
 
+define openssl-software
+	$(call software-check,$(ET_OPENSSL_TREE),openssl,fetch)
+endef
+
 define openssl-depends
 	$(call software-check,$(ET_OPENSSL_TREE),openssl)
 	@mkdir -p $(ET_OVERLAY_DIR)
@@ -191,6 +195,10 @@ openssl-purge:
 
 .PHONY: openssl-version
 openssl-version:
+	$(call $@)
+
+.PHONY: openssl-software
+openssl-software:
 	$(call $@)
 
 .PHONY: openssl-info

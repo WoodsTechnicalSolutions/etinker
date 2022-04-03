@@ -28,6 +28,14 @@ define overlay-depends
 	@printf "usr/lib/*.a\n"       >> $(ET_OVERLAY_DIR)/exclude
 endef
 
+define overlay-software
+	$(call cadence-ttc-pwm-software)
+	$(call cryptodev-linux-software)
+	$(call openssl-software)
+	$(call wireless-regdb-software)
+	$(call rt-tests-software)
+endef
+
 define overlay-version
 	$(call cadence-ttc-pwm-version)
 	$(call cryptodev-linux-version)
@@ -85,6 +93,10 @@ overlay-purge:
 
 .PHONY: overlay-version
 overlay-version:
+	$(call $@)
+
+.PHONY: overlay-software
+overlay-software:
 	$(call $@)
 
 .PHONY: overlay-info

@@ -65,6 +65,10 @@ define toolchain-version
 	fi
 endef
 
+define toolchain-software
+	$(call software-check,$(ET_TOOLCHAIN_TREE),toolchain,fetch)
+endef
+
 define toolchain-depends
 	$(call software-check,$(ET_TOOLCHAIN_TREE),toolchain)
 	@mkdir -p $(ET_TOOLCHAIN_TARBALLS_DIR)
@@ -252,6 +256,10 @@ endif
 
 .PHONY: toolchain-version
 toolchain-version:
+	$(call $@)
+
+.PHONY: toolchain-software
+toolchain-software:
 	$(call $@)
 
 .PHONY: toolchain-info

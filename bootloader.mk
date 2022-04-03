@@ -103,6 +103,10 @@ define bootloader-version
 	@printf "ET_BOOTLOADER_LOCALVERSION: $(ET_BOOTLOADER_LOCALVERSION)\n"
 endef
 
+define bootloader-software
+	$(call software-check,$(ET_BOOTLOADER_TREE),bootloader,fetch)
+endef
+
 define bootloader-depends
 	$(call software-check,$(ET_BOOTLOADER_TREE),bootloader)
 	@mkdir -p $(ET_BOOTLOADER_DIR)/boot
@@ -288,6 +292,10 @@ bootloader-purge:
 
 .PHONY: bootloader-version
 bootloader-version:
+	$(call $@)
+
+.PHONY: bootloader-software
+bootloader-software:
 	$(call $@)
 
 .PHONY: bootloader-info

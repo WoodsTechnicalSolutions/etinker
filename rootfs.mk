@@ -68,6 +68,10 @@ define rootfs-version
 	@printf "ET_ROOTFS_BUSYBOX_VERSION: $(ET_ROOTFS_BUSYBOX_VERSION)\n"
 endef
 
+define rootfs-software
+	$(call software-check,$(ET_ROOTFS_TREE),rootfs,fetch)
+endef
+
 define rootfs-depends
 	$(call software-check,$(ET_ROOTFS_TREE),rootfs)
 	@mkdir -p $(ET_ROOTFS_DIR)
@@ -226,6 +230,10 @@ rootfs-purge:
 
 .PHONY: rootfs-version
 rootfs-version:
+	$(call $@)
+
+.PHONY: rootfs-software
+rootfs-software:
 	$(call $@)
 
 .PHONY: rootfs-info

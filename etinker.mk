@@ -44,9 +44,6 @@ export ET_TFTP_DIR ?= /srv/tftp
 
 export ET_INITRAMFS ?= no
 
-# triggers explicit checkout of Git refs from "software.conf" files
-export ET_SOFTWARE_SYNC ?= no
-
 export ET_CLEAN ?= no
 export ET_PURGE ?= no
 export ET_RELEASE ?= no
