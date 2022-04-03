@@ -50,7 +50,7 @@ fi
 # validate first positional argumement
 case $1 in
 make)
-	if [ -e $2 ]; then
+	if [ -z "2" ]; then
 		printf "Missing 'make' arguments!\n"
 		usage
 		exit 1
