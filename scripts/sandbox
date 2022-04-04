@@ -56,7 +56,7 @@ make)
 		exit 1
 	fi
 	;;
-info | update | version)
+build | info | update | version)
 	;;
 *)
 	printf "Invalid argument list!\n"
