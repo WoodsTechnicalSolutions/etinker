@@ -65,7 +65,7 @@ purge:
 	$(call library-$@)
 	$(call overlay-$@)
 
-# For partitioned and empty SD/MMC devices
+# For partitioned SD/MMC devices
 .PHONY: sync
 sync:
 	@$(ET_MAKE) -C $(ET_DIR) rootfs-sync-mmc
@@ -75,7 +75,22 @@ sync:
 	@$(ET_MAKE) -C $(ET_DIR) overlay-sync-mmc
 
 .PHONY: update
-update: clean sandbox rootfs-update
+update:
+	@$(ET_MAKE) -C $(ET_DIR) toolchain-$@
+ifdef ET_BOARD_KERNEL_TREE
+	@$(ET_MAKE) -C $(ET_DIR) kernel-$@
+endif
+ifdef ET_BOARD_BOOTLOADER_TREE
+	@$(ET_MAKE) -C $(ET_DIR) bootloader-$@
+endif
+ifdef ET_BOARD_ROOTFS_TREE
+	@$(ET_MAKE) -C $(ET_DIR) rootfs-$@
+endif
+	@$(ET_MAKE) -C $(ET_DIR) library-$@
+ifdef ET_BOARD_ROOTFS_TREE
+	@$(ET_MAKE) -C $(ET_DIR) overlay-$@
+	@$(ET_MAKE) -C $(ET_DIR) rootfs-$@
+endif
 
 .PHONY: info
 info:

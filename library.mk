@@ -157,6 +157,7 @@ $(ET_LIBRARY_TARGET_FINAL): $(ET_LIBRARY_BUILD_SO)
 endif
 
 $(ET_LIBRARY_BUILD_ARCHIVE): $(OBJECTS) $(DEPENDS)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Building static library *****\n\n"
 	@mkdir -p $(ET_LIBRARY_DIR)/usr/include
 	@mkdir -p $(ET_LIBRARY_DIR)/usr/lib
 	@mkdir -p $(ET_LIBRARY_DIR)/usr/bin
@@ -168,6 +169,7 @@ $(ET_LIBRARY_BUILD_ARCHIVE): $(OBJECTS) $(DEPENDS)
 
 ifdef ET_LIBRARY_SO
 $(ET_LIBRARY_BUILD_SO): $(ET_LIBRARY_BUILD_ARCHIVE)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Building shared library *****\n\n"
 	$(CC) $(LDFLAGS) -o $@ -Wl,--whole-archive $^ -Wl,--no-whole-archive
 	cp -a $@ $(ET_LIBRARY_DIR)/usr/lib/
 	(cd $(ET_LIBRARY_DIR)/usr/lib && \
@@ -175,6 +177,7 @@ $(ET_LIBRARY_BUILD_SO): $(ET_LIBRARY_BUILD_ARCHIVE)
 		ln -s lib$(ET_LIBRARY_NAME).so.$(ET_LIBRARY_VERSION) lib$(ET_LIBRARY_NAME).so)
 
 $(ET_LIBRARY_TEST): $(ET_LIBRARY_SO)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Building test binary *****\n\n"
 	@mkdir -p $(@D)
 	@mkdir -p $(ET_LIBRARY_DIR)/usr/include
 	@cp -a $(ET_DIR)/include/* $(ET_LIBRARY_DIR)/usr/include/
@@ -191,12 +194,14 @@ $(ET_LIBRARY_BUILD_DIR)/%.d: $(ET_DIR)/lib/%.c
 
 .PHONY: library-clean
 library-clean:
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call library-clean *****\n\n"
 	$(RM) $(OBJECTS) $(ET_LIBRARY_BUILD_ARCHIVE) $(ET_LIBRARY_BUILD_SO)
 	$(RM) $(ET_LIBRARY_SO) $(ET_LIBRARY_TEST) $(ET_LIBRARY_TARGET_FINAL)
 	$(RM) -r $(ET_LIBRARY_DIR)
 
 .PHONY: library-purge
 library-purge: library-clean
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call library-purge *****\n\n"
 	$(RM) -r $(ET_LIBRARY_BUILD_DIR)
 
 .PHONY: library-version
