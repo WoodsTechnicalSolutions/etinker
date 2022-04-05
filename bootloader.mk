@@ -12,14 +12,12 @@
 # - https://gitlab.denx.de/u-boot/u-boot/-/tree/master/doc
 #
 
-ifndef ET_BOARD_BOOTLOADER_TREE
-$(error [ 'etinker' bootloader build requires ET_BOARD_BOOTLOADER_TREE ] ***)
-endif
-
-et_board := $(ET_BOARD)
+ifdef ET_BOARD_BOOTLOADER_TREE
 
 ifdef ET_BOARD_ALIAS
 et_board := $(ET_BOARD_ALIAS)
+else
+et_board := $(ET_BOARD)
 endif
 
 ifndef ET_BOARD_BOOTLOADER_TYPE
@@ -264,6 +262,15 @@ define bootloader-sync
 	@$(ET_DIR)/scripts/sync bootloader $1
 endef
 
+define bootloader-update
+	@$(ET_MAKE) -C $(ET_DIR) bootloader-clean
+	@$(ET_MAKE) -C $(ET_DIR) bootloader
+endef
+
+define bootloader-all
+	@$(ET_MAKE) -C $(ET_DIR) bootloader
+endef
+
 .PHONY: bootloader
 bootloader: $(ET_BOOTLOADER_TARGET_FINAL)
 $(ET_BOOTLOADER_TARGET_FINAL): $(ET_BOOTLOADER_BUILD_CONFIG)
@@ -306,4 +313,12 @@ bootloader-sync-%:
 	$(call bootloader-sync,$(*F))
 
 .PHONY: bootloader-update
-bootloader-update: bootloader-clean bootloader
+bootloader-update:
+	$(call $@)
+
+.PHONY: bootloader-all
+bootloader-all:
+	$(call $@)
+
+endif
+# ET_BOARD_BOOTLOADER_TREE

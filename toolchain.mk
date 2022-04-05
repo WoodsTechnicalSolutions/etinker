@@ -211,6 +211,15 @@ define toolchain-info
 	fi
 endef
 
+define toolchain-update
+	@$(ET_MAKE) -C $(ET_DIR) toolchain-clean
+	@$(ET_MAKE) -C $(ET_DIR) toolchain
+endef
+
+define toolchain-all
+	@$(ET_MAKE) -C $(ET_DIR) toolchain
+endef
+
 .PHONY: toolchain
 toolchain: $(ET_TOOLCHAIN_TARGET_FINAL)
 $(ET_TOOLCHAIN_TARGET_FINAL): $(ET_TOOLCHAIN_BUILD_CONFIG)
@@ -267,4 +276,9 @@ toolchain-info:
 	$(call $@)
 
 .PHONY: toolchain-update
-toolchain-update: toolchain-clean toolchain
+toolchain-update:
+	$(call $@)
+
+.PHONY: toolchain-all
+toolchain-all:
+	$(call $@)

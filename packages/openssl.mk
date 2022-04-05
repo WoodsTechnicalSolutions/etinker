@@ -13,9 +13,7 @@
 # - https://github.com/archlinuxarm/PKGBUILDs/tree/master/core/openssl-cryptodev
 #
 
-ifndef ET_BOARD_ROOTFS_TREE
-$(error [ 'etinker' packages requires buildroot rootfs ] ***)
-endif
+ifdef ET_BOARD_ROOTFS_TREE
 
 export ET_OPENSSL_TREE := openssl
 export ET_OPENSSL_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_OPENSSL_TREE)
@@ -167,6 +165,15 @@ define openssl-info
 	@printf "ET_OPENSSL_TARGET_FINAL: $(ET_OPENSSL_TARGET_FINAL)\n"
 endef
 
+define openssl-update
+	@$(ET_MAKE) -C $(ET_DIR) openssl-clean
+	@$(ET_MAKE) -C $(ET_DIR) openssl
+endef
+
+define openssl-all
+	@$(ET_MAKE) -C $(ET_DIR) openssl
+endef
+
 .PHONY: openssl
 openssl: $(ET_OPENSSL_TARGET_FINAL)
 $(ET_OPENSSL_TARGET_FINAL): $(ET_OPENSSL_BUILD_CONFIG)
@@ -206,4 +213,12 @@ openssl-info:
 	$(call $@)
 
 .PHONY: openssl-update
-openssl-update: openssl-clean openssl
+openssl-update:
+	$(call $@)
+
+.PHONY: openssl-all
+openssl-all:
+	$(call $@)
+
+endif
+# ET_BOARD_ROOTFS_TREE

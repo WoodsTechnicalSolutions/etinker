@@ -7,9 +7,7 @@
 # available under the terms of the GNU General Public License version 3.
 #
 
-ifndef ET_BOARD_ROOTFS_TREE
-$(error [ 'etinker' overlay packages require buildroot rootfs ] ***)
-endif
+ifdef ET_BOARD_ROOTFS_TREE
 
 export ET_OVERLAY_BUILD_DIR := $(ET_DIR)/overlay/build/$(ET_ROOTFS_TYPE)/$(ET_CROSS_TUPLE)
 export ET_OVERLAY_DIR := $(ET_DIR)/overlay/$(ET_BOARD)$(ET_ROOTFS_VARIANT)/$(ET_CROSS_TUPLE)
@@ -76,12 +74,23 @@ define overlay-sync
 	@$(ET_DIR)/scripts/sync overlay $1
 endef
 
+define overlay-update
+	@$(ET_MAKE) -C $(ET_DIR) overlay-clean
+	@$(ET_MAKE) -C $(ET_DIR) overlay
+endef
+
+define overlay-all
+	@$(ET_MAKE) -C $(ET_DIR) overlay
+endef
+
 .PHONY: overlay
-ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -o zynq),zynq)
-overlay: cadence-ttc-pwm 
-endif
-overlay: cryptodev-linux openssl wireless-regdb rt-tests
+overlay:
 	$(call overlay-depends)
+	$(call cadence-ttc-pwm-all)
+	$(call cryptodev-linux-all)
+	$(call openssl-all)
+	$(call wireless-regdb-all)
+	$(call rt-tests-all)
 
 .PHONY: overlay-clean
 overlay-clean:
@@ -107,4 +116,12 @@ overlay-sync-%:
 	$(call overlay-sync,$(*F))
 
 .PHONY: overlay-update
-overlay-update: overlay-clean overlay
+overlay-update:
+	$(call $@)
+
+.PHONY: overlay-all
+overlay-all:
+	$(call $@)
+
+endif
+# ET_BOARD_ROOTFS_TREE

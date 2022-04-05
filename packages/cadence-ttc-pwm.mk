@@ -12,14 +12,8 @@
 #
 
 ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -o zynq),zynq)
-
-ifndef ET_BOARD_ROOTFS_TREE
-$(error [ 'etinker' packages requires buildroot rootfs ] ***)
-endif
-
-ifndef ET_BOARD_KERNEL_TREE
-$(error [ 'etinker' packages requires linux kernel ] ***)
-endif
+ifdef ET_BOARD_ROOTFS_TREE
+ifdef ET_BOARD_KERNEL_TREE
 
 export ET_CADENCE_TTC_PWM_TREE := cadence-ttc-pwm
 export ET_CADENCE_TTC_PWM_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_CADENCE_TTC_PWM_TREE)
@@ -123,6 +117,15 @@ define cadence-ttc-pwm-info
 	@printf "ET_CADENCE_TTC_PWM_TARGET_FINAL: $(ET_CADENCE_TTC_PWM_TARGET_FINAL)\n"
 endef
 
+define cadence-ttc-pwm-update
+	@$(ET_MAKE) -C $(ET_DIR) cadence-ttc-pwm-clean
+	@$(ET_MAKE) -C $(ET_DIR) cadence-ttc-pwm
+endef
+
+define cadence-ttc-pwm-all
+	@$(ET_MAKE) -C $(ET_DIR) cadence-ttc-pwm
+endef
+
 .PHONY: cadence-ttc-pwm
 cadence-ttc-pwm: $(ET_CADENCE_TTC_PWM_TARGET_FINAL)
 $(ET_CADENCE_TTC_PWM_TARGET_FINAL): $(ET_CADENCE_TTC_PWM_BUILD_CONFIG)
@@ -162,5 +165,16 @@ cadence-ttc-pwm-info:
 	$(call $@)
 
 .PHONY: cadence-ttc-pwm-update
-cadence-ttc-pwm-update: cadence-ttc-pwm-clean cadence-ttc-pwm
+cadence-ttc-pwm-update:
+	$(call $@)
+
+.PHONY: cadence-ttc-pwm-all
+cadence-ttc-pwm-all:
+	$(call $@)
+
 endif
+# ET_BOARD_KERNEL_TREE
+endif
+# ET_BOARD_ROOTFS_TREE
+endif
+# zynq

@@ -72,20 +72,11 @@ export ET_BOARD_DIR ?= $(ET_DIR)/boards/$(ET_BOARD)
 # pull in etinker component information
 include $(ET_DIR)/software.mk
 include $(ET_DIR)/toolchain.mk
-ifdef ET_BOARD_KERNEL_TREE
-export ET_SYSROOT_DIR ?= $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot
 include $(ET_DIR)/kernel.mk
-endif
-ifdef ET_BOARD_BOOTLOADER_TREE
 include $(ET_DIR)/bootloader.mk
-endif
-ifdef ET_BOARD_ROOTFS_TREE
 include $(ET_DIR)/rootfs.mk
-endif
 include $(ET_DIR)/library.mk
-ifdef ET_BOARD_ROOTFS_TREE
 include $(ET_DIR)/overlay.mk
-endif
 
 # allow users to find cross-compiler
 export PATH := $(ET_TOOLCHAIN_DIR)/bin:$(PATH)

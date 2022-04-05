@@ -12,9 +12,7 @@
 # - https://wiki.linuxfoundation.org/realtime/documentation/howto/tools/rt-tests
 #
 
-ifndef ET_BOARD_ROOTFS_TREE
-$(error [ 'etinker' packages requires buildroot rootfs ] ***)
-endif
+ifdef ET_BOARD_ROOTFS_TREE
 
 export ET_RT_TESTS_TREE := rt-tests
 export ET_RT_TESTS_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_RT_TESTS_TREE)
@@ -134,6 +132,15 @@ define rt-tests-info
 	@printf "ET_RT_TESTS_TARGET_FINAL: $(ET_RT_TESTS_TARGET_FINAL)\n"
 endef
 
+define rt-tests-update
+	@$(ET_MAKE) -C $(ET_DIR) rt-tests-clean
+	@$(ET_MAKE) -C $(ET_DIR) rt-tests
+endef
+
+define rt-tests-all
+	@$(ET_MAKE) -C $(ET_DIR) rt-tests
+endef
+
 .PHONY: rt-tests
 rt-tests: $(ET_RT_TESTS_TARGET_FINAL)
 $(ET_RT_TESTS_TARGET_FINAL): $(ET_RT_TESTS_BUILD_CONFIG)
@@ -170,4 +177,12 @@ rt-tests-info: $(ET_RT_TESTS_BUILD_CONFIG)
 	$(call $@)
 
 .PHONY: rt-tests-update
-rt-tests-update: rt-tests-clean rt-tests
+rt-tests-update:
+	$(call $@)
+
+.PHONY: rt-tests-all
+rt-tests-all:
+	$(call $@)
+
+endif
+# ET_BOARD_ROOTFS_TREE

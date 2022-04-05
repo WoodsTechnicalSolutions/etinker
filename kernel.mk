@@ -12,13 +12,13 @@
 # - https://www.kernel.org/doc/html/latest/kbuild/index.html
 #
 
-ifndef ET_BOARD_KERNEL_TREE
-$(error [ 'etinker' kernel build requires ET_BOARD_KERNEL_TREE ] ***)
-endif
+ifdef ET_BOARD_KERNEL_TREE
 
 ifndef ET_BOARD_KERNEL_TYPE
 export ET_BOARD_KERNEL_TYPE := $(ET_BOARD_TYPE)
 endif
+
+export ET_SYSROOT_DIR ?= $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot
 
 # embedded kernel, for application processors, is GNU Linux
 export ET_KERNEL_TYPE := $(ET_BOARD_KERNEL_TYPE)
@@ -323,6 +323,15 @@ define kernel-sync
 	@$(ET_DIR)/scripts/sync kernel $1
 endef
 
+define kernel-update
+	@$(ET_MAKE) -C $(ET_DIR) kernel-clean
+	@$(ET_MAKE) -C $(ET_DIR) kernel
+endef
+
+define kernel-all
+	@$(ET_MAKE) -C $(ET_DIR) kernel
+endef
+
 .PHONY: kernel
 kernel: $(ET_KERNEL_TARGET_FINAL)
 $(ET_KERNEL_TARGET_FINAL): $(ET_KERNEL_BUILD_CONFIG)
@@ -371,4 +380,12 @@ kernel-sync-%:
 	$(call kernel-sync,$(*F))
 
 .PHONY: kernel-update
-kernel-update: kernel-clean kernel
+kernel-update:
+	$(call $@)
+
+.PHONY: kernel-all
+kernel-all:
+	$(call $@)
+
+endif
+# ET_BOARD_KERNEL_TREE

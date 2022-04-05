@@ -12,9 +12,7 @@
 # - https://buildroot.org/docs.html
 #
 
-ifndef ET_BOARD_ROOTFS_TREE
-$(error [ 'etinker' rootfs build requires ET_BOARD_ROOTFS_TREE ] ***)
-endif
+ifdef ET_BOARD_ROOTFS_TREE
 
 ifndef ET_BOARD_ROOTFS_TYPE
 export ET_BOARD_ROOTFS_TYPE := $(ET_BOARD_TYPE)
@@ -207,6 +205,15 @@ define rootfs-sync
 	@$(ET_DIR)/scripts/sync rootfs $1
 endef
 
+define rootfs-update
+	@$(ET_MAKE) -C $(ET_DIR) rootfs-clean
+	@$(ET_MAKE) -C $(ET_DIR) rootfs
+endef
+
+define rootfs-all
+	@$(ET_MAKE) -C $(ET_DIR) rootfs
+endef
+
 .PHONY: rootfs
 rootfs: $(ET_ROOTFS_TARGET_FINAL)
 $(ET_ROOTFS_TARGET_FINAL): $(ET_ROOTFS_BUILD_CONFIG)
@@ -244,4 +251,12 @@ rootfs-sync-%:
 	$(call rootfs-sync,$(*F))
 
 .PHONY: rootfs-update
-rootfs-update: rootfs-clean rootfs
+rootfs-update:
+	$(call $@)
+
+.PHONY: rootfs-all
+rootfs-all:
+	$(call $@)
+
+endif
+# ET_BOARD_ROOTFS_TREE

@@ -15,20 +15,12 @@ include etinker.mk
 
 .PHONY: sandbox
 sandbox:
-	@$(ET_MAKE) -C $(ET_DIR) toolchain
-ifdef ET_BOARD_KERNEL_TREE
-	@$(ET_MAKE) -C $(ET_DIR) kernel
-endif
-ifdef ET_BOARD_BOOTLOADER_TREE
-	@$(ET_MAKE) -C $(ET_DIR) bootloader
-endif
-ifdef ET_BOARD_ROOTFS_TREE
-	@$(ET_MAKE) -C $(ET_DIR) rootfs
-endif
-	@$(ET_MAKE) -C $(ET_DIR) library
-ifdef ET_BOARD_ROOTFS_TREE
-	@$(ET_MAKE) -C $(ET_DIR) overlay
-endif
+	$(call toolchain-all)
+	$(call kernel-all)
+	$(call bootloader-all)
+	$(call rootfs-all)
+	$(call library-all)
+	$(call overlay-all)
 
 .PHONY: software
 software:
@@ -65,32 +57,22 @@ purge:
 	$(call library-$@)
 	$(call overlay-$@)
 
-# For partitioned SD/MMC devices
-.PHONY: sync
-sync:
-	@$(ET_MAKE) -C $(ET_DIR) rootfs-sync-mmc
-	@$(ET_MAKE) -C $(ET_DIR) bootloader-sync-mmc
-	@$(ET_MAKE) -C $(ET_DIR) kernel-sync-mmc
-	@$(ET_MAKE) -C $(ET_DIR) library-sync-mmc
-	@$(ET_MAKE) -C $(ET_DIR) overlay-sync-mmc
-
 .PHONY: update
 update:
-	@$(ET_MAKE) -C $(ET_DIR) toolchain-$@
-ifdef ET_BOARD_KERNEL_TREE
-	@$(ET_MAKE) -C $(ET_DIR) kernel-$@
-endif
-ifdef ET_BOARD_BOOTLOADER_TREE
-	@$(ET_MAKE) -C $(ET_DIR) bootloader-$@
-endif
-ifdef ET_BOARD_ROOTFS_TREE
-	@$(ET_MAKE) -C $(ET_DIR) rootfs-$@
-endif
-	@$(ET_MAKE) -C $(ET_DIR) library-$@
-ifdef ET_BOARD_ROOTFS_TREE
-	@$(ET_MAKE) -C $(ET_DIR) overlay-$@
-	@$(ET_MAKE) -C $(ET_DIR) rootfs-$@
-endif
+	$(call toolchain-$@)
+	$(call kernel-$@)
+	$(call bootloader-$@)
+	$(call rootfs-$@)
+	$(call library-$@)
+	$(call overlay-$@)
+
+.PHONY: sync
+sync:
+	$(call rootfs-sync,mmc)
+	$(call bootloader-sync,mmc)
+	$(call kernel-sync,mmc)
+	$(call library-sync,mmc)
+	$(call overlay-sync,mmc)
 
 .PHONY: info
 info:

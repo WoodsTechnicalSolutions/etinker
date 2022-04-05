@@ -12,13 +12,8 @@
 # - https://git.busybox.net/buildroot/tree/package/cryptodev-linux/cryptodev-linux.mk
 #
 
-ifndef ET_BOARD_ROOTFS_TREE
-$(error [ 'etinker' packages requires buildroot rootfs ] ***)
-endif
-
-ifndef ET_BOARD_KERNEL_TREE
-$(error [ 'etinker' packages requires linux kernel ] ***)
-endif
+ifdef ET_BOARD_ROOTFS_TREE
+ifdef ET_BOARD_KERNEL_TREE
 
 export ET_CRYPTODEV_LINUX_TREE := cryptodev-linux
 export ET_CRYPTODEV_LINUX_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_CRYPTODEV_LINUX_TREE)
@@ -106,6 +101,15 @@ define cryptodev-linux-info
 	@printf "ET_CRYPTODEV_LINUX_TARGET_FINAL: $(ET_CRYPTODEV_LINUX_TARGET_FINAL)\n"
 endef
 
+define cryptodev-linux-update
+	@$(ET_MAKE) -C $(ET_DIR) cryptodev-linux-clean
+	@$(ET_MAKE) -C $(ET_DIR) cryptodev-linux
+endef
+
+define cryptodev-linux-all
+	@$(ET_MAKE) -C $(ET_DIR) cryptodev-linux
+endef
+
 .PHONY: cryptodev-linux
 cryptodev-linux: $(ET_CRYPTODEV_LINUX_TARGET_FINAL)
 $(ET_CRYPTODEV_LINUX_TARGET_FINAL): $(ET_CRYPTODEV_LINUX_BUILD_CONFIG)
@@ -145,4 +149,14 @@ cryptodev-linux-info:
 	$(call $@)
 
 .PHONY: cryptodev-linux-update
-cryptodev-linux-update: cryptodev-linux-clean cryptodev-linux
+cryptodev-linux-update:
+	$(call $@)
+
+.PHONY: cryptodev-linux-all
+cryptodev-linux-all:
+	$(call $@)
+
+endif
+# ET_BOARD_KERNEL_TREE
+endif
+# ET_BOARD_ROOTFS_TREE

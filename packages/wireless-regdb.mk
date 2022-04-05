@@ -12,9 +12,7 @@
 # - https://git.busybox.net/buildroot/tree/package/wireless-regdb/wireless-regdb.mk
 #
 
-ifndef ET_BOARD_ROOTFS_TREE
-$(error [ 'etinker' packages requires buildroot rootfs ] ***)
-endif
+ifdef ET_BOARD_ROOTFS_TREE
 
 export ET_WIRELESS_REGDB_TREE := wireless-regdb
 export ET_WIRELESS_REGDB_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_WIRELESS_REGDB_TREE)
@@ -131,6 +129,15 @@ define wireless-regdb-info
 	@printf "ET_WIRELESS_REGDB_TARGET_FINAL: $(ET_WIRELESS_REGDB_TARGET_FINAL)\n"
 endef
 
+define wireless-regdb-update
+	@$(ET_MAKE) -C $(ET_DIR) wireless-regdb-clean
+	@$(ET_MAKE) -C $(ET_DIR) wireless-regdb
+endef
+
+define wireless-regdb-all
+	@$(ET_MAKE) -C $(ET_DIR) wireless-regdb
+endef
+
 .PHONY: wireless-regdb
 wireless-regdb: $(ET_WIRELESS_REGDB_TARGET_FINAL)
 $(ET_WIRELESS_REGDB_TARGET_FINAL): $(ET_WIRELESS_REGDB_BUILD_CONFIG)
@@ -170,4 +177,12 @@ wireless-regdb-info:
 	$(call $@)
 
 .PHONY: wireless-regdb-update
-wireless-regdb-update: wireless-regdb-clean wireless-regdb
+wireless-regdb-update:
+	$(call $@)
+
+.PHONY: wireless-regdb-all
+wireless-regdb-all:
+	$(call $@)
+
+endif
+# ET_BOARD_ROOTFS_TREE
