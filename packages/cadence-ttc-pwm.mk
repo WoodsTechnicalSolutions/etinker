@@ -15,11 +15,13 @@ ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -o zynq),zynq)
 ifdef ET_BOARD_ROOTFS_TREE
 ifdef ET_BOARD_KERNEL_TREE
 
+module_build_dir := $(ET_DIR)/overlay/build/$(ET_KERNEL_TYPE)/$(ET_CROSS_TUPLE)
+
 export ET_CADENCE_TTC_PWM_TREE := cadence-ttc-pwm
 export ET_CADENCE_TTC_PWM_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_CADENCE_TTC_PWM_TREE)
 export ET_CADENCE_TTC_PWM_VERSION := $(shell cd $(ET_CADENCE_TTC_PWM_SOFTWARE_DIR) 2>/dev/null && git describe --always --long --dirty 2>/dev/null)
 export ET_CADENCE_TTC_PWM_CACHED_VERSION := $(shell sed -n 's/cadence-ttc-pwm-ref://p' $(ET_BOARD_DIR)/software.conf)
-export ET_CADENCE_TTC_PWM_BUILD_DIR := $(ET_OVERLAY_BUILD_DIR)/$(ET_CADENCE_TTC_PWM_TREE)
+export ET_CADENCE_TTC_PWM_BUILD_DIR := $(module_build_dir)/$(ET_CADENCE_TTC_PWM_TREE)
 export ET_CADENCE_TTC_PWM_BUILD_CONFIG := $(ET_CADENCE_TTC_PWM_BUILD_DIR)/Makefile
 export ET_CADENCE_TTC_PWM_BUILD_KO := $(ET_CADENCE_TTC_PWM_BUILD_DIR)/pwm-cadence.ko
 export ET_CADENCE_TTC_PWM_KO := $(ET_KERNEL_DIR)/usr/lib/modules/$(ET_KERNEL_VERSION)$(ET_KERNEL_LOCALVERSION)/extra/pwm-cadence.ko
