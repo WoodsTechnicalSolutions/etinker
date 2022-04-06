@@ -114,7 +114,7 @@ for n in `ls ${ET_DIR}/boards`; do
 
 	# baseline boards
 	case $n in
-	am335x-pocketbeagle | aml-s905x-cc | ls1012afrdm | ls1043ardb | pynq-z2-xlnx | pynq-z2 | sama5d3-xpld)
+	am335x-pocketbeagle | aml-s905x-cc | ls1012afrdm | ls1043ardb | omap3-evm | pynq-z2-xlnx | pynq-z2 | sama5d3-xpld)
 		if ! do_make $n "$@"; then
 			printf "etinker $0 failed!\n"
 			exit 1

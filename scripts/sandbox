@@ -84,7 +84,7 @@ for n in `ls boards`; do
 
 	# baseline boards
 	case $n in
-	ek-tm4c* | nrf* | aml-s905x-cc* | am335x-* | ls1012afrdm* | ls1043ardb* | pynq-z2* | sama5d3-xpld*)
+	ek-tm4c* | nrf* | aml-s905x-cc* | am335x-* | ls1012afrdm* | ls1043ardb* | omap3-evm* | pynq-z2* | sama5d3-xpld*)
 		if ! do_make $n "$@"; then
 			printf "etinker $0 failed!\n"
 			exit 1

@@ -85,7 +85,7 @@ for n in `ls ${ET_DIR}/boards`; do
 	for b in `ls ${ET_DIR}/boards/$n/config/`; do
 		case $b in
 		u-boot-*)
-			board=`echo $b | grep -Po 'u-boot-\K[^\n]*'`
+			board=`echo $b | sed 's,u-boot-,,'`
 			if ! do_make $board "$@"; then
 				printf "etinker $0 failed!\n"
 				exit 1
