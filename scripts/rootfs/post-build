@@ -17,8 +17,6 @@ fi
 
 # Update target file system
 mkdir -p ${TARGET}/usr/lib/firmware
-# Preserve some target directory items with '-buildroot'
-cp -fv ${TARGET}/etc/dhcp/dhcpd.conf ${TARGET}/etc/dhcp/dhcpd.conf-buildroot
 # Copy common files to target
 rsync ${rsync_opts} ${ET_DIR}/common/rootfs/* ${TARGET}/ 2>/dev/null
 cp -fv ${ET_DIR}/scripts/mksdcard ${TARGET}/usr/sbin/ 2>/dev/null
@@ -59,7 +57,6 @@ if [ -f ${TARGET}/etc/inittab ]; then
 	printf "\n${ET_ROOTFS_GETTY_PORT}::respawn:/sbin/getty -L ${ET_ROOTFS_GETTY_PORT} 115200 screen-256color\n" >> ${TARGET}/etc/inittab
 fi
 sed -i s,ET_ROOTFS_GETTY_PORT,${ET_ROOTFS_GETTY_PORT}, ${TARGET}/etc/profile.d/tty.sh
-sed -i s,ET_BOARD,${ET_BOARD}, ${TARGET}/etc/dhcp/dhcpd.conf
 # Google DNS
 rm -f ${TARGET}/etc/resolv.conf
 printf "nameserver 8.8.8.8\n"  > ${TARGET}/etc/resolv.conf
