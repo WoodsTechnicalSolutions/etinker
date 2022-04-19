@@ -71,6 +71,7 @@ define rootfs-software
 endef
 
 define rootfs-depends
+	$(call software-check,$(ET_OPENSSL_TREE),openssl)
 	$(call software-check,$(ET_ROOTFS_TREE),rootfs)
 	@mkdir -p $(ET_ROOTFS_DIR)
 	@mkdir -p $(ET_ROOTFS_BUILD_DIR)
