@@ -86,6 +86,11 @@ for n in `ls ${ET_DIR}/boards`; do
 		case $b in
 		u-boot-*)
 			board=`echo $b | sed 's,u-boot-,,'`
+			if [ "pynq-z2" == "`echo $board | grep -o pynq-z2`" ]; then
+				if ! [ -d ${ET_DIR}/boards/zynq/fpga/sdk ]; then
+					continue
+				fi
+			fi
 			if ! do_make $board "$@"; then
 				printf "etinker $0 failed!\n"
 				exit 1

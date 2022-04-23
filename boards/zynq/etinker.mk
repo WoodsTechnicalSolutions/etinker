@@ -30,6 +30,10 @@ ifneq ($(ET_BOARD_TYPE),zynq)
 $(error [ ET_BOARD_TYPE is NOT 'zynq' ] ***)
 endif
 
+ifeq ($(shell test -d $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/sdk || echo missing),missing)
+$(error [ Zynq FPGA build is missing! ( $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/sdk ) ] ***)
+endif
+
 ET_BOARD_KERNEL_ARCH := arm
 ET_BOARD_KERNEL_LOADADDR ?= 0x02080000
 

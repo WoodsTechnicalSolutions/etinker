@@ -9,9 +9,9 @@ export ET_BOOTLOADER_BUILD_SPL := $(ET_BOOTLOADER_BUILD_DIR)/spl/$(ET_BOARD_BOOT
 export ET_BOOTLOADER_SPL := $(ET_BOOTLOADER_DIR)/boot/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
 
 define bootloader-depends-$(ET_BOARD_TYPE)
-	@if [ -d $(ET_BOARD_DIR)/fpga/sdk ]; then \
-		rsync -r $(ET_BOARD_DIR)/fpga/dts $(ET_BOARD_DIR)/; \
-		rsync -r $(ET_BOARD_DIR)/fpga/sdk/ps*_init_gpl.* \
+	@if [ -d $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/sdk ]; then \
+		rsync -r $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/dts $(ET_BOARD_DIR)/; \
+		rsync -r $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/sdk/ps*_init_gpl.* \
 			$(ET_BOOTLOADER_SOFTWARE_DIR)/board/xilinx/zynq/$(ET_BOARD_KERNEL_DT)/; \
 	else \
 		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] FPGA BUILD IS MISSING! *****\n"; \
@@ -29,7 +29,7 @@ define bootloader-finalize-$(ET_BOARD_TYPE)
 	fi
 	@cp -av $(ET_BOOTLOADER_BUILD_SPL) $(ET_BOOTLOADER_DIR)/boot/
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Generating Xilinx 'fpga.bin' *****\n\n"
-	@(cd $(ET_BOARD_DIR)/fpga && \
+	@(cd $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga && \
 		$(ET_SCRIPTS_DIR)/fpga-bit-to-bin.py -f "`ls sdk/*.bit | tr -d \\\n`" \
 		$(ET_BOOTLOADER_DIR)/boot/fpga.bin)
 	@if ! [ -f $(ET_BOOTLOADER_DIR)/boot/fpga.bin ]; then \
