@@ -1,0 +1,7 @@
+mmcdev=0
+mmcroot=/dev/mmcblk0p2
+bootfile=fitImage
+uenvcmd=echo && echo [ etinker: omap3-beagle-xm (fitImage) ] && echo && \
+setenv bootargs console=${console} ${optargs} root=${mmcroot} rw rootfstype=${mmcrootfstype} && \
+fatload mmc ${mmcdev}:1 $kernel_addr_r ${bootfile} && \
+bootm $kernel_addr_r

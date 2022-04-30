@@ -12,7 +12,7 @@ CONFIG_SPL=y
 # CONFIG_LOCALVERSION_AUTO is not set
 CONFIG_DISTRO_DEFAULTS=y
 CONFIG_BOOTARGS_SUBST=y
-CONFIG_BOOTCOMMAND="run findfdt; run distro_bootcmd"
+CONFIG_BOOTCOMMAND="if mmc rescan; then if mmc dev 0; then fatload mmc 0 ${scriptaddr} uEnv.txt && env import -t ${scriptaddr} ${filesize} && run uenvcmd; fi; fi; env set fdtaddr '0x84000000'; env set dtboaddr '0x85000000'; env set fdt_addr_r '0x84000000'; env set rdaddr '0x84080000'; env set ramdisk_addr_r '0x84080000'; env set bootm_size 'bootm_size=0x8000000'; run findfdt; run distro_bootcmd"
 CONFIG_USE_PREBOOT=y
 CONFIG_DEFAULT_FDT_FILE="omap3-beagle-xm.dtb"
 CONFIG_SYS_CONSOLE_INFO_QUIET=y
