@@ -12,14 +12,14 @@
 
 	images {
 		kernel-1 {
-			description = "Vanilla Linux kernel";
+			description = "Linux kernel";
 			data = /incbin/("./zImage");
 			type = "kernel";
 			arch = "arm";
 			os = "linux";
 			compression = "none";
-			load = <0x82000000>;
-			entry = <0x82000000>;
+			load = <0x84000000>;
+			entry = <0x84000000>;
 			hash-1 {
 				algo = "crc32";
 			};
@@ -33,7 +33,7 @@
 			type = "flat_dt";
 			arch = "arm";
 			compression = "none";
-			load = <0x89000000>;
+			load = <0x86000000>;
 			hash-1 {
 				algo = "crc32";
 			};

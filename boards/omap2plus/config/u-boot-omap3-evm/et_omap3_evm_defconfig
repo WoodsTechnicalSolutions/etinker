@@ -12,7 +12,7 @@ CONFIG_SPL=y
 # CONFIG_LOCALVERSION_AUTO is not set
 CONFIG_DISTRO_DEFAULTS=y
 CONFIG_BOOTARGS_SUBST=y
-CONFIG_BOOTCOMMAND="if test ${boot_fit} -eq 1; then run update_to_fit; fi; run envboot; run distro_bootcmd"
+CONFIG_BOOTCOMMAND="if mmc rescan; then if mmc dev 0; then fatload mmc 0 ${scriptaddr} uEnv.txt && env import -t ${scriptaddr} ${filesize} && run uenvcmd; fi; fi; run distro_bootcmd"
 CONFIG_USE_PREBOOT=y
 CONFIG_DEFAULT_FDT_FILE="omap3-evm.dtb"
 CONFIG_SYS_CONSOLE_INFO_QUIET=y
@@ -60,7 +60,6 @@ CONFIG_ENV_FAT_DEVICE_AND_PART="0:1"
 CONFIG_SYS_RELOC_GD_ENV_ADDR=y
 CONFIG_SYS_MMC_ENV_PART=1
 CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
-CONFIG_ENV_IMPORT_FDT=y
 CONFIG_VERSION_VARIABLE=y
 CONFIG_SPL_DM=y
 CONFIG_SPL_DM_SEQ_ALIAS=y
