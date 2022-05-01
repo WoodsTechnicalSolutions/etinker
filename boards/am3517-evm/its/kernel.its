@@ -1,0 +1,48 @@
+/*
+ * Simple U-Boot uImage source file containing a single kernel and FDT blob
+ *
+ * [1] https://source.denx.de/u-boot/u-boot/-/blob/master/doc/uImage.FIT/kernel_fdt.its
+ */
+
+/dts-v1/;
+
+/ {
+	description = "Simple image with single Linux kernel and FDT blob";
+	#address-cells = <1>;
+
+	images {
+		kernel-1 {
+			description = "Linux kernel: omap2plus";
+			data = /incbin/("./zImage");
+			type = "kernel";
+			arch = "arm";
+			os = "linux";
+			compression = "none";
+			load = <0x80008000>;
+			entry = <0x80008000>;
+			hash-1 {
+				algo = "sha256";
+			};
+		};
+		fdt-1 {
+			description = "FDT: am3517-evm.dtb";
+			data = /incbin/("./am3517-evm.dtb");
+			type = "flat_dt";
+			arch = "arm";
+			compression = "none";
+			load = <0x8ff00000>;
+			hash-1 {
+				algo = "sha256";
+			};
+		};
+	};
+
+	configurations {
+		default = "conf-1";
+		conf-1 {
+			description = "Boot Linux kernel with FDT blob";
+			kernel = "kernel-1";
+			fdt = "fdt-1";
+		};
+	};
+};
