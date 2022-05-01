@@ -1,0 +1,9 @@
+mmcdev=0
+mmcroot=/dev/mmcblk0p2
+mmcrootfstype=ext4 rootwait
+bootfile=fitImage
+fitaddr=0x90000000
+uenvcmd=echo && echo [ etinker: am335x-pocketbeagle (fitImage) ] && echo && \
+setenv bootargs console=${console} ${optargs} root=${mmcroot} rw rootfstype=${mmcrootfstype} && \
+fatload mmc ${mmcdev}:1 ${fitaddr} ${bootfile} && \
+bootm ${fitaddr}
