@@ -12,7 +12,7 @@ CONFIG_SPL=y
 # CONFIG_LOCALVERSION_AUTO is not set
 CONFIG_DISTRO_DEFAULTS=y
 CONFIG_BOOTARGS_SUBST=y
-CONFIG_BOOTCOMMAND="if mmc rescan; then if mmc dev 0; then fatload mmc 0 ${scriptaddr} uEnv.txt && env import -t ${scriptaddr} ${filesize} && run uenvcmd; fi; fi; env set fdtaddr '0x84000000'; env set dtboaddr '0x85000000'; env set fdt_addr_r '0x84000000'; env set rdaddr '0x84080000'; env set ramdisk_addr_r '0x84080000'; env set bootm_size 'bootm_size=0x8000000'; run findfdt; run distro_bootcmd"
+CONFIG_BOOTCOMMAND="if mmc rescan; then if mmc dev 0; then fatload mmc 0 ${scriptaddr} uEnv.txt && env import -t ${scriptaddr} ${filesize} && run uenvcmd; fi; fi; env set fdtaddr '0x87f00000'; env set fdt_addr_r '0x87f00000'; env set bootm_size 'bootm_size=0x8000000'; run findfdt; run distro_bootcmd"
 CONFIG_USE_PREBOOT=y
 CONFIG_DEFAULT_FDT_FILE="omap3-beagle.dtb"
 CONFIG_SYS_CONSOLE_INFO_QUIET=y
@@ -61,7 +61,6 @@ CONFIG_SPL_OF_CONTROL=y
 CONFIG_OF_SPL_REMOVE_PROPS="clocks clock-names interrupt-parent"
 CONFIG_ENV_OVERWRITE=y
 CONFIG_ENV_IS_IN_FAT=y
-CONFIG_SYS_REDUNDAND_ENVIRONMENT=y
 CONFIG_ENV_FAT_DEVICE_AND_PART="0:1"
 CONFIG_SYS_RELOC_GD_ENV_ADDR=y
 CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG=y
