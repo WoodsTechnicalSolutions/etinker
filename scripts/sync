@@ -164,9 +164,15 @@ case "${destination}" in
 				fi
 				printf "[%s][%s] Extracting ${target_dir}/images/rootfs.tar into [ ${media}/rootfs ]\n" ${ET_BOARD} ${target}
 				sudo tar -xf ${target_dir}/images/rootfs.tar -C ${media}/rootfs/
+				sudo rsync ${rsync_opts_x} ${ET_BOOTLOADER_DIR}/boot ${media}/rootfs/
+				sudo rsync ${rsync_opts_x} ${ET_KERNEL_DIR}/boot ${media}/rootfs/
+				sudo rsync ${rsync_opts_x} ${ET_KERNEL_DIR}/usr/lib/modules ${media}/rootfs/usr/lib/
 				if [ -d ${media}/backup ]; then
 					sudo rm -rf ${media}/backup/{bin,boot,dev,etc,lib32,libexec,lib,linuxrc,media,mnt,opt,proc,root,run,sbin,src,sys,tmp,usr}
 					sudo tar -xf ${target_dir}/images/rootfs.tar -C ${media}/backup/
+					sudo rsync ${rsync_opts_x} ${ET_BOOTLOADER_DIR}/boot ${media}/backup/
+					sudo rsync ${rsync_opts_x} ${ET_KERNEL_DIR}/boot ${media}/backup/
+					sudo rsync ${rsync_opts_x} ${ET_KERNEL_DIR}/usr/lib/modules ${media}/backup/usr/lib/
 				fi
 				if [ -d ${media}/data ]; then
 					sudo cp ${target_dir}/images/rootfs.tar ${media}/data/
