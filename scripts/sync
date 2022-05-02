@@ -100,12 +100,19 @@ case "${destination}" in
 					exit 1
 				fi
 				sudo rsync ${rsync_opts_x} ${target_dir}/boot ${media}/rootfs/
+				if [ -d ${media}/backup ]; then
+					sudo rsync ${rsync_opts_x} ${target_dir}/boot ${media}/backup/
+				fi
 				if [ "${target}" = "kernel" ]; then
 					sudo rsync ${rsync_opts_x} ${target_dir}/usr/lib/modules ${media}/rootfs/usr/lib/
 					case "${ET_BOARD}" in
 					am335x-*)
 						sudo mkdir -p ${media}/rootfs/usr/lib/firmware
 						sudo rsync ${rsync_opts_x} ${ET_DIR}/firmware/am* ${media}/rootfs/usr/lib/firmware/
+						if [ -d ${media}/backup ]; then
+							sudo mkdir -p ${media}/backup/usr/lib/firmware
+							sudo rsync ${rsync_opts_x} ${ET_DIR}/firmware/am* ${media}/backup/usr/lib/firmware/
+						fi
 						;;
 					*)
 						# NOOP
@@ -146,11 +153,19 @@ case "${destination}" in
 				;;
 			library)
 				sudo rsync ${rsync_opts_x} ${target_dir}/* ${media}/rootfs/
+				if [ -d ${media}/backup ]; then
+					sudo rsync ${rsync_opts_x} ${target_dir}/* ${media}/backup/
+				fi
 				;;
 			overlay)
 				sudo rsync --exclude-from=${ET_OVERLAY_DIR}/exclude \
 					${rsync_opts_x} ${target_dir}/* \
 					${media}/rootfs/
+				if [ -d ${media}/backup ]; then
+					sudo rsync --exclude-from=${ET_OVERLAY_DIR}/exclude \
+						${rsync_opts_x} ${target_dir}/* \
+						${media}/backup/
+				fi
 				;;
 			rootfs)
 				if ! [ "${media}/rootfs" = "`find ${media}/rootfs -maxdepth 0 -empty`" ]; then
