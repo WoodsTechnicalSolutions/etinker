@@ -117,6 +117,10 @@ define toolchain-build
 				cp -a $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot.cache; \
 			fi; \
 		fi; \
+		if [ -z "$(ET_TOOLCHAIN_DEBUG)" ]; then \
+			$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/src; \
+			$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/$(ET_CROSS_TUPLE); \
+		fi; \
 		;; \
 	*clean) \
 		$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/src; \
