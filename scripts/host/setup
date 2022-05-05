@@ -1,7 +1,9 @@
 #!/bin/bash
 
 if [ -f /usr/bin/apt ]; then
-	sudo dpkg --add-architecture i386
+	if [ "`uname -m`" = "x86_64" ]; then
+		sudo dpkg --add-architecture i386
+	fi
 	sudo apt update
 	sudo apt install -y \
 		asciidoc \
@@ -101,13 +103,14 @@ if [ -f /usr/bin/apt ]; then
 		netpbm \
 		net-tools \
 		ninja-build \
-		nfs-kernel-server \
 		openssh-client \
 		openssh-server \
 		patchelf \
 		pax \
 		pkg-config \
 		python-is-python3 \
+		python2 \
+		python2-dev \
 		python3-pip \
 		python3-dev \
 		qemu \
@@ -141,10 +144,15 @@ if [ -f /usr/bin/apt ]; then
 		xvfb \
 		xz-utils \
 		zip \
-		zlib1g-dev:i386 \
 		zlib1g-dev
+	if [ "`systemd-detect-virt`" = "none" ]; then
+		sudo apt install -y \
+			nfs-kernel-server
+	fi
 	if [ "`uname -m`" = "x86_64" ]; then
-		sudo apt install -y libc6-dev-i386
+		sudo apt install -y \
+			libc6-dev-i386 \
+			zlib1g-dev:i386
 	fi
 	sudo apt autoremove
 fi
