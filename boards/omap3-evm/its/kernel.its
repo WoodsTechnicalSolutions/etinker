@@ -11,7 +11,7 @@
 	#address-cells = <1>;
 
 	images {
-		kernel-1 {
+		kernel {
 			description = "Linux kernel: omap2plus";
 			data = /incbin/("./zImage");
 			type = "kernel";
@@ -24,7 +24,7 @@
 				algo = "sha256";
 			};
 		};
-		fdt-1 {
+		fdt-omap3-evm.dtb {
 			description = "FDT: omap3-evm.dtb";
 			data = /incbin/("./omap3-evm.dtb");
 			type = "flat_dt";
@@ -38,11 +38,11 @@
 	};
 
 	configurations {
-		default = "conf-1";
-		conf-1 {
+		default = "conf-omap3-evm.dtb";
+		conf-omap3-evm.dtb {
 			description = "Boot Linux kernel with FDT blob";
-			kernel = "kernel-1";
-			fdt = "fdt-1";
+			kernel = "kernel";
+			fdt = "fdt-omap3-evm.dtb";
 		};
 	};
 };

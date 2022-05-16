@@ -1,9 +1,5 @@
-mmcdev=0
-mmcroot=/dev/mmcblk0p2
-mmcrootfstype=ext4 rootwait
-bootfile=fitImage
-fitaddr=0x8b000000
+boot=mmc
+boot_fit=1
+addr_fit=0x8b000000
 uenvcmd=echo && echo [ etinker: omap3-evm (fitImage) ] && echo && \
-setenv bootargs console=${console} ${optargs} root=${mmcroot} rw rootfstype=${mmcrootfstype} && \
-fatload mmc ${mmcdev}:1 ${fitaddr} ${bootfile} && \
-bootm ${fitaddr}
+run update_to_fit && run args_mmc && run mmcboot
