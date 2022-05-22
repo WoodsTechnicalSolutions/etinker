@@ -85,6 +85,19 @@ for n in `ls boards`; do
 	# baseline boards
 	case $n in
 	ek-tm4c* | nrf* | aml-s905x-cc* | am335x-* | ls1012afrdm* | ls1043ardb* | omap3-evm* | pynq-z2* | sama5d3-xpld*)
+		case $n in
+		ek-tm4c* | nrf*)
+			case "$@" in
+			*bootloader* | *kernel* | *rootfs* | *overlay*)
+				continue
+				;;
+			*)
+				;;
+			esac
+			;;
+		*)
+			;;
+		esac
 		if [ "pynq-z2" == "`echo $n | grep -o pynq-z2`" ]; then
 			if ! [ -d boards/zynq/fpga/sdk ]; then
 				continue
