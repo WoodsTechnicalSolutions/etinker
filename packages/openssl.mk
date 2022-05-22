@@ -65,7 +65,8 @@ define openssl-build
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] openssl DESTDIR=$(ET_OVERLAY_DIR) *****\n\n"; \
 		sed -e 's,DESTDIR=,DESTDIR=$$\(ET_OVERLAY_DIR\),' -i $(ET_OPENSSL_BUILD_DIR)/Makefile; \
 	fi
-	@$(MAKE) --no-print-directory -C $(ET_OPENSSL_BUILD_DIR) $1
+	@($(MAKE) --no-print-directory -C $(ET_OPENSSL_BUILD_DIR) $1 || \
+		$(MAKE) --no-print-directory -C $(ET_OPENSSL_BUILD_DIR) $1)
 	@if [ "$1" = "install_runtime" ]; then \
 		cd $(ET_OVERLAY_DIR)/usr/lib/ && \
 			ln -sf libcrypto*.so.* libcrypto.so && \
@@ -125,8 +126,6 @@ define openssl-config
 				no-fuzz-afl \
 				zlib-dynamic); \
 	fi
-	@(cd $(ET_OPENSSL_BUILD_DIR) && \
-		$(MAKE) --no-print-directory depend)
 endef
 
 define openssl-clean
