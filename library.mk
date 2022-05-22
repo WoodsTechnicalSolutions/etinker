@@ -145,6 +145,19 @@ define library-info
 	@printf " └── DEPENDS: $(DEPENDS)\n"
 endef
 
+define library-sync
+	@$(ET_DIR)/scripts/sync library $(*F)
+endef
+
+define library-update
+	@$(ET_MAKE) -C $(ET_DIR) library-clean
+	@$(ET_MAKE) -C $(ET_DIR) library
+endef
+
+define library-all
+	@$(ET_MAKE) -C $(ET_DIR) library
+endef
+
 .PHONY: library
 library: $(ET_LIBRARY_TARGET_FINAL)
 
@@ -213,7 +226,12 @@ library-info:
 	$(call $@)
 
 library-sync-%:
-	@$(ET_DIR)/scripts/sync library $(*F)
+	$(call library-sync,$(*F))
 
 .PHONY: library-update
-library-update: library-clean library
+library-update:
+	$(call $@)
+
+.PHONY: library-all
+library-all:
+	$(call $@)
