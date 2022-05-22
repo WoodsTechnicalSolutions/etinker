@@ -5,9 +5,10 @@ index ae6658ed40..35164bb875 100644
 @@ -5,8 +5,8 @@
  ################################################################################
  
- LIBOPENSSL_VERSION = 1.1.1n
+-LIBOPENSSL_VERSION = 1.1.1n
 -LIBOPENSSL_SITE = https://www.openssl.org/source
 -LIBOPENSSL_SOURCE = openssl-$(LIBOPENSSL_VERSION).tar.gz
++LIBOPENSSL_VERSION = 1.1.1o
 +LIBOPENSSL_SITE = $(ET_OPENSSL_SOFTWARE_DIR)
 +LIBOPENSSL_SITE_METHOD = local
  LIBOPENSSL_LICENSE = OpenSSL or SSLeay
