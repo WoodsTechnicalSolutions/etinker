@@ -102,7 +102,7 @@ define rootfs-build
 		fi; \
 		;; \
 	esac
-	$(MAKE) --no-print-directory -j $(ET_CPUS) \
+	$(MAKE) --no-print-directory \
 		CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 		O=$(ET_ROOTFS_BUILD_DIR) \
 		-C $(ET_ROOTFS_SOFTWARE_DIR) \
