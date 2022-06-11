@@ -146,7 +146,7 @@ define library-info
 endef
 
 define library-sync
-	@$(ET_DIR)/scripts/sync library $(*F)
+	@$(ET_DIR)/scripts/sync library $1
 endef
 
 define library-update
