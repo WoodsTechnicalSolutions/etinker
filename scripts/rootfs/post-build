@@ -137,7 +137,7 @@ omap2plus|sama5|zynq|meson|layerscape)
 	case "${ET_BOARD}" in
 	am3517-evm|omap3-beagle|omap3-evm*|sama5d3-xpld*|ls1043ardb*)
 		mkdir -p ${TARGET}/media/ubifs
-		printf "ubi0:rootfs /media/ubifs ubifs defaults 0 0\n" >> ${TARGET}/etc/fstab
+		printf "#ubi0:rootfs /media/ubifs ubifs defaults 0 0\n" >> ${TARGET}/etc/fstab
 		;;
 	*)
 		# DEFAULT NO-OP
@@ -155,7 +155,7 @@ omap2plus|sama5|zynq|meson|layerscape)
 	esac
 	# Last Fixup
 	case "${ET_BOARD}" in
-	am335x-*|am3517-evm*|omap3-beagle*|omap3-evm*|sama5d3-xpld*)
+	am335x-*|am3517-evm*|omap3-beagle*|omap3-evm*)
 		if [ -f ${TARGET}/etc/inittab ]; then
 			printf "\nttyGS0::respawn:/sbin/getty -L ttyGS0 115200 screen-256color\n" >> ${TARGET}/etc/inittab
 		fi
@@ -163,6 +163,10 @@ omap2plus|sama5|zynq|meson|layerscape)
 		;;
 	ls1012afrdm*)
 		sed -i s,\/dev\/mmc,\#\/dev\/mmc, ${TARGET}/etc/fstab
+		;;
+	sama5d3-xpld*)
+		# mmc1 is the root device seen by Linux
+		sed -i s,mmcblk0,mmcblk1, ${TARGET}/etc/fstab
 		;;
 	*)
 		# DEFAULT NO-OP
