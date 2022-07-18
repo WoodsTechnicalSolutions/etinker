@@ -49,14 +49,22 @@ OBJDUMP = $(ET_CROSS_TUPLE)-objdump
 
 MKDIR = mkdir -p
 
+export GCC_EXEC_PREFIX := $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib/gcc
+
 ifeq ($(ET_RELEASE),yes)
 OPTIMIZE = -Os
 else
 OPTIMIZE = -g3 -Og
 endif
 
-CFLAGS = $(OPTIMIZE)
+CFLAGS  = $(OPTIMIZE)
 CFLAGS += $(ET_CFLAGS)
+ifeq ($(ET_MCU_LIBC),newlib-nano)
+CFLAGS += --specs=nano.specs
+endif
+ifeq ($(ET_MCU_LIBC),picolibc)
+CFLAGS += --specs=picolibc.specs
+endif
 CFLAGS += -std=c11 -Wall -Werror
 CFLAGS += -MD
 CFLAGS += -D$(ET_BOARD_MCU_DEFINE)
@@ -89,21 +97,32 @@ CFLAGS += -I $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/include
 
 LDFLAGS = $(OPTIMIZE)
 LDFLAGS += $(ET_LDFLAGS)
-LDFLAGS += --sysroot=$(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)
+ifeq ($(ET_MCU_LIBC),newlib-nano)
+LDFLAGS += --specs=nano.specs
+endif
+ifeq ($(ET_MCU_LIBC),picolibc)
+LDFLAGS += --specs=picolibc.specs
+endif
 LDFLAGS += -D$(ET_BOARD_MCU_DEFINE)
 LDFLAGS += -mthumb
 LDFLAGS += -mabi=aapcs
 LDFLAGS += -mcpu=cortex-m4
 LDFLAGS += -mfloat-abi=hard
 LDFLAGS += -mfpu=fpv4-sp-d16
+LDFLAGS += -Wl,--static
 LDFLAGS += -Wl,--gc-sections
+LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/lib
+LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib
 LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/lib
+LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib/gcc/$(ET_CROSS_TUPLE)/$(ET_TOOLCHAIN_GCC_VERSION)
 LDFLAGS += -Wl,-L $(NRFX_DIR)/mdk
 LDFLAGS += -Wl,-T $(NRFX_DIR)/mdk/$(ET_BOARD_MCU)_xxaa.ld
 LDFLAGS += -Wl,-Map=$(BUILD_DIR)/$(TARGET_MAP)
+LDFLAGS += -u _printf_float
+LDFLAGS += -u _scanf_float
 
-LDLIBS  = -Wl,--start-group -lm -lc -lgcc -lnosys -Wl,--end-group
-LDLIBS += $(ET_LDLIBS)
+LDLIBS  = $(ET_LDLIBS)
+LDLIBS += -Wl,--start-group -lm -lc -lgcc -lnosys -Wl,--end-group
 
 SOURCES = $(shell find src/ -name "*.c" -print 2> /dev/null)
 SOURCES += $(FREERTOS_DIR)/croutine.c
@@ -137,6 +156,7 @@ $(TARGET_ELF): $(BUILD_DIR)/$(TARGET_ELF)
 
 $(BUILD_DIR)/$(TARGET_ELF): $(NRFX_DIR)/mdk/gcc_startup_$(ET_BOARD_MCU).S
 $(BUILD_DIR)/$(TARGET_ELF): $(OBJECTS)
+	$(call toolchain-mcu-libc)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 	@$(SIZE) $@
 ifeq ($(TARGET_BUILD),debug)

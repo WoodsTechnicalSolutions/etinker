@@ -224,6 +224,16 @@ define toolchain-all
 	@$(ET_MAKE) -C $(ET_DIR) toolchain
 endef
 
+define toolchain-mcu-libc
+	@(cd $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/lib && \
+		for f in `ls $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib/gcc/$(ET_CROSS_TUPLE)/$(ET_TOOLCHAIN_GCC_VERSION)`; do \
+			rm -f $$f; \
+			ln -s $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib/gcc/$(ET_CROSS_TUPLE)/$(ET_TOOLCHAIN_GCC_VERSION)/$$f; \
+		done; \
+		rm -f crt0.o; \
+		ln -s $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/lib/crt0.o)
+endef
+
 .PHONY: toolchain
 toolchain: $(ET_TOOLCHAIN_TARGET_FINAL)
 $(ET_TOOLCHAIN_TARGET_FINAL): $(ET_TOOLCHAIN_BUILD_CONFIG)
