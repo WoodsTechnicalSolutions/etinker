@@ -93,7 +93,7 @@ static nrfx_uarte_t uarte_1 = NRFX_UARTE_INSTANCE(1);
 static nrfx_uarte_config_t uarte_1_config = NRFX_UARTE_DEFAULT_CONFIG(UARTE_1_TX_PIN, UARTE_1_RX_PIN);
 #endif // ! USE_SPIM_0
 
-#if !defined(TEST_UARTE_NOTIFIY)
+#if !defined(TEST_UARTE_NOTIFY)
 #if !defined(USE_SPIM_0)
 static nrfx_twim_t twim_0 = NRFX_TWIM_INSTANCE(1);
 static nrfx_twim_config_t twim_0_config = NRFX_TWIM_DEFAULT_CONFIG(TWIM_0_SCL_PIN, TWIM_0_SDA_PIN);
@@ -127,7 +127,7 @@ static nrfx_saadc_channel_t saadc[] = {
 	NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_7, 2),
 	NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_VDD, 3),
 };
-#endif // ! TEST_UARTE_NOTIFIY
+#endif // ! TEST_UARTE_NOTIFY
 
 #if !defined(USE_SPIM_0)
 static uint8_t uarte_1_rx[1] = { 0 };
@@ -139,20 +139,20 @@ static void uarte_1_task_function (void *pvParameter)
 		// trigger IRQ read
 		nrfx_uarte_rx(&uarte_1, uarte_1_rx, 1);
 		// wait of IRQ completion
-#if defined(TEST_UARTE_NOTIFIY)
+#if defined(TEST_UARTE_NOTIFY)
 		if (ulTaskNotifyTake(pdTRUE, 5000 / portTICK_PERIOD_MS) != 1) {
 			fprintf(stderr, "5 second timeout\r\n");
 #else
 		if (ulTaskNotifyTake(pdTRUE, portMAX_DELAY) != 1) {
-#endif // TEST_UARTE_NOTIFIY
+#endif // TEST_UARTE_NOTIFY
 			continue;
 		}
-#if defined(TEST_UARTE_NOTIFIY)
+#if defined(TEST_UARTE_NOTIFY)
 		// echo to console
 		while (nrfx_uarte_tx_in_progress(&uarte_1))
 			nrfx_systick_delay_us(10);
 		nrfx_uarte_tx(&uarte_0, &uarte_1_rx[0], 1);
-#endif // TEST_UARTE_NOTIFIY
+#endif // TEST_UARTE_NOTIFY
 		nrfx_gpiote_out_toggle(LED_1_G);
 	}
 }
@@ -195,14 +195,14 @@ static TaskHandle_t main_task;
 
 static void main_task_function (void *pvParameter)
 {
-#if !defined(TEST_UARTE_NOTIFIY)
+#if !defined(TEST_UARTE_NOTIFY)
 	uint8_t i;
 	uint8_t nl[] = { 13, 10 }; // '\r\n'
 	nrfx_err_t err;
-#endif // TEST_UARTE_NOTIFIY
+#endif // TEST_UARTE_NOTIFY
 
 	while (true) {
-#if defined(TEST_UARTE_NOTIFIY)
+#if defined(TEST_UARTE_NOTIFY)
 		vTaskDelay(10 / portTICK_PERIOD_MS);
 #else
 		printf("  MS: %lu\r\n", count);
@@ -277,7 +277,7 @@ static void main_task_function (void *pvParameter)
 		nrfx_gpiote_out_set(LED_2_B);
 
 		printf("\r\e[2J");
-#endif // TEST_UARTE_NOTIFIY
+#endif // TEST_UARTE_NOTIFY
 	}
 }
 
@@ -310,7 +310,7 @@ int main(void)
 	}
 #endif // ! USE_SPIM_0
 
-#if !defined(TEST_UARTE_NOTIFIY)
+#if !defined(TEST_UARTE_NOTIFY)
 	printf("\r\nSAADC Init ...\r\n");
 
 	nrfx_saadc_init(NRFX_SAADC_DEFAULT_CONFIG_IRQ_PRIORITY);
@@ -348,7 +348,7 @@ int main(void)
 			nrfx_gpiote_out_toggle(LED_2_R);
 		}
 	}
-#endif // ! TEST_UARTE_NOTIFIY
+#endif // ! TEST_UARTE_NOTIFY
 
 	nrfx_gpiote_out_toggle(LED_1_G);
 
