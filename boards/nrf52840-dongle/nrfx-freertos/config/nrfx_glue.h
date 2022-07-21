@@ -37,8 +37,7 @@
 #include <stdio.h>
 
 #define ASSERT(expr) { \
-	if (expr) { \
-	} else { \
+	if (!(expr)) { \
 		fprintf(stderr, \
 			"\r\n%s: %s: %d\r\n", \
 			__FILE__, __func__, __LINE__); \
