@@ -150,7 +150,7 @@ static void uarte_1_task_function (void *pvParameter)
 #if defined(TEST_UARTE_NOTIFY)
 		// echo to console
 		while (nrfx_uarte_tx_in_progress(&uarte_1))
-			nrfx_systick_delay_us(10);
+			nrfx_systick_delay_ms(1);
 		nrfx_uarte_tx(&uarte_0, &uarte_1_rx[0], 1);
 #endif // TEST_UARTE_NOTIFY
 		nrfx_gpiote_out_toggle(LED_1_G);
@@ -236,14 +236,14 @@ static void main_task_function (void *pvParameter)
 #if !defined(USE_SPIM_0)
 			// UARTE 1
 			while (nrfx_uarte_tx_in_progress(&uarte_1))
-				nrfx_systick_delay_us(10);
+				nrfx_systick_delay_ms(1);
 			nrfx_uarte_tx(&uarte_1, &spim_1_tx[i], 1);
 #endif // ! USE_SPIM_0
 		}
 		printf("\r\n");
 #if !defined(USE_SPIM_0)
 		while (nrfx_uarte_tx_in_progress(&uarte_1))
-			nrfx_systick_delay_us(10);
+			nrfx_systick_delay_ms(1);
 		nrfx_uarte_tx(&uarte_1, nl, sizeof(nl));
 #endif // ! USE_SPIM_0
 

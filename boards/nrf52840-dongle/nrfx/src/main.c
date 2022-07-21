@@ -224,14 +224,14 @@ int main(void)
 #if !defined(USE_SPIM_0)
 			// UARTE 1
 			while (nrfx_uarte_tx_in_progress(&uarte_1))
-				nrfx_systick_delay_us(10);
+				nrfx_systick_delay_ms(1);
 			nrfx_uarte_tx(&uarte_1, &spim_1_tx[i], 1);
 #endif // ! USE_SPIM_0
 		}
 		printf("\r\n");
 #if !defined(USE_SPIM_0)
 		while (nrfx_uarte_tx_in_progress(&uarte_1))
-			nrfx_systick_delay_us(10);
+			nrfx_systick_delay_ms(1);
 		nrfx_uarte_tx(&uarte_1, nl, sizeof(nl));
 #endif // ! USE_SPIM_0
 
@@ -246,19 +246,19 @@ int main(void)
 			saadc_value[0], saadc_value[1],
 			saadc_value[2], saadc_value[3]);
 
-		nrfx_systick_delay_us(1000000);
+		nrfx_systick_delay_ms(1000);
 
 		nrfx_gpiote_out_clear(LED_2_G);
 		nrfx_gpiote_out_clear(LED_2_B);
 		nrfx_gpiote_out_set(LED_2_R);
 
-		nrfx_systick_delay_us(1000000);
+		nrfx_systick_delay_ms(1000);
 
 		nrfx_gpiote_out_clear(LED_2_R);
 		nrfx_gpiote_out_clear(LED_2_B);
 		nrfx_gpiote_out_set(LED_2_G);
 
-		nrfx_systick_delay_us(1000000);
+		nrfx_systick_delay_ms(1000);
 
 		nrfx_gpiote_out_clear(LED_2_R);
 		nrfx_gpiote_out_clear(LED_2_G);
