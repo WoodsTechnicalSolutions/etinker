@@ -26,6 +26,7 @@ include $(ET_DIR)/etinker.mk
 
 NRFX_DIR ?= $(ET_SOFTWARE_DIR)/nrfx
 CMSIS_DIR ?= $(ET_SOFTWARE_DIR)/cmsis
+FREERTOS_DIR ?= $(ET_SOFTWARE_DIR)/freertos-kernel
 
 ifeq ($(ET_RELEASE),yes)
 TARGET_BUILD := release
@@ -89,6 +90,8 @@ CFLAGS += -I $(NRFX_DIR)/drivers
 CFLAGS += -I $(NRFX_DIR)/drivers/include
 CFLAGS += -I $(NRFX_DIR)/helpers
 CFLAGS += -I $(CMSIS_DIR)/CMSIS/Core/Include
+CFLAGS += -I $(FREERTOS_DIR)/include
+CFLAGS += -I $(FREERTOS_DIR)/portable/GCC/ARM_CM4F
 CFLAGS += -I $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/sys-include
 CFLAGS += -I $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/include
 
@@ -122,6 +125,15 @@ LDLIBS  = $(ET_LDLIBS)
 LDLIBS += -Wl,--start-group -lm -lc -lgcc -lnosys -Wl,--end-group
 
 SOURCES = $(shell find src/ -name "*.c" -print 2> /dev/null)
+SOURCES += $(FREERTOS_DIR)/croutine.c
+SOURCES += $(FREERTOS_DIR)/event_groups.c
+SOURCES += $(FREERTOS_DIR)/portable/GCC/ARM_CM4F/port.c
+SOURCES += $(FREERTOS_DIR)/portable/MemMang/heap_1.c
+SOURCES += $(FREERTOS_DIR)/list.c
+SOURCES += $(FREERTOS_DIR)/queue.c
+SOURCES += $(FREERTOS_DIR)/stream_buffer.c
+SOURCES += $(FREERTOS_DIR)/tasks.c
+SOURCES += $(FREERTOS_DIR)/timers.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_gpiote.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_pwm.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_saadc.c
@@ -169,6 +181,7 @@ endif
 $(BUILD_DIR):
 	$(call software-check,nrfx,nrfx)
 	$(call software-check,cmsis,cmsis)
+	$(call software-check,freertos-kernel,freertos-kernel)
 	@$(MKDIR) $(BUILD_DIR)/asm
 
 program: $(BUILD_DIR)/$(TARGET_BIN)
