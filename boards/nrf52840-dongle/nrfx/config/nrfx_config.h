@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 - 2021, Nordic Semiconductor ASA
+ * Copyright (c) 2017 - 2022, Nordic Semiconductor ASA
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -302,7 +302,7 @@
 // <7=> 7
 
 #ifndef NRFX_GPIOTE_DEFAULT_CONFIG_IRQ_PRIORITY
-#define NRFX_GPIOTE_DEFAULT_CONFIG_IRQ_PRIORITY 1
+#define NRFX_GPIOTE_DEFAULT_CONFIG_IRQ_PRIORITY 7
 #endif
 
 // <e> NRFX_GPIOTE_CONFIG_LOG_ENABLED - Enables logging in the module.
