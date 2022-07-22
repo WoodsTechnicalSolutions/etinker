@@ -37,6 +37,7 @@ endif
 BUILD_DIR := $(TARGET_BUILD)
 
 OPENOCD_CONFIG ?= openocd.cfg
+OPENOCD_GDB_CONFIG ?= openocd-gdb.cfg
 OPENOCD_GDB_LOG := $(BUILD_DIR)/openocd-gdb.log
 OPENOCD_PROGRAM_LOG := $(BUILD_DIR)/openocd-program.log
 
@@ -194,7 +195,7 @@ flash: program
 gdb: $(BUILD_DIR)/$(TARGET_ELF)
 	@if [ -n "`which openocd 2> /dev/null | tr -d \\n`" ]; then \
 		$(GDB) \
-		-ex 'target remote | openocd -f $(OPENOCD_CONFIG) -c "gdb_port pipe; log_output $(OPENOCD_GDB_LOG)"' \
+		-ex 'target remote | openocd -f $(OPENOCD_CONFIG) -f $(OPENOCD_GDB_CONFIG) -c "gdb_port pipe; log_output $(OPENOCD_GDB_LOG)"' \
 		$<; \
 	fi
 
