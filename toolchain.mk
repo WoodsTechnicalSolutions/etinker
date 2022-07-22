@@ -224,15 +224,22 @@ define toolchain-all
 	@$(ET_MAKE) -C $(ET_DIR) toolchain
 endef
 
+ifdef ET_MCU_LIBC
 define toolchain-mcu-libc
-	@(cd $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/lib && \
-		for f in `ls $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib/gcc/$(ET_CROSS_TUPLE)/$(ET_TOOLCHAIN_GCC_VERSION)`; do \
+	@(cd $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE) && \
+		if ! [ -d lib-base ]; then \
+			cp -a lib lib-base; \
+		fi; \
+		rm -rf lib; \
+		cp -a lib-base lib; \
+		cp -a $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/lib/* lib/; \
+		cd lib && \
+		for f in `ls $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib/gcc/$(ET_CROSS_TUPLE)/$(ET_TOOLCHAIN_GCC_VERSION)/`; do \
 			rm -f $$f; \
 			ln -s $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib/gcc/$(ET_CROSS_TUPLE)/$(ET_TOOLCHAIN_GCC_VERSION)/$$f; \
-		done; \
-		rm -f crt0.o; \
-		ln -s $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/lib/crt0.o)
+		done)
 endef
+endif
 
 .PHONY: toolchain
 toolchain: $(ET_TOOLCHAIN_TARGET_FINAL)
