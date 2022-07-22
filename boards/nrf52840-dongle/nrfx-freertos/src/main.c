@@ -9,7 +9,6 @@
 #include "task.h"
 #include "timers.h"
 
-#include "nrfx_systick.h"
 #include "nrfx_gpiote.h"
 #include "nrfx_uarte.h"
 #include "nrfx_spim.h"
@@ -150,7 +149,7 @@ static void uarte_1_task_function (void *pvParameter)
 #if defined(TEST_UARTE_NOTIFY)
 		// echo to console
 		while (nrfx_uarte_tx_in_progress(&uarte_1))
-			nrfx_systick_delay_ms(1);
+			nrfx_coredep_delay_us(10);
 		nrfx_uarte_tx(&uarte_0, &uarte_1_rx[0], 1);
 #endif // TEST_UARTE_NOTIFY
 		nrfx_gpiote_out_toggle(LED_1_G);
@@ -236,14 +235,14 @@ static void main_task_function (void *pvParameter)
 #if !defined(USE_SPIM_0)
 			// UARTE 1
 			while (nrfx_uarte_tx_in_progress(&uarte_1))
-				nrfx_systick_delay_ms(1);
+				nrfx_coredep_delay_us(10);
 			nrfx_uarte_tx(&uarte_1, &spim_1_tx[i], 1);
 #endif // ! USE_SPIM_0
 		}
 		printf("\r\n");
 #if !defined(USE_SPIM_0)
 		while (nrfx_uarte_tx_in_progress(&uarte_1))
-			nrfx_systick_delay_ms(1);
+			nrfx_coredep_delay_us(10);
 		nrfx_uarte_tx(&uarte_1, nl, sizeof(nl));
 #endif // ! USE_SPIM_0
 
@@ -286,8 +285,6 @@ int main(void)
 	BaseType_t rc;
 	nrfx_err_t err;
 
-	nrfx_systick_init();
-
 	syscalls_init(&uarte_0, &uarte_0_config);
 
 	printf("\r\nStarting ...\r\n");
@@ -304,7 +301,7 @@ int main(void)
 		nrfx_gpiote_out_clear(LED_2_B);
 		nrfx_gpiote_out_clear(LED_1_G);
 		while (true) {
-			nrfx_systick_delay_ms(2000);
+			nrfx_coredep_delay_us(2000000);
 			nrfx_gpiote_out_toggle(LED_2_R);
 		}
 	}
@@ -327,7 +324,7 @@ int main(void)
 		nrfx_gpiote_out_clear(LED_2_B);
 		nrfx_gpiote_out_clear(LED_1_G);
 		while (true) {
-			nrfx_systick_delay_ms(3000);
+			nrfx_coredep_delay_us(3000000);
 			nrfx_gpiote_out_toggle(LED_2_R);
 		}
 	}
@@ -344,7 +341,7 @@ int main(void)
 		nrfx_gpiote_out_clear(LED_2_B);
 		nrfx_gpiote_out_clear(LED_1_G);
 		while (true) {
-			nrfx_systick_delay_ms(1000);
+			nrfx_coredep_delay_us(1000000);
 			nrfx_gpiote_out_toggle(LED_2_R);
 		}
 	}

@@ -187,7 +187,7 @@ static inline bool _NRFX_IRQ_IS_PENDING(IRQn_Type irq_number)
  *        A compilation error is generated if the DWT unit is not present
  *        in the SoC used.
  */
-#define NRFX_DELAY_DWT_BASED    0
+#define NRFX_DELAY_DWT_BASED    1
 
 #include <soc/nrfx_coredep.h>
 

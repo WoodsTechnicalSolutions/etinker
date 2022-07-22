@@ -138,7 +138,6 @@ SOURCES += $(NRFX_DIR)/drivers/src/nrfx_gpiote.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_pwm.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_saadc.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_spim.c
-SOURCES += $(NRFX_DIR)/drivers/src/nrfx_systick.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_twi_twim.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_twim.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_uarte.c
