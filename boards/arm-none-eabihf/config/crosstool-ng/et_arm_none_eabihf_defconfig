@@ -14,7 +14,7 @@ CT_ARCH_ARM_MODE_THUMB=y
 # CT_DEMULTILIB is not set
 CT_ARCH_FPU="fpv4-sp-d16"
 CT_ARCH_FLOAT_HW=y
-CT_TARGET_CFLAGS="-mabi=aapcs -mthumb -march=armv7e-m+fp -mfpu=fpv4-sp-d16 -mfloat-abi=hard"
+CT_TARGET_CFLAGS="-mabi=aapcs -mthumb -march=armv7e-m+fp -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ftls-model=local-exec"
 CT_TARGET_LDFLAGS="-mabi=aapcs -mthumb -march=armv7e-m+fp -mfpu=fpv4-sp-d16 -mfloat-abi=hard"
 CT_STATIC_TOOLCHAIN=y
 CT_TOOLCHAIN_PKGVERSION="Arm® Cortex®-M4 EABI Hardware Floating Point"
@@ -36,7 +36,7 @@ CT_NCURSES_HOST_FALLBACKS="linux,screen-256color,xterm,xterm-color,xterm-256colo
 CT_NCURSES_TARGET_DISABLE_DB=y
 CT_NCURSES_TARGET_FALLBACKS="linux,screen-256color,xterm,xterm-color,xterm-256color,vt100"
 CT_COMP_LIBS_NEWLIB_NANO=y
-CT_LIBC_NEWLIB_NANO_TARGET_CFLAGS="-fno-builtin -fno-strict-aliasing -ffunction-sections -fdata-sections"
+CT_LIBC_NEWLIB_NANO_TARGET_CFLAGS="-fno-builtin -fno-strict-aliasing -ffunction-sections -fdata-sections -ftls-model=local-exec"
 CT_LIBC_NEWLIB_NANO_IO_C99FMT=y
 CT_LIBC_NEWLIB_NANO_IO_LL=y
 CT_LIBC_NEWLIB_NANO_IO_FLOAT=y
@@ -46,7 +46,7 @@ CT_LIBC_NEWLIB_NANO_RETARGETABLE_LOCKING=y
 CT_LIBC_NEWLIB_NANO_EXTRA_SECTIONS=y
 CT_LIBC_NEWLIB_NANO_WIDE_ORIENT=y
 CT_COMP_LIBS_PICOLIBC=y
-CT_LIBC_PICOLIBC_TARGET_CFLAGS="-fno-builtin -fno-strict-aliasing -ffunction-sections -fdata-sections"
+CT_LIBC_PICOLIBC_TARGET_CFLAGS="-fno-builtin -fno-strict-aliasing -ffunction-sections -fdata-sections -ftls-model=local-exec"
 CT_LIBC_PICOLIBC_REGISTER_FINI=y
 CT_LIBC_PICOLIBC_ATEXIT_DYNAMIC_ALLOC=y
 CT_LIBC_PICOLIBC_GLOBAL_ATEXIT=y
