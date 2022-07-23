@@ -13,21 +13,6 @@ ET_DIR ?= $(shell realpath -e ../../..)
 
 include $(ET_DIR)/etinker.mk
 
-TIVAWARE := $(ET_SOFTWARE_DIR)/tivaware
-
-CFLAGS = -mthumb -march=armv7e-m+fp -mfpu=fpv4-sp-d16 -mfloat-abi=hard
-CFLAGS += -MD -std=c99 -Wall -ffunction-sections -fdata-sections -pedantic
-CFLAGS += -DPART_$(shell echo $(ET_BOARD_MCU) | tr '[:lower:]' '[:upper:]') -DTARGET_IS_TM4C129_RA1
-CFLAGS += -I $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/sys-include
-CFLAGS += -I $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/include
-CFLAGS += -I $(TIVAWARE)
-CFLAGS += $(ET_CFLAGS)
-ifndef RELEASE
-CFLAGS += -Og -g3 -gdwarf -DDEBUG=1
-else
-CFLAGS += -Os
-endif
-
 CC = $(ET_CROSS_TUPLE)-gcc
 LD = $(ET_CROSS_TUPLE)-ld
 GDB = $(ET_CROSS_TUPLE)-gdb
@@ -39,28 +24,71 @@ MKDIR = mkdir -p
 
 OUTPUT = build
 
-LDFLAGS = --sysroot=$(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE) \
-	  -Wl,--entry=ResetISR \
-	  -Wl,--static \
-	  -Wl,--gc-sections \
-	  -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/lib \
-	  -Wl,-T$(ET_BOARD_MCU).ld \
-	  -Wl,-Map=$(OUTPUT)/$(TARGET_MAP)
+TIVAWARE := tivaware-$(ET_MCU_LIBC)
+TIVAWARE_DIR := $(ET_SOFTWARE_DIR)/$(TIVAWARE)
 
-LDLIBS = $(ET_SOFTWARE_DIR)/tivaware/driverlib/gcc/libdriver.a
+OPENOCD_GDB_CONFIG ?= openocd-gdb.cfg
+OPENOCD_GDB_LOG := $(OUTPUT)/openocd-gdb.log
+
+export GCC_EXEC_PREFIX := $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib/gcc
+
+ifeq ($(ET_RELEASE),yes)
+OPTIMIZE = -Os
+else
+OPTIMIZE = -g3 -Og
+endif
+
+CFLAGS = $(OPTIMIZE)
+CFLAGS += $(ET_CFLAGS)
+ifeq ($(ET_MCU_LIBC),newlib-nano)
+CFLAGS += --specs=nano.specs
+endif
+ifeq ($(ET_MCU_LIBC),picolibc)
+CFLAGS += --specs=picolibc.specs
+endif
+CFLAGS = -mthumb -march=armv7e-m+fp -mfpu=fpv4-sp-d16 -mfloat-abi=hard
+CFLAGS += -MD -std=c99 -Wall -ffunction-sections -fdata-sections -pedantic
+CFLAGS += -DPART_$(shell echo $(ET_BOARD_MCU) | tr '[:lower:]' '[:upper:]') -DTARGET_IS_TM4C123_RB1
+CFLAGS += -I $(ET_TOOLCHAIN_DIR)/newlib-nano/$(ET_CROSS_TUPLE)/include
+CFLAGS += -I $(TIVAWARE_DIR)
+
+LDFLAGS  = $(OPTIMIZE)
+LDFLAGS += $(ET_LDFLAGS)
+ifeq ($(ET_MCU_LIBC),newlib-nano)
+LDFLAGS += --specs=nano.specs
+endif
+ifeq ($(ET_MCU_LIBC),picolibc)
+LDFLAGS += --specs=picolibc.specs
+endif
+LDFLAGS += -Wl,-T$(ET_BOARD_MCU).ld
+LDFLAGS += -Wl,--entry=ResetISR
+LDFLAGS += -Wl,--static
+LDFLAGS += -Wl,--gc-sections
+LDFLAGS += -Wl,-Map=$(OUTPUT)/$(TARGET_MAP)
+LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/lib
+LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib
+LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/lib
+LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib/gcc/$(ET_CROSS_TUPLE)/$(ET_TOOLCHAIN_GCC_VERSION)
+LDFLAGS += -u _printf_float
+LDFLAGS += -u _scanf_float
+
+LDLIBS  = $(ET_LDLIBS)
+LDLIBS += $(TIVAWARE_DIR)/driverlib/gcc/libdriver.a
+LDLIBS += -Wl,--start-group -lm -lc -lgcc -Wl,--end-group
 
 SOURCES = $(shell find src/ -name "*.c" -print)
-TIVAWARE_SOURCES := $(TIVAWARE)/utils/uartstdio.c
+TIVAWARE_SOURCES := $(TIVAWARE_DIR)/utils/uartstdio.c
 ifndef RELEASE
 OBJECTS = $(addprefix $(OUTPUT)/,$(notdir $(SOURCES:.c=.s)))
-TIVAWARE_OBJECTS = $(addprefix $(OUTPUT)/tivaware/,$(notdir $(TIVAWARE_SOURCES:.c=.s)))
+TIVAWARE_OBJECTS = $(addprefix $(OUTPUT)/$(TIVAWARE)/,$(notdir $(TIVAWARE_SOURCES:.c=.s)))
 else
 OBJECTS = $(addprefix $(OUTPUT)/,$(notdir $(SOURCES:.c=.o)))
-TIVAWARE_OBJECTS = $(addprefix $(OUTPUT)/tivaware/,$(notdir $(TIVAWARE_SOURCES:.c=.o)))
+TIVAWARE_OBJECTS = $(addprefix $(OUTPUT)/$(TIVAWARE)/,$(notdir $(TIVAWARE_SOURCES:.c=.o)))
 endif
 
 $(TARGET_ELF): $(OUTPUT)/$(TARGET_ELF)
 $(OUTPUT)/$(TARGET_ELF): $(TIVAWARE_OBJECTS) $(OBJECTS)
+	$(call toolchain-mcu-libc)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 	@$(SIZE) $@
 ifndef RELEASE
@@ -79,18 +107,18 @@ ifndef RELEASE
 $(OUTPUT)/%.s: src/%.c | $(OUTPUT)
 	$(CC) $(CFLAGS) -S $^ -o $@
 
-$(OUTPUT)/tivaware/%.s: $(TIVAWARE)/utils/%.c | $(OUTPUT)
+$(OUTPUT)/$(TIVAWARE)/%.s: $(TIVAWARE_DIR)/utils/%.c | $(OUTPUT)
 	$(CC) $(CFLAGS) -S $^ -o $@
 else
 $(OUTPUT)/%.o: src/%.c | $(OUTPUT)
 	$(CC) $(CFLAGS) -c $^ -o $@
 
-$(OUTPUT)/tivaware/%.o: $(TIVAWARE)/utils/%.c | $(OUTPUT)
+$(OUTPUT)/$(TIVAWARE)/%.o: $(TIVAWARE_DIR)/utils/%.c | $(OUTPUT)
 	$(CC) $(CFLAGS) -c $^ -o $@
 endif
 
 $(OUTPUT):
-	@$(MKDIR) $(OUTPUT)/tivaware
+	@$(MKDIR) $(OUTPUT)/$(TIVAWARE)
 
 clean:
 	$(RM) -r $(OUTPUT) *.log
@@ -102,9 +130,11 @@ else
 	lm4flash $<
 endif
 
+program: flash
+
 gdb: $(OUTPUT)/$(TARGET_ELF)
 	@$(GDB) \
-		-ex 'target remote | openocd -p -f board/$(ET_BOARD).cfg -c "gdb_port pipe; log_output $(ET_BOARD)-openocd.log"' \
+		-ex 'target remote | openocd -f board/ti_$(ET_BOARD).cfg -f $(OPENOCD_GDB_CONFIG) -c "gdb_port pipe; log_output $(OPENOCD_GDB_LOG)"' \
 		$<
 
 .PHONY: all clean flash gdb $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
