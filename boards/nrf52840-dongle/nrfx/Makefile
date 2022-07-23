@@ -18,7 +18,7 @@ TARGET_MAP = $(TARGET_NAME).map
 
 TARGET_DIR := $(shell realpath -e $(CURDIR))
 
-all: $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
+all: depends $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
 
 ET_DIR ?= $(shell realpath -e ../../..)
 
@@ -140,11 +140,13 @@ HEADERS = Makefile
 HEADERS += $(shell find config/ -name "*.h" -print 2> /dev/null)
 HEADERS += $(shell find src/ -maxdepth 1 -name "*.h" -print 2> /dev/null)
 
+depends:
+	$(call toolchain-mcu-libc)
+
 $(TARGET_ELF): $(BUILD_DIR)/$(TARGET_ELF)
 
 $(BUILD_DIR)/$(TARGET_ELF): $(NRFX_DIR)/mdk/gcc_startup_$(ET_BOARD_MCU).S
 $(BUILD_DIR)/$(TARGET_ELF): $(OBJECTS)
-	$(call toolchain-mcu-libc)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 	@$(SIZE) $@
 ifeq ($(TARGET_BUILD),debug)
@@ -244,4 +246,4 @@ info:
 	@printf "OBJECTS: $(OBJECTS)\n"
 	@printf "PATH: $(PATH)\n"
 
-.PHONY: all clean distclean flash gdb program $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
+.PHONY: all clean depends distclean flash gdb program $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)

@@ -7,7 +7,7 @@ TARGET_BIN = $(TARGET_NAME).axf
 TARGET_HEX = $(TARGET_NAME).hex
 TARGET_MAP = $(TARGET_NAME).map
 
-all: $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
+all: depends $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
 
 ET_DIR ?= $(shell realpath -e ../../..)
 
@@ -86,9 +86,11 @@ OBJECTS = $(addprefix $(OUTPUT)/,$(notdir $(SOURCES:.c=.o)))
 TIVAWARE_OBJECTS = $(addprefix $(OUTPUT)/$(TIVAWARE)/,$(notdir $(TIVAWARE_SOURCES:.c=.o)))
 endif
 
+depends:
+	$(call toolchain-mcu-libc)
+
 $(TARGET_ELF): $(OUTPUT)/$(TARGET_ELF)
 $(OUTPUT)/$(TARGET_ELF): $(TIVAWARE_OBJECTS) $(OBJECTS)
-	$(call toolchain-mcu-libc)
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 	@$(SIZE) $@
 ifndef RELEASE
@@ -137,4 +139,4 @@ gdb: $(OUTPUT)/$(TARGET_ELF)
 		-ex 'target remote | openocd -f board/ti_$(ET_BOARD).cfg -f $(OPENOCD_GDB_CONFIG) -c "gdb_port pipe; log_output $(OPENOCD_GDB_LOG)"' \
 		$<
 
-.PHONY: all clean flash gdb $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
+.PHONY: all clean depends flash gdb $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
