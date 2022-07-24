@@ -227,17 +227,31 @@ endef
 ifdef ET_MCU_LIBC
 define toolchain-mcu-libc
 	@(cd $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE) && \
-		if ! [ -d lib-base ]; then \
-			cp -a lib lib-base; \
+		mkdir -p base; \
+		if ! [ -d base/lib ]; then \
+			cp -a lib base/; \
 		fi; \
 		rm -rf lib; \
-		cp -a lib-base lib; \
+		cp -a base/lib .; \
 		cp -a $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/lib/* lib/; \
-		cd lib && \
+		(cd lib && \
 		for f in `ls $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib/gcc/$(ET_CROSS_TUPLE)/$(ET_TOOLCHAIN_GCC_VERSION)/`; do \
 			rm -f $$f; \
 			ln -s $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib/gcc/$(ET_CROSS_TUPLE)/$(ET_TOOLCHAIN_GCC_VERSION)/$$f; \
-		done)
+		done); \
+		if ! [ -d base/include ]; then \
+			cp -a include base/; \
+		fi; \
+		rm -rf include; \
+		cp -a base/include .; \
+		cp -a $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/include/* include/; \
+		if ! [ -d base/sys-include ]; then \
+			cp -a sys-include base/; \
+		fi; \
+		rm -rf sys-include; \
+		cp -a base/sys-include .; \
+		cp -a $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/sys-include/* sys-include/; \
+	)
 endef
 endif
 
