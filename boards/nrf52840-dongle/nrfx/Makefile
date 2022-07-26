@@ -18,8 +18,6 @@ TARGET_MAP = $(TARGET_NAME).map
 
 TARGET_DIR := $(shell realpath -e $(CURDIR))
 
-all: depends $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
-
 ET_DIR ?= $(shell realpath -e ../../..)
 
 include $(ET_DIR)/etinker.mk
@@ -35,14 +33,8 @@ endif
 
 BUILD_DIR := $(TARGET_BUILD)
 
-OPENOCD_CONFIG ?= openocd.cfg
-OPENOCD_GDB_CONFIG ?= openocd-gdb.cfg
-OPENOCD_GDB_LOG := $(BUILD_DIR)/openocd-gdb.log
-OPENOCD_PROGRAM_LOG := $(BUILD_DIR)/openocd-program.log
-
 CC = $(ET_CROSS_TUPLE)-gcc
 LD = $(ET_CROSS_TUPLE)-ld
-GDB = $(ET_CROSS_TUPLE)-gdb
 SIZE = $(ET_CROSS_TUPLE)-size
 OBJCOPY = $(ET_CROSS_TUPLE)-objcopy
 OBJDUMP = $(ET_CROSS_TUPLE)-objdump
@@ -93,7 +85,7 @@ CFLAGS += -I $(CMSIS_DIR)/CMSIS/Core/Include
 CFLAGS += -I $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/sys-include
 CFLAGS += -I $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/include
 
-LDFLAGS = $(OPTIMIZE)
+LDFLAGS  = $(OPTIMIZE)
 LDFLAGS += $(ET_LDFLAGS)
 ifeq ($(ET_MCU_LIBC),newlib-nano)
 LDFLAGS += --specs=nano.specs
@@ -122,7 +114,7 @@ LDFLAGS += -u _scanf_float
 LDLIBS  = $(ET_LDLIBS)
 LDLIBS += -Wl,--start-group -lm -lc -lgcc -lnosys -Wl,--end-group
 
-SOURCES = $(shell find src/ -name "*.c" -print 2> /dev/null)
+SOURCES  = $(shell find src/ -name "*.c" -print 2> /dev/null)
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_gpiote.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_pwm.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_saadc.c
@@ -139,6 +131,8 @@ OBJECTS = $(addprefix $(BUILD_DIR)/,$(SOURCES:.c=.o))
 HEADERS = Makefile
 HEADERS += $(shell find config/ -name "*.h" -print 2> /dev/null)
 HEADERS += $(shell find src/ -maxdepth 1 -name "*.h" -print 2> /dev/null)
+
+all: depends $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
 
 depends:
 	$(call toolchain-mcu-libc)
@@ -173,25 +167,19 @@ $(BUILD_DIR):
 	$(call software-check,cmsis,cmsis)
 	@$(MKDIR) $(BUILD_DIR)/asm
 
-program: $(BUILD_DIR)/$(TARGET_BIN)
-	@if [ -n "`which openocd 2> /dev/null | tr -d \\n`" ]; then \
-		openocd -f $(OPENOCD_CONFIG) -c "log_output $(OPENOCD_PROGRAM_LOG); program $< verify reset exit" ; \
-		cat $(OPENOCD_PROGRAM_LOG); \
-	fi
+openocd:
+	$(call openocd, server)
+
+program: $(BUILD_DIR)/$(TARGET_ELF)
+	$(call openocd, $@, $<)
 
 flash: program
 
 gdb: $(BUILD_DIR)/$(TARGET_ELF)
-	@if [ -n "`which openocd 2> /dev/null | tr -d \\n`" ]; then \
-		$(GDB) \
-		-ex 'target remote | openocd -f $(OPENOCD_CONFIG) -f $(OPENOCD_GDB_CONFIG) -c "gdb_port pipe; log_output $(OPENOCD_GDB_LOG)"' \
-		$<; \
-	fi
+	$(call openocd, $@, $<)
 
 reset:
-	@if [ -n "`which openocd 2> /dev/null | tr -d \\n`" ]; then \
-		openocd -f $(OPENOCD_CONFIG) -c "init; reset run; shutdown" ; \
-	fi
+	$(call openocd, $@)
 
 # https://sourceforge.net/projects/cmsisconfig
 nrfx-config:
@@ -212,11 +200,11 @@ nrfx-config:
 		$(TARGET_DIR)/config/nrfx_config.h &)
 
 distclean: clean
-	$(RM) -r *.log
 	$(RM) -r debug
 	$(RM) -r release
 
 clean:
+	$(RM) -r *.log
 	$(RM) -r $(BUILD_DIR)
 
 info:
@@ -234,7 +222,6 @@ info:
 	@printf "TARGET_BUILD: $(TARGET_BUILD)\n"
 	@printf "CC: $(CC)\n"
 	@printf "LD: $(LD)\n"
-	@printf "GDB: $(GDB)\n"
 	@printf "SIZE: $(SIZE)\n"
 	@printf "OBJCOPY: $(OBJCOPY)\n"
 	@printf "OBJDUMP: $(OBJDUMP)\n"
@@ -246,4 +233,4 @@ info:
 	@printf "OBJECTS: $(OBJECTS)\n"
 	@printf "PATH: $(PATH)\n"
 
-.PHONY: all clean depends distclean flash gdb program $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
+.PHONY: all clean depends distclean flash gdb openocd program $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
