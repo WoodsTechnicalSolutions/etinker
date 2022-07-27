@@ -13,9 +13,25 @@ TivaWare(tm) for C Series Libraries
 
 4. Place TivaWare in 'etinker' software directory
 
-   $ cp -a /home/<user>/.wine/drive_c/ti/TivaWare_C_Series-2.2.0.295 /path/to/etinker/software/tivaware
+   $ cp -a /home/<user>/.wine/drive_c/ti/TivaWare_C_Series-2.2.0.295 /path/to/etinker/software/tivaware-newlib-nano
+   $ cp -a /home/<user>/.wine/drive_c/ti/TivaWare_C_Series-2.2.0.295 /path/to/etinker/software/tivaware-picolibc
 
-5. Build TivaWare
+5. Copy cached build files
+
+   $ cp -a /path/to/etinker/boards/ek-tm4c123gxl/sdk/tivaware-newlib-nano/* /path/to/etinker/software/tivaware-newlib-nano/
+   $ cp -a /path/to/etinker/boards/ek-tm4c123gxl/sdk/tivaware-picolibc/*    /path/to/etinker/software/tivaware-picolibc/
+
+6. Build TivaWare libraries for newlib-nano and picolibc variants
+
+   $ export PATH="/path/to/etinker/toolchain/arm-none-eabihf/bin:${PATH}"
+   $ cd /path/to/etinker/software/tivaware-newlib-nano
+   $ make clean all
+   $ cd /path/to/etinker/software/tivaware-picolibc
+   $ make clean all
+
+
+OLD INSTRUCTIONS
+================
 
    a. Modify PREFIX in 'tivaware/makedefs' to fall back to 'arm-none-eabihf' as the default cross-compile tuple
 
@@ -33,4 +49,3 @@ TivaWare(tm) for C Series Libraries
 
       $ cd /path/to/etinker/software/tivaware
       $ make clean all
-
