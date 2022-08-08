@@ -106,13 +106,12 @@ LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib
 LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/lib
 LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib/gcc/$(ET_CROSS_TUPLE)/$(ET_TOOLCHAIN_GCC_VERSION)
 LDFLAGS += -Wl,-L $(NRFX_DIR)/mdk
-LDFLAGS += -Wl,-T $(NRFX_DIR)/mdk/$(ET_BOARD_MCU)_xxaa.ld
+LDFLAGS += -Wl,-T $(NRFX_DIR)/mdk/$(ET_BOARD_MCU)_xxaa_port.ld
 LDFLAGS += -Wl,-Map=$(BUILD_DIR)/$(TARGET_MAP)
 LDFLAGS += -u _printf_float
 LDFLAGS += -u _scanf_float
 
 LDLIBS  = $(ET_LDLIBS)
-LDLIBS += -Wl,--start-group -lm -lc -lgcc -lnosys -Wl,--end-group
 
 SOURCES  = $(shell find src/ -name "*.c" -print 2> /dev/null)
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_gpiote.c
@@ -141,6 +140,10 @@ $(TARGET_ELF): $(BUILD_DIR)/$(TARGET_ELF)
 
 $(BUILD_DIR)/$(TARGET_ELF): $(NRFX_DIR)/mdk/gcc_startup_$(ET_BOARD_MCU).S
 $(BUILD_DIR)/$(TARGET_ELF): $(OBJECTS)
+	@if ! [ -f $(NRFX_DIR)/mdk/$(ET_BOARD_MCU)_xxaa_port.ld ]; then \
+		cp $(NRFX_DIR)/mdk/$(ET_BOARD_MCU)_xxaa.ld $(NRFX_DIR)/mdk/$(ET_BOARD_MCU)_xxaa_port.ld; \
+		sed -i s,\ -lnosys,, $(NRFX_DIR)/mdk/$(ET_BOARD_MCU)_xxaa_port.ld; \
+	fi;
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 	@$(SIZE) $@
 ifeq ($(TARGET_BUILD),debug)
