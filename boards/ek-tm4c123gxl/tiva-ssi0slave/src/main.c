@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdbool.h>
+#include <string.h>
 #include <ctype.h>
 
 #include "inc/hw_types.h"
@@ -119,6 +120,9 @@ int main(void)
 			ascii[i] = (char)data_rx[0];
 		}
 
+		// send byte (echo)
+		SSIDataPut(SSI0_BASE, data_rx[0]);
+
 		if (++i == 16) {
 			UARTprintf(" | ");
 			for (k = 0; k < i; k++) {
@@ -131,15 +135,10 @@ int main(void)
 				j += i;
 			}
 			i = 0;
+			memset(ascii, '\0', sizeof(ascii));
 		} else {
 			UARTprintf(" ");
 		}
-
-		// send byte (echo)
-
-		SSIDataPut(SSI0_BASE, data_rx[0]);
-
-		while (SSIBusy(SSI0_BASE));
 	}
 
 	return 0;

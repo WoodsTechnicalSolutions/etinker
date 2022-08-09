@@ -98,12 +98,13 @@ static nrfx_twim_t twim_0 = NRFX_TWIM_INSTANCE(1);
 static nrfx_twim_config_t twim_0_config = NRFX_TWIM_DEFAULT_CONFIG(TWIM_0_SCL_PIN, TWIM_0_SDA_PIN);
 #endif // ! USE_SPIM_0
 
-static nrfx_spim_t spim_1 = NRFX_SPIM_INSTANCE(0);
-static nrfx_spim_config_t spim_1_config = {
-	.sck_pin        = SPIM_1_SCLK_PIN,
-	.mosi_pin       = SPIM_1_MOSI_PIN,
-	.miso_pin       = SPIM_1_MISO_PIN,
-	.ss_pin         = SPIM_1_CS_PIN,
+#if defined(USE_SPIM_0)
+static nrfx_spim_t spim_0 = NRFX_SPIM_INSTANCE(0);
+static nrfx_spim_config_t spim_0_config = {
+	.sck_pin        = SPIM_0_SCLK_PIN,
+	.mosi_pin       = SPIM_0_MOSI_PIN,
+	.miso_pin       = SPIM_0_MISO_PIN,
+	.ss_pin         = SPIM_0_CS_PIN,
 	.ss_active_high = false,
 	.irq_priority   = NRFX_SPIM_DEFAULT_CONFIG_IRQ_PRIORITY,
 	.orc            = 0xFF,
@@ -112,8 +113,11 @@ static nrfx_spim_config_t spim_1_config = {
 	.bit_order      = NRF_SPIM_BIT_ORDER_MSB_FIRST,
 	.miso_pull      = NRF_GPIO_PIN_NOPULL,
 };
-static nrfx_spim_xfer_desc_t spim_1_xfer = { 0 };
-static uint8_t spim_1_tx[] = { // '0123456789abcdef'
+static nrfx_spim_xfer_desc_t spim_0_xfer = { 0 };
+static uint8_t data_rx[] = { 0 };
+#endif // USE_SPIM_0
+
+static uint8_t data_tx[] = { // '0123456789abcdef'
 	48, 49, 50, 51, 52, 53, 54, 55,
 	56, 57, 97, 98, 99, 100, 101, 102
 };
@@ -196,9 +200,11 @@ static void main_task_function (void *pvParameter)
 {
 #if !defined(TEST_UARTE_NOTIFY)
 	uint8_t i;
+#if !defined(USE_SPIM_0)
 	uint8_t nl[] = { 13, 10 }; // '\r\n'
 	nrfx_err_t err;
-#endif // TEST_UARTE_NOTIFY
+#endif // USE_SPIM_0
+#endif // ! TEST_UARTE_NOTIFY
 
 	while (true) {
 #if defined(TEST_UARTE_NOTIFY)
@@ -222,22 +228,26 @@ static void main_task_function (void *pvParameter)
 		}
 #endif // ! USE_SPIM_0
 
+#if defined(USE_SPIM_0)
 		// send data on SPIM 1, UARTE 1, and UARTE 0 [console]
 		printf(" SPI: ");
-		for (i = 0; i < sizeof(spim_1_tx); i++) {
-			spim_1_xfer.p_rx_buffer = NULL;
-			spim_1_xfer.rx_length = 0;
-			spim_1_xfer.p_tx_buffer = (uint8_t const *)&spim_1_tx[i];
-			spim_1_xfer.tx_length = 1;
-			nrfx_spim_xfer(&spim_1, &spim_1_xfer, 0);
+#endif // USE_SPIM_0
+		for (i = 0; i < sizeof(data_tx); i++) {
+#if defined(USE_SPIM_0)
+			spim_0_xfer.p_rx_buffer = data_rx;
+			spim_0_xfer.rx_length = 1;
+			spim_0_xfer.p_tx_buffer = (uint8_t const *)&data_tx[i];
+			spim_0_xfer.tx_length = 1;
+			nrfx_spim_xfer(&spim_0, &spim_0_xfer, 0);
 			// UARTE 0
-			printf("%c", spim_1_tx[i]);
-#if !defined(USE_SPIM_0)
+			printf("%c", data_rx[0]);
+			data_rx[0] = 0;
+#else
 			// UARTE 1
 			while (nrfx_uarte_tx_in_progress(&uarte_1))
 				nrfx_coredep_delay_us(10);
-			nrfx_uarte_tx(&uarte_1, &spim_1_tx[i], 1);
-#endif // ! USE_SPIM_0
+			nrfx_uarte_tx(&uarte_1, &data_tx[i], 1);
+#endif // USE_SPIM_0
 		}
 		printf("\r\n");
 #if !defined(USE_SPIM_0)
@@ -314,7 +324,21 @@ int main(void)
 	nrfx_saadc_channels_config(saadc, sizeof(saadc) / sizeof(saadc[0]));
 	nrfx_saadc_offset_calibrate(NULL);
 
-#if !defined(USE_SPIM_0)
+#if defined(USE_SPIM_0)
+	printf("\r\nSPIM 0 Init ...\r\n");
+
+	err = nrfx_spim_init(&spim_0, &spim_0_config, NULL, NULL);
+	if (err != NRFX_SUCCESS) {
+		printf("error nrfx_spim_init\r\n");
+		nrfx_gpiote_out_clear(LED_2_G);
+		nrfx_gpiote_out_clear(LED_2_B);
+		nrfx_gpiote_out_clear(LED_1_G);
+		while (true) {
+			nrfx_coredep_delay_us(1000000);
+			nrfx_gpiote_out_toggle(LED_2_R);
+		}
+	}
+#else
 	printf("\r\nTWIM 1 Init ...\r\n");
 
 	err = nrfx_twim_init(&twim_0, &twim_0_config, NULL, NULL);
@@ -330,21 +354,7 @@ int main(void)
 	}
 
 	nrfx_twim_enable(&twim_0);
-#endif // ! USE_SPIM_0
-
-	printf("\r\nSPIM 1 Init ...\r\n");
-
-	err = nrfx_spim_init(&spim_1, &spim_1_config, NULL, NULL);
-	if (err != NRFX_SUCCESS) {
-		printf("error nrfx_spim_init\r\n");
-		nrfx_gpiote_out_clear(LED_2_G);
-		nrfx_gpiote_out_clear(LED_2_B);
-		nrfx_gpiote_out_clear(LED_1_G);
-		while (true) {
-			nrfx_coredep_delay_us(1000000);
-			nrfx_gpiote_out_toggle(LED_2_R);
-		}
-	}
+#endif // USE_SPIM_0
 #endif // ! TEST_UARTE_NOTIFY
 
 	nrfx_gpiote_out_toggle(LED_1_G);
