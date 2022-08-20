@@ -17,6 +17,7 @@ CT_TOOLCHAIN_PKGVERSION="Arm® Cortex®-M4 EABI Software Floating Point"
 CT_TOOLCHAIN_BUGURL="https://www.woodsts.org/contact.html"
 CT_TARGET_VENDOR="none"
 CT_TOOLCHAIN_ENABLE_NLS=y
+CT_BINUTILS_EXTRA_CONFIG_ARRAY="--disable-warn-rwx-segments"
 CT_LIBC_NONE=y
 CT_CC_GCC_EXTRA_CONFIG_ARRAY="--enable-plugins --enable-install-libiberty"
 CT_CC_GCC_SYSTEM_ZLIB=y
