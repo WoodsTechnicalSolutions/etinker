@@ -104,6 +104,7 @@ LDFLAGS += -mfloat-abi=hard
 LDFLAGS += -mfpu=fpv4-sp-d16
 LDFLAGS += -Wl,--static
 LDFLAGS += -Wl,--gc-sections
+LDFLAGS += -Wl,--no-dynamic-linker
 LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/lib
 LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib
 LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/lib

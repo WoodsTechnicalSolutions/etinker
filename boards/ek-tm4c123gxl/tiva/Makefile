@@ -68,6 +68,7 @@ LDFLAGS += -Wl,-T$(ET_BOARD_MCU).ld
 LDFLAGS += -Wl,--entry=ResetISR
 LDFLAGS += -Wl,--static
 LDFLAGS += -Wl,--gc-sections
+LDFLAGS += -Wl,--no-dynamic-linker
 LDFLAGS += -Wl,-Map=$(BUILD_DIR)/$(TARGET_MAP)
 LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/lib
 LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib
