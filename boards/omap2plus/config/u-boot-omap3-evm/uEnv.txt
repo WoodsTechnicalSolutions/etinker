@@ -1,5 +1,6 @@
 boot=mmc
 boot_fit=1
 addr_fit=0x8b000000
+console=ttyS0,115200n8
 uenvcmd=echo && echo [ etinker: omap3-evm (fitImage) ] && echo && \
 run update_to_fit && run args_mmc && run mmcboot
