@@ -47,8 +47,10 @@ define bootloader-finalize-$(ET_BOARD)
 	fi
 	@echo
 	(cd $(LSDK_ATF_DIR) && echo && \
-		git fetch --all && \
+		git restore . && git clean -df && \
+		git fetch --all && git fetch --tags && \
 		git checkout $(LSDK_VERSION) && echo && \
+		sed -i s,--fatal-warnings\ -O1,--fatal-warnings\ -O1\ --no-warn-rwx-segments\ --no-warn-execstack, Makefile && \
 		make PLAT=$(LSDK_MACHINE) clean && \
 		make ARCH=aarch64 CROSS_COMPILE=$(ET_CROSS_TUPLE)- \
 			PLAT=$(LSDK_MACHINE) bl2 \
