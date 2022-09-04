@@ -37,6 +37,11 @@
 #
 #******************************************************************************
 
+export ET_BOARD ?= arm-none-eabihf
+export ET_MCU_LIBC ?= newlib-nano
+export ET_DIR ?= /src/etinker
+include $(ET_DIR)/etinker.mk
+
 DIRS=driverlib \
      grlib     \
      sensorlib \
@@ -44,18 +49,7 @@ DIRS=driverlib \
 #     examples
 
 all::
-	@(cd /src/etinker/toolchain/arm-none-eabihf/arm-none-eabihf && \
-		if ! [ -d lib-base ]; then \
-			cp -a lib lib-base; \
-		fi; \
-		rm -rf lib; \
-		cp -a lib-base lib; \
-		cp -a /src/etinker/toolchain/arm-none-eabihf/newlib-nano/arm-none-eabihf/lib/* lib/; \
-		cd lib && \
-		for f in `ls /src/etinker/toolchain/arm-none-eabihf/newlib-nano/lib/gcc/arm-none-eabihf/12.1.0/`; do \
-			rm -f $$f; \
-			ln -s /src/etinker/toolchain/arm-none-eabihf/newlib-nano/lib/gcc/arm-none-eabihf/12.1.0/$$f; \
-		done)
+	$(call toolchain-mcu-libc)
 	@for i in ${DIRS};                  \
 	 do                                 \
 	     if [ -f $${i}/Makefile ];      \

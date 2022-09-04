@@ -18,34 +18,12 @@ TivaWare(tm) for C Series Libraries
 
 5. Copy cached build files
 
-   $ cp -a /path/to/etinker/boards/ek-tm4c123gxl/sdk/tivaware-newlib-nano/* /path/to/etinker/software/tivaware-newlib-nano/
-   $ cp -a /path/to/etinker/boards/ek-tm4c123gxl/sdk/tivaware-picolibc/*    /path/to/etinker/software/tivaware-picolibc/
+   $ cp -a /path/to/etinker/boards/ek-tm4c123gxl/sdk/tivaware/* /path/to/etinker/software/tivaware-newlib-nano/
+   $ cp -a /path/to/etinker/boards/ek-tm4c123gxl/sdk/tivaware/* /path/to/etinker/software/tivaware-picolibc/
 
 6. Build TivaWare libraries for newlib-nano and picolibc variants
 
-   $ export PATH="/path/to/etinker/toolchain/arm-none-eabihf/bin:${PATH}"
    $ cd /path/to/etinker/software/tivaware-newlib-nano
-   $ make clean all
+   $ ET_DIR=/path/to/etinker make clean all
    $ cd /path/to/etinker/software/tivaware-picolibc
-   $ make clean all
-
-
-OLD INSTRUCTIONS
-================
-
-   a. Modify PREFIX in 'tivaware/makedefs' to fall back to 'arm-none-eabihf' as the default cross-compile tuple
-
-   b. Modify CFLAGS in 'tivaware/makedefs' to include '--specs=nano.specs'
-
-   c. Modify LDFLAGS in 'tivaware/makedefs' to include '--specs=nano.specs --sysroot=/path/to/etinker/toolchain/arm-none-eabihf/newlib-nano/arm-none-eabihf'
-
-   d. Modify DIRS in 'tivaware/Makefile' to remove 'examples' from list (you only need the libraries)
-
-   e. Export PATH in shell
-
-      $ export PATH="/path/to/etinker/toolchain/arm-none-eabihf/bin:${PATH}"
-
-   f. Build
-
-      $ cd /path/to/etinker/software/tivaware
-      $ make clean all
+   $ ET_DIR=/path/to/etinker make clean all ET_MCU_LIBC=picolibc

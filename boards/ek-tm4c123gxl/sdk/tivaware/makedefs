@@ -37,10 +37,6 @@
 #
 #******************************************************************************
 
-# [woodsts: made change to Hard Floating Point (arm-none-eabihf)]
-export PATH := /src/etinker/toolchain/arm-none-eabihf/bin:$(PATH)
-export GCC_EXEC_PREFIX := /src/etinker/toolchain/arm-none-eabihf/newlib-nano/lib/gcc
-
 #******************************************************************************
 #
 # Get the operating system name.  If this is Cygwin, the .d files will be
@@ -68,10 +64,10 @@ ifeq (${COMPILER}, gcc)
 
 #
 # Get the prefix for the tools to use.  Use arm-stellaris-eabi if it exists,
-# otherwise fall back to arm-none-eabihf.
+# otherwise fall back to $(ET_CROSS_TUPLE) .
 #
 PREFIX:=${shell type arm-stellaris-eabi-gcc > /dev/null 2>&1 && \
-         echo arm-stellaris-eabi || echo arm-none-eabihf}
+         echo arm-stellaris-eabi || echo $(ET_CROSS_TUPLE)}
 
 #
 # The command for calling the compiler.
@@ -102,10 +98,8 @@ AFLAGS=-mthumb \
 #
 # The flags passed to the compiler.
 #
-CFLAGS=--specs=nano.specs \
-       --sysroot=/src/etinker/toolchain/arm-none-eabihf/newlib-nano/arm-none-eabihf \
-       -I /src/etinker/toolchain/arm-none-eabihf/newlib-nano/arm-none-eabihf/sys-include \
-       -I /src/etinker/toolchain/arm-none-eabihf/newlib-nano/arm-none-eabihf/include \
+CFLAGS=--sysroot=$(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE) \
+       -isysroot $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE) \
        -mthumb             \
        ${CPU}              \
        ${FPU}              \
@@ -131,8 +125,7 @@ LD=${PREFIX}-ld
 #
 # The flags passed to the linker.
 #
-LDFLAGS=--specs=nano.specs \
-        --sysroot=/src/etinker/toolchain/arm-none-eabihf/newlib-nano/arm-none-eabihf \
+LDFLAGS=--sysroot=$(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE) \
         -u _printf_float \
         -u _scanf_float \
         --gc-sections

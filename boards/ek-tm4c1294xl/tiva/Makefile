@@ -34,8 +34,6 @@ MKDIR = mkdir -p
 
 BUILD_DIR := $(TARGET_BUILD)
 
-export GCC_EXEC_PREFIX := $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib/gcc
-
 ifeq ($(ET_RELEASE),yes)
 OPTIMIZE = -Os
 else
@@ -44,36 +42,22 @@ endif
 
 CFLAGS  = $(OPTIMIZE)
 CFLAGS += $(ET_CFLAGS)
-ifeq ($(ET_MCU_LIBC),newlib-nano)
-CFLAGS += --specs=nano.specs
-endif
-ifeq ($(ET_MCU_LIBC),picolibc)
-CFLAGS += --specs=picolibc.specs
-endif
+CFLAGS += --sysroot=$(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)
+CFLAGS += -isysroot $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)
 CFLAGS += -mthumb -march=armv7e-m+fp -mfpu=fpv4-sp-d16 -mfloat-abi=hard
 CFLAGS += -MD -std=c99 -Wall -ffunction-sections -fdata-sections -pedantic
 CFLAGS += -DPART_$(shell echo $(ET_BOARD_MCU) | tr '[:lower:]' '[:upper:]') -DTARGET_IS_TM4C123_RB1
-CFLAGS += -I $(ET_TOOLCHAIN_DIR)/newlib-nano/$(ET_CROSS_TUPLE)/include
 CFLAGS += -I $(TIVAWARE_DIR)
 
 LDFLAGS  = $(OPTIMIZE)
 LDFLAGS += $(ET_LDFLAGS)
-ifeq ($(ET_MCU_LIBC),newlib-nano)
-LDFLAGS += --specs=nano.specs
-endif
-ifeq ($(ET_MCU_LIBC),picolibc)
-LDFLAGS += --specs=picolibc.specs
-endif
+LDFLAGS += --sysroot=$(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)
 LDFLAGS += -Wl,-T$(ET_BOARD_MCU).ld
 LDFLAGS += -Wl,--entry=ResetISR
 LDFLAGS += -Wl,--static
 LDFLAGS += -Wl,--gc-sections
 LDFLAGS += -Wl,--no-dynamic-linker
 LDFLAGS += -Wl,-Map=$(BUILD_DIR)/$(TARGET_MAP)
-LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/lib
-LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib
-LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/lib
-LDFLAGS += -Wl,-L $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib/gcc/$(ET_CROSS_TUPLE)/$(ET_TOOLCHAIN_GCC_VERSION)
 LDFLAGS += -u _printf_float
 LDFLAGS += -u _scanf_float
 
