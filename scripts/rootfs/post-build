@@ -36,7 +36,7 @@ if [ -d ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/debug-root ]; then
 fi
 if [ -d ${ET_KERNEL_DIR}/boot ]; then
 	rsync ${rsync_opts} ${ET_KERNEL_DIR}/boot ${TARGET}/ 2>/dev/null
-	rsync ${rsync_opts} ${ET_KERNEL_DIR}/lib/modules ${TARGET}/usr/lib/ 2>/dev/null
+	rsync ${rsync_opts} ${ET_KERNEL_DIR}/usr ${TARGET}/ 2>/dev/null
 fi
 if [ -d ${ET_BOOTLOADER_DIR}/boot ]; then
 	rsync ${rsync_opts} ${ET_BOOTLOADER_DIR}/* ${TARGET}/ 2>/dev/null
