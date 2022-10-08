@@ -1,8 +1,52 @@
 diff --git a/src/kernel/pwm-cadence.c b/src/kernel/pwm-cadence.c
-index fe3f5bf..1da21e2 100644
 --- a/src/kernel/pwm-cadence.c
 +++ b/src/kernel/pwm-cadence.c
-@@ -308,7 +308,9 @@ static int cadence_pwm_remove(struct platform_device *pdev)
+@@ -127,7 +127,7 @@ static void cpwm_write(struct cadence_pwm_chip *cpwm, int pwm,
+  */
+ 
+ static int cadence_pwm_config(struct pwm_chip *chip,
+-	struct pwm_device *pwm, int duty_ns, int period_ns)
++	struct pwm_device *pwm, int duty_ns, int period_ns, bool enabled)
+ {
+ 	struct cadence_pwm_chip *cpwm = cadence_pwm_get(chip);
+ 	int h = pwm->hwpwm;
+@@ -228,10 +228,32 @@ static int cadence_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm)
+ 	return 0;
+ }
+ 
++static int cadence_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
++			 const struct pwm_state *state)
++{
++	int err;
++	bool enabled = pwm->state.enabled;
++
++	if (!state->enabled) {
++		if (enabled)
++			cadence_pwm_disable(chip, pwm);
++
++		return 0;
++	}
++
++	err = cadence_pwm_config(pwm->chip, pwm,
++			     state->duty_cycle, state->period, enabled);
++	if (err)
++		return err;
++
++	if (!enabled)
++		err = cadence_pwm_enable(chip, pwm);
++
++	return err;
++}
++
+ static const struct pwm_ops cadence_pwm_ops = {
+-	.config = cadence_pwm_config,
+-	.enable = cadence_pwm_enable,
+-	.disable = cadence_pwm_disable,
++	.apply = cadence_pwm_apply,
+ 	.owner = THIS_MODULE,
+ };
+ 
+@@ -308,7 +330,9 @@ static int cadence_pwm_remove(struct platform_device *pdev)
  	for (i = 0; i < cpwm->chip.npwm; i ++)
  		pwm_disable(&cpwm->chip.pwms[i]);
  
@@ -13,7 +57,7 @@ index fe3f5bf..1da21e2 100644
  }
  
  static const struct of_device_id cadence_pwm_of_match[] = {
-@@ -331,12 +333,7 @@ static struct platform_driver cadence_pwm_driver = {
+@@ -331,12 +355,7 @@ static struct platform_driver cadence_pwm_driver = {
  
  static int __init cadence_pwm_init(void)
  {
