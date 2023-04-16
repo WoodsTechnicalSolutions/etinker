@@ -1,7 +1,7 @@
 #
 # ek-tm4c1294xl, ARM Cortex-M4F, board configuration file for 'etinker'
 #
-# Copyright (C) 2018-2022 Derald D. Woods
+# Copyright (C) 2018-2023, Derald D. Woods <woods.technical@gmail.com>
 #
 # This file is made available under the Creative Commons CC0 1.0
 # Universal Public Domain Dedication.

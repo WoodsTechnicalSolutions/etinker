@@ -1,7 +1,7 @@
 #
 # PYNQ-Z2, ARM Cortex-A9, board configuration file for 'etinker'
 #
-# Copyright (C) 2019-2022 Derald D. Woods
+# Copyright (C) 2019-2023, Derald D. Woods <woods.technical@gmail.com>
 #
 # [references]
 # ------------------------------------------------------------------------------

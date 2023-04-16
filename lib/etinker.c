@@ -1,7 +1,7 @@
 /*
  * This is a C source file for the 'etinker' library
  *
- * Copyright (C) 2021-2022 Derald D. Woods
+ * Copyright (C) 2021-2023, Derald D. Woods <woods.technical@gmail.com>
  *
  * This file is part of the Embedded Tinkerer Sandbox, and is made
  * available under the terms of the GNU General Public License version 3.

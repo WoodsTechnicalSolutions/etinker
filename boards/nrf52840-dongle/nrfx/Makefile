@@ -1,7 +1,7 @@
 #
 # This is the GNU Makefile for an 'etinker' nrfx project.
 #
-# Copyright (C) 2020-2022 Derald D. Woods
+# Copyright (C) 2020-2023, Derald D. Woods <woods.technical@gmail.com>
 #
 # This file is part of the Embedded Tinkerer Sandbox, and is made
 # available under the terms of the GNU General Public License version 3.
