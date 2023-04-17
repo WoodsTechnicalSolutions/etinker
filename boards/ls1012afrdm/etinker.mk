@@ -8,11 +8,11 @@
 # [references]
 # ------------------------------------------------------------------------------
 # https://www.nxp.com/products/no-longer-manufactured/frdm-ls1012a-board:FRDM-LS1012A
-# https://source.codeaurora.org/external/qoriq/qoriq-components/u-boot/tree/configs/ls1012afrdm_qspi_defconfig?h=integration
-# https://source.codeaurora.org/external/qoriq/qoriq-components/u-boot/tree/arch/arm/dts/fsl-ls1012a-frdm.dts?h=integration
-# https://source.codeaurora.org/external/qoriq/qoriq-components/linux/log/arch/arm64/configs/defconfig?h=linux-5.4
-# https://source.codeaurora.org/external/qoriq/qoriq-components/linux/tree/arch/arm64/configs/lsdk.config?h=linux-5.4
-# https://source.codeaurora.org/external/qoriq/qoriq-components/linux/tree/arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dts?h=linux-5.4
+# https://github.com/nxp-qoriq/u-boot/blob/integration/configs/ls1012afrdm_qspi_defconfig
+# https://github.com/nxp-qoriq/u-boot/blob/integration/arch/arm/dts/fsl-ls1012a-frdm.dts
+# https://github.com/nxp-qoriq/linux/blob/linux-5.4/arch/arm64/configs/defconfig
+# https://github.com/nxp-qoriq/linux/blob/linux-5.4/arch/arm64/configs/lsdk.config
+# https://github.com/nxp-qoriq/linux/blob/linux-5.4/arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dts
 # ------------------------------------------------------------------------------
 #
 # This file is made available under the Creative Commons CC0 1.0

@@ -21,7 +21,7 @@ define bootloader-finalize-$(ET_BOARD)
 	@mkdir -p $(ET_SOFTWARE_DIR)/qoriq
 	@if ! [ -d $(LSDK_RCW_DIR) ]; then \
 		(cd $(ET_SOFTWARE_DIR)/qoriq && \
-			git clone https://source.codeaurora.org/external/qoriq/qoriq-components/rcw $(LSDK_RCW_DIR)); \
+			git clone https://github.com/nxp-qoriq/rcw.git $(LSDK_RCW_DIR)); \
 		if ! [ -d $(LSDK_RCW_DIR) ]; then \
 			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Getting NXP QorIQ 'rcw' FAILED! *****\n\n"; \
 			exit 2; \
@@ -41,7 +41,7 @@ define bootloader-finalize-$(ET_BOARD)
 	@cp -av $(LSDK_RCW_BIN) $(ET_BOOTLOADER_DIR)/boot/
 	@if ! [ -d $(LSDK_PPA_DIR) ]; then \
 		(cd $(ET_SOFTWARE_DIR)/qoriq && \
-			git clone https://source.codeaurora.org/external/qoriq/qoriq-components/ppa-generic $(LSDK_PPA_DIR)); \
+			git clone https://github.com/nxp-qoriq/ppa-generic.git $(LSDK_PPA_DIR)); \
 		if ! [ -d $(LSDK_PPA_DIR) ]; then \
 			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Getting NXP QorIQ 'ppa-generic' FAILED! *****\n\n"; \
 			exit 2; \
@@ -61,7 +61,7 @@ define bootloader-finalize-$(ET_BOARD)
 	@cp -av $(LSDK_PPA_BIN) $(ET_BOOTLOADER_DIR)/boot/
 	@if ! [ -d $(LSDK_PFE_DIR) ]; then \
 		(cd $(ET_SOFTWARE_DIR)/qoriq && \
-			git clone https://github.com/NXP/qoriq-engine-pfe-bin.git $(LSDK_PFE_DIR)); \
+		git clone https://github.com/nxp-qoriq/qoriq-engine-pfe-bin.git $(LSDK_PFE_DIR)); \
 		if ! [ -d $(LSDK_PFE_DIR) ]; then \
 			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Getting NXP QorIQ 'PFE Firmware' FAILED! *****\n\n"; \
 			exit 2; \

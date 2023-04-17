@@ -21,7 +21,7 @@ define bootloader-finalize-$(ET_BOARD)
 	@mkdir -p $(ET_SOFTWARE_DIR)/qoriq
 	@if ! [ -d $(LSDK_RCW_DIR) ]; then \
 		(cd $(ET_SOFTWARE_DIR)/qoriq && \
-			git clone https://source.codeaurora.org/external/qoriq/qoriq-components/rcw $(LSDK_RCW_DIR)); \
+		git clone https://github.com/nxp-qoriq/rcw.git $(LSDK_RCW_DIR)); \
 		if ! [ -d $(LSDK_RCW_DIR) ]; then \
 			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Getting $(LSDK_VERSION) QorIQ 'rcw' FAILED! *****\n\n"; \
 			exit 2; \
@@ -39,7 +39,7 @@ define bootloader-finalize-$(ET_BOARD)
 	fi
 	@if ! [ -d $(LSDK_ATF_DIR) ]; then \
 		(cd $(ET_SOFTWARE_DIR)/qoriq && \
-			git clone https://source.codeaurora.org/external/qoriq/qoriq-components/atf $(LSDK_ATF_DIR)); \
+			git clone https://github.com/nxp-qoriq/atf.git $(LSDK_ATF_DIR)); \
 		if ! [ -d $(LSDK_ATF_DIR) ]; then \
 			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Getting $(LSDK_VERSION) QorIQ 'atf' FAILED! *****\n\n"; \
 			exit 2; \
