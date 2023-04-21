@@ -82,7 +82,7 @@ static inline int printe(const char *fmt, ...)
 
 static inline char *stringify(unsigned long int value)
 {
-	extern char syscalls_string[64];
+	extern char syscalls_string[1024];
 
 	snprintf(syscalls_string, sizeof(syscalls_string), "0x%08lx", value);
 
