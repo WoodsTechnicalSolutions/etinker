@@ -38,8 +38,7 @@
 
 #define ASSERT(expr) { \
 	if (!(expr)) { \
-		fprintf(stderr, \
-			"\r\n%s: %s: %d\r\n", \
+		printf("\r\n%s: %s: %d\r\n", \
 			__FILE__, __func__, __LINE__); \
 		while (1); \
 	} \

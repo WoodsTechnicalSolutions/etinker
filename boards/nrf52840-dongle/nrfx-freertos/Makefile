@@ -20,6 +20,8 @@ TARGET_DIR := $(shell realpath -e $(CURDIR))
 
 ET_DIR ?= $(shell realpath -e ../../..)
 
+all: $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
+
 include $(ET_DIR)/etinker.mk
 
 NRFX_DIR ?= $(ET_SOFTWARE_DIR)/nrfx
@@ -79,6 +81,9 @@ CFLAGS += -I $(NRFX_DIR)/helpers
 CFLAGS += -I $(CMSIS_DIR)/CMSIS/Core/Include
 CFLAGS += -I $(FREERTOS_DIR)/include
 CFLAGS += -I $(FREERTOS_DIR)/portable/GCC/ARM_CM4F
+ifeq ($(ET_MCU_LIBC),picolibc)
+CFLAGS += -I $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/include
+endif
 
 LDFLAGS  = $(OPTIMIZE)
 LDFLAGS += $(ET_LDFLAGS)
@@ -126,8 +131,6 @@ OBJECTS = $(addprefix $(BUILD_DIR)/,$(SOURCES:.c=.o))
 HEADERS = Makefile
 HEADERS += $(shell find config/ -name "*.h" -print 2> /dev/null)
 HEADERS += $(shell find src/ -maxdepth 1 -name "*.h" -print 2> /dev/null)
-
-all: depends $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
 
 depends:
 	$(call toolchain-mcu-libc)
