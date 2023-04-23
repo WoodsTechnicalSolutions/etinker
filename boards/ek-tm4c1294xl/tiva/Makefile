@@ -48,6 +48,9 @@ CFLAGS += -mthumb -march=armv7e-m+fp -mfpu=fpv4-sp-d16 -mfloat-abi=hard
 CFLAGS += -MD -std=c99 -Wall -ffunction-sections -fdata-sections -pedantic
 CFLAGS += -DPART_$(shell echo $(ET_BOARD_MCU) | tr '[:lower:]' '[:upper:]') -DTARGET_IS_TM4C123_RB1
 CFLAGS += -I $(TIVAWARE_DIR)
+ifeq ($(ET_MCU_LIBC),picolibc)
+CFLAGS += -I $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/include
+endif
 
 LDFLAGS  = $(OPTIMIZE)
 LDFLAGS += $(ET_LDFLAGS)
