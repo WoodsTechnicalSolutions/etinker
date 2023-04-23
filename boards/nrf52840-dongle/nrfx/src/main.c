@@ -110,9 +110,16 @@ static nrfx_spim_xfer_desc_t spim_0_xfer = { 0 };
 static uint8_t data_rx[] = { 0 };
 #endif // USE_SPIM_0
 
-static uint8_t data_tx[] = { // '0123456789abcdef'
-	48, 49, 50, 51, 52, 53, 54, 55,
-	56, 57, 97, 98, 99, 100, 101, 102
+static uint8_t tx_id = 0;
+static uint8_t data_tx[2][16] = {
+	{ // '0123456789abcdef'
+		48, 49, 50, 51, 52, 53, 54, 55,
+		56, 57, 97, 98, 99, 100, 101, 102
+	},
+	{ // '0505050505050505'
+		48, 53, 48, 53, 48, 53, 48, 53,
+		48, 53, 48, 53, 48, 53, 48, 53
+	}
 };
 
 static nrf_saadc_value_t saadc_value[4] = { 0 };
@@ -218,11 +225,12 @@ int main(void)
 		// send data on SPIM 0, UARTE 1, and UARTE 0 [console]
 		printf(" SPI: ");
 #endif // USE_SPIM_0
-		for (i = 0; i < sizeof(data_tx); i++) {
+		tx_id = (tx_id == 0) ? 1 : 0;
+		for (i = 0; i < sizeof(data_tx[0]); i++) {
 #if defined(USE_SPIM_0)
 			spim_0_xfer.p_rx_buffer = data_rx;
 			spim_0_xfer.rx_length = 1;
-			spim_0_xfer.p_tx_buffer = (uint8_t const *)&data_tx[i];
+			spim_0_xfer.p_tx_buffer = (uint8_t const *)&data_tx[tx_id][i];
 			spim_0_xfer.tx_length = 1;
 			nrfx_spim_xfer(&spim_0, &spim_0_xfer, 0);
 			// UARTE 0
@@ -232,7 +240,7 @@ int main(void)
 			// UARTE 1
 			while (nrfx_uarte_tx_in_progress(&uarte_1))
 				nrfx_coredep_delay_us(10);
-			nrfx_uarte_tx(&uarte_1, &data_tx[i], 1);
+			nrfx_uarte_tx(&uarte_1, &data_tx[tx_id][i], 1);
 #endif // USE_SPIM_0
 		}
 		printf("\r\n");
