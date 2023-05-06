@@ -1,6 +1,10 @@
 module="cryptodev"
 options=""
-ko="/lib/modules/`uname -r`/extra/$module.ko"
+if [ -d /lib/modules/`uname -r`/updates ]; then
+	ko="/lib/modules/`uname -r`/updates/$module.ko"
+else
+	ko="/lib/modules/`uname -r`/extra/$module.ko"
+fi
 if [ -f $ko ]; then
 	case "$1" in
 	start)
