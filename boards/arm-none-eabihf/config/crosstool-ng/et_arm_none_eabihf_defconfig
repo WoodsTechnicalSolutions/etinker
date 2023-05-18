@@ -28,6 +28,7 @@ CT_LIBC_PICOLIBC_REGISTER_FINI=y
 CT_LIBC_PICOLIBC_ATEXIT_DYNAMIC_ALLOC=y
 CT_LIBC_PICOLIBC_GLOBAL_ATEXIT=y
 CT_LIBC_PICOLIBC_EXTRA_SECTIONS=y
+CT_GCC_V_12=y
 CT_CC_GCC_EXTRA_CONFIG_ARRAY="--enable-plugins --enable-install-libiberty --with-mode=thumb --with-arch=armv7e-m+fp --with-fpu=fpv4-sp-d16 --with-float=hard"
 CT_CC_GCC_SYSTEM_ZLIB=y
 CT_CC_GCC_CONFIG_TLS=y
