@@ -27,3 +27,16 @@ export ET_BOARD_MCU_DEFINE := $(shell echo $(ET_BOARD_MCU)$(ET_BOARD_MCU_EXT) | 
 # pull in a board toolchain
 ET_BOARD_TOOLCHAIN_TYPE := arm-none-eabihf
 include $(ET_DIR)/boards/$(ET_BOARD_TOOLCHAIN_TYPE)/etinker.mk
+
+# build MCU applications
+app: $(ET_LIBRARY_TARGET_FINAL)
+	@(cd $(ET_BOARD_DIR)/nrfx && make --no-print-directory all)
+
+app-%: $(ET_LIBRARY_TARGET_FINAL)
+	@(cd $(ET_BOARD_DIR)/nrfx && make --no-print-directory $(*F))
+
+rtos-app: $(ET_LIBRARY_TARGET_FINAL)
+	@(cd $(ET_BOARD_DIR)/nrfx-freertos && make --no-print-directory all)
+
+rtos-app-%: $(ET_LIBRARY_TARGET_FINAL)
+	@(cd $(ET_BOARD_DIR)/nrfx-freertos && make --no-print-directory $(*F))

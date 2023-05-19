@@ -25,3 +25,10 @@ export ET_BOARD_MCU := tm4c1294ncpdt
 # pull in a board toolchain
 ET_BOARD_TOOLCHAIN_TYPE := arm-none-eabihf
 include $(ET_DIR)/boards/$(ET_BOARD_TOOLCHAIN_TYPE)/etinker.mk
+
+# build MCU applications
+app: $(ET_LIBRARY_TARGET_FINAL)
+	@(cd $(ET_BOARD_DIR)/tiva && make --no-print-directory all)
+
+app-%: $(ET_LIBRARY_TARGET_FINAL)
+	@(cd $(ET_BOARD_DIR)/tiva && make --no-print-directory $(*F))
