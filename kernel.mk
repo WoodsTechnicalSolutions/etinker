@@ -15,7 +15,7 @@
 ifdef ET_BOARD_KERNEL_TREE
 
 ifndef ET_BOARD_KERNEL_TYPE
-export ET_BOARD_KERNEL_TYPE := $(ET_BOARD_TYPE)
+export ET_BOARD_KERNEL_TYPE := $(ET_BOARD_TYPE)$(ET_KERNEL_VARIANT)
 endif
 
 export ET_SYSROOT_DIR ?= $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot
@@ -98,7 +98,7 @@ export ET_KERNEL_BUILD_CONFIG := $(ET_KERNEL_BUILD_DIR)/.config
 export ET_KERNEL_BUILD_DEFCONFIG := $(ET_KERNEL_BUILD_DIR)/defconfig
 export ET_KERNEL_BUILD_SYSMAP := $(ET_KERNEL_BUILD_DIR)/System.map
 export ET_KERNEL_BUILD_DTB := $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$(ET_KERNEL_VENDOR)$(ET_KERNEL_DT).dtb
-export ET_KERNEL_DIR := $(ET_DIR)/kernel/$(ET_BOARD)/$(ET_CROSS_TUPLE)
+export ET_KERNEL_DIR := $(ET_DIR)/kernel/$(ET_BOARD)$(ET_KERNEL_VARIANT)/$(ET_CROSS_TUPLE)
 export ET_KERNEL_DEFCONFIG := $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config/$(ET_KERNEL_TREE)/$(kernel_defconfig)
 export ET_KERNEL_SYSMAP := $(ET_KERNEL_DIR)/boot/System.map
 export ET_KERNEL_DTB := $(ET_KERNEL_DIR)/boot/$(ET_KERNEL_DT).dtb
@@ -117,7 +117,7 @@ define kernel-version
 endef
 
 define kernel-software
-	$(call software-check,$(ET_KERNEL_TREE),kernel,fetch)
+	$(call software-check,$(ET_KERNEL_TREE),kernel,fetch,$(ET_KERNEL_VARIANT))
 endef
 
 define kernel-depends

@@ -1,1 +1,0 @@
-../ls1043ardb/kernel.mk

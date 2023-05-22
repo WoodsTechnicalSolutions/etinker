@@ -20,12 +20,14 @@ define software-check
 		mkdir -p $(ET_SOFTWARE_DIR); \
 		(cd $(ET_SOFTWARE_DIR) && \
 			if [ "toolchain" = "$2" ]; then \
-				export et_url="$(shell sed -n 's/$2-url://p' $(ET_DIR)/boards/$(ET_CROSS_TUPLE)/software.conf)"; \
-				export et_ref="$(shell sed -n 's/$2-ref://p' $(ET_DIR)/boards/$(ET_CROSS_TUPLE)/software.conf)"; \
+				export et_url="$(shell sed -n 's/$2$4-url://p' $(ET_DIR)/boards/$(ET_CROSS_TUPLE)/software.conf)"; \
+				export et_ref="$(shell sed -n 's/$2$4-ref://p' $(ET_DIR)/boards/$(ET_CROSS_TUPLE)/software.conf)"; \
 			else \
-				export et_url="$(shell sed -n 's/$2-url://p' $(ET_BOARD_DIR)/software.conf)"; \
-				export et_ref="$(shell sed -n 's/$2-ref://p' $(ET_BOARD_DIR)/software.conf)"; \
+				export et_url="$(shell sed -n 's/$2$4-url://p' $(ET_BOARD_DIR)/software.conf)"; \
+				export et_ref="$(shell sed -n 's/$2$4-ref://p' $(ET_BOARD_DIR)/software.conf)"; \
 			fi; \
+			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] et_url=$$et_url *****\n"; \
+			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] et_ref=$$et_ref *****\n\n"; \
 			case $2 in \
 			toolchain | bootloader | kernel | rootfs) \
 				if [ -d $1 ]; then \
@@ -37,7 +39,7 @@ define software-check
 					printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] ERROR MISSING $(ET_SOFTWARE_DIR)/$1 DIRECTORY *****\n\n"; \
 					exit 2; \
 				fi; \
-				(cd $1 && git checkout $$et_ref) || exit 2; \
+				(cd $1 && git checkout $$et_ref && (git status | grep -oq HEAD) || git pull) || exit 2; \
 				if [ -d $(ET_PATCH_DIR)/$(notdir $1) ]; then \
 					(cd $1 && \
 						git branch -D patched -f 2> /dev/null; \
@@ -56,7 +58,7 @@ define software-check
 					printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] ERROR MISSING $(ET_SOFTWARE_DIR)/$2 DIRECTORY *****\n\n"; \
 					exit 2; \
 				fi; \
-				(cd $2 && git checkout $$et_ref) || exit 2; \
+				(cd $2 && git checkout $$et_ref && (git status | grep -oq HEAD) || git pull) || exit 2; \
 				if [ -d $(ET_PATCH_DIR)/$(notdir $2) ]; then \
 					(cd $2 && \
 						git branch -D patched -f 2> /dev/null; \
