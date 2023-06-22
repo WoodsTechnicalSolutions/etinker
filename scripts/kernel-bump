@@ -45,6 +45,16 @@ is_virtual ()
 	fi
 }
 
+is_rt ()
+{
+	for param in $@; do
+		if [ "$param" = "-rt" ]; then
+			return 0
+		fi
+	done
+	return 1
+}
+
 # verify first positional argument
 if [ -z "$1" ]; then
 	printf "Missing arguments!\n"
@@ -95,9 +105,7 @@ for n in `ls ${ET_DIR}/boards`; do
 				continue
 			fi
 		fi
-		if ! do_make $n "$@"; then
-			printf "etinker $0 failed!\n"
-			exit 1
+		if is_rt "$@"; then
 			# realtime builds
 			case $n in
 			am335x-pocketbeagle | aml-s905x-cc | ls1043ardb)
@@ -111,6 +119,12 @@ for n in `ls ${ET_DIR}/boards`; do
 			*)
 				;;
 			esac
+		else
+			# stock builds
+			if ! do_make $n "$@"; then
+				printf "etinker $0 failed!\n"
+				exit 1
+			fi
 		fi
 		;;
 	*)
