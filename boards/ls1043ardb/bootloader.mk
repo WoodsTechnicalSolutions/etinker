@@ -51,6 +51,9 @@ define bootloader-finalize-$(ET_BOARD)
 		git fetch --all && git fetch --tags && \
 		git checkout $(LSDK_VERSION) && echo && \
 		sed -i s,--fatal-warnings\ -O1,--fatal-warnings\ -O1\ --no-warn-rwx-segments\ --no-warn-execstack, Makefile && \
+		git branch -D patched -f 2> /dev/null; \
+		git switch -c patched; \
+		git commit -a -m "etinker: Fix compiler flags" && echo && \
 		make PLAT=$(LSDK_MACHINE) clean && \
 		make ARCH=aarch64 CROSS_COMPILE=$(ET_CROSS_TUPLE)- \
 			PLAT=$(LSDK_MACHINE) bl2 \
