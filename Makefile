@@ -21,6 +21,7 @@ sandbox:
 	$(call rootfs-all)
 	$(call library-all)
 	$(call overlay-all)
+	$(call rootfs-update)
 
 .PHONY: software
 software:
@@ -65,6 +66,7 @@ update:
 	$(call rootfs-$@)
 	$(call library-$@)
 	$(call overlay-$@)
+	$(call rootfs-$@)
 
 .PHONY: sync
 sync:
