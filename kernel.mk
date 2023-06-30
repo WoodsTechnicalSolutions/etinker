@@ -32,7 +32,7 @@ endif
 export ET_KERNEL_LOADADDR := $(ET_BOARD_KERNEL_LOADADDR)
 export ET_KERNEL_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_KERNEL_TREE)
 export ET_KERNEL_HEADERS_DIR ?= $(ET_SYSROOT_DIR)/usr/include
-export ET_KERNEL_CACHED_VERSION := $(shell sed -n 's/kernel-ref://p' $(ET_BOARD_DIR)/software.conf)
+export ET_KERNEL_CACHED_VERSION := $(shell sed -n 's/kernel$(ET_KERNEL_VARIANT)-ref://p' $(ET_BOARD_DIR)/software.conf)
 export ET_KERNEL_CROSS_PARAMS := ARCH=$(ET_KERNEL_ARCH) CROSS_COMPILE=$(ET_CROSS_COMPILE)
 
 kernel_defconfig := et_$(subst -,_,$(ET_KERNEL_TYPE))_defconfig

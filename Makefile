@@ -98,11 +98,11 @@ info:
 	@printf "ET_PURGE: $(ET_PURGE)\n"
 	@printf "ET_CPUS: $(ET_CPUS) [ make -j $(ET_CPUS) ]\n"
 	@printf "ET_DIR: $(ET_DIR)\n"
+	@printf "ET_BOARD_DIR: $(ET_BOARD_DIR)\n"
 	@printf "ET_PATCH_DIR: $(ET_PATCH_DIR)\n"
 	@printf "ET_SCRIPTS_DIR: $(ET_SCRIPTS_DIR)\n"
 	@printf "ET_SOFTWARE_DIR: $(ET_SOFTWARE_DIR)\n"
 	@printf "ET_TARBALLS_DIR: $(ET_TARBALLS_DIR)\n"
-	@printf "ET_BOARD_DIR: $(ET_BOARD_DIR)\n"
 	@if [ -n "$(ET_SYSROOT_DIR)" ]; then \
 		printf "ET_SYSROOT_DIR: $(ET_SYSROOT_DIR)\n"; \
 	fi

@@ -97,10 +97,11 @@ for n in `ls ${ET_DIR}/boards`; do
 		continue
 	fi
 
-	# baseline boards
+	# boards with a supported kernel build
 	case $n in
-	am335x-pocketbeagle | aml-s905x-cc | ls1012afrdm | ls1043ardb | omap3-evm | pynq-z2-xlnx | pynq-z2 | sama5d3-xpld)
-		if [ "pynq-z2" == "`echo $n | grep -o pynq-z2`" ]; then
+	am335x-pocketbeagle | aml-s905x-cc | ls1012afrdm | ls1043ardb | pynq-z2 | sama5d3-xpld)
+		if [ "pynq-z2" == "$n" ]; then
+			# Xilinx board requires a generated FPGA project
 			if ! [ -d ${ET_DIR}/boards/zynq/fpga/sdk ]; then
 				continue
 			fi
@@ -124,6 +125,15 @@ for n in `ls ${ET_DIR}/boards`; do
 			if ! do_make $n "$@"; then
 				printf "etinker $0 failed!\n"
 				exit 1
+			fi
+			if [ "pynq-z2" == "$n" ]; then
+				# build the Xilinx variant
+				export ET_KERNEL_VARIANT="-xlnx"
+				if ! do_make $n "$@"; then
+					printf "etinker $0 failed!\n"
+					exit 1
+				fi
+				unset ET_KERNEL_VARIANT
 			fi
 		fi
 		;;

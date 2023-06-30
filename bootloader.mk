@@ -14,23 +14,17 @@
 
 ifdef ET_BOARD_BOOTLOADER_TREE
 
-ifdef ET_BOARD_ALIAS
-et_board := $(ET_BOARD_ALIAS)
-else
-et_board := $(ET_BOARD)
-endif
-
 ifndef ET_BOARD_BOOTLOADER_TYPE
-export ET_BOARD_BOOTLOADER_TYPE := $(ET_BOARD_TYPE)
+export ET_BOARD_BOOTLOADER_TYPE := $(ET_BOARD)$(ET_BOOTLOADER_VARIANT)
 endif
 
 # embedded bootloader, for application processors, is Das U-Boot
 export ET_BOOTLOADER_TYPE := $(ET_BOARD_BOOTLOADER_TYPE)
 export ET_BOOTLOADER_TREE := $(ET_BOARD_BOOTLOADER_TREE)
 export ET_BOOTLOADER_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_BOOTLOADER_TREE)
-export ET_BOOTLOADER_CACHED_VERSION := $(shell sed -n 's/bootloader-ref://p' $(ET_BOARD_DIR)/software.conf)
+export ET_BOOTLOADER_CACHED_VERSION := $(shell sed -n 's/bootloader$(ET_BOOTLOADER_VARIANT)-ref://p' $(ET_BOARD_DIR)/software.conf)
 
-bootloader_defconfig := et_$(subst -,_,$(et_board))_defconfig
+bootloader_defconfig := et_$(subst -,_,$(ET_BOOTLOADER_TYPE))_defconfig
 
 # [start] bootloader version magic
 ifneq ($(shell ls $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null),)
@@ -76,12 +70,12 @@ endif
 export ET_BOOTLOADER_VERSION
 export ET_BOOTLOADER_LOCALVERSION
 
-export ET_BOOTLOADER_BUILD_DIR := $(ET_DIR)/bootloader/build/$(et_board)/$(ET_CROSS_TUPLE)
+export ET_BOOTLOADER_BUILD_DIR := $(ET_DIR)/bootloader/build/$(ET_BOOTLOADER_TYPE)/$(ET_CROSS_TUPLE)
 export ET_BOOTLOADER_BUILD_CONFIG := $(ET_BOOTLOADER_BUILD_DIR)/.config
 export ET_BOOTLOADER_BUILD_DEFCONFIG := $(ET_BOOTLOADER_BUILD_DIR)/defconfig
 export ET_BOOTLOADER_BUILD_SYSMAP := $(ET_BOOTLOADER_BUILD_DIR)/System.map
-export ET_BOOTLOADER_DIR := $(ET_DIR)/bootloader/$(ET_BOARD)/$(ET_CROSS_TUPLE)
-export ET_BOOTLOADER_DEFCONFIG := $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(et_board)/$(bootloader_defconfig)
+export ET_BOOTLOADER_DIR := $(ET_DIR)/bootloader/$(ET_BOOTLOADER_TYPE)/$(ET_CROSS_TUPLE)
+export ET_BOOTLOADER_DEFCONFIG := $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config/u-boot-$(ET_BOOTLOADER_TYPE)/$(bootloader_defconfig)
 
 export DEVICE_TREE := $(ET_BOARD_BOOTLOADER_DT)
 # Handle out-of-tree devicetree build (i.e. dtb-y += custom-board.dtb)
@@ -90,7 +84,7 @@ export DEVICE_TREE_MAKEFILE := -f $(ET_BOARD_DIR)/dts/u-boot/Makefile
 endif
 
 # Get board specific definitions
-include $(ET_DIR)/boards/$(et_board)/bootloader.mk
+include $(ET_DIR)/boards/$(ET_BOARD)/bootloader.mk
 
 export ET_BOOTLOADER_BUILD_IMAGE ?= $(ET_BOOTLOADER_BUILD_DIR)/$(ET_BOARD_BOOTLOADER_IMAGE)
 export ET_BOOTLOADER_IMAGE ?= $(ET_BOOTLOADER_DIR)/boot/$(ET_BOARD_BOOTLOADER_IMAGE)
@@ -102,7 +96,7 @@ define bootloader-version
 endef
 
 define bootloader-software
-	$(call software-check,$(ET_BOOTLOADER_TREE),bootloader,fetch)
+	$(call software-check,$(ET_BOOTLOADER_TREE),bootloader,fetch,$(ET_BOOTLOADER_VARIANT))
 endef
 
 define bootloader-depends
@@ -137,11 +131,11 @@ define bootloader-finalize
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_BUILD_IMAGE) build FAILED! *****\n\n"; \
 		exit 2; \
 	fi
-	@if [ -f $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(et_board)/uEnv.txt ]; then \
-		cp -av $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(et_board)/uEnv*.txt $(ET_BOOTLOADER_DIR)/boot/; \
+	@if [ -f $(ET_DIR)/boards/$(ET_BOARD)/config/u-boot-$(ET_BOOTLOADER_TYPE)/uEnv.txt ]; then \
+		cp -av $(ET_DIR)/boards/$(ET_BOARD)/config/u-boot-$(ET_BOOTLOADER_TYPE)/uEnv*.txt $(ET_BOOTLOADER_DIR)/boot/; \
 	fi
-	@if [ -d $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(et_board)/extlinux ]; then \
-		cp -av $(ET_DIR)/boards/$(ET_BOOTLOADER_TYPE)/config/u-boot-$(et_board)/extlinux $(ET_BOOTLOADER_DIR)/boot/; \
+	@if [ -d $(ET_DIR)/boards/$(ET_BOARD)/config/u-boot-$(ET_BOOTLOADER_TYPE)/extlinux ]; then \
+		cp -av $(ET_DIR)/boards/$(ET_BOARD)/config/u-boot-$(ET_BOOTLOADER_TYPE)/extlinux $(ET_BOOTLOADER_DIR)/boot/; \
 	fi
 	@cp -av $(ET_BOOTLOADER_BUILD_IMAGE) $(ET_BOOTLOADER_DIR)/boot/
 	$(call bootloader-finalize-$(ET_BOARD))

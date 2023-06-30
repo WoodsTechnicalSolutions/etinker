@@ -77,28 +77,34 @@ done
 
 # operate on valid virtual boards
 for n in `ls ${ET_DIR}/boards`; do
-	if ! is_virtual $n; then
+	if is_virtual $n; then
 		continue
 	fi
 
-	# select boards with U-Boot config
-	for b in `ls ${ET_DIR}/boards/$n/config/`; do
-		case $b in
-		u-boot-*)
-			board=`echo $b | sed 's,u-boot-,,'`
-			if [ "pynq-z2" == "`echo $board | grep -o pynq-z2`" ]; then
-				if ! [ -d ${ET_DIR}/boards/zynq/fpga/sdk ]; then
-					continue
-				fi
+	# boards with a supported bootloader build
+	case $n in
+	am335x-pocketbeagle | am3517-evm | aml-s905x-cc | ls1012afrdm | ls1043ardb | omap3-* | pynq-z2 | sama5d3-xpld)
+		if [ "pynq-z2" == "$n" ]; then
+			# Xilinx board requires a generated FPGA project
+			if ! [ -d ${ET_DIR}/boards/zynq/fpga/sdk ]; then
+				continue
 			fi
-			if ! do_make $board "$@"; then
+		fi
+		if ! do_make $n "$@"; then
+			printf "etinker $0 failed!\n"
+			exit 1
+		fi
+		if [ "pynq-z2" == "$n" ]; then
+			# build the Xilinx variant
+			export ET_BOOTLOADER_VARIANT="-xlnx"
+			if ! do_make $n "$@"; then
 				printf "etinker $0 failed!\n"
 				exit 1
 			fi
-			;;
-		*)
-			;;
-		esac
-
-	done
+			unset ET_BOOTLOADER_VARIANT
+		fi
+		;;
+	*)
+		;;
+	esac
 done
