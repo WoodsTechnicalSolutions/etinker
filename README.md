@@ -36,11 +36,11 @@ definitions used by higher level real boards. This tracks the Linux
 kernel view of what is common to a given platform. Configuration
 files for Linux, U-Boot, and Buildroot reside in the virtual boards.
 
-- layerscape [ls1043ardb, ls1043ardb-rt]
-- meson [aml-s905x-cc, aml-s905x-cc-rt]
+- layerscape [ls1043ardb]
+- meson [aml-s905x-cc]
 - omap2plus [am335x-pocketbeagle, am3517-evm, omap3-beagle, omap3-beagle-xm, omap3-evm]
 - sama5 [sama5d3-xpld]
-- zynq [pynq-z2, pynq-z2-xlnx]
+- zynq [pynq-z2]
 
 #### Toolchain Boards
 
@@ -74,7 +74,7 @@ $ ./scripts/host/setup
 3. Build your first board
 
 ```
-$ ET_BOARD=am335x-pocketbeagle make sandbox rootfs-update
+$ ET_BOARD=am335x-pocketbeagle make sandbox
 ```
 
 Depending on your workstation hardware, the build time could be 1.5
