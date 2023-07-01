@@ -17,7 +17,7 @@ ifdef ET_BOARD_ROOTFS_TREE
 export ET_RT_TESTS_TREE := rt-tests
 export ET_RT_TESTS_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_RT_TESTS_TREE)
 export ET_RT_TESTS_VERSION := $(shell cd $(ET_RT_TESTS_SOFTWARE_DIR) 2>/dev/null && git describe --long --dirty 2>/dev/null)
-export ET_RT_TESTS_CACHED_VERSION := $(shell sed -n 's/rt-tests-ref://p' $(ET_BOARD_DIR)/software.conf)
+export ET_RT_TESTS_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) rt-tests-ref)
 export ET_RT_TESTS_BUILD_DIR := $(ET_OVERLAY_BUILD_DIR)/$(ET_RT_TESTS_TREE)
 export ET_RT_TESTS_BUILD_CONFIG := $(ET_RT_TESTS_BUILD_DIR)/.configured
 export ET_RT_TESTS_BUILD_BIN := $(ET_RT_TESTS_BUILD_DIR)/bld/oslat

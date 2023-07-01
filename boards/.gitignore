@@ -14,3 +14,5 @@
 /omap3-beagle-xm-*
 /omap3-evm-*
 /sama5d3-xpld-*
+/*/override.conf
+/override.conf

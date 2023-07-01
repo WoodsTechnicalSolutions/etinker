@@ -22,7 +22,7 @@ endif
 export ET_BOOTLOADER_TYPE := $(ET_BOARD_BOOTLOADER_TYPE)
 export ET_BOOTLOADER_TREE := $(ET_BOARD_BOOTLOADER_TREE)
 export ET_BOOTLOADER_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_BOOTLOADER_TREE)
-export ET_BOOTLOADER_CACHED_VERSION := $(shell sed -n 's/bootloader$(ET_BOOTLOADER_VARIANT)-ref://p' $(ET_BOARD_DIR)/software.conf)
+export ET_BOOTLOADER_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) bootloader$(ET_BOOTLOADER_VARIANT)-ref)
 
 bootloader_defconfig := et_$(subst -,_,$(ET_BOOTLOADER_TYPE))_defconfig
 
@@ -96,11 +96,11 @@ define bootloader-version
 endef
 
 define bootloader-software
-	$(call software-check,$(ET_BOOTLOADER_TREE),bootloader,fetch,$(ET_BOOTLOADER_VARIANT))
+	$(call software-check,$(ET_BOOTLOADER_TREE),bootloader$(ET_BOOTLOADER_VARIANT),fetch)
 endef
 
 define bootloader-depends
-	$(call software-check,$(ET_BOOTLOADER_TREE),bootloader)
+	$(call software-check,$(ET_BOOTLOADER_TREE),bootloader$(ET_BOOTLOADER_VARIANT))
 	@mkdir -p $(ET_BOOTLOADER_DIR)/boot
 	@mkdir -p $(ET_BOOTLOADER_BUILD_DIR)
 	@mkdir -p $(shell dirname $(ET_BOOTLOADER_DEFCONFIG))

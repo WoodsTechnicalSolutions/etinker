@@ -25,7 +25,7 @@ export ET_ROOTFS_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_ROOTFS_TREE)
 export ET_ROOTFS_HOSTNAME := $(ET_BOARD_HOSTNAME)
 export ET_ROOTFS_GETTY_PORT := $(ET_BOARD_GETTY_PORT)
 export ET_ROOTFS_ISSUE := $(shell printf "etinker: $(ET_BOARD)")
-export ET_ROOTFS_CACHED_VERSION := $(shell sed -n 's/rootfs-ref://p' $(ET_BOARD_DIR)/software.conf)
+export ET_ROOTFS_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) rootfs-ref)
 
 rootfs_defconfig := et_$(subst -,_,$(ET_ROOTFS_TYPE))_defconfig
 rootfs_type := $(ET_ROOTFS_TYPE)

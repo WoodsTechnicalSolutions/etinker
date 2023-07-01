@@ -7,29 +7,18 @@
 # available under the terms of the GNU General Public License version 3.
 #
 
-ifneq ($(ET_BOARD_VENDOR),$(ET_HOST_OS_ID))
-ifneq ($(shell ls $(ET_BOARD_DIR)/software.conf 2> /dev/null),$(ET_BOARD_DIR)/software.conf)
-$(error [ 'etinker' requires '$(ET_BOARD_DIR)/software.conf' ***)
-endif
-endif
-
 # check for existence of a source tree
 define software-check
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] USING $(ET_SOFTWARE_DIR)/$1 for $2 *****\n\n"
 	@if ! [ -d $(ET_SOFTWARE_DIR)/$1 ] || [ "fetch" = "$3" ]; then \
 		mkdir -p $(ET_SOFTWARE_DIR); \
 		(cd $(ET_SOFTWARE_DIR) && \
-			if [ "toolchain" = "$2" ]; then \
-				export et_url="$(shell sed -n 's/$2$4-url://p' $(ET_DIR)/boards/$(ET_CROSS_TUPLE)/software.conf)"; \
-				export et_ref="$(shell sed -n 's/$2$4-ref://p' $(ET_DIR)/boards/$(ET_CROSS_TUPLE)/software.conf)"; \
-			else \
-				export et_url="$(shell sed -n 's/$2$4-url://p' $(ET_BOARD_DIR)/software.conf)"; \
-				export et_ref="$(shell sed -n 's/$2$4-ref://p' $(ET_BOARD_DIR)/software.conf)"; \
-			fi; \
+			export et_url="$(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) $2-url)"; \
+			export et_ref="$(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) $2-ref)"; \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] et_url=$$et_url *****\n"; \
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] et_ref=$$et_ref *****\n\n"; \
 			case $2 in \
-			toolchain | bootloader | kernel | rootfs) \
+			toolchain | bootloader* | kernel* | rootfs) \
 				if [ -d $1 ]; then \
 					(cd $1 && git restore . && git clean -df && git fetch --all && git fetch --tags); \
 				else \

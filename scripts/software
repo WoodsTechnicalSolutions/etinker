@@ -1,0 +1,26 @@
+#!/bin/bash
+
+ET_DIR="`realpath -e $(dirname $0)/..`"
+ET_BOARD_DIR="${ET_DIR}/boards/${1}"
+
+# overridden board-specific definition
+if [ -f ${ET_BOARD_DIR}/override.conf ] && grep -q "${2}" ${ET_BOARD_DIR}/override.conf; then
+	sed -n s/${2}://p ${ET_BOARD_DIR}/override.conf
+	exit 0
+fi
+
+# overridden common definition
+if [ -f ${ET_DIR}/boards/override.conf ] && grep -q "${2}" ${ET_DIR}/boards/override.conf; then
+	sed -n s/${2}://p ${ET_DIR}/boards/override.conf
+	exit 0
+fi
+
+if grep -q "${2}" ${ET_BOARD_DIR}/software.conf; then
+	# board-specific definition
+	sed -n s/${2}://p ${ET_BOARD_DIR}/software.conf
+else
+	# common definition
+	sed -n s/${2}://p ${ET_DIR}/boards/software.conf
+fi
+
+exit 0

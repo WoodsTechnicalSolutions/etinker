@@ -82,10 +82,15 @@ esac
 
 # check state of boards directory
 for n in `ls ${ET_DIR}/boards`; do
+	if [ "$n" = "software.conf" ]; then
+		continue
+	fi
+
 	if ! [ -f ${ET_DIR}/boards/$n/etinker.mk ]; then
 		printf "'$n' is not a valid etinker board!\n" $n
 		exit 1
 	fi
+
 	if is_virtual $n; then
 		continue
 	fi
@@ -93,6 +98,10 @@ done
 
 # operate on valid boards
 for n in `ls ${ET_DIR}/boards`; do
+	if [ "$n" = "software.conf" ]; then
+		continue
+	fi
+
 	if is_virtual $n; then
 		continue
 	fi

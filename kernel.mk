@@ -32,7 +32,7 @@ endif
 export ET_KERNEL_LOADADDR := $(ET_BOARD_KERNEL_LOADADDR)
 export ET_KERNEL_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_KERNEL_TREE)
 export ET_KERNEL_HEADERS_DIR ?= $(ET_SYSROOT_DIR)/usr/include
-export ET_KERNEL_CACHED_VERSION := $(shell sed -n 's/kernel$(ET_KERNEL_VARIANT)-ref://p' $(ET_BOARD_DIR)/software.conf)
+export ET_KERNEL_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) kernel$(ET_KERNEL_VARIANT)-ref)
 export ET_KERNEL_CROSS_PARAMS := ARCH=$(ET_KERNEL_ARCH) CROSS_COMPILE=$(ET_CROSS_COMPILE)
 
 kernel_defconfig := et_$(subst -,_,$(ET_KERNEL_TYPE))_defconfig
@@ -117,11 +117,11 @@ define kernel-version
 endef
 
 define kernel-software
-	$(call software-check,$(ET_KERNEL_TREE),kernel,fetch,$(ET_KERNEL_VARIANT))
+	$(call software-check,$(ET_KERNEL_TREE),kernel$(ET_KERNEL_VARIANT),fetch)
 endef
 
 define kernel-depends
-	$(call software-check,$(ET_KERNEL_TREE),kernel)
+	$(call software-check,$(ET_KERNEL_TREE),kernel$(ET_KERNEL_VARIANT))
 	@mkdir -p $(ET_KERNEL_DIR)/boot
 	@mkdir -p $(ET_KERNEL_DIR)/usr/lib/modules
 	@mkdir -p $(ET_KERNEL_BUILD_BOOT_DIR)

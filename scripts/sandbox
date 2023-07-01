@@ -1,6 +1,8 @@
 #!/bin/bash
 #
 
+ET_DIR="`realpath -e $(dirname $0)/..`"
+
 usage ()
 {
 	printf "\nusage: sandbox <command>\n\n"
@@ -67,10 +69,15 @@ esac
 
 # check state of boards directory
 for n in `ls boards`; do
+	if [ "$n" = "software.conf" ]; then
+		continue
+	fi
+
 	if ! [ -f boards/$n/etinker.mk ]; then
 		printf "'$n' is not a valid etinker board!\n" $n
 		exit 1
 	fi
+
 	if is_virtual $n; then
 		continue
 	fi
@@ -78,13 +85,17 @@ done
 
 # operate on valid boards
 for n in `ls boards`; do
+	if [ "$n" = "software.conf" ]; then
+		continue
+	fi
+
 	if is_virtual $n; then
 		continue
 	fi
 
 	# baseline boards
 	case $n in
-	ek-tm4c* | nrf* | aml-s905x-cc* | am335x-* | ls1012afrdm* | ls1043ardb* | omap3-evm* | pynq-z2* | sama5d3-xpld*)
+	ek-tm4c* | nrf* | aml-s905x-cc | am335x-pocketbeagle | ls1012afrdm | ls1043ardb | omap3-evm | pynq-z2 | sama5d3-xpld)
 		case $n in
 		ek-tm4c* | nrf*)
 			case "$@" in
@@ -98,14 +109,26 @@ for n in `ls boards`; do
 		*)
 			;;
 		esac
-		if [ "pynq-z2" == "`echo $n | grep -o pynq-z2`" ]; then
-			if ! [ -d boards/zynq/fpga/sdk ]; then
+		if [ "pynq-z2" == "$n" ]; then
+			# Xilinx board requires a generated FPGA project
+			if ! [ -d ${ET_DIR}/boards/zynq/fpga/sdk ]; then
 				continue
 			fi
 		fi
 		if ! do_make $n "$@"; then
 			printf "etinker $0 failed!\n"
 			exit 1
+		fi
+		if [ "pynq-z2" == "$n" ]; then
+			# build the Xilinx variant
+			export ET_KERNEL_VARIANT="-xlnx"
+			export ET_BOOTLOADER_VARIANT="-xlnx"
+			if ! do_make $n "$@"; then
+				printf "etinker $0 failed!\n"
+				exit 1
+			fi
+			unset ET_KERNEL_VARIANT
+			unset ET_BOOTLOADER_VARIANT
 		fi
 		;;
 	*)
