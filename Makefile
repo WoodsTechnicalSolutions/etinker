@@ -103,9 +103,6 @@ info:
 	@printf "ET_SCRIPTS_DIR: $(ET_SCRIPTS_DIR)\n"
 	@printf "ET_SOFTWARE_DIR: $(ET_SOFTWARE_DIR)\n"
 	@printf "ET_TARBALLS_DIR: $(ET_TARBALLS_DIR)\n"
-	@if [ -n "$(ET_SYSROOT_DIR)" ]; then \
-		printf "ET_SYSROOT_DIR: $(ET_SYSROOT_DIR)\n"; \
-	fi
 	@if [ -n "$(ET_CUSTOM_DIR)" ]; then \
 		printf "ET_CUSTOM_DIR: $(ET_CUSTOM_DIR)\n"; \
 	fi

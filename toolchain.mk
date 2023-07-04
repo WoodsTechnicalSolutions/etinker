@@ -30,6 +30,7 @@ export ET_TOOLCHAIN_VERSION := $(shell printf "%s" $(toolchain_version) | sed s,
 export ET_TOOLCHAIN_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) toolchain-ref)
 export ET_TOOLCHAIN_DIR := $(ET_DIR)/toolchain/$(ET_CROSS_TUPLE)
 export ET_TOOLCHAIN_BUILD_DIR := $(ET_DIR)/toolchain/build/$(ET_CROSS_TUPLE)
+export ET_TOOLCHAIN_SYSROOT_DIR := $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot
 export ET_TOOLCHAIN_TARBALLS_DIR := $(ET_TARBALLS_DIR)/toolchain
 export ET_TOOLCHAIN_GENERATOR_DIR := $(ET_TOOLCHAIN_BUILD_DIR)/generator
 export ET_TOOLCHAIN_GENERATOR := $(ET_TOOLCHAIN_GENERATOR_DIR)/bin/ct-ng
@@ -211,6 +212,7 @@ define toolchain-info
 		printf "ET_TOOLCHAIN_BUILD_DEFCONFIG: $(ET_TOOLCHAIN_BUILD_DEFCONFIG)\n"; \
 		printf "ET_TOOLCHAIN_DEFCONFIG: $(ET_TOOLCHAIN_DEFCONFIG)\n"; \
 		printf "ET_TOOLCHAIN_DIR: $(ET_TOOLCHAIN_DIR)\n"; \
+		printf "ET_TOOLCHAIN_SYSROOT_DIR: $(ET_TOOLCHAIN_SYSROOT_DIR)\n"; \
 		printf "ET_TOOLCHAIN_TARGET_FINAL: $(ET_TOOLCHAIN_TARGET_FINAL)\n"; \
 	fi
 endef
