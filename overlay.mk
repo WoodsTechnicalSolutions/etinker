@@ -17,6 +17,7 @@ include $(ET_DIR)/packages/cryptodev-linux.mk
 include $(ET_DIR)/packages/openssl.mk
 include $(ET_DIR)/packages/wireless-regdb.mk
 include $(ET_DIR)/packages/rt-tests.mk
+include $(ET_DIR)/packages/trace-cmd.mk
 
 define overlay-depends
 	@mkdir -p $(ET_OVERLAY_DIR)
@@ -32,6 +33,7 @@ define overlay-software
 	$(call openssl-software)
 	$(call wireless-regdb-software)
 	$(call rt-tests-software)
+	$(call trace-cmd-software)
 endef
 
 define overlay-version
@@ -40,6 +42,7 @@ define overlay-version
 	$(call openssl-version)
 	$(call wireless-regdb-version)
 	$(call rt-tests-version)
+	$(call trace-cmd-version)
 endef
 
 define overlay-clean
@@ -48,6 +51,7 @@ define overlay-clean
 	$(call openssl-clean)
 	$(call wireless-regdb-clean)
 	$(call rt-tests-clean)
+	$(call trace-cmd-clean)
 endef
 
 define overlay-purge
@@ -56,6 +60,7 @@ define overlay-purge
 	$(call openssl-purge)
 	$(call wireless-regdb-purge)
 	$(call rt-tests-purge)
+	$(call trace-cmd-purge)
 endef
 
 define overlay-info
@@ -67,6 +72,7 @@ define overlay-info
 	$(call openssl-info)
 	$(call wireless-regdb-info)
 	$(call rt-tests-info)
+	$(call trace-cmd-info)
 endef
 
 define overlay-sync
@@ -91,6 +97,7 @@ overlay:
 	$(call openssl-all)
 	$(call wireless-regdb-all)
 	$(call rt-tests-all)
+	$(call trace-cmd-all)
 
 .PHONY: overlay-clean
 overlay-clean:
