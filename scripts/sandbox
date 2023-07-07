@@ -10,6 +10,7 @@ usage ()
 	printf "\tmake <targets> - Build specified board targets\n"
 	printf "\tbuild          - Build all boards\n"
 	printf "\tinfo           - Show build variables for all boards\n"
+	printf "\tsoftware       - Update/Sync Git repos for all boards\n"
 	printf "\tupdate         - Clean and build all boards\n"
 	printf "\tversion        - Show version information for all boards\n\n"
 }
@@ -22,7 +23,7 @@ do_make ()
 		args="`echo $@ | cut -d ' ' -f 3-9`"
 		ET_BOARD=$1 make $args
 		;;
-	info | update | version)
+	info | software | update | version)
 		ET_BOARD=$1 make $2
 		;;
 	build)
@@ -52,13 +53,13 @@ fi
 # validate first positional argumement
 case $1 in
 make)
-	if [ -z "2" ]; then
+	if [ -z "$2" ]; then
 		printf "Missing 'make' arguments!\n"
 		usage
 		exit 1
 	fi
 	;;
-build | info | update | version)
+build | info | software | update | version)
 	;;
 *)
 	printf "Invalid argument list!\n"
@@ -93,18 +94,13 @@ for n in `ls boards`; do
 		continue
 	fi
 
-	# baseline boards
+	# baseline boards running Linux
 	case $n in
-	ek-tm4c* | nrf* | aml-s905x-cc | am335x-pocketbeagle | ls1012afrdm | ls1043ardb | omap3-evm | pynq-z2 | sama5d3-xpld)
-		case $n in
-		ek-tm4c* | nrf*)
-			case "$@" in
-			*bootloader* | *kernel* | *rootfs* | *overlay*)
-				continue
-				;;
-			*)
-				;;
-			esac
+	am335x-pocketbeagle | aml-s905x-cc | ls1012afrdm | ls1043ardb | omap3-evm | pynq-z2 | sama5d3-xpld)
+		# skip certain targets Linux
+		case "$@" in
+		*app*)
+			continue
 			;;
 		*)
 			;;
@@ -130,6 +126,19 @@ for n in `ls boards`; do
 			unset ET_KERNEL_VARIANT
 			unset ET_BOOTLOADER_VARIANT
 		fi
+		;;
+	ek-tm4c* | nrf*)
+		# allow certain targets for MCU
+		case "$@" in
+		*app* | *toolchain* | info | software | update | version)
+			if ! do_make $n "$@"; then
+				printf "etinker $0 failed!\n"
+				exit 1
+			fi
+			;;
+		*)
+			;;
+		esac
 		;;
 	*)
 		;;
