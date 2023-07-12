@@ -9,6 +9,7 @@ CONFIG_AM33XX=y
 CONFIG_SPL=y
 # CONFIG_LOCALVERSION_AUTO is not set
 CONFIG_SPL_LOAD_FIT=y
+# CONFIG_BOOTMETH_VBE_REQUEST is not set
 CONFIG_OF_BOARD_SETUP=y
 CONFIG_DISTRO_DEFAULTS=y
 CONFIG_BOOTCOMMAND="if mmc rescan; then if mmc dev 0; then fatload mmc 0 ${scriptaddr} uEnv.txt && env import -t ${scriptaddr} ${filesize} && run uenvcmd; fi; fi; run findfdt; run init_console; run distro_bootcmd"
@@ -38,6 +39,7 @@ CONFIG_MD5SUM_VERIFY=y
 CONFIG_CMD_GPT_RENAME=y
 CONFIG_CMD_LSBLK=y
 CONFIG_CMD_MBR=y
+CONFIG_CMD_WRITE=y
 CONFIG_CMD_SETEXPR_FMT=y
 CONFIG_BOOTP_DNS2=y
 CONFIG_SYS_DISABLE_AUTOLOAD=y
