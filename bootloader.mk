@@ -131,11 +131,11 @@ define bootloader-finalize
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_BUILD_IMAGE) build FAILED! *****\n\n"; \
 		exit 2; \
 	fi
-	@if [ -f $(ET_DIR)/boards/$(ET_BOARD)/config/u-boot-$(ET_BOOTLOADER_TYPE)/uEnv.txt ]; then \
-		cp -av $(ET_DIR)/boards/$(ET_BOARD)/config/u-boot-$(ET_BOOTLOADER_TYPE)/uEnv*.txt $(ET_BOOTLOADER_DIR)/boot/; \
+	@if [ -f $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config/u-boot-$(ET_BOOTLOADER_TYPE)/uEnv.txt ]; then \
+		cp -av $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config/u-boot-$(ET_BOOTLOADER_TYPE)/uEnv*.txt $(ET_BOOTLOADER_DIR)/boot/; \
 	fi
-	@if [ -d $(ET_DIR)/boards/$(ET_BOARD)/config/u-boot-$(ET_BOOTLOADER_TYPE)/extlinux ]; then \
-		cp -av $(ET_DIR)/boards/$(ET_BOARD)/config/u-boot-$(ET_BOOTLOADER_TYPE)/extlinux $(ET_BOOTLOADER_DIR)/boot/; \
+	@if [ -d $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config/u-boot-$(ET_BOOTLOADER_TYPE)/extlinux ]; then \
+		cp -av $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config/u-boot-$(ET_BOOTLOADER_TYPE)/extlinux $(ET_BOOTLOADER_DIR)/boot/; \
 	fi
 	@cp -av $(ET_BOOTLOADER_BUILD_IMAGE) $(ET_BOOTLOADER_DIR)/boot/
 	$(call bootloader-finalize-$(ET_BOARD))
