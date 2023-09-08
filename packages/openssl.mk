@@ -124,6 +124,7 @@ define openssl-config
 				no-tests \
 				no-fuzz-libfuzzer \
 				no-fuzz-afl \
+				no-afalgeng \
 				zlib-dynamic); \
 	fi
 endef

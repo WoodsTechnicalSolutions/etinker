@@ -10,9 +10,12 @@ usage ()
 	printf "\nusage: rootfs-bump <command>\n\n"
 	printf "<command>\n"
 	printf "\tmake <target> - Direct make target\n"
+	printf "\t*config       - {g,menu,n,old}config\n"
 	printf "\tbuild         - Purge and Build\n"
+	printf "\tinfo          - Show build variables for all boards\n"
+	printf "\tsoftware      - Update/Sync Git repos for all boards\n"
 	printf "\tupdate        - Clean and Build\n"
-	printf "\t*config       - {g,menu,n,old}config\n\n"
+	printf "\tversion       - Show version information for all boards\n\n"
 }
 
 do_make ()
@@ -25,7 +28,7 @@ do_make ()
 	*config)
 		ET_BOARD=$1 make rootfs-$2
 		;;
-	update)
+	info | software | update | version)
 		ET_BOARD=$1 make rootfs-$2 kernel-$2 overlay-$2
 		;;
 	build)
@@ -61,7 +64,7 @@ make)
 		exit 1
 	fi
 	;;
-*config | update | build)
+*config | build | info | software | update | version)
 	;;
 *)
 	printf "Invalid argument list!\n"

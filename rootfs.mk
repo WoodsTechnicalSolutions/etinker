@@ -80,6 +80,7 @@ define rootfs-depends
 	@if [ -f $(ET_ROOTFS_DEFCONFIG) ]; then \
 		rsync $(ET_ROOTFS_DEFCONFIG) $(ET_ROOTFS_SOFTWARE_DIR)/configs/ > /dev/null; \
 	fi
+	@printf "LIBOPENSSL_OVERRIDE_SRCDIR = $(ET_SOFTWARE_DIR)/openssl\n" > $(ET_ROOTFS_BUILD_DIR)/local.mk
 endef
 
 define rootfs-build
