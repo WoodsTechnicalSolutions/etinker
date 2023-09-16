@@ -175,14 +175,17 @@ endef
 
 define toolchain-clean
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-clean *****\n\n"
-	$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/src
-	$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/$(ET_CROSS_TUPLE)
+	$(call toolchain-build,clean)
 endef
 
 define toolchain-purge
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-purge *****\n\n"
-	$(RM) -r $(ET_TOOLCHAIN_DIR)
-	$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-purge [$(ET_PURGE)] *****\n\n"
+	@if [ "yes" = "$(ET_PURGE)" ]; then \
+		(set -x; \
+			$(RM) -r $(ET_TOOLCHAIN_DIR); \
+			$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR); \
+		); \
+	fi
 endef
 
 define toolchain-info
@@ -261,45 +264,40 @@ endif
 
 .PHONY: toolchain
 toolchain: $(ET_TOOLCHAIN_TARGET_FINAL)
-$(ET_TOOLCHAIN_TARGET_FINAL): $(ET_TOOLCHAIN_BUILD_CONFIG)
 ifneq ($(ET_BOARD_VENDOR),$(ET_HOST_OS_ID))
+$(ET_TOOLCHAIN_TARGET_FINAL): $(ET_TOOLCHAIN_BUILD_CONFIG)
 	$(call toolchain-build,build)
 endif
 
-toolchain-%: $(ET_TOOLCHAIN_BUILD_CONFIG)
 ifneq ($(ET_BOARD_VENDOR),$(ET_HOST_OS_ID))
+toolchain-%: $(ET_TOOLCHAIN_BUILD_CONFIG)
 	$(call toolchain-build,$(*F))
 endif
 
 .PHONY: toolchain-config
+ifneq ($(ET_BOARD_VENDOR),$(ET_HOST_OS_ID))
 toolchain-config: $(ET_TOOLCHAIN_BUILD_CONFIG)
 $(ET_TOOLCHAIN_BUILD_CONFIG): $(ET_TOOLCHAIN_GENERATOR)
-ifneq ($(ET_BOARD_VENDOR),$(ET_HOST_OS_ID))
 	$(call toolchain-config)
 endif
 
 .PHONY: toolchain-generator
+ifneq ($(ET_BOARD_VENDOR),$(ET_HOST_OS_ID))
 toolchain-generator: $(ET_TOOLCHAIN_GENERATOR)
 $(ET_TOOLCHAIN_GENERATOR):
-ifneq ($(ET_BOARD_VENDOR),$(ET_HOST_OS_ID))
 	$(call toolchain-generator)
 endif
 
 .PHONY: toolchain-clean
-toolchain-clean:
 ifneq ($(ET_BOARD_VENDOR),$(ET_HOST_OS_ID))
-ifeq ($(ET_CLEAN),yes)
-	$(call toolchain-build,clean)
-endif
+toolchain-clean:
 	$(call $@)
 endif
 
 .PHONY: toolchain-purge
 ifneq ($(ET_BOARD_VENDOR),$(ET_HOST_OS_ID))
 toolchain-purge:
-ifeq ($(ET_PURGE),yes)
 	$(call $@)
-endif
 endif
 
 .PHONY: toolchain-version
