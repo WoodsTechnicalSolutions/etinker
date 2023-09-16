@@ -16,3 +16,5 @@
 /sama5d3-xpld-*
 /*/override.conf
 /override.conf
+/*/config/linux/et_*_master_defconfig
+/*/config/u-boot*/et_*_master_defconfig
