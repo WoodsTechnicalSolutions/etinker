@@ -31,6 +31,7 @@ $(error [ ET_BOARD_TYPE is NOT 'sama5' ] ***)
 endif
 
 ET_BOARD_KERNEL_ARCH := arm
+ET_BOARD_KERNEL_VENDOR := microchip/
 ET_BOARD_KERNEL_LOADADDR ?= 0x22000000
 
 ET_BOARD_BOOTLOADER_IMAGE := u-boot.img

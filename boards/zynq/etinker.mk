@@ -35,6 +35,7 @@ $(error [ Zynq FPGA build is missing! ( $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/s
 endif
 
 ET_BOARD_KERNEL_ARCH := arm
+ET_BOARD_KERNEL_VENDOR := xilinx/
 ET_BOARD_KERNEL_LOADADDR ?= 0x02080000
 
 ET_BOARD_BOOTLOADER_IMAGE ?= u-boot.img
