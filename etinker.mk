@@ -50,6 +50,11 @@ export ET_RELEASE ?= no
 
 export ET_MAKE := $(MAKE) --no-print-directory
 
+ifdef ET_VARIANT
+export ET_KERNEL_VARIANT := $(ET_VARIANT)
+export ET_BOOTLOADER_VARIANT := $(ET_VARIANT)
+endif
+
 # pull in board specific information
 include $(ET_DIR)/boards/$(ET_BOARD)/etinker.mk
 
