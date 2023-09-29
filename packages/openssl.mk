@@ -135,10 +135,10 @@ define openssl-clean
 	$(RM) $(ET_OPENSSL_BUILD_CRYPTO_SO)
 	$(RM) $(ET_OPENSSL_BUILD_SSL_SO)
 	$(RM) $(ET_OPENSSL_BUILD_BIN)
-	$(RM) $(ET_OVERLAY_DIR)/usr/lib/*ssl*
-	$(RM) $(ET_OVERLAY_DIR)/usr/lib/*crypto*
-	$(RM) $(ET_OVERLAY_DIR)/usr/lib/pkgconfig/*ssl*
-	$(RM) $(ET_OVERLAY_DIR)/usr/lib/pkgconfig/*crypto*
+	$(RM) -r $(ET_OVERLAY_DIR)/usr/lib/*ssl*
+	$(RM) -r $(ET_OVERLAY_DIR)/usr/lib/*crypto*
+	$(RM) -r $(ET_OVERLAY_DIR)/usr/lib/pkgconfig/*ssl*
+	$(RM) -r $(ET_OVERLAY_DIR)/usr/lib/pkgconfig/*crypto*
 	$(RM) -r $(ET_OVERLAY_DIR)/usr/lib/engines*
 	$(RM) -r $(ET_OVERLAY_DIR)/usr/include/openssl
 endef
