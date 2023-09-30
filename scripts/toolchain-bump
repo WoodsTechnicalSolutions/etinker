@@ -11,7 +11,11 @@ usage ()
 	printf "<command>\n"
 	printf "\tmake <target> - Direct make target\n"
 	printf "\tbuild         - Purge and Build\n"
-	printf "\t*config       - {g,menu,n,old,savedef}config\n\n"
+	printf "\t*config       - {g,menu,n,old,savedef}config\n"
+	printf "\tinfo          - Show build variables for all boards\n"
+	printf "\tsoftware      - Update/Sync Git repos for all boards\n"
+	printf "\tupdate        - Clean and Build\n"
+	printf "\tversion       - Show version information for all boards\n\n"
 }
 
 do_make ()
@@ -22,9 +26,14 @@ do_make ()
 		ET_BOARD=$1 make toolchain-$3
 		;;
 	*config)
-		# update 'ct-ng'
-		rm -rf ${ET_DIR}/toolchain/build/$1/generator
-		ET_BOARD=$1 make toolchain-generator
+		if [ "oldconfig" = "$2" ]; then
+			# update 'ct-ng'
+			rm -rf ${ET_DIR}/toolchain/build/$1/generator
+			ET_BOARD=$1 make toolchain-generator
+		fi
+		ET_BOARD=$1 make toolchain-$2
+		;;
+	info | software | update | version)
 		ET_BOARD=$1 make toolchain-$2
 		;;
 	build)
@@ -60,7 +69,7 @@ make)
 		exit 1
 	fi
 	;;
-build | *config)
+*config | build | info | software | update | version)
 	;;
 *)
 	printf "Invalid argument list!\n"
@@ -71,6 +80,10 @@ esac
 
 # check state of boards directory
 for n in `ls ${ET_DIR}/boards`; do
+	if [ "$n" = "software.conf" ]; then
+		continue
+	fi
+
 	if ! [ -f ${ET_DIR}/boards/$n/etinker.mk ]; then
 		printf "'$n' is not a valid etinker board!\n" $n
 		exit 1
@@ -79,6 +92,10 @@ done
 
 # operate on valid boards
 for n in `ls ${ET_DIR}/boards`; do
+	if [ "$n" = "software.conf" ]; then
+		continue
+	fi
+
 	if is_virtual $n; then
 		continue
 	fi
