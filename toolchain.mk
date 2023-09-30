@@ -42,6 +42,7 @@ export ET_TOOLCHAIN_TARGET_FINAL ?= $(ET_TOOLCHAIN_DIR)/bin/$(ET_CROSS_TUPLE)-gd
 # configured component versions
 export ET_TOOLCHAIN_GCC_VERSION := $(shell grep -oP 'CT_GCC_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_BUILD_CONFIG) 2>/dev/null)
 export ET_TOOLCHAIN_GDB_VERSION := $(shell grep -oP 'CT_GDB_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_BUILD_CONFIG) 2>/dev/null)
+export ET_TOOLCHAIN_BINUTILS_VERSION := $(shell grep -oP 'CT_BINUTILS_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_BUILD_CONFIG) 2>/dev/null)
 ifeq ($(CT_KERNEL),linux)
 export ET_TOOLCHAIN_GLIBC_VERSION := $(shell grep -oP 'CT_GLIBC_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_BUILD_CONFIG) 2>/dev/null)
 export ET_TOOLCHAIN_LINUX_VERSION := $(shell grep -oP 'CT_LINUX_VERSION=[^"]*"\K[^"]*' $(ET_TOOLCHAIN_BUILD_CONFIG) 2>/dev/null)
@@ -54,6 +55,7 @@ endif
 
 define toolchain-version
 	@printf "ET_TOOLCHAIN_VERSION: \033[0;33m[$(ET_TOOLCHAIN_CACHED_VERSION)]\033[0m $(ET_TOOLCHAIN_VERSION)\n"
+	@printf "ET_TOOLCHAIN_BINUTILS_VERSION: $(ET_TOOLCHAIN_BINUTILS_VERSION)\n"
 	@printf "ET_TOOLCHAIN_GCC_VERSION: $(ET_TOOLCHAIN_GCC_VERSION)\n"
 	@printf "ET_TOOLCHAIN_GDB_VERSION: $(ET_TOOLCHAIN_GDB_VERSION)\n"
 	@if [ "bare-metal" = "$(CT_KERNEL)" ]; then \
@@ -196,6 +198,7 @@ define toolchain-info
 	else \
 		printf "ET_TOOLCHAIN_TREE: $(ET_TOOLCHAIN_TREE)\n"; \
 		printf "ET_TOOLCHAIN_VERSION: $(ET_TOOLCHAIN_VERSION)\n"; \
+		printf "ET_TOOLCHAIN_BINUTILS_VERSION: $(ET_TOOLCHAIN_BINUTILS_VERSION)\n"; \
 		printf "ET_TOOLCHAIN_GCC_VERSION: $(ET_TOOLCHAIN_GCC_VERSION)\n"; \
 		printf "ET_TOOLCHAIN_GDB_VERSION: $(ET_TOOLCHAIN_GDB_VERSION)\n"; \
 		if [ "$(CT_KERNEL)" = "linux" ]; then \
