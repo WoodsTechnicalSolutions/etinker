@@ -24,6 +24,6 @@ TivaWare(tm) for C Series Libraries
 6. Build TivaWare libraries for newlib-nano and picolibc variants
 
    $ cd /path/to/etinker/software/tivaware-newlib-nano
-   $ ET_DIR=/path/to/etinker make clean all
+   $ ET_DIR=/path/to/etinker make clean all ET_MCU_LIBC=newlib-nano
    $ cd /path/to/etinker/software/tivaware-picolibc
    $ ET_DIR=/path/to/etinker make clean all ET_MCU_LIBC=picolibc

@@ -111,6 +111,12 @@ CFLAGS=--sysroot=$(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE) \
        -pedantic           \
        -DPART_${PART}      \
        -c
+ifeq ($(ET_MCU_LIBC),picolibc)
+CFLAGS += -I $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/include
+endif
+ifeq ($(ET_MCU_LIBC),newlib-nano)
+CFLAGS += -I $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/include
+endif
 
 #
 # The command for calling the library archiver.

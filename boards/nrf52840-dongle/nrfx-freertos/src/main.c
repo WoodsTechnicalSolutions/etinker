@@ -5,6 +5,16 @@
 #include <stddef.h>
 #include <ctype.h>
 
+//#ifdef __picolibc_deprecated
+/* 'picolibc' is present */
+extern unsigned int __data_start;
+unsigned int __data_source = (unsigned int)&__data_start;
+extern unsigned int __tdata_start;
+unsigned int __tls_base = (unsigned int)&__tdata_start;
+extern unsigned int __tbss_start;
+unsigned int __arm32_tls_tcb_offset = (unsigned int)&__tbss_start;
+//#endif
+
 #include "FreeRTOS.h"
 #include "task.h"
 #include "timers.h"
@@ -16,6 +26,16 @@
 #include "nrfx_saadc.h"
 
 #include "boards.h"
+
+#ifndef stdin
+FILE *const stdin = NULL;
+#endif
+#ifndef stdout
+FILE *const stdout = NULL;
+#endif
+#ifndef stderr
+FILE *const stderr = NULL;
+#endif
 
 extern int syscalls_init(nrfx_uarte_t const *uart,
 					nrfx_uarte_config_t const *config);

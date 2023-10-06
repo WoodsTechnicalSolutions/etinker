@@ -84,6 +84,9 @@ CFLAGS += -I $(FREERTOS_DIR)/portable/GCC/ARM_CM4F
 ifeq ($(ET_MCU_LIBC),picolibc)
 CFLAGS += -I $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/include
 endif
+ifeq ($(ET_MCU_LIBC),newlib-nano)
+CFLAGS += -I $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/include
+endif
 
 LDFLAGS  = $(OPTIMIZE)
 LDFLAGS += $(ET_LDFLAGS)
