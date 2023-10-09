@@ -25,15 +25,12 @@ do_make ()
 	make)
 		ET_BOARD=$1 make toolchain-$3
 		;;
-	*config)
+	*config | info | software | update | version)
 		if [ "oldconfig" = "$2" ]; then
 			# update 'ct-ng'
 			rm -rf ${ET_DIR}/toolchain/build/$1/generator
 			ET_BOARD=$1 make toolchain-generator
 		fi
-		ET_BOARD=$1 make toolchain-$2
-		;;
-	info | software | update | version)
 		ET_BOARD=$1 make toolchain-$2
 		;;
 	build)
