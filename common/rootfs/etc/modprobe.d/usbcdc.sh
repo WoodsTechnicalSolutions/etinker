@@ -31,31 +31,17 @@ if [ -f $ko ]; then
 		grep -Eo '"product":.*?[^\\]"' /etc/etinker.conf | cut -d '"' -f 4 > strings/0x409/product
 
 		mkdir -p configs/c.1/strings/0x409
-		echo "Config 1: RNDIS network" > configs/c.1/strings/0x409/configuration
+		echo "ACM+NCM" > configs/c.1/strings/0x409/configuration
 		echo 250 > configs/c.1/MaxPower
 		# USB_OTG_SRP | USB_OTG_HNP
 		echo 0x80 > configs/c.1/bmAttributes
 
-		# MS Windows 10 RNDIS
-		# - [http://irq5.io/2016/12/22/raspberry-pi-zero-as-multiple-usb-gadgets/]
-		echo 1 > os_desc/use
-		echo 0xcd > os_desc/b_vendor_code
-		echo MSFT100 > os_desc/qw_sign
-
-		# Ethernet (RNDIS)
-		mkdir -p functions/rndis.usb0
-		# taken from Debian's am335x_evm boot scripts
-		if [ -f functions/rndis.usb0/class ]; then
-			echo EF > functions/rndis.usb0/class
-			echo 04 > functions/rndis.usb0/subclass
-			echo 01 > functions/rndis.usb0/protocol
-		fi
-		echo RNDIS > functions/rndis.usb0/os_desc/interface.rndis/compatible_id
-		echo 5162001 > functions/rndis.usb0/os_desc/interface.rndis/sub_compatible_id
+		# Ethernet (NCM)
+		mkdir -p functions/ncm.usb0
 		ln -s configs/c.1 os_desc
-		grep -Eo '"host_addr":.*?[^\\]"' /etc/etinker.conf | cut -d '"' -f 4 > functions/rndis.usb0/host_addr
-		grep -Eo '"dev_addr":.*?[^\\]"' /etc/etinker.conf | cut -d '"' -f 4 > functions/rndis.usb0/dev_addr
-		ln -s functions/rndis.usb0 configs/c.1/
+		grep -Eo '"host_addr":.*?[^\\]"' /etc/etinker.conf | cut -d '"' -f 4 > functions/ncm.usb0/host_addr
+		grep -Eo '"dev_addr":.*?[^\\]"' /etc/etinker.conf | cut -d '"' -f 4 > functions/ncm.usb0/dev_addr
+		ln -s functions/ncm.usb0 configs/c.1/
 
 		# Serial (ACM)
 		list="`grep -Eo '"acm":.*?[^\\]",' /etc/etinker.conf | cut -d '"' -f 4`"
