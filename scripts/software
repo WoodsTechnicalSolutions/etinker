@@ -10,8 +10,8 @@ if [ -f ${ET_BOARD_DIR}/override.conf ] && grep -q "${2}" ${ET_BOARD_DIR}/overri
 fi
 
 # overridden common definition
-if [ -f ${ET_DIR}/boards/override.conf ] && grep -q "${2}" ${ET_DIR}/boards/override.conf; then
-	sed -n s/${2}://p ${ET_DIR}/boards/override.conf
+if [ -f ${ET_DIR}/override.conf ] && grep -q "${2}" ${ET_DIR}/override.conf; then
+	sed -n s/${2}://p ${ET_DIR}/override.conf
 	exit 0
 fi
 
@@ -20,7 +20,7 @@ if grep -q "${2}" ${ET_BOARD_DIR}/software.conf; then
 	sed -n s/${2}://p ${ET_BOARD_DIR}/software.conf
 else
 	# common definition
-	sed -n s/${2}://p ${ET_DIR}/boards/software.conf
+	sed -n s/${2}://p ${ET_DIR}/software.conf
 fi
 
 exit 0

@@ -6,6 +6,7 @@
 /software
 /tarballs
 /toolchain
+/override.conf
 /*.patch
 *.log
 *.o

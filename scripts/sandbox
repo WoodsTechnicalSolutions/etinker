@@ -70,10 +70,6 @@ esac
 
 # check state of boards directory
 for n in `ls boards`; do
-	if [ "$n" = "software.conf" ]; then
-		continue
-	fi
-
 	if ! [ -f boards/$n/etinker.mk ]; then
 		printf "'$n' is not a valid etinker board!\n" $n
 		exit 1
@@ -86,10 +82,6 @@ done
 
 # operate on valid boards
 for n in `ls boards`; do
-	if [ "$n" = "software.conf" ]; then
-		continue
-	fi
-
 	if is_virtual $n; then
 		continue
 	fi
