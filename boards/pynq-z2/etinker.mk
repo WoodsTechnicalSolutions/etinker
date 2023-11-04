@@ -34,7 +34,7 @@ include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/etinker.mk
 
 ET_BOARD_TOOLCHAIN_TREE ?= crosstool-ng
 ET_BOARD_KERNEL_TREE ?= linux$(ET_KERNEL_VARIANT)
-ET_BOARD_BOOTLOADER_TREE ?= u-boot$(ET_BOOTLOADER_VARIANT)
+ET_BOARD_BOOTLOADER_TREE ?= u-boot
 ET_BOARD_ROOTFS_TREE ?= buildroot
 
 ET_BOARD_HOSTNAME ?= $(ET_BOARD)
@@ -47,9 +47,4 @@ ET_BOARD_BOOTLOADER_DT ?= zynq-pynq-z2
 ifneq ("$(ET_KERNEL_VARIANT)","")
 # fixup kernel version
 export USE_KERNEL_TREE_VERSION := $(ET_KERNEL_VARIANT)
-endif
-
-ifneq ("$(ET_BOOTLOADER_VARIANT)","")
-# fixup bootloader version
-export USE_BOOTLOADER_TREE_VERSION := $(ET_BOOTLOADER_VARIANT)
 endif
