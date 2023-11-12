@@ -339,7 +339,7 @@ $(ET_KERNEL_TARGET_FINAL): $(ET_KERNEL_BUILD_CONFIG)
 	$(call kernel-build-$(ET_BOARD))
 	$(call kernel-build,$(ET_KERNEL_VENDOR)$(ET_KERNEL_DT).dtb)
 ifdef ET_KERNEL_DT_ETINKER
-	$(call kernel-build,$(ET_KERNEL_VENDOR)$(ET_KERNEL_DT_ETINKER).dtb)
+	$(foreach dts,$(ET_KERNEL_DT_ETINKER),$(call kernel-build,$(ET_KERNEL_VENDOR)$(dts).dtb))
 endif
 	$(call kernel-build,modules)
 	$(call kernel-build,modules_install)
