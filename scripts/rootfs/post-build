@@ -94,10 +94,10 @@ omap2plus|sama5|zynq|meson|layerscape)
 		mkdir -p ${TARGET}/media/mmcblk0p2
 		mkdir -p ${TARGET}/media/mmcblk0p3
 		mkdir -p ${TARGET}/media/mmcblk0p4
-		printf "/dev/mmcblk0p1 /media/mmcblk0p1 auto defaults 0 0\n" >> ${TARGET}/etc/fstab
-		printf "/dev/mmcblk0p2 /media/mmcblk0p2 auto defaults 0 0\n" >> ${TARGET}/etc/fstab
-		printf "/dev/mmcblk0p3 /media/mmcblk0p3 auto defaults 0 0\n" >> ${TARGET}/etc/fstab
-		printf "/dev/mmcblk0p4 /media/mmcblk0p4 auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+		printf "/dev/mmcblk0p1 /media/mmcblk0p1 auto defaults,noauto 0 0\n" >> ${TARGET}/etc/fstab
+		printf "/dev/mmcblk0p2 /media/mmcblk0p2 auto defaults,noauto 0 0\n" >> ${TARGET}/etc/fstab
+		printf "/dev/mmcblk0p3 /media/mmcblk0p3 auto defaults,noauto 0 0\n" >> ${TARGET}/etc/fstab
+		printf "/dev/mmcblk0p4 /media/mmcblk0p4 auto defaults,noauto 0 0\n" >> ${TARGET}/etc/fstab
 		# Build '/usr/sbin/firmware-update' file for on-target updates of SD and eMMC
 		printf "#!/bin/bash\n" > ${TARGET}/usr/sbin/firmware-update
 		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
