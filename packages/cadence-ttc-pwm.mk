@@ -8,7 +8,7 @@
 #
 # [references]
 # - https://ip.cadence.com/ipportfolio/ip-portfolio-overview/systems-peripherals/bus-ip/pwm-ip
-# - https://github.com/XiphosSystemsCorp/cadence-ttc-pwm
+# - https://github.com/woodsts/cadence-ttc-pwm
 #
 
 ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -o zynq),zynq)
