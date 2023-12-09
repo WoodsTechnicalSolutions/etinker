@@ -8,7 +8,7 @@
 #
 # [references]
 # - https://wireless.wiki.kernel.org/en/developers/Regulatory/wireless-regdb
-# - https://git.kernel.org/pub/scm/linux/kernel/git/sforshee/wireless-regdb.git
+# - https://git.kernel.org/pub/scm/linux/kernel/git/wens/wireless-regdb.git
 # - https://git.busybox.net/buildroot/tree/package/wireless-regdb/wireless-regdb.mk
 #
 
@@ -18,14 +18,14 @@ export ET_WIRELESS_REGDB_TREE := wireless-regdb
 export ET_WIRELESS_REGDB_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_WIRELESS_REGDB_TREE)
 export ET_WIRELESS_REGDB_VERSION := $(shell cd $(ET_WIRELESS_REGDB_SOFTWARE_DIR) 2>/dev/null && git describe --long --dirty 2>/dev/null)
 export ET_WIRELESS_REGDB_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) wireless-regdb-ref)
-export ET_WIRELESS_REGDB_BUILD_X509_PEM := $(ET_WIRELESS_REGDB_SOFTWARE_DIR)/sforshee.x509.pem
-export ET_WIRELESS_REGDB_BUILD_PUB_PEM := $(ET_WIRELESS_REGDB_SOFTWARE_DIR)/sforshee.key.pub.pem
+export ET_WIRELESS_REGDB_BUILD_X509_PEM := $(ET_WIRELESS_REGDB_SOFTWARE_DIR)/wens.x509.pem
+export ET_WIRELESS_REGDB_BUILD_PUB_PEM := $(ET_WIRELESS_REGDB_SOFTWARE_DIR)/wens.key.pub.pem
 export ET_WIRELESS_REGDB_BUILD_DB_P7S := $(ET_WIRELESS_REGDB_SOFTWARE_DIR)/regulatory.db.p7s
 export ET_WIRELESS_REGDB_BUILD_DB := $(ET_WIRELESS_REGDB_SOFTWARE_DIR)/regulatory.db
 export ET_WIRELESS_REGDB_BUILD_BIN := $(ET_WIRELESS_REGDB_SOFTWARE_DIR)/regulatory.bin
 export ET_WIRELESS_REGDB_BUILD_CONFIG := $(ET_WIRELESS_REGDB_BUILD_BIN)
-export ET_WIRELESS_REGDB_X509_PEM := $(ET_OVERLAY_DIR)/etc/wireless-regdb/pubkeys/sforshee.x509.pem
-export ET_WIRELESS_REGDB_PUB_PEM := $(ET_OVERLAY_DIR)/etc/wireless-regdb/pubkeys/sforshee.key.pub.pem
+export ET_WIRELESS_REGDB_X509_PEM := $(ET_OVERLAY_DIR)/etc/wireless-regdb/pubkeys/wens.x509.pem
+export ET_WIRELESS_REGDB_PUB_PEM := $(ET_OVERLAY_DIR)/etc/wireless-regdb/pubkeys/wens.key.pub.pem
 export ET_WIRELESS_REGDB_DB_P7S := $(ET_OVERLAY_DIR)/usr/lib/firmware/regulatory.db.p7s
 export ET_WIRELESS_REGDB_DB := $(ET_OVERLAY_DIR)/usr/lib/firmware/regulatory.db
 export ET_WIRELESS_REGDB_BIN := $(ET_OVERLAY_DIR)/usr/lib/crda/regulatory.bin
@@ -56,11 +56,11 @@ define wireless-regdb-build
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call wireless-regdb-build 'make $1' *****\n\n"
 	@if [ "$1" = "all" ]; then \
 		if ! [ -f $(ET_WIRELESS_REGDB_BUILD_X509_PEM) ]; then \
-			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] wireless-regdb sforshee.x509.pem FAILED! *****\n"; \
+			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] wireless-regdb wens.x509.pem FAILED! *****\n"; \
 			exit 2; \
 		fi; \
 		if ! [ -f $(ET_WIRELESS_REGDB_BUILD_PUB_PEM) ]; then \
-			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] wireless-regdb sforshee.key.pub.pem FAILED! *****\n"; \
+			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] wireless-regdb wens.key.pub.pem FAILED! *****\n"; \
 			exit 2; \
 		fi; \
 		if ! [ -f $(ET_WIRELESS_REGDB_BUILD_DB_P7S) ]; then \
