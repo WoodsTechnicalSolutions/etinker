@@ -92,6 +92,7 @@ define rootfs-build
 	*) \
 		if ! [ -f $(ET_ROOTFS_BUILD_CONFIG) ]; then \
 			$(MAKE) --no-print-directory \
+				$(ET_CFLAGS_ROOTFS) \
 				CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 				O=$(ET_ROOTFS_BUILD_DIR) \
 				-C $(ET_ROOTFS_SOFTWARE_DIR) \
@@ -104,6 +105,7 @@ define rootfs-build
 		;; \
 	esac
 	$(MAKE) --no-print-directory \
+		$(ET_CFLAGS_ROOTFS) \
 		CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 		O=$(ET_ROOTFS_BUILD_DIR) \
 		-C $(ET_ROOTFS_SOFTWARE_DIR) \
@@ -119,6 +121,7 @@ define rootfs-build
 		fi; \
 		if ! [ "$1" = "savedefconfig" ]; then \
 			$(MAKE) --no-print-directory \
+				$(ET_CFLAGS_ROOTFS) \
 				CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 				O=$(ET_ROOTFS_BUILD_DIR) \
 				-C $(ET_ROOTFS_SOFTWARE_DIR) \
@@ -128,6 +131,7 @@ define rootfs-build
 		cp -av $(ET_ROOTFS_SOFTWARE_DIR)/configs/$(rootfs_defconfig) $(ET_ROOTFS_DEFCONFIG); \
 		if [ -f $(ET_ROOTFS_BUILD_BUSYBOX_CONFIG) ]; then \
 			$(MAKE) --no-print-directory \
+				$(ET_CFLAGS_ROOTFS) \
 				CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 				O=$(ET_ROOTFS_BUILD_DIR) \
 				-C $(ET_ROOTFS_SOFTWARE_DIR) \
@@ -163,6 +167,7 @@ define rootfs-config
 	$(call rootfs-depends)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rootfs-config *****\n\n"
 	$(MAKE) --no-print-directory \
+		$(ET_CFLAGS_ROOTFS) \
 		CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 		O=$(ET_ROOTFS_BUILD_DIR) \
 		-C $(ET_ROOTFS_SOFTWARE_DIR) \

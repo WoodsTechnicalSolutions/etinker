@@ -167,6 +167,7 @@ define kernel-build
 	*) \
 		if ! [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
 			$(MAKE) --no-print-directory \
+				$(ET_CFLAGS_KERNEL) \
 				$(ET_KERNEL_CROSS_PARAMS) \
 				O=$(ET_KERNEL_BUILD_DIR) \
 				-C $(ET_KERNEL_SOFTWARE_DIR) \
@@ -178,7 +179,9 @@ define kernel-build
 		fi; \
 		;; \
 	esac
-	$(MAKE) --no-print-directory -j $(ET_CPUS) $(ET_KERNEL_CROSS_PARAMS) \
+	$(MAKE) --no-print-directory -j $(ET_CPUS) \
+		$(ET_CFLAGS_KERNEL) \
+		$(ET_KERNEL_CROSS_PARAMS) \
 		LOCALVERSION=$(localversion) \
 		LOADADDR=$(ET_KERNEL_LOADADDR) \
 		INSTALL_MOD_PATH=$(ET_KERNEL_DIR)/usr \
@@ -254,6 +257,7 @@ define kernel-build
 		fi; \
 		if ! [ "$1" = "savedefconfig" ]; then \
 			$(MAKE) --no-print-directory \
+				$(ET_CFLAGS_KERNEL) \
 				$(ET_KERNEL_CROSS_PARAMS) \
 				O=$(ET_KERNEL_BUILD_DIR) \
 				-C $(ET_KERNEL_SOFTWARE_DIR) \
@@ -274,6 +278,7 @@ define kernel-config
 	$(call kernel-depends)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-config *****\n\n"
 	$(MAKE) --no-print-directory \
+		$(ET_CFLAGS_KERNEL) \
 		$(ET_KERNEL_CROSS_PARAMS) \
 		O=$(ET_KERNEL_BUILD_DIR) \
 		-C $(ET_KERNEL_SOFTWARE_DIR) \

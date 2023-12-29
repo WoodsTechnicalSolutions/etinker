@@ -157,6 +157,7 @@ define bootloader-build
 	*) \
 		if ! [ -f $(ET_BOOTLOADER_BUILD_CONFIG) ]; then \
 			$(MAKE) --no-print-directory \
+				$(ET_CFLAGS_BOOTLOADER) \
 				CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 				O=$(ET_BOOTLOADER_BUILD_DIR) \
 				-C $(ET_BOOTLOADER_SOFTWARE_DIR) \
@@ -170,6 +171,7 @@ define bootloader-build
 	esac
 	(cd $(ET_BOOTLOADER_SOFTWARE_DIR) && \
 		$(MAKE) --no-print-directory -j $(ET_CPUS) \
+			$(ET_CFLAGS_BOOTLOADER) \
 			CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 			DEVICE_TREE=$(DEVICE_TREE) \
 			LOCALVERSION=$(ET_BOOTLOADER_LOCALVERSION) \
@@ -191,6 +193,7 @@ define bootloader-build
 		fi; \
 		if ! [ "$1" = "savedefconfig" ]; then \
 			$(MAKE) --no-print-directory \
+				$(ET_CFLAGS_BOOTLOADER) \
 				CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 				O=$(ET_BOOTLOADER_BUILD_DIR) \
 				-C $(ET_BOOTLOADER_SOFTWARE_DIR) \
@@ -211,6 +214,7 @@ define bootloader-config
 	$(call bootloader-depends)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-config *****\n\n"
 	$(MAKE) --no-print-directory \
+		$(ET_CFLAGS_BOOTLOADER) \
 		CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 		O=$(ET_BOOTLOADER_BUILD_DIR) \
 		-C $(ET_BOOTLOADER_SOFTWARE_DIR) \
