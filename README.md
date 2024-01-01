@@ -13,19 +13,20 @@ about tinkering.
 
 ## Development Boards
 
-- am335x-pocketbeagle [Octavo/TI ARM Cortex-A8]
-- am3517-evm [TI ARM Cortex-A8]
-- aml-s905x-cc [Amlogic ARM Cortex-A53]
-- ek-tm4c123gxl [TI TivaC ARM Cortex-M4]
-- ek-tm4c1294xl [TI TivaC ARM Cortex-M4]
-- ls1012afrdm [NXP Layerscape ARM Cortex-A53]
-- ls1043ardb [NXP Layerscape ARM Cortex-A53]
-- nrf52840-dongle [Nordic ARM Cortex-M4]
-- omap3-beagle-xm [TI ARM Cortex-A8]
-- omap3-beagle [TI ARM Cortex-A8]
-- omap3-evm [TI ARM Cortex-A8]
-- pynq-z2 [Xilinx Zynq-7020 ARM Cortex-A9]
-- sama5d3-xpld [ARM Cortex-A5]
+- am335x-pocketbeagle [Octavo/TI Arm Cortex-A8]
+- am3517-evm [TI Arm Cortex-A8]
+- aml-s905x-cc [Amlogic Arm Cortex-A53]
+- ek-tm4c123gxl [TI TivaC Arm Cortex-M4]
+- ek-tm4c1294xl [TI TivaC Arm Cortex-M4]
+- ls1012afrdm [NXP Layerscape Arm Cortex-A53]
+- ls1043ardb [NXP Layerscape Arm Cortex-A53]
+- nrf52840-dongle [Nordic Arm Cortex-M4]
+- omap3-beagle-xm [TI Arm Cortex-A8]
+- omap3-beagle [TI Arm Cortex-A8]
+- omap3-evm [TI Arm Cortex-A8]
+- pynq-z2 [Xilinx Zynq-7020 Arm Cortex-A9]
+- sama5d3-xpld [Arm Cortex-A5]arm-cortex
+- k3-j721e-sk [TI TDA4VM Arm Cortex-R5 / Cortex-A72]
 
 ### Special Boards
 
@@ -41,6 +42,7 @@ files for Linux, U-Boot, and Buildroot reside in the virtual boards.
 - omap2plus [am335x-pocketbeagle, am3517-evm, omap3-beagle, omap3-beagle-xm, omap3-evm]
 - sama5 [sama5d3-xpld]
 - zynq [pynq-z2]
+- k3 [k3-j721e-sk]
 
 #### Toolchain Boards
 
@@ -50,8 +52,10 @@ with the toolchain boards. This concept is useful for testing new
 and/or variant toolchains.
 
 - aarch64-cortexa53-linux-gnu [layerscape, meson]
+- aarch64-cortexa72-linux-gnu [k3]
 - arm-none-eabi
 - arm-none-eabihf [ek-tm4c123gxl, ek-tm4c1294xl, nrf52840-dongle]
+- arm-cortexr5-eabihf [k3]
 - arm-cortexa5-linux-gnueabihf [sama5]
 - arm-cortexa8-linux-gnueabihf [omap2plus]
 - arm-cortexa9-linux-gnueabihf [zynq]
