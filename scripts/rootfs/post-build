@@ -65,7 +65,7 @@ printf "nameserver 8.8.4.4\n" >> ${TARGET}/etc/resolv.conf
 
 # Board Specific Modifications
 case "${ET_BOARD_TYPE}" in
-omap2plus|sama5|zynq|meson|layerscape)
+omap2plus|sama5|zynq|meson|layerscape|k3)
 	printf "\n***** [${ET_BOARD}][${ET_BOARD_TYPE}] custom modifications *****\n\n"
 	# Board Common
 	mkdir -p ${TARGET}/media/BOOT
@@ -146,7 +146,7 @@ omap2plus|sama5|zynq|meson|layerscape)
 	esac
 	# Boards with larger, and different, user-space
 	case "${ET_BOARD_TYPE}" in
-	meson|layerscape)
+	meson|layerscape|k3)
 		sed -i s,\#PermitRootLogin\ prohibit-password,PermitRootLogin\ yes, ${TARGET}/etc/ssh/sshd_config
 		mv ${TARGET}/etc/modprobe.d/usbcdc.sh ${TARGET}/etc/modprobe.d/_usbcdc.sh_
 		;;

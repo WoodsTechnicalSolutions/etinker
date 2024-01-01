@@ -34,6 +34,9 @@ case "${board}" in
 	*am335x*|*am3517*|*beagle*|*torpedo*|*omap3*|*overo*)
 		printf "***** OMAP3 ARM Cortex-A8 *****\n"
 		;;
+	*k3*)
+		printf "***** TI K3 Multicore SoC *****\n"
+		;;
 	*)
 		printf "***** INVALID BOARD NAME *****\n"
 		usage

@@ -156,4 +156,6 @@ if [ -f /usr/bin/apt ]; then
 			zlib1g-dev:i386
 	fi
 	sudo apt autoremove
+	pip3 install jsonschema
+	pip3 install pyelftools
 fi

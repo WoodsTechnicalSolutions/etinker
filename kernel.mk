@@ -289,7 +289,7 @@ define kernel-clean
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-clean *****\n\n"
 	$(RM) $(ET_KERNEL_BUILD_CONFIG)
 	$(RM) $(ET_KERNEL_BUILD_DEFCONFIG)
-	$(RM) $(ET_KERNEL_DIR)/boot/*
+	$(RM) -r $(ET_KERNEL_DIR)/boot/*
 	$(RM) -r $(ET_KERNEL_DIR)/usr/lib/modules/*
 endef
 
