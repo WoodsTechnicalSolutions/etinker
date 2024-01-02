@@ -51,3 +51,13 @@ ET_BOARD_BOOTLOADER_DT ?= k3-j721e-sk
 export TI_K3_SOC := j721e
 export TI_K3_SOC_TYPE := gp
 export TI_K3_FW_TYPE := ti-fs
+
+ifneq ("$(ET_KERNEL_VARIANT)","")
+# fixup kernel version
+export USE_KERNEL_TREE_VERSION := $(ET_KERNEL_VARIANT)
+endif
+
+ifneq ("$(ET_BOOTLOADER_VARIANT)","")
+# fixup bootloader version
+export USE_BOOTLOADER_TREE_VERSION := $(ET_BOOTLOADER_VARIANT)
+endif

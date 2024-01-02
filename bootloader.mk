@@ -161,7 +161,7 @@ define bootloader-build
 				CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 				O=$(ET_BOOTLOADER_BUILD_DIR) \
 				-C $(ET_BOOTLOADER_SOFTWARE_DIR) \
-				$(bootloader_defconfig); \
+				$(bootloader_defconfig) $(ET_BOOTLOADER_DEFCONFIG_N); \
 			if ! [ -f $(ET_BOOTLOADERL_BUILD_CONFIG) ]; then \
 				printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_TREE) .config MISSING! *****\n"; \
 				exit 2; \

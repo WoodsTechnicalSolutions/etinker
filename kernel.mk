@@ -171,7 +171,7 @@ define kernel-build
 				$(ET_KERNEL_CROSS_PARAMS) \
 				O=$(ET_KERNEL_BUILD_DIR) \
 				-C $(ET_KERNEL_SOFTWARE_DIR) \
-				$(kernel_defconfig); \
+				$(kernel_defconfig) $(ET_KERNEL_DEFCONFIG_N); \
 			if ! [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
 				printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) .config MISSING! *****\n"; \
 				exit 2; \
