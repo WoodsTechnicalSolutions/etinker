@@ -183,7 +183,9 @@ if [ -n "${ET_CUSTOM_DIR}" ] && [ -d ${ET_CUSTOM_DIR} ]; then
 	rsync ${rsync_opts} ${ET_CUSTOM_DIR}/* ${TARGET}/ 2>/dev/null
 fi
 
-if [ "${ET_INITRAMFS}" = "yes" ]; then
+if [ "${ET_INITRAMFS}" = "yes" ] || \
+		[ "${ET_VARIANT}" = "-initramfs" ] || \
+		[ "${ET_ROOTFS_VARIANT}" = "-initramfs" ]; then
 	# reduce size of rootfs.cpio
 	rm -rf ${TARGET}/boot
 	rm -f ${TARGET}/usr/lib/lib*.a

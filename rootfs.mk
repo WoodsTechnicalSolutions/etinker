@@ -73,6 +73,10 @@ endef
 define rootfs-depends
 	$(call software-check,$(ET_OPENSSL_TREE),openssl)
 	$(call software-check,$(ET_ROOTFS_TREE),rootfs)
+	@mkdir -p $(ET_KERNEL_DIR)
+	@mkdir -p $(ET_BOOTLOADER_DIR)
+	@mkdir -p $(ET_OVERLAY_DIR)
+	@mkdir -p $(ET_LIBRARY_DIR)
 	@mkdir -p $(ET_ROOTFS_DIR)
 	@mkdir -p $(ET_ROOTFS_BUILD_DIR)
 	@mkdir -p $(ET_ROOTFS_TARBALLS_DIR)
