@@ -1,7 +1,7 @@
 #
 # TI OMAP3 BeagleBoard xM, ARM Cortex-A8, board configuration file for 'etinker'
 #
-# Copyright (C) 2018-2023, Derald D. Woods <woods.technical@gmail.com>
+# Copyright (C) 2018-2024, Derald D. Woods <woods.technical@gmail.com>
 #
 # [references]
 # ------------------------------------------------------------------------------

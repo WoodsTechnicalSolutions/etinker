@@ -3,7 +3,7 @@
 #
 # NOTE: This board is no longer directly supported by NXP in their LSDK tools
 #
-# Copyright (C) 2021-2023, Derald D. Woods <woods.technical@gmail.com>
+# Copyright (C) 2021-2024, Derald D. Woods <woods.technical@gmail.com>
 #
 # [references]
 # ------------------------------------------------------------------------------

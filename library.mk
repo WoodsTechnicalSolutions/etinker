@@ -4,7 +4,7 @@
 # Uses similar build concepts as found in 'libgpiod' here:
 # - https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git
 #
-# Copyright (C) 2021-2023, Derald D. Woods <woods.technical@gmail.com>
+# Copyright (C) 2021-2024, Derald D. Woods <woods.technical@gmail.com>
 #
 # This file is part of the Embedded Tinkerer Sandbox, and is made
 # available under the terms of the GNU General Public License version 3.
