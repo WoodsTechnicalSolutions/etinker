@@ -38,10 +38,10 @@ endef
 
 define kernel-finalize-$(ET_BOARD)
 	$(call kernel-finalize-$(ET_BOARD_TYPE))
-	@mkdir -p $(ET_KERNEL_DIR)/lib/firmware
+	@mkdir -p $(ET_KERNEL_DIR)/usr/lib/firmware
 	@echo
-	@cp -av $(LSDK_PFE_ELF) $(ET_KERNEL_DIR)/lib/firmware/
-	@cp -av $(LSDK_PFE_BIN) $(ET_KERNEL_DIR)/lib/firmware/
+	@cp -av $(LSDK_PFE_ELF) $(ET_KERNEL_DIR)/usr/lib/firmware/
+	@cp -av $(LSDK_PFE_BIN) $(ET_KERNEL_DIR)/usr/lib/firmware/
 	@echo
 	@cp -av $(LSDK_PFE_ELF) $(ET_KERNEL_DIR)/boot/
 	@cp -av $(LSDK_PFE_BIN) $(ET_KERNEL_DIR)/boot/
