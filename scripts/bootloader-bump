@@ -86,24 +86,9 @@ for n in `ls ${ET_DIR}/boards`; do
 	case $n in
 	am335x-pocketbeagle | am3517-evm | aml-s905x-cc | ls1012afrdm | \
 	ls1043ardb | omap3-* | pynq-z2 | sama5d3-xpld | k3-j721e-sk)
-		if [ "pynq-z2" == "$n" ]; then
-			# Xilinx board requires a generated FPGA project
-			if ! [ -d ${ET_DIR}/boards/zynq/fpga/sdk ]; then
-				continue
-			fi
-		fi
 		if ! do_make $n "$@"; then
 			printf "etinker $0 failed!\n"
 			exit 1
-		fi
-		if [ "pynq-z2" == "$n" ]; then
-			# build the Xilinx variant
-			export ET_BOOTLOADER_VARIANT="-xlnx"
-			if ! do_make $n "$@"; then
-				printf "etinker $0 failed!\n"
-				exit 1
-			fi
-			unset ET_BOOTLOADER_VARIANT
 		fi
 		;;
 	*)

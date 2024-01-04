@@ -111,13 +111,11 @@ for n in `ls boards`; do
 		if [ "pynq-z2" == "$n" ]; then
 			# build the Xilinx variant
 			export ET_KERNEL_VARIANT="-xlnx"
-			export ET_BOOTLOADER_VARIANT="-xlnx"
 			if ! do_make $n "$@"; then
 				printf "etinker $0 failed!\n"
 				exit 1
 			fi
 			unset ET_KERNEL_VARIANT
-			unset ET_BOOTLOADER_VARIANT
 		fi
 		;;
 	ek-tm4c* | nrf*)
