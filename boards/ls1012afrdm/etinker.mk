@@ -33,11 +33,7 @@
 export ET_BOARD_TYPE := layerscape
 
 ET_BOARD_KERNEL_TYPE ?= layerscape-qoriq
-ET_BOARD_ROOTFS_TYPE ?= meson
-ifeq ($(ET_INITRAMFS),yes)
-export ET_ROOTFS_VARIANT := -initramfs
 ET_BOARD_ROOTFS_TYPE := meson$(ET_ROOTFS_VARIANT)
-endif
 
 include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/etinker.mk
 
