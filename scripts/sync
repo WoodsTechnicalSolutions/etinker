@@ -145,6 +145,19 @@ case "${destination}" in
 								printf "\nMissing ${LSDK_VERSION} Firmware Image! [ ${LSDK_FIRMWARE_BIN} ]\n\n"
 							fi
 							;;
+						k3)
+							mkdir -p ${media}/BOOT/lib/firmware
+							if [ "${ET_BOARD}" = "k3-j721e-sk" ]; then
+								cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c66xdsp_1_release_strip.xe66 ${media}/BOOT/lib/firmware/j7-c66_0-fw
+								cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c66xdsp_2_release_strip.xe66 ${media}/BOOT/lib/firmware/j7-c66_1-fw
+								cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c7x_1_release_strip.xe71     ${media}/BOOT/lib/firmware/j7-c71_0-fw
+								cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-eth/${TI_K3_SOC}/app_remoteswitchcfg_server_strip.xer5f     ${media}/BOOT/lib/firmware/j7-main-r5f0_0-fw
+								cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu2_1_release_strip.xer5f   ${media}/BOOT/lib/firmware/j7-main-r5f0_1-fw
+								cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu3_0_release_strip.xer5f   ${media}/BOOT/lib/firmware/j7-main-r5f1_0-fw
+								cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu3_1_release_strip.xer5f   ${media}/BOOT/lib/firmware/j7-main-r5f1_1-fw
+								cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu1_1_release_strip.xer5f   ${media}/BOOT/lib/firmware/j7-mcu-r5f0_1-fw
+							fi
+							;;
 						*)
 							# NOOP
 							;;
@@ -306,6 +319,24 @@ case "${destination}" in
 				fi
 				rm -f ${nfs}/media/BOOT/firmware.img
 				sudo rsync ${rsync_opts} ${target_dir}/boot/* ${nfs}/media/BOOT/
+				case "${ET_BOARD_TYPE}" in
+					k3)
+						sudo mkdir -p ${nfs}/media/BOOT/lib/firmware
+						if [ "${ET_BOARD}" = "k3-j721e-sk" ]; then
+							cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c66xdsp_1_release_strip.xe66 ${nfs}/media/BOOT/lib/firmware/j7-c66_0-fw
+							cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c66xdsp_2_release_strip.xe66 ${nfs}/media/BOOT/lib/firmware/j7-c66_1-fw
+							cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c7x_1_release_strip.xe71     ${nfs}/media/BOOT/lib/firmware/j7-c71_0-fw
+							cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-eth/${TI_K3_SOC}/app_remoteswitchcfg_server_strip.xer5f     ${nfs}/media/BOOT/lib/firmware/j7-main-r5f0_0-fw
+							cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu2_1_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-main-r5f0_1-fw
+							cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu3_0_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-main-r5f1_0-fw
+							cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu3_1_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-main-r5f1_1-fw
+							cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu1_1_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-mcu-r5f0_1-fw
+						fi
+						;;
+					*)
+						# NOOP
+						;;
+				esac
 				;;
 			*)
 				printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}
