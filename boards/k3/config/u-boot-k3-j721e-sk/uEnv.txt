@@ -9,3 +9,4 @@
 #       it is not evaluated until the bootcmd is run.
 bootpart=1:1
 bootdir=""
+args_mmc=setenv bootargs console=${console} ${optargs} root=/dev/mmcblk1p2 rw rootfstype=${mmcrootfstype}

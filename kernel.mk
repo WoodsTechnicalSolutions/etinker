@@ -135,6 +135,10 @@ define kernel-depends
 	@if [ -f $(ET_KERNEL_DEFCONFIG) ]; then \
 		rsync $(ET_KERNEL_DEFCONFIG) $(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/configs/ > /dev/null; \
 	fi
+	@if [ -n "$(ET_KERNEL_DEFCONFIG_N)" ]; then \
+		rsync $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config/linux/$(ET_KERNEL_DEFCONFIG_N) \
+			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/configs/; \
+	fi
 	$(call kernel-depends-$(ET_BOARD))
 endef
 
@@ -282,7 +286,7 @@ define kernel-config
 		$(ET_KERNEL_CROSS_PARAMS) \
 		O=$(ET_KERNEL_BUILD_DIR) \
 		-C $(ET_KERNEL_SOFTWARE_DIR) \
-		$(kernel_defconfig)
+		$(kernel_defconfig) $(ET_KERNEL_DEFCONFIG_N)
 endef
 
 define kernel-clean
@@ -316,6 +320,9 @@ define kernel-info
 	@printf "ET_KERNEL_BUILD_DTB: $(ET_KERNEL_BUILD_DTB)\n"
 	@printf "ET_KERNEL_BUILD_SYSMAP: $(ET_KERNEL_BUILD_SYSMAP)\n"
 	@printf "ET_KERNEL_DEFCONFIG: $(ET_KERNEL_DEFCONFIG)\n"
+	@if [ -n "$(shell echo $(ET_KERNEL_DEFCONFIG_N))" ]; then \
+		printf "ET_KERNEL_DEFCONFIG_N: $(ET_KERNEL_DEFCONFIG_N)\n"; \
+	fi
 	@printf "ET_KERNEL_DIR: $(ET_KERNEL_DIR)\n"
 	@printf "ET_KERNEL_DTB: $(ET_KERNEL_DTB)\n"
 	@printf "ET_KERNEL_SYSMAP: $(ET_KERNEL_SYSMAP)\n"

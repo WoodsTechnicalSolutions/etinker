@@ -40,3 +40,5 @@ ET_BOARD_BOOTLOADER_SPL_BINARY ?= tispl.bin
 # pull in a board toolchain
 ET_BOARD_TOOLCHAIN_TYPE ?= aarch64-cortexa53-linux-gnu
 include $(ET_DIR)/boards/$(ET_BOARD_TOOLCHAIN_TYPE)/etinker.mk
+
+ET_KERNEL_DEFCONFIG_N := ti_arm64_prune.config
