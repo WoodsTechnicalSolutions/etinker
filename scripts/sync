@@ -323,14 +323,14 @@ case "${destination}" in
 					k3)
 						sudo mkdir -p ${nfs}/media/BOOT/lib/firmware
 						if [ "${ET_BOARD}" = "k3-j721e-sk" ]; then
-							cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c66xdsp_1_release_strip.xe66 ${nfs}/media/BOOT/lib/firmware/j7-c66_0-fw
-							cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c66xdsp_2_release_strip.xe66 ${nfs}/media/BOOT/lib/firmware/j7-c66_1-fw
-							cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c7x_1_release_strip.xe71     ${nfs}/media/BOOT/lib/firmware/j7-c71_0-fw
-							cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-eth/${TI_K3_SOC}/app_remoteswitchcfg_server_strip.xer5f     ${nfs}/media/BOOT/lib/firmware/j7-main-r5f0_0-fw
-							cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu2_1_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-main-r5f0_1-fw
-							cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu3_0_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-main-r5f1_0-fw
-							cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu3_1_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-main-r5f1_1-fw
-							cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu1_1_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-mcu-r5f0_1-fw
+							sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c66xdsp_1_release_strip.xe66 ${nfs}/media/BOOT/lib/firmware/j7-c66_0-fw
+							sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c66xdsp_2_release_strip.xe66 ${nfs}/media/BOOT/lib/firmware/j7-c66_1-fw
+							sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c7x_1_release_strip.xe71     ${nfs}/media/BOOT/lib/firmware/j7-c71_0-fw
+							sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-eth/${TI_K3_SOC}/app_remoteswitchcfg_server_strip.xer5f     ${nfs}/media/BOOT/lib/firmware/j7-main-r5f0_0-fw
+							sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu2_1_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-main-r5f0_1-fw
+							sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu3_0_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-main-r5f1_0-fw
+							sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu3_1_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-main-r5f1_1-fw
+							sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu1_1_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-mcu-r5f0_1-fw
 						fi
 						;;
 					*)
