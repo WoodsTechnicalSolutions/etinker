@@ -84,6 +84,10 @@ omap2plus|sama5|zynq|meson|layerscape|k3)
 	am335x-*)
 		rsync ${rsync_opts} ${ET_DIR}/firmware/am335x* ${TARGET}/usr/lib/firmware/
 		;;
+	k3-j721e-sk*)
+		# mmc1 is the SD/MMC card
+		sed -i s,mmcblk0,mmcblk1, ${TARGET}/etc/fstab
+		;;
 	aml-s905x-cc*)
 		# My boards use both the 32 GiB eMMC and SD/MMC card
 		sed -i s,\#\/dev\/mmc,\/dev\/mmc, ${TARGET}/etc/fstab
