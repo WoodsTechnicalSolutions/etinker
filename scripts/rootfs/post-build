@@ -18,33 +18,33 @@ fi
 # Update target file system
 mkdir -p ${TARGET}/usr/lib/firmware
 # Copy common files to target
-rsync ${rsync_opts} ${ET_DIR}/common/rootfs/* ${TARGET}/ 2>/dev/null
-cp -fv ${ET_DIR}/scripts/mksdcard ${TARGET}/usr/sbin/ 2>/dev/null
+rsync ${rsync_opts} ${ET_DIR}/common/rootfs/* ${TARGET}/ ${ET_NOERR}
+cp -fv ${ET_DIR}/scripts/mksdcard ${TARGET}/usr/sbin/ ${ET_NOERR}
 # Copy board specific files to target
 if [ -d ${ET_DIR}/boards/${ET_BOARD}/rootfs ]; then
-	rsync ${rsync_opts} ${ET_DIR}/boards/${ET_BOARD}/rootfs/* ${TARGET}/ 2>/dev/null
+	rsync ${rsync_opts} ${ET_DIR}/boards/${ET_BOARD}/rootfs/* ${TARGET}/ ${ET_NOERR}
 fi
 if [ -d ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib ]; then
-	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libssp.so* ${TARGET}/lib/ 2>/dev/null
-	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libSegFault.so ${TARGET}/lib/ 2>/dev/null
-	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libmemusage.so ${TARGET}/lib/ 2>/dev/null
-	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libpcprofile.so ${TARGET}/lib/ 2>/dev/null
-	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libitm.so* ${TARGET}/lib/ 2>/dev/null
+	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libssp.so* ${TARGET}/lib/ ${ET_NOERR}
+	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libSegFault.so ${TARGET}/lib/ ${ET_NOERR}
+	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libmemusage.so ${TARGET}/lib/ ${ET_NOERR}
+	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libpcprofile.so ${TARGET}/lib/ ${ET_NOERR}
+	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libitm.so* ${TARGET}/lib/ ${ET_NOERR}
 fi
 if [ -d ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/debug-root ]; then
-	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/debug-root/* ${TARGET}/ 2>/dev/null
+	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/debug-root/* ${TARGET}/ ${ET_NOERR}
 fi
 if [ -d ${ET_KERNEL_DIR}/boot ]; then
-	rsync ${rsync_opts} ${ET_KERNEL_DIR}/boot ${TARGET}/ 2>/dev/null
-	rsync ${rsync_opts} ${ET_KERNEL_DIR}/usr ${TARGET}/ 2>/dev/null
+	rsync ${rsync_opts} ${ET_KERNEL_DIR}/boot ${TARGET}/ ${ET_NOERR}
+	rsync ${rsync_opts} ${ET_KERNEL_DIR}/usr ${TARGET}/ ${ET_NOERR}
 fi
 if [ -d ${ET_BOOTLOADER_DIR}/boot ]; then
-	rsync ${rsync_opts} ${ET_BOOTLOADER_DIR}/* ${TARGET}/ 2>/dev/null
+	rsync ${rsync_opts} ${ET_BOOTLOADER_DIR}/* ${TARGET}/ ${ET_NOERR}
 fi
 if [ -d ${ET_OVERLAY_DIR} ] && [ -f ${ET_OVERLAY_DIR}/exclude ]; then
 	rsync ${rsync_opts} --exclude-from=${ET_OVERLAY_DIR}/exclude \
 		${ET_OVERLAY_DIR}/ \
-		${TARGET}/ 2>/dev/null
+		${TARGET}/ ${ET_NOERR}
 fi
 printf "\n%s\n\n" "`cat ${TARGET}/etc/issue`" > ${TARGET}/etc/issue
 if [ -f ${TARGET}/etc/inittab ]; then
@@ -184,7 +184,7 @@ omap2plus|sama5|zynq|meson|layerscape|k3)
 esac
 
 if [ -n "${ET_CUSTOM_DIR}" ] && [ -d ${ET_CUSTOM_DIR} ]; then
-	rsync ${rsync_opts} ${ET_CUSTOM_DIR}/* ${TARGET}/ 2>/dev/null
+	rsync ${rsync_opts} ${ET_CUSTOM_DIR}/* ${TARGET}/ ${ET_NOERR}
 fi
 
 if [ "${ET_INITRAMFS}" = "yes" ] || \

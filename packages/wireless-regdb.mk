@@ -16,7 +16,7 @@ ifdef ET_BOARD_ROOTFS_TREE
 
 export ET_WIRELESS_REGDB_TREE := wireless-regdb
 export ET_WIRELESS_REGDB_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_WIRELESS_REGDB_TREE)
-export ET_WIRELESS_REGDB_VERSION := $(shell cd $(ET_WIRELESS_REGDB_SOFTWARE_DIR) 2>/dev/null && git describe --long --dirty 2>/dev/null)
+export ET_WIRELESS_REGDB_VERSION := $(shell cd $(ET_WIRELESS_REGDB_SOFTWARE_DIR) $(ET_NOERR) && git describe --long --dirty $(ET_NOERR))
 export ET_WIRELESS_REGDB_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) wireless-regdb-ref)
 export ET_WIRELESS_REGDB_BUILD_X509_PEM := $(ET_WIRELESS_REGDB_SOFTWARE_DIR)/wens.x509.pem
 export ET_WIRELESS_REGDB_BUILD_PUB_PEM := $(ET_WIRELESS_REGDB_SOFTWARE_DIR)/wens.key.pub.pem

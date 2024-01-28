@@ -36,18 +36,18 @@ export ET_KERNEL_CROSS_PARAMS := ARCH=$(ET_KERNEL_ARCH) CROSS_COMPILE=$(ET_CROSS
 kernel_defconfig := et_$(subst -,_,$(ET_KERNEL_TYPE))_defconfig
 
 # [start] kernel version magic
-ifneq ($(shell ls $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null),)
-kversion := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && make kernelversion | tr -d \\n)
-kgithash := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git rev-parse --short HEAD)
-kgitdirty := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty | grep -oe '-dirty')
+ifneq ($(shell ls $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR)),)
+kversion := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR) && make kernelversion | tr -d \\n)
+kgithash := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR) && git rev-parse --short HEAD)
+kgitdirty := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR) && git describe --dirty | grep -oe '-dirty')
 klocalversion := -g$(kgithash)$(kgitdirty)
 ifdef USE_KERNEL_TREE_VERSION
 ET_KERNEL_VERSION := $(kversion)
 ET_KERNEL_LOCALVERSION := $(USE_KERNEL_TREE_VERSION)$(klocalversion)
 localversion := $(ET_KERNEL_LOCALVERSION)
 else
-ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v | cut -d '-' -f 1)
-ET_KERNEL_LOCALVERSION := -$(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | cut -d '-' -f 2-5)
+ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR) && git describe --dirty $(ET_NOERR) | tr -d v | cut -d '-' -f 1)
+ET_KERNEL_LOCALVERSION := -$(shell cd $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR) && git describe --dirty $(ET_NOERR) | cut -d '-' -f 2-5)
 # empty local version
 ifeq ($(ET_KERNEL_LOCALVERSION),-)
 ET_KERNEL_LOCALVERSION :=
@@ -124,16 +124,16 @@ define kernel-depends
 	@mkdir -p $(ET_KERNEL_DIR)/usr/lib/modules
 	@mkdir -p $(ET_KERNEL_BUILD_BOOT_DIR)
 	@mkdir -p $(shell dirname $(ET_KERNEL_DEFCONFIG))
-	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.dts* 2> /dev/null`" ]; then \
+	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.dts* $(ET_NOERR)`" ]; then \
 		rsync -r $(ET_BOARD_DIR)/dts/*.dts* \
-			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/boot/dts/$(ET_KERNEL_VENDOR) > /dev/null; \
+			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/boot/dts/$(ET_KERNEL_VENDOR) $(ET_NULL); \
 	fi
-	@if [ -d $(ET_BOARD_DIR)/dts/linux ] && [ -n "`ls $(ET_BOARD_DIR)/dts/linux/*.dts* 2> /dev/null`" ]; then \
+	@if [ -d $(ET_BOARD_DIR)/dts/linux ] && [ -n "`ls $(ET_BOARD_DIR)/dts/linux/*.dts* $(ET_NOERR)`" ]; then \
 		rsync -r $(ET_BOARD_DIR)/dts/linux/*.dts* \
-			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/boot/dts/$(ET_KERNEL_VENDOR) > /dev/null; \
+			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/boot/dts/$(ET_KERNEL_VENDOR) $(ET_NULL); \
 	fi
 	@if [ -f $(ET_KERNEL_DEFCONFIG) ]; then \
-		rsync $(ET_KERNEL_DEFCONFIG) $(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/configs/ > /dev/null; \
+		rsync $(ET_KERNEL_DEFCONFIG) $(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/configs/ $(ET_NULL); \
 	fi
 	@if [ -n "$(ET_KERNEL_DEFCONFIG_N)" ]; then \
 		rsync $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config/linux/$(ET_KERNEL_DEFCONFIG_N) \

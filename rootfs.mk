@@ -34,17 +34,17 @@ rootfs_type := $(subst $(ET_ROOTFS_VARIANT),,$(ET_ROOTFS_TYPE))
 endif
 
 # [start] rootfs version magic
-ifneq ($(shell ls $(ET_ROOTFS_SOFTWARE_DIR) 2>/dev/null),)
-ET_ROOTFS_VERSION := $(shell cd $(ET_ROOTFS_SOFTWARE_DIR) 2>/dev/null && git describe --long --dirty 2>/dev/null | tr -d v)
+ifneq ($(shell ls $(ET_ROOTFS_SOFTWARE_DIR) $(ET_NOERR)),)
+ET_ROOTFS_VERSION := $(shell cd $(ET_ROOTFS_SOFTWARE_DIR) $(ET_NOERR) && git describe --long --dirty $(ET_NOERR) | tr -d v)
 ifeq ($(shell echo $(ET_ROOTFS_VERSION) | cut -d '-' -f 2),0)
-ET_ROOTFS_VERSION := $(shell cd $(ET_ROOTFS_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v)
+ET_ROOTFS_VERSION := $(shell cd $(ET_ROOTFS_SOFTWARE_DIR) $(ET_NOERR) && git describe --dirty $(ET_NOERR) | tr -d v)
 endif
 endif
 # [end] rootfs version magic
 
 export ET_ROOTFS_VERSION
 
-export ET_ROOTFS_BUSYBOX_VERSION := $(shell sed -n 's/BUSYBOX_VERSION\ =\ //p' $(ET_ROOTFS_SOFTWARE_DIR)/package/busybox/busybox.mk 2> /dev/null)
+export ET_ROOTFS_BUSYBOX_VERSION := $(shell sed -n 's/BUSYBOX_VERSION\ =\ //p' $(ET_ROOTFS_SOFTWARE_DIR)/package/busybox/busybox.mk $(ET_NOERR))
 
 export ET_ROOTFS_BUILD_DIR := $(ET_DIR)/rootfs/build/$(ET_ROOTFS_TYPE)/$(ET_CROSS_TUPLE)
 export ET_ROOTFS_BUILD_CONFIG := $(ET_ROOTFS_BUILD_DIR)/.config
@@ -82,7 +82,7 @@ define rootfs-depends
 	@mkdir -p $(ET_ROOTFS_TARBALLS_DIR)
 	@mkdir -p $(shell dirname $(ET_ROOTFS_DEFCONFIG))
 	@if [ -f $(ET_ROOTFS_DEFCONFIG) ]; then \
-		rsync $(ET_ROOTFS_DEFCONFIG) $(ET_ROOTFS_SOFTWARE_DIR)/configs/ > /dev/null; \
+		rsync $(ET_ROOTFS_DEFCONFIG) $(ET_ROOTFS_SOFTWARE_DIR)/configs/ $(ET_NULL); \
 	fi
 	@printf "LIBOPENSSL_OVERRIDE_SRCDIR = $(ET_SOFTWARE_DIR)/openssl\n" > $(ET_ROOTFS_BUILD_DIR)/local.mk
 endef
@@ -160,7 +160,7 @@ define rootfs-build
 			rsync -r $(ET_ROOTFS_DIR)/images/* $(ET_TFTP_DIR)/$(ET_BOARD)/; \
 		fi; \
 	fi
-	@if [ -n "$(shell diff $(ET_ROOTFS_SOFTWARE_DIR)/configs/$(rootfs_defconfig) $(ET_ROOTFS_DEFCONFIG) 2> /dev/null)" ]; then \
+	@if [ -n "$(shell diff $(ET_ROOTFS_SOFTWARE_DIR)/configs/$(rootfs_defconfig) $(ET_ROOTFS_DEFCONFIG) $(ET_NOERR))" ]; then \
 		echo; \
 		cp -av $(ET_ROOTFS_SOFTWARE_DIR)/configs/$(rootfs_defconfig) $(ET_ROOTFS_DEFCONFIG); \
 	fi

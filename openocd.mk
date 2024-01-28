@@ -14,7 +14,7 @@ export OPENOCD_GDB_LOG := openocd-gdb.log
 export OPENOCD_PROGRAM_LOG := openocd-program.log
 
 define openocd
-	@if [ -z "`which openocd 2> /dev/null`" ]; then \
+	@if [ -z "`which openocd $(ET_NOERR)`" ]; then \
 		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] 'openocd' is MISSING! *****\n"; \
 		exit 2; \
 	fi

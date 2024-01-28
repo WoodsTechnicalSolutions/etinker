@@ -105,7 +105,7 @@ LDFLAGS += -u _scanf_float
 
 LDLIBS  = $(ET_LDLIBS)
 
-SOURCES  = $(shell find src/ -name "*.c" -print 2> /dev/null)
+SOURCES  = $(shell find src/ -name "*.c" -print $(ET_NOERR))
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_gpiote.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_pwm.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_saadc.c
@@ -120,8 +120,8 @@ SOURCES += $(NRFX_DIR)/mdk/system_$(ET_BOARD_MCU).c
 OBJECTS = $(addprefix $(BUILD_DIR)/,$(SOURCES:.c=.o))
 
 HEADERS = Makefile
-HEADERS += $(shell find config/ -name "*.h" -print 2> /dev/null)
-HEADERS += $(shell find src/ -maxdepth 1 -name "*.h" -print 2> /dev/null)
+HEADERS += $(shell find config/ -name "*.h" -print $(ET_NOERR))
+HEADERS += $(shell find src/ -maxdepth 1 -name "*.h" -print $(ET_NOERR))
 
 depends:
 	$(call toolchain-mcu-libc)

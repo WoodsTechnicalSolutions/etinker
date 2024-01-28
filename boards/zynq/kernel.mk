@@ -1,6 +1,6 @@
 ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -o xlnx),xlnx)
 # Xilinx 'linux-xlnx' tree
-export ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && make kernelversion | tr -d \\n)
+export ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR) && make kernelversion | tr -d \\n)
 export ET_KERNEL_LOCALVERSION := -$(ET_KERNEL_CACHED_VERSION)
 endif
 export ET_KERNEL_BUILD_UIMAGE := $(ET_KERNEL_BUILD_BOOT_DIR)/uImage
@@ -10,7 +10,7 @@ export ET_KERNEL_ZIMAGE := $(ET_KERNEL_DIR)/boot/zImage
 
 define kernel-depends-$(ET_BOARD_TYPE)
 	@if [ -d $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/sdk ]; then \
-		rsync -r $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/dts $(ET_BOARD_DIR)/ > /dev/null; \
+		rsync -r $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/dts $(ET_BOARD_DIR)/ $(ET_NULL); \
 	else \
 		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] FPGA BUILD IS MISSING! *****\n"; \
 		exit 2; \

@@ -26,7 +26,7 @@ ET_BOARD_OS ?= linux
 ET_BOARD_ABI ?= gnu
 ET_BOARD_CROSS_TUPLE := $(ET_BOARD_ARCH)-pc-$(ET_BOARD_OS)-$(ET_BOARD_ABI)
 
-ifeq ($(shell which $(ET_BOARD_CROSS_TUPLE)-gcc 2> /dev/null),)
+ifeq ($(shell which $(ET_BOARD_CROSS_TUPLE)-gcc $(ET_NOERR)),)
 $(error [ ET_BOARD=$(ET_BOARD) requires desktop compiler $(ET_BOARD_CROSS_TUPLE)-gcc ] ***)
 endif
 

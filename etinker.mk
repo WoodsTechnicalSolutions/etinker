@@ -40,6 +40,7 @@ export ET_DIR ?= $(shell realpath -e $(CURDIR))
 export ET_CPUS := $(shell nproc --all | tr -d \\n)
 export ET_QUIET := &> /dev/null
 export ET_NOERR := 2> /dev/null
+export ET_NULL := > /dev/null
 
 export ET_TFTP ?= no
 export ET_TFTP_DIR ?= /srv/tftp

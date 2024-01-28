@@ -74,7 +74,7 @@ DEPENDS := $(OBJECTS:.o=.d)
 CC := $(ET_CROSS_COMPILE)gcc
 AR := $(ET_CROSS_COMPILE)gcc-ar
 NM := $(ET_CROSS_COMPILE)gcc-nm
-ifeq ($(shell which $(ET_CROSS_COMPILE)size 2> /dev/null),)
+ifeq ($(shell which $(ET_CROSS_COMPILE)size $(ET_NOERR)),)
 SIZE := size
 OBJCOPY := objcopy
 OBJDUMP := objdump

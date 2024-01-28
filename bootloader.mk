@@ -27,17 +27,17 @@ export ET_BOOTLOADER_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_B
 bootloader_defconfig := et_$(subst -,_,$(ET_BOOTLOADER_TYPE))_defconfig
 
 # [start] bootloader version magic
-ifneq ($(shell ls $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null),)
-bversion := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && make -s ubootversion | tr -d \\n)
-bgithash := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git rev-parse --short HEAD)
-bgitdirty := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --dirty|grep -oe '-dirty')
+ifneq ($(shell ls $(ET_BOOTLOADER_SOFTWARE_DIR) $(ET_NOERR)),)
+bversion := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) $(ET_NOERR) && make -s ubootversion | tr -d \\n)
+bgithash := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) $(ET_NOERR) && git rev-parse --short HEAD)
+bgitdirty := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) $(ET_NOERR) && git describe --dirty|grep -oe '-dirty')
 blocalversion := -g$(bgithash)$(bgitdirty)
 ifdef USE_BOOTLOADER_TREE_VERSION
 ET_BOOTLOADER_VERSION := $(bversion)
 ET_BOOTLOADER_LOCALVERSION := $(USE_BOOTLOADER_TREE_VERSION)$(blocalversion)
 else
-ET_BOOTLOADER_VERSION := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | tr -d v)
-ET_BOOTLOADER_LOCALVERSION := -$(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null | cut -d '-' -f 2-5)
+ET_BOOTLOADER_VERSION := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) $(ET_NOERR) && git describe --dirty $(ET_NOERR) | tr -d v)
+ET_BOOTLOADER_LOCALVERSION := -$(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) $(ET_NOERR) && git describe --dirty $(ET_NOERR) | cut -d '-' -f 2-5)
 # RC version (i.e. v2018.09-rc1)
 ifeq ($(shell echo $(ET_BOOTLOADER_LOCALVERSION) | sed s,[0-9].*,,),-rc)
 rcversion := $(shell printf "%s" $(ET_BOOTLOADER_LOCALVERSION) | cut -d '-' -f 2)
@@ -79,7 +79,7 @@ export ET_BOOTLOADER_DEFCONFIG := $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config/u-boo
 
 export DEVICE_TREE := $(ET_BOARD_BOOTLOADER_DT)
 # Handle out-of-tree devicetree build (i.e. dtb-y += custom-board.dtb)
-ifneq ($(shell ls $(ET_BOARD_DIR)/dts/u-boot/Makefile 2> /dev/null),)
+ifneq ($(shell ls $(ET_BOARD_DIR)/dts/u-boot/Makefile $(ET_NOERR)),)
 export DEVICE_TREE_MAKEFILE := -f $(ET_BOARD_DIR)/dts/u-boot/Makefile
 endif
 
@@ -104,16 +104,16 @@ define bootloader-depends
 	@mkdir -p $(ET_BOOTLOADER_DIR)/boot
 	@mkdir -p $(ET_BOOTLOADER_BUILD_DIR)
 	@mkdir -p $(shell dirname $(ET_BOOTLOADER_DEFCONFIG))
-	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.dts* 2> /dev/null`" ]; then \
+	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.dts* $(ET_NOERR)`" ]; then \
 		rsync -rP $(ET_BOARD_DIR)/dts/*.dts* \
 			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_BOOTLOADER_ARCH)/dts/; \
 	fi
-	@if [ -d $(ET_BOARD_DIR)/dts/u-boot ] && [ -n "`ls $(ET_BOARD_DIR)/dts/u-boot/*.dts* 2> /dev/null`" ]; then \
+	@if [ -d $(ET_BOARD_DIR)/dts/u-boot ] && [ -n "`ls $(ET_BOARD_DIR)/dts/u-boot/*.dts* $(ET_NOERR)`" ]; then \
 		rsync -rP $(ET_BOARD_DIR)/dts/u-boot/*.dts* \
 			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_BOOTLOADER_ARCH)/dts/; \
 	fi
 	@if [ -f $(ET_BOOTLOADER_DEFCONFIG) ]; then \
-		rsync $(ET_BOOTLOADER_DEFCONFIG) $(ET_BOOTLOADER_SOFTWARE_DIR)/configs/ > /dev/null; \
+		rsync $(ET_BOOTLOADER_DEFCONFIG) $(ET_BOOTLOADER_SOFTWARE_DIR)/configs/ $(ET_NULL); \
 	fi
 	$(call bootloader-depends-$(ET_BOARD))
 endef

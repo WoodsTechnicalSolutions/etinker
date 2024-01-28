@@ -1,6 +1,6 @@
 ifeq ($(shell echo $(ET_BOARD_TYPE) | grep -o libre),libre)
 # Libre Computer 'libretech-linux' tree
-export ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) 2>/dev/null && make kernelversion | tr -d \\n)
+export ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR) && make kernelversion | tr -d \\n)
 export ET_KERNEL_LOCALVERSION := -libretech
 endif
 

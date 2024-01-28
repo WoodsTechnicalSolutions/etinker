@@ -19,7 +19,7 @@ module_build_dir := $(ET_DIR)/overlay/build/$(ET_KERNEL_TYPE)/$(ET_CROSS_TUPLE)
 
 export ET_CADENCE_TTC_PWM_TREE := cadence-ttc-pwm
 export ET_CADENCE_TTC_PWM_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_CADENCE_TTC_PWM_TREE)
-export ET_CADENCE_TTC_PWM_VERSION := $(shell cd $(ET_CADENCE_TTC_PWM_SOFTWARE_DIR) 2>/dev/null && git describe --always --long --dirty 2>/dev/null)
+export ET_CADENCE_TTC_PWM_VERSION := $(shell cd $(ET_CADENCE_TTC_PWM_SOFTWARE_DIR) $(ET_NOERR) && git describe --always --long --dirty $(ET_NOERR))
 export ET_CADENCE_TTC_PWM_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) cadence-ttc-pwm-ref)
 export ET_CADENCE_TTC_PWM_BUILD_DIR := $(module_build_dir)/$(ET_CADENCE_TTC_PWM_TREE)
 export ET_CADENCE_TTC_PWM_BUILD_CONFIG := $(ET_CADENCE_TTC_PWM_BUILD_DIR)/Makefile

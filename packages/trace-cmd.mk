@@ -19,7 +19,7 @@ ifdef ET_BOARD_ROOTFS_TREE
 
 export ET_TRACE_CMD_TREE := trace-cmd
 export ET_TRACE_CMD_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_TRACE_CMD_TREE)
-export ET_TRACE_CMD_VERSION := $(shell cd $(ET_TRACE_CMD_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null)
+export ET_TRACE_CMD_VERSION := $(shell cd $(ET_TRACE_CMD_SOFTWARE_DIR) $(ET_NOERR) && git describe --dirty $(ET_NOERR))
 export ET_TRACE_CMD_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) trace-cmd-ref)
 export ET_TRACE_CMD_BUILD_DIR := $(ET_OVERLAY_BUILD_DIR)/$(ET_TRACE_CMD_TREE)
 export ET_TRACE_CMD_BUILD_CONFIG := $(ET_TRACE_CMD_BUILD_DIR)/.configured
@@ -29,7 +29,7 @@ export ET_TRACE_CMD_TARGET_FINAL ?= $(ET_TRACE_CMD_BIN)
 
 export ET_TRACE_EVENT_TREE := libtraceevent
 export ET_TRACE_EVENT_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_TRACE_EVENT_TREE)
-export ET_TRACE_EVENT_VERSION := $(shell cd $(ET_TRACE_EVENT_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null)
+export ET_TRACE_EVENT_VERSION := $(shell cd $(ET_TRACE_EVENT_SOFTWARE_DIR) $(ET_NOERR) && git describe --dirty $(ET_NOERR))
 export ET_TRACE_EVENT_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) libtraceevent-ref)
 export ET_TRACE_EVENT_BUILD_DIR := $(ET_OVERLAY_BUILD_DIR)/$(ET_TRACE_EVENT_TREE)
 export ET_TRACE_EVENT_BUILD_CONFIG := $(ET_TRACE_EVENT_BUILD_DIR)/.configured
@@ -39,7 +39,7 @@ export ET_TRACE_EVENT_TARGET_FINAL ?= $(ET_TRACE_EVENT_LIB)
 
 export ET_TRACE_FS_TREE := libtracefs
 export ET_TRACE_FS_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_TRACE_FS_TREE)
-export ET_TRACE_FS_VERSION := $(shell cd $(ET_TRACE_FS_SOFTWARE_DIR) 2>/dev/null && git describe --dirty 2>/dev/null)
+export ET_TRACE_FS_VERSION := $(shell cd $(ET_TRACE_FS_SOFTWARE_DIR) $(ET_NOERR) && git describe --dirty $(ET_NOERR))
 export ET_TRACE_FS_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) libtracefs-ref)
 export ET_TRACE_FS_BUILD_DIR := $(ET_OVERLAY_BUILD_DIR)/$(ET_TRACE_FS_TREE)
 export ET_TRACE_FS_BUILD_CONFIG := $(ET_TRACE_FS_BUILD_DIR)/.configured
