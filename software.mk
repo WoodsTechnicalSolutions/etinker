@@ -31,9 +31,11 @@ define software-check
 				(cd $1 && git checkout $$et_ref && (git status | grep -oq HEAD) || git pull) || exit 2; \
 				if [ -d $(ET_PATCH_DIR)/$(notdir $1) ]; then \
 					(cd $1 && \
-						git branch -D patched -f 2> /dev/null; \
+						git branch -D patched -f $(ET_NOERR); \
 						git switch -c patched; \
-						patch -p1 -i $(ET_PATCH_DIR)/$(notdir $1)/*.patch && \
+						for f in $(shell ls $(ET_PATCH_DIR)/$(notdir $1)/*.patch $(ET_NOERR)); do \
+							patch -p1 -i $$f; \
+						done && \
 						git commit -a -m "etinker: patches applied @ $$et_ref") || exit 2; \
 				fi; \
 				;; \
@@ -50,9 +52,11 @@ define software-check
 				(cd $2 && git checkout $$et_ref && (git status | grep -oq HEAD) || git pull) || exit 2; \
 				if [ -d $(ET_PATCH_DIR)/$(notdir $2) ]; then \
 					(cd $2 && \
-						git branch -D patched -f 2> /dev/null; \
+						git branch -D patched -f $(ET_NOERR); \
 						git switch -c patched; \
-						patch -p1 -i $(ET_PATCH_DIR)/$(notdir $2)/*.patch && \
+						for f in $(shell ls $(ET_PATCH_DIR)/$(notdir $2)/*.patch $(ET_NOERR)); do \
+							patch -p1 -i $$f; \
+						done && \
 						git commit -a -m "etinker: patches applied @ $$et_ref") || exit 2; \
 				fi; \
 				;; \
