@@ -122,10 +122,6 @@ define trace-cmd-config
 		if ! [ -d $(ET_TRACE_EVENT_BUILD_DIR) ] || ! [ -f $(ET_TRACE_EVENT_BUILD_CONFIG) ]; then \
 			rsync -a --cvs-exclude $(ET_TRACE_EVENT_SOFTWARE_DIR) $(shell dirname $(ET_TRACE_EVENT_BUILD_DIR))/; \
 			echo; \
-			count="`grep -n samples $(ET_TRACE_EVENT_BUILD_DIR)/meson.build | cut -d ':' -f 1`" && \
-			export count="$$(($$count - 1))"; \
-			head -"$$count" $(ET_TRACE_EVENT_BUILD_DIR)/meson.build > $(ET_TRACE_EVENT_BUILD_DIR)/_meson.build; \
-			mv $(ET_TRACE_EVENT_BUILD_DIR)/_meson.build $(ET_TRACE_EVENT_BUILD_DIR)/meson.build; \
 			PATH="$(ET_ROOTFS_BUILD_DIR)/host/bin:$(ET_ROOTFS_BUILD_DIR)/host/sbin:$(PATH)" \
 			CC_FOR_BUILD="$(ET_ROOTFS_BUILD_DIR)/host/bin/ccache /usr/lib/ccache/gcc" \
 			CXX_FOR_BUILD="$(ET_ROOTFS_BUILD_DIR)/host/bin/ccache /usr/lib/ccache/g++" \
@@ -138,6 +134,7 @@ define trace-cmd-config
 				--cross-file=$(ET_ROOTFS_BUILD_DIR)/host/etc/meson/cross-compilation.conf \
 				-Db_pie=false \
 				-Dstrip=false \
+				-Ddoc=false \
 				-Dbuild.pkg_config_path=$(ET_ROOTFS_BUILD_DIR)/host/lib/pkgconfig \
 				-Dbuild.cmake_prefix_path=$(ET_ROOTFS_BUILD_DIR)/host/lib/cmake \
 				$(ET_TRACE_EVENT_BUILD_DIR)/ \
@@ -148,11 +145,9 @@ define trace-cmd-config
 	libtracefs) \
 		if ! [ -d $(ET_TRACE_FS_BUILD_DIR) ] || ! [ -f $(ET_TRACE_FS_BUILD_CONFIG) ]; then \
 			rsync -a --cvs-exclude $(ET_TRACE_FS_SOFTWARE_DIR) $(shell dirname $(ET_TRACE_FS_BUILD_DIR))/; \
+			sed -i s/\'1.8\'/\'1.8.0\'/ $(ET_TRACE_FS_BUILD_DIR)/meson.build; \
+			sed -i "/tracefs-marker/a \ \ \ \'tracefs-mmap\.c\'," $(ET_TRACE_FS_BUILD_DIR)/src/meson.build; \
 			echo; \
-			count="`grep -n samples $(ET_TRACE_FS_BUILD_DIR)/meson.build | cut -d ':' -f 1`" && \
-			export count="$$(($$count - 1))"; \
-			head -"$$count" $(ET_TRACE_FS_BUILD_DIR)/meson.build > $(ET_TRACE_FS_BUILD_DIR)/_meson.build; \
-			mv $(ET_TRACE_FS_BUILD_DIR)/_meson.build $(ET_TRACE_FS_BUILD_DIR)/meson.build; \
 			PATH="$(ET_ROOTFS_BUILD_DIR)/host/bin:$(ET_ROOTFS_BUILD_DIR)/host/sbin:$(PATH)" \
 			CC_FOR_BUILD="$(ET_ROOTFS_BUILD_DIR)/host/bin/ccache /usr/lib/ccache/gcc" \
 			CXX_FOR_BUILD="$(ET_ROOTFS_BUILD_DIR)/host/bin/ccache /usr/lib/ccache/g++" \
@@ -165,6 +160,8 @@ define trace-cmd-config
 				--cross-file=$(ET_ROOTFS_BUILD_DIR)/host/etc/meson/cross-compilation.conf \
 				-Db_pie=false \
 				-Dstrip=false \
+				-Ddoc=false \
+				-Dsamples=false \
 				-Dbuild.pkg_config_path=$(ET_ROOTFS_BUILD_DIR)/host/lib/pkgconfig \
 				-Dbuild.cmake_prefix_path=$(ET_ROOTFS_BUILD_DIR)/host/lib/cmake \
 				$(ET_TRACE_FS_BUILD_DIR)/ \
@@ -175,11 +172,10 @@ define trace-cmd-config
 	trace-cmd) \
 		if ! [ -d $(ET_TRACE_CMD_BUILD_DIR) ] || ! [ -f $(ET_TRACE_CMD_BUILD_CONFIG) ]; then \
 			rsync -a --cvs-exclude $(ET_TRACE_CMD_SOFTWARE_DIR) $(shell dirname $(ET_TRACE_CMD_BUILD_DIR))/; \
+			sed -i "s/subdir.*Documentation.*$$//" $(ET_TRACE_CMD_BUILD_DIR)/meson.build; \
+			head -n -5 $(ET_TRACE_CMD_BUILD_DIR)/meson.build > $(ET_TRACE_CMD_BUILD_DIR)/meson.build.tmp; \
+			mv $(ET_TRACE_CMD_BUILD_DIR)/meson.build.tmp $(ET_TRACE_CMD_BUILD_DIR)/meson.build; \
 			echo; \
-			count="`grep -n python $(ET_TRACE_CMD_BUILD_DIR)/meson.build | cut -d ':' -f 1`" && \
-			export count="$$(($$count - 1))"; \
-			head -"$$count" $(ET_TRACE_CMD_BUILD_DIR)/meson.build > $(ET_TRACE_CMD_BUILD_DIR)/_meson.build; \
-			mv $(ET_TRACE_CMD_BUILD_DIR)/_meson.build $(ET_TRACE_CMD_BUILD_DIR)/meson.build; \
 			PATH="$(ET_ROOTFS_BUILD_DIR)/host/bin:$(ET_ROOTFS_BUILD_DIR)/host/sbin:$(PATH)" \
 			CC_FOR_BUILD="$(ET_ROOTFS_BUILD_DIR)/host/bin/ccache /usr/lib/ccache/gcc" \
 			CXX_FOR_BUILD="$(ET_ROOTFS_BUILD_DIR)/host/bin/ccache /usr/lib/ccache/g++" \
