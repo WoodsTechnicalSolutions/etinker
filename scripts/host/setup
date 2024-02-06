@@ -78,6 +78,9 @@ if [ -f /usr/bin/apt ]; then
 		libssl-dev \
 		libtool \
 		libtool-bin \
+		libtracecmd-dev \
+		libtraceevent-dev \
+		libtracefs-dev \
 		libusb-1.0-0-dev \
 		libusb-dev \
 		libx11-dev \
@@ -132,6 +135,7 @@ if [ -f /usr/bin/apt ]; then
 		tmux \
 		tofrodos \
 		tree \
+		trace-cmd \
 		u-boot-tools \
 		uucp \
 		uuid-dev \
