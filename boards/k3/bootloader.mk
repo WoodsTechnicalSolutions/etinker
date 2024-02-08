@@ -122,6 +122,13 @@ define bootloader-prepare-$(ET_BOARD_TYPE)
 			O=$(TI_R5_UBOOT_BUILD_DIR) \
 			-C $(ET_BOOTLOADER_SOFTWARE_DIR) \
 			$(TI_R5_UBOOT_DEFCONFIG); \
+	else \
+		yes '' | $(MAKE) --no-print-directory \
+			$(ET_CFLAGS_BOOTLOADER) \
+			CROSS_COMPILE=$(TI_R5_CROSS_TUPLE)- \
+			O=$(TI_R5_UBOOT_BUILD_DIR) \
+			-C $(ET_BOOTLOADER_SOFTWARE_DIR) \
+			oldconfig; \
 	fi
 	$(MAKE) --no-print-directory \
 		$(ET_CFLAGS_BOOTLOADER) \
