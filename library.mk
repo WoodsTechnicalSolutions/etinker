@@ -194,7 +194,7 @@ $(ET_LIBRARY_TEST): $(ET_LIBRARY_SO)
 	@mkdir -p $(@D)
 	@mkdir -p $(ET_LIBRARY_DIR)/usr/include
 	@cp -a $(ET_DIR)/include/* $(ET_LIBRARY_DIR)/usr/include/
-	$(CC) $(CFLAGS_TEST) $(ET_DIR)/lib/test.c -o $@ $(LDFLAGS_TEST)
+	$(CC) $(CFLAGS_TEST) $(ET_DIR)/lib/test.c -o $@ $^
 endif
 
 $(ET_LIBRARY_BUILD_DIR)/%.o: $(ET_DIR)/lib/%.c
@@ -204,6 +204,12 @@ $(ET_LIBRARY_BUILD_DIR)/%.o: $(ET_DIR)/lib/%.c
 $(ET_LIBRARY_BUILD_DIR)/%.d: $(ET_DIR)/lib/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -M $< > $@
+
+ifeq (x86_64,$(shell echo $(ET_BOARD) | cut -d '-' -f 1))
+.PHONY: library-test
+library-test: $(ET_LIBRARY_TEST)
+	@LD_LIBRARY_PATH=$(ET_LIBRARY_DIR)/usr/lib $^
+endif
 
 .PHONY: library-clean
 library-clean:
