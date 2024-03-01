@@ -21,7 +21,7 @@ export ET_BOOTLOADER_SPL := $(ET_BOOTLOADER_DIR)/boot/$(ET_BOARD_BOOTLOADER_SPL_
 export TI_ARM_CROSS_TUPLE := arm-none-eabihf
 
 export TI_K3_BOOT_FIRMWARE_DIR := $(ET_SOFTWARE_DIR)/ti/ti-linux-firmware
-export TI_K3_BOOT_FIRMWARE_VERSION ?= 09.01.00.008
+export TI_K3_BOOT_FIRMWARE_VERSION ?= origin/ti-linux-firmware
 
 export TI_K3_OPTEE_OS_DIR := $(ET_SOFTWARE_DIR)/ti/ti-optee-os
 export TI_K3_OPTEE_OS_VERSION ?= 09.01.00.008
@@ -34,7 +34,7 @@ export TI_R5_CROSS_TUPLE := arm-cortexr5-eabihf
 export TI_R5_UBOOT_BUILD_DIR := $(ET_DIR)/bootloader/build/$(ET_BOOTLOADER_TYPE)/$(TI_R5_CROSS_TUPLE)
 export TI_R5_UBOOT_BUILD_CONFIG := $(TI_R5_UBOOT_BUILD_DIR)/.config
 export TI_R5_UBOOT_DIR := $(ET_DIR)/bootloader/$(ET_BOOTLOADER_TYPE)/$(TI_R5_CROSS_TUPLE)
-export TI_R5_UBOOT_DEFCONFIG ?= j721e_evm_r5_defconfig
+export TI_R5_UBOOT_DEFCONFIG ?= $(TI_K3_SOC)_evm_r5_defconfig
 
 export PATH := $(ET_DIR)/toolchain/$(TI_ARM_CROSS_TUPLE)/bin:$(ET_DIR)/toolchain/$(TI_R5_CROSS_TUPLE)/bin:$(PATH)
 
@@ -142,7 +142,9 @@ define bootloader-finalize-$(ET_BOARD_TYPE)
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_BUILD_SPL) build FAILED! *****\n\n"; \
 		exit 2; \
 	fi
-	@cp -v $(TI_R5_UBOOT_BUILD_DIR)/sysfw.itb $(ET_BOOTLOADER_DIR)/boot/
+	@if [ -f $(TI_R5_UBOOT_BUILD_DIR)/sysfw.itb ]; then \
+		cp -v $(TI_R5_UBOOT_BUILD_DIR)/sysfw.itb $(ET_BOOTLOADER_DIR)/boot/; \
+	fi
 	@cp -v $(TI_R5_UBOOT_BUILD_DIR)/tiboot3.bin $(ET_BOOTLOADER_DIR)/boot/
 	@cp -av $(ET_BOOTLOADER_BUILD_SPL) $(ET_BOOTLOADER_DIR)/boot/
 endef
