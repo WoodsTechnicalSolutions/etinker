@@ -9,10 +9,9 @@
 # https://gitlab.com/u-boot/u-boot/blob/master/configs/j721e_evm_r5_defconfig
 # https://gitlab.com/u-boot/u-boot/blob/master/configs/j721e_evm_a72_defconfig
 # https://gitlab.com/u-boot/u-boot/-/tree/master/board/ti/j721e
-# https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/ti/k3-am625-sk.dts
-# https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-# https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/ti/k3-am625.dtsi
-# https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/ti/k3-am62.dtsi
+# https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
+# https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
+# https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/ti/k3-j721e.dtsi
 # ------------------------------------------------------------------------------
 #
 # This file is made available under the Creative Commons CC0 1.0
