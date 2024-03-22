@@ -188,6 +188,7 @@ define trace-cmd-config
 				--cross-file=$(ET_ROOTFS_BUILD_DIR)/host/etc/meson/cross-compilation.conf \
 				-Db_pie=false \
 				-Dstrip=false \
+				-Dpython=false \
 				-Dbuild.pkg_config_path=$(ET_ROOTFS_BUILD_DIR)/host/lib/pkgconfig \
 				-Dbuild.cmake_prefix_path=$(ET_ROOTFS_BUILD_DIR)/host/lib/cmake \
 				$(ET_TRACE_CMD_BUILD_DIR)/ \
