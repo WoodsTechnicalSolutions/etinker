@@ -169,10 +169,6 @@ omap2plus|sama5|zynq|meson|layerscape|k3)
 	ls1012afrdm*)
 		sed -i s,\/dev\/mmc,\#\/dev\/mmc, ${TARGET}/etc/fstab
 		;;
-	sama5d3-xpld*)
-		# mmc1 is the root device seen by Linux
-		sed -i s,mmcblk0,mmcblk1, ${TARGET}/etc/fstab
-		;;
 	*)
 		# DEFAULT NO-OP
 		;;
