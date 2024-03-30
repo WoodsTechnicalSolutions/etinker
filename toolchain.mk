@@ -247,14 +247,18 @@ define toolchain-mcu-libc
 				rm -f $$f; \
 				ln -s $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/lib/gcc/$(ET_CROSS_TUPLE)/$(ET_TOOLCHAIN_GCC_VERSION)/$$f; \
 			done; \
-			if [ -f librdimon.a ]; then ln -s librdimon.a librdimon_nano.a; fi; \
+			if [ -f librdimon.a ]; then \
+				ln -s librdimon.a librdimon_nano.a; \
+			fi; \
 		); \
 		if ! [ -d base/include ]; then \
 			cp -a include base/; \
 		fi; \
 		rm -rf include; \
 		cp -a base/include .; \
-		cp -a $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/include/* include/; \
+		if [ -d $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/include ]; then \
+			cp -a $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/include/* include/; \
+		fi; \
 		if ! [ -d base/sys-include ]; then \
 			cp -a sys-include base/; \
 		fi; \

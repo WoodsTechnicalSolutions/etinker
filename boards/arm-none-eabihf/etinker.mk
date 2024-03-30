@@ -29,6 +29,6 @@ ifeq ($(ET_BOARD),$(ET_BOARD_CROSS_TUPLE))
 export ET_BOARD_TYPE := $(ET_BOARD_CROSS_TUPLE)
 endif
 
-export ET_MCU_LIBC ?= newlib-nano
+export ET_MCU_LIBC ?= picolibc
 
 export CT_KERNEL = bare-metal
