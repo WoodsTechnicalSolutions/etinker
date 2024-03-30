@@ -120,6 +120,7 @@ define openssl-config
 				enable-devcryptoeng \
 				enable-camellia \
 				enable-mdc2 \
+				no-docs \
 				no-rc5 \
 				no-tests \
 				no-fuzz-libfuzzer \
