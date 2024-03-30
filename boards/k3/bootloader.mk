@@ -24,11 +24,11 @@ export TI_K3_BOOT_FIRMWARE_DIR := $(ET_SOFTWARE_DIR)/ti/ti-linux-firmware
 export TI_K3_BOOT_FIRMWARE_VERSION ?= origin/ti-linux-firmware
 
 export TI_K3_OPTEE_OS_DIR := $(ET_SOFTWARE_DIR)/ti/ti-optee-os
-export TI_K3_OPTEE_OS_VERSION ?= 09.01.00.008
+export TI_K3_OPTEE_OS_VERSION ?= 09.02.00.009
 export TI_K3_OPTEE_OS_PLATFORM ?= k3-$(TI_K3_SOC)
 
 export TI_K3_ATF_DIR := $(ET_SOFTWARE_DIR)/ti/arm-trusted-firmware
-export TI_K3_ATF_VERSION ?= 09.01.00.008
+export TI_K3_ATF_VERSION ?= 09.02.00.009
 
 export TI_R5_CROSS_TUPLE := arm-cortexr5-eabihf
 export TI_R5_UBOOT_BUILD_DIR := $(ET_DIR)/bootloader/build/$(ET_BOOTLOADER_TYPE)/$(TI_R5_CROSS_TUPLE)
@@ -95,7 +95,7 @@ define bootloader-prepare-$(ET_BOARD_TYPE)
 			CROSS_COMPILE64=$(ET_CROSS_COMPILE) \
 			PLATFORM=$(TI_K3_OPTEE_OS_PLATFORM) \
 			CFG_ARM64_core=y \
-			-C $(TI_K3_OPTEE_OS_DIR))
+			clean all)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Building $(TI_K3_ATF_VERSION) of 'arm-trusted-firmware' *****\n\n"
 	@if ! [ -d $(TI_K3_ATF_DIR) ]; then \
 		(cd $(ET_SOFTWARE_DIR)/ti && \
@@ -113,7 +113,7 @@ define bootloader-prepare-$(ET_BOARD_TYPE)
 			CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 			PLAT=k3 \
 			TARGET_BOARD=generic \
-			SPD=opteed)
+			SPD=opteed clean all)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Building TI K3 Arm Cortex-R5 $(ET_BOOTLOADER_VERSION) of 'u-boot' *****\n\n"
 	@if ! [ -f $(TI_R5_UBOOT_BUILD_CONFIG) ]; then \
 		$(MAKE) --no-print-directory \
