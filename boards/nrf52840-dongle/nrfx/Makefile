@@ -46,7 +46,7 @@ MKDIR = mkdir -p
 ifeq ($(ET_RELEASE),yes)
 OPTIMIZE = -Os
 else
-OPTIMIZE = -g3 -Og
+OPTIMIZE = -g3 -O0
 endif
 
 CFLAGS  = $(OPTIMIZE)

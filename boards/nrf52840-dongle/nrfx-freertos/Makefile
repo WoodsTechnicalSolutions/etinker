@@ -20,7 +20,7 @@ TARGET_DIR := $(shell realpath -e $(CURDIR))
 
 ET_DIR ?= $(shell realpath -e ../../..)
 
-all: $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
+all: depends $(TARGET_ELF) $(TARGET_HEX) $(TARGET_BIN)
 
 include $(ET_DIR)/etinker.mk
 
@@ -47,7 +47,7 @@ MKDIR = mkdir -p
 ifeq ($(ET_RELEASE),yes)
 OPTIMIZE = -Os
 else
-OPTIMIZE = -g3 -Og
+OPTIMIZE = -g3 -O0
 endif
 
 CFLAGS  = $(OPTIMIZE)

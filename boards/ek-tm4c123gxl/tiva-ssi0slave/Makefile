@@ -37,7 +37,7 @@ BUILD_DIR := $(TARGET_BUILD)
 ifeq ($(ET_RELEASE),yes)
 OPTIMIZE = -Os
 else
-OPTIMIZE = -g3 -Og
+OPTIMIZE = -g3 -O0
 endif
 
 CFLAGS  = $(OPTIMIZE)
