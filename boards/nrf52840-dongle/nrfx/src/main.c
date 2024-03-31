@@ -5,15 +5,12 @@
 #include <stddef.h>
 #include <ctype.h>
 
-//#ifdef __picolibc_deprecated
-/* 'picolibc' is present */
 extern unsigned int __data_start;
 unsigned int __data_source = (unsigned int)&__data_start;
 extern unsigned int __tdata_start;
 unsigned int __tls_base = (unsigned int)&__tdata_start;
 extern unsigned int __tbss_start;
 unsigned int __arm32_tls_tcb_offset = (unsigned int)&__tbss_start;
-//#endif
 
 #include "nrfx_gpiote.h"
 #include "nrfx_uarte.h"
