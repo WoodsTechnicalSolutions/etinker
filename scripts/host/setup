@@ -162,4 +162,6 @@ if [ -f /usr/bin/apt ]; then
 	sudo apt autoremove
 	pip3 install jsonschema
 	pip3 install pyelftools
+	pip3 install yamllint
+	pip3 install uboot
 fi
