@@ -29,9 +29,14 @@
 # licensed Public Domain.
 #
 
+export TI_K3_SOC := j721e
+export TI_K3_SOC_TYPE := gp
+export TI_K3_FW_TYPE := ti-fs
+export TI_ARM64_CROSS_TUPLE := aarch64-cortexa72-linux-gnu
+
 export ET_BOARD_TYPE := k3
 
-ET_BOARD_TOOLCHAIN_TYPE ?= aarch64-cortexa72-linux-gnu
+ET_BOARD_TOOLCHAIN_TYPE ?= $(TI_ARM64_CROSS_TUPLE)
 
 include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/etinker.mk
 
@@ -43,20 +48,16 @@ ET_BOARD_ROOTFS_TREE ?= buildroot
 ET_BOARD_HOSTNAME ?= $(ET_BOARD)
 ET_BOARD_GETTY_PORT ?= ttyS2
 
-ET_BOARD_KERNEL_DT ?= k3-j721e-sk
+ET_BOARD_KERNEL_DT ?= k3-$(TI_K3_SOC)-sk
 
-ET_BOARD_BOOTLOADER_DT ?= k3-j721e-sk
-
-export TI_K3_SOC := j721e
-export TI_K3_SOC_TYPE := gp
-export TI_K3_FW_TYPE := ti-fs
+ET_BOARD_BOOTLOADER_DT ?= k3-$(TI_K3_SOC)-sk
 
 ifneq ("$(ET_KERNEL_VARIANT)","")
 # fixup kernel version
 export USE_KERNEL_TREE_VERSION := $(ET_KERNEL_VARIANT)
 endif
 
-ifneq ("$(ET_BOOTLOADER_VARIANT)","")
+ifeq ("$(ET_BOOTLOADER_VARIANT)","-ti")
 # fixup bootloader version
 export USE_BOOTLOADER_TREE_VERSION := $(ET_BOOTLOADER_VARIANT)
 endif
