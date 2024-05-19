@@ -1,8 +1,7 @@
-From 2cceb7b4ca360e53131734a55dcf50a9101cc5e2 Mon Sep 17 00:00:00 2001
+From 5f985dd3a77ebc105f9bc6f82590710912933d67 Mon Sep 17 00:00:00 2001
 From: Naushir Patuck <naush@raspberrypi.com>
 Date: Tue, 21 Jan 2020 14:06:47 +0000
-Subject: [PATCH 01/12] media: uapi: Add MEDIA_BUS_FMT_SENSOR_DATA media bus
- format
+Subject: [PATCH] media: uapi: Add MEDIA_BUS_FMT_SENSOR_DATA media bus format
 
 This patch adds MEDIA_BUS_FMT_SENSOR_DATA used by the bcm2835-unicam
 driver to support CSI-2 embedded data streams from camera sensors.
@@ -66,5 +65,5 @@ index f05f747e444d..b7e21da0ff56 100644
 +
  #endif /* __LINUX_MEDIA_BUS_FORMAT_H */
 -- 
-2.43.0
+2.45.1
 
