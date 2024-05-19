@@ -68,6 +68,7 @@ endef
 
 define rootfs-software
 	$(call software-check,$(ET_ROOTFS_TREE),rootfs,fetch)
+	$(call software-check,$(ET_OPENSSL_TREE),openssl,fetch)
 endef
 
 define rootfs-depends
