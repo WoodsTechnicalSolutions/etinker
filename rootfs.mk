@@ -69,9 +69,11 @@ endef
 define rootfs-software
 	$(call software-check,$(ET_ROOTFS_TREE),rootfs,fetch)
 	$(call software-check,$(ET_OPENSSL_TREE),openssl,fetch)
+	$(call software-check,luajit,luajit,fetch)
 endef
 
 define rootfs-depends
+	$(call software-check,luajit,luajit,fetch)
 	$(call software-check,$(ET_OPENSSL_TREE),openssl)
 	$(call software-check,$(ET_ROOTFS_TREE),rootfs)
 	@mkdir -p $(ET_KERNEL_DIR)
@@ -86,6 +88,7 @@ define rootfs-depends
 		rsync $(ET_ROOTFS_DEFCONFIG) $(ET_ROOTFS_SOFTWARE_DIR)/configs/ $(ET_NULL); \
 	fi
 	@printf "LIBOPENSSL_OVERRIDE_SRCDIR = $(ET_SOFTWARE_DIR)/openssl\n" > $(ET_ROOTFS_BUILD_DIR)/local.mk
+	@printf "LUAJIT_OVERRIDE_SRCDIR = $(ET_SOFTWARE_DIR)/luajit\n" >> $(ET_ROOTFS_BUILD_DIR)/local.mk
 endef
 
 define rootfs-build
