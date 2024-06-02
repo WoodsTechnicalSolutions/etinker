@@ -21,12 +21,12 @@ export ET_BOOTLOADER_SPL := $(ET_BOOTLOADER_DIR)/boot/$(ET_BOARD_BOOTLOADER_SPL_
 export TI_K3_BOOT_FIRMWARE_DIR := $(ET_SOFTWARE_DIR)/ti/ti-linux-firmware
 export TI_K3_BOOT_FIRMWARE_VERSION ?= origin/ti-linux-firmware
 
-export TI_K3_OPTEE_OS_DIR := $(ET_SOFTWARE_DIR)/ti/ti-optee-os
-export TI_K3_OPTEE_OS_VERSION ?= 09.02.00.009
-export TI_K3_OPTEE_OS_PLATFORM ?= k3-$(TI_K3_SOC)
-
 export TI_K3_ATF_DIR := $(ET_SOFTWARE_DIR)/ti/arm-trusted-firmware
 export TI_K3_ATF_VERSION ?= 09.02.00.009
+
+export TI_K3_OPTEE_OS_DIR := $(ET_SOFTWARE_DIR)/ti/ti-optee-os
+export TI_K3_OPTEE_OS_VERSION ?= $(TI_K3_ATF_VERSION)
+export TI_K3_OPTEE_OS_PLATFORM ?= k3-$(TI_K3_SOC)
 
 export TI_ARM_CROSS_TUPLE := arm-none-eabihf
 export TI_R5_CROSS_TUPLE := arm-cortexr5-eabihf
