@@ -36,7 +36,7 @@ CT_BINUTILS_PLUGINS=y
 CT_BINUTILS_FOR_TARGET=y
 # CT_BINUTILS_FOR_TARGET_OPCODES is not set
 CT_GLIBC_USE_LIBIDN_ADDON=y
-# CT_GLIBC_ENABLE_WERROR is not set
+CT_GCC_V_13=y
 CT_CC_GCC_EXTRA_CONFIG_ARRAY="--enable-gnu-indirect-function --enable-checking=release --enable-clocale=gnu --enable-install-libiberty --enable-plugin --with-isl"
 # CT_CC_GCC_STATIC_LIBSTDCXX is not set
 CT_CC_GCC_SYSTEM_ZLIB=y
