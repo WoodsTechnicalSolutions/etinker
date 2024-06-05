@@ -81,7 +81,7 @@ define bootloader-prepare-common
 			CROSS_COMPILE64=$(TI_ARM64_CROSS_TUPLE)- \
 			PLATFORM=$(TI_K3_OPTEE_OS_PLATFORM) \
 			CFG_ARM64_core=y \
-			all)
+			clean all)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Building $(TI_K3_ATF_VERSION) of 'arm-trusted-firmware' *****\n\n"
 	@if ! [ -d $(TI_K3_ATF_DIR) ]; then \
 		(cd $(ET_SOFTWARE_DIR)/ti && \
@@ -100,7 +100,7 @@ define bootloader-prepare-common
 			PLAT=k3 \
 			TARGET_BOARD=generic \
 			SPD=opteed \
-			all)
+			clean all)
 endef
 
 define bootloader-finalize-common
