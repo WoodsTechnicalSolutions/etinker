@@ -1,10 +1,9 @@
 include $(ET_DIR)/boards/k3/common.mk
 
+define bootloader-depends-$(ET_BOARD_TYPE)
 ifneq (exists,$(shell test -f $(ET_DIR)/bootloader/k3-$(TI_K3_SOC)-r5/$(TI_R5_CROSS_TUPLE)/boot/tiboot3.bin && echo exists))
 $(error ET_BOARD=k3-$(TI_K3_SOC)-r5 MUST BE BUILT FIRST! ***)
 endif
-
-define bootloader-depends-$(ET_BOARD_TYPE)
 	@$(call bootloader-depends-common)
 endef
 
