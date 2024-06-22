@@ -28,9 +28,9 @@ export TI_K3_OPTEE_OS_DIR := $(ET_SOFTWARE_DIR)/ti/ti-optee-os
 export TI_K3_OPTEE_OS_VERSION ?= $(TI_K3_ATF_VERSION)
 export TI_K3_OPTEE_OS_PLATFORM ?= k3-$(TI_K3_SOC)
 
-export TI_ARM_CROSS_TUPLE := arm-none-eabihf
-export TI_R5_CROSS_TUPLE := arm-cortexr5-eabihf
-export TI_ARM64_CROSS_COMPILE := 
+export TI_ARM_CROSS_TUPLE ?= arm-none-eabihf
+export TI_R5_CROSS_TUPLE ?= arm-cortexr5-eabihf
+export TI_ARM64_CROSS_COMPILE ?= $(TI_ARM64_CROSS_TUPLE)-
 
 export ET_CFLAGS_BOOTLOADER := BINMAN_INDIRS=$(TI_K3_BOOT_FIRMWARE_DIR) \
 				BL31=$(TI_K3_ATF_DIR)/build/k3/generic/release/bl31.bin \
@@ -39,6 +39,13 @@ export ET_CFLAGS_BOOTLOADER := BINMAN_INDIRS=$(TI_K3_BOOT_FIRMWARE_DIR) \
 export PATH := $(ET_DIR)/toolchain/$(TI_ARM64_CROSS_TUPLE)/bin:$(ET_DIR)/toolchain/$(TI_ARM_CROSS_TUPLE)/bin:$(PATH)
 
 define bootloader-depends-common
+	@(if ! [ -f $(ET_DIR)/toolchain/$(TI_ARM64_CROSS_TUPLE)/bin/$(TI_ARM64_CROSS_TUPLE)-gcc ]; then \
+		ET_BOARD=$(TI_ARM64_CROSS_TUPLE) make -C $(ET_DIR) toolchain; \
+	fi)
+	@if ! [ -f $(ET_DIR)/toolchain/$(TI_ARM64_CROSS_TUPLE)/bin/$(TI_ARM64_CROSS_TUPLE)-gcc ]; then \
+		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_BOOTLOADER_BUILD_SPL) Missing '$(TI_ARM64_CROSS_TUPLE)' toolchain! *****\n\n"; \
+		exit 2; \
+	fi
 	@(if ! [ -f $(ET_DIR)/toolchain/$(TI_ARM_CROSS_TUPLE)/bin/$(TI_ARM_CROSS_TUPLE)-gcc ]; then \
 		ET_BOARD=$(TI_ARM_CROSS_TUPLE) make -C $(ET_DIR) toolchain; \
 	fi)
