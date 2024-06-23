@@ -224,7 +224,9 @@ define toolchain-info
 endef
 
 define toolchain-update
-	@$(ET_MAKE) -C $(ET_DIR) toolchain-clean
+	@(if [ -f $(ET_TOOLCHAIN_BUILD_CONFIG) ]; then \
+		$(ET_MAKE) -C $(ET_DIR) toolchain-clean; \
+	fi)
 	@$(ET_MAKE) -C $(ET_DIR) toolchain
 endef
 
