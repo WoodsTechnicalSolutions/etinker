@@ -35,55 +35,45 @@ export ET_KERNEL_CROSS_PARAMS := ARCH=$(ET_KERNEL_ARCH) CROSS_COMPILE=$(ET_CROSS
 
 kernel_defconfig := et_$(subst -,_,$(ET_KERNEL_TYPE))_defconfig
 
-# [start] kernel version magic
-ifneq ($(shell ls $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR)),)
-kversion := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR) && make kernelversion | tr -d \\n)
-kgithash := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR) && git rev-parse --short HEAD)
-kgitdirty := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR) && git describe --dirty | grep -oe '-dirty')
-klocalversion := -g$(kgithash)$(kgitdirty)
-ifdef USE_KERNEL_TREE_VERSION
-ET_KERNEL_VERSION := $(kversion)
-ET_KERNEL_LOCALVERSION := $(USE_KERNEL_TREE_VERSION)$(klocalversion)
-localversion := $(ET_KERNEL_LOCALVERSION)
-else
+# [start] kernel version magic (only because I encounter incomplete Git trees)
+kversion := $(shell $(ET_MAKE) kernelversion -C $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR) | tr -d \\n)
+# check kernel tree for typical Git info
+gittag := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR) && git describe $(ET_NOERR))
+ifeq (gittag,$(shell test -n "$(gittag)" && printf gittag || printf empty))
+githash := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR) && git rev-parse --short HEAD)
+gitdirty := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR) && git describe --dirty $(ET_NOERR) | grep -oe '-dirty')
+gitversion := -g$(githash)$(gitdirty)
 ET_KERNEL_VERSION := $(shell cd $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR) && git describe --dirty $(ET_NOERR) | tr -d v | cut -d '-' -f 1)
-ET_KERNEL_LOCALVERSION := -$(shell cd $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR) && git describe --dirty $(ET_NOERR) | cut -d '-' -f 2-5)
-# empty local version
-ifeq ($(ET_KERNEL_LOCALVERSION),-)
-ET_KERNEL_LOCALVERSION :=
+ifneq ($(gittag),v$(ET_KERNEL_VERSION))
+ET_KERNEL_LOCALVERSION := -$(shell cd $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR) && git describe --dirty $(ET_NOERR) | tr -d v | cut -d '-' -f 2-5)
 endif
-# exact tag in series (i.e. v4.14.1)
-ifeq ($(ET_KERNEL_LOCALVERSION),-v$(ET_KERNEL_VERSION))
-ET_KERNEL_LOCALVERSION :=
+ifeq (unknown,$(shell test -z "$(ET_KERNEL_VERSION)" && printf unknown || printf normal))
+ET_KERNEL_VERSION := $(kversion)
 endif
-# RC version (i.e. v4.14-rc1)
-ifeq ($(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,[0-9].*,,),-rc)
-rcversion := $(shell printf "%s" $(ET_KERNEL_LOCALVERSION) | cut -d '-' -f 2)
-ET_KERNEL_VERSION := $(ET_KERNEL_VERSION).0-$(rcversion)
-rclocalversion := -$(shell printf "%s" $(ET_KERNEL_LOCALVERSION) | cut -d '-' -f 3-5)
-ifeq ($(ET_KERNEL_LOCALVERSION),-$(rcversion)$(rclocalversion))
-ET_KERNEL_LOCALVERSION := $(rclocalversion)
+localversion := $(ET_KERNEL_LOCALVERSION)
+else # no git describe info found
+ET_KERNEL_VERSION := $(kversion)
 endif
-ifeq ($(ET_KERNEL_LOCALVERSION),-$(rcversion))
-ET_KERNEL_LOCALVERSION :=
-endif
-endif
-# first in release series (i.e. v4.14)
-ifeq ($(shell printf "%s" $(ET_KERNEL_VERSION)|cut -d '.' -f 3),)
+# first in release series (i.e. v6.9)
+ifeq ($(shell printf $(ET_KERNEL_VERSION) | cut -d '.' -f 3),)
 ET_KERNEL_VERSION := $(ET_KERNEL_VERSION).0
 endif
-localversion := $(ET_KERNEL_LOCALVERSION)
 # linux-rt
-ifeq ($(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,[0-9].*,,),-rt)
-localversion := $(subst $(shell cat $(ET_KERNEL_SOFTWARE_DIR)/localversion-rt | tr -d \\n),,$(ET_KERNEL_LOCALVERSION))
+ifeq (linux-rt,$(shell [ -f $(ET_KERNEL_SOFTWARE_DIR)/localversion-rt ] && echo linux-rt || echo no))
+localversion-rt := $(shell cat $(ET_KERNEL_SOFTWARE_DIR)/localversion-rt)
+localversion := $(shell echo $(ET_KERNEL_LOCALVERSION) | sed s/$(localversion-rt)//)
 endif
 # linux-next
-ifeq ($(ET_KERNEL_VERSION),next)
+ifeq (linux-next,$(shell [ -f $(ET_KERNEL_SOFTWARE_DIR)/localversion-next ] && echo linux-next || echo no))
 ET_KERNEL_VERSION := $(kversion)
-ET_KERNEL_LOCALVERSION := -next$(ET_KERNEL_LOCALVERSION)
+ET_KERNEL_LOCALVERSION := $(shell cat $(ET_KERNEL_SOFTWARE_DIR)/localversion-next)
 localversion :=
 endif
-endif
+# final override
+ifdef USE_KERNEL_TREE_VERSION
+ET_KERNEL_VERSION := $(kversion)
+ET_KERNEL_LOCALVERSION := $(USE_KERNEL_TREE_VERSION)
+localversion := $(ET_KERNEL_LOCALVERSION)
 endif
 # [end] kernel version magic
 
@@ -170,7 +160,7 @@ define kernel-build
 		;; \
 	*) \
 		if ! [ -f $(ET_KERNEL_BUILD_CONFIG) ]; then \
-			$(MAKE) --no-print-directory \
+			$(ET_MAKE) \
 				$(ET_CFLAGS_KERNEL) \
 				$(ET_KERNEL_CROSS_PARAMS) \
 				O=$(ET_KERNEL_BUILD_DIR) \
@@ -183,7 +173,7 @@ define kernel-build
 		fi; \
 		;; \
 	esac
-	$(MAKE) --no-print-directory -j $(ET_CPUS) \
+	$(ET_MAKE) -j $(ET_CPUS) \
 		$(ET_CFLAGS_KERNEL) \
 		$(ET_KERNEL_CROSS_PARAMS) \
 		LOCALVERSION=$(localversion) \
@@ -260,7 +250,7 @@ define kernel-build
 			exit 2; \
 		fi; \
 		if ! [ "$1" = "savedefconfig" ]; then \
-			$(MAKE) --no-print-directory \
+			$(ET_MAKE) \
 				$(ET_CFLAGS_KERNEL) \
 				$(ET_KERNEL_CROSS_PARAMS) \
 				O=$(ET_KERNEL_BUILD_DIR) \
@@ -281,7 +271,7 @@ endef
 define kernel-config
 	$(call kernel-depends)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call kernel-config *****\n\n"
-	$(MAKE) --no-print-directory \
+	$(ET_MAKE) \
 		$(ET_CFLAGS_KERNEL) \
 		$(ET_KERNEL_CROSS_PARAMS) \
 		O=$(ET_KERNEL_BUILD_DIR) \

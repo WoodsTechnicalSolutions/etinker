@@ -44,7 +44,7 @@ ET_BOARD_KERNEL_DT ?= zynq-pynq-z2
 
 ET_BOARD_BOOTLOADER_DT ?= zynq-pynq-z2
 
-ifneq ("$(ET_KERNEL_VARIANT)","")
+ifdef ET_KERNEL_VARIANT
 # fixup kernel version
 export USE_KERNEL_TREE_VERSION := $(ET_KERNEL_VARIANT)
 endif
