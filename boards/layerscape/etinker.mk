@@ -30,8 +30,10 @@ ifneq ($(ET_BOARD_TYPE),layerscape)
 $(error [ ET_BOARD_TYPE is NOT 'layerscape' ] ***)
 endif
 
+ET_BOARD_DT_PREFIX := freescale/
+
 ET_BOARD_KERNEL_ARCH := arm64
-ET_BOARD_KERNEL_VENDOR := freescale/
+ET_BOARD_KERNEL_VENDOR := $(ET_BOARD_DT_PREFIX)
 ET_BOARD_KERNEL_LOADADDR ?= 0x80080000
 
 ET_BOARD_BOOTLOADER_IMAGE := u-boot.bin

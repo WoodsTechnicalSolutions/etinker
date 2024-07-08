@@ -30,8 +30,10 @@ ifneq ($(ET_BOARD_TYPE),omap2plus)
 $(error [ ET_BOARD_TYPE is NOT 'omap2plus' ] ***)
 endif
 
+ET_BOARD_DT_PREFIX := ti/omap/
+
 ET_BOARD_KERNEL_ARCH := arm
-ET_BOARD_KERNEL_VENDOR := ti/omap/
+ET_BOARD_KERNEL_VENDOR := $(ET_BOARD_DT_PREFIX)
 ET_BOARD_KERNEL_LOADADDR ?= 0x82000000
 
 ET_BOARD_BOOTLOADER_IMAGE := u-boot.img

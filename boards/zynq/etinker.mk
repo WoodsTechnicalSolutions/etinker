@@ -34,8 +34,10 @@ ifeq ($(shell test -d $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/sdk || echo missing
 $(error [ Zynq FPGA build is missing! ( $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/sdk ) ] ***)
 endif
 
+ET_BOARD_DT_PREFIX := xilinx/
+
 ET_BOARD_KERNEL_ARCH := arm
-ET_BOARD_KERNEL_VENDOR := xilinx/
+ET_BOARD_KERNEL_VENDOR := $(ET_BOARD_DT_PREFIX)
 ET_BOARD_KERNEL_LOADADDR ?= 0x02080000
 
 ET_BOARD_BOOTLOADER_IMAGE ?= u-boot.img

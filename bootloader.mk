@@ -111,6 +111,10 @@ define bootloader-depends
 	@if [ -d $(ET_BOARD_DIR)/dts/u-boot ] && [ -n "`ls $(ET_BOARD_DIR)/dts/u-boot/*.dts* $(ET_NOERR)`" ]; then \
 		rsync -rP $(ET_BOARD_DIR)/dts/u-boot/*.dts* \
 			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_BOOTLOADER_ARCH)/dts/; \
+		if [ -d $(ET_BOOTLOADER_SOFTWARE_DIR)/dts/upstream/src/$(ET_BOOTLOADER_ARCH)/$(ET_BOARD_DT_PREFIX) ]; then \
+			rsync -rP $(ET_BOARD_DIR)/dts/u-boot/*.dts* \
+				$(ET_BOOTLOADER_SOFTWARE_DIR)/dts/upstream/src/$(ET_ARCH)/$(ET_BOARD_DT_PREFIX); \
+		fi; \
 	fi
 	@if [ -f $(ET_BOOTLOADER_DEFCONFIG) ]; then \
 		rsync $(ET_BOOTLOADER_DEFCONFIG) $(ET_BOOTLOADER_SOFTWARE_DIR)/configs/ $(ET_NULL); \

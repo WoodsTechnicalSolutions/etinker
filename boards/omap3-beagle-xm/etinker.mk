@@ -42,4 +42,4 @@ ET_BOARD_GETTY_PORT ?= ttyS2
 ET_BOARD_KERNEL_DT ?= omap3-beagle-xm
 ET_BOARD_KERNEL_DT_ETINKER ?= omap3-beagle-xm-etinker
 
-ET_BOARD_BOOTLOADER_DT ?= omap3-beagle-xm
+ET_BOARD_BOOTLOADER_DT ?= $(ET_BOARD_DT_PREFIX)omap3-beagle-xm

@@ -30,6 +30,8 @@ ifneq ($(ET_BOARD_TYPE),k3-r5)
 $(error [ ET_BOARD_TYPE is NOT 'k3-r5' ] ***)
 endif
 
+ET_BOARD_DT_PREFIX := ti/
+
 ET_BOARD_BOOTLOADER_IMAGE := u-boot.img
 ET_BOARD_BOOTLOADER_SPL_BINARY ?= tiboot3.bin
 
