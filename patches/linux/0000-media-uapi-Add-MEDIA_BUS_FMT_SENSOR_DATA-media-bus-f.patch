@@ -1,4 +1,4 @@
-From 5f985dd3a77ebc105f9bc6f82590710912933d67 Mon Sep 17 00:00:00 2001
+From 22230833e13dca662fe499529f867352265a58f0 Mon Sep 17 00:00:00 2001
 From: Naushir Patuck <naush@raspberrypi.com>
 Date: Tue, 21 Jan 2020 14:06:47 +0000
 Subject: [PATCH] media: uapi: Add MEDIA_BUS_FMT_SENSOR_DATA media bus format
@@ -8,19 +8,18 @@ driver to support CSI-2 embedded data streams from camera sensors.
 
 Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
 ---
- .../media/v4l/subdev-formats.rst              | 32 +++++++++++++++++++
+ .../media/v4l/subdev-formats.rst              | 30 +++++++++++++++++++
  include/uapi/linux/media-bus-format.h         |  3 ++
- 2 files changed, 35 insertions(+)
+ 2 files changed, 33 insertions(+)
 
 diff --git a/Documentation/userspace-api/media/v4l/subdev-formats.rst b/Documentation/userspace-api/media/v4l/subdev-formats.rst
-index eb3cd20b0cf2..40f83c731397 100644
+index d2a6cd2e1eb2..ca3230b83362 100644
 --- a/Documentation/userspace-api/media/v4l/subdev-formats.rst
 +++ b/Documentation/userspace-api/media/v4l/subdev-formats.rst
-@@ -8306,3 +8306,35 @@ The following table lists the existing metadata formats.
- 	both sides of the link and the bus format is a fixed
- 	metadata format that is not configurable from userspace.
- 	Width and height will be set to 0 for this format.
-+
+@@ -8561,3 +8561,33 @@ and finally the bit number in subscript. "x" indicates a padding bit.
+       - x
+       - x
+       - x
 +
 +.. _v4l2-mbus-sensor-data:
 +
@@ -51,19 +50,18 @@ index eb3cd20b0cf2..40f83c731397 100644
 +      - Sensor vendor specific ancillary metadata. Some vendors follow a generic
 +        CSI-2/SMIA embedded data format as described in the `CSI-2 specification.
 +	<https://mipi.org/specifications/csi-2>`_
-+
 diff --git a/include/uapi/linux/media-bus-format.h b/include/uapi/linux/media-bus-format.h
-index f05f747e444d..b7e21da0ff56 100644
+index d4c1d991014b..ac214f7ef341 100644
 --- a/include/uapi/linux/media-bus-format.h
 +++ b/include/uapi/linux/media-bus-format.h
-@@ -174,4 +174,7 @@
-  */
- #define MEDIA_BUS_FMT_METADATA_FIXED		0x7001
+@@ -183,4 +183,7 @@
+ #define MEDIA_BUS_FMT_META_20			0x8006
+ #define MEDIA_BUS_FMT_META_24			0x8007
  
 +/* Sensor ancillary metadata formats - next is 0x7002 */
 +#define MEDIA_BUS_FMT_SENSOR_DATA		0x7002
 +
  #endif /* __LINUX_MEDIA_BUS_FORMAT_H */
 -- 
-2.45.1
+2.45.2
 

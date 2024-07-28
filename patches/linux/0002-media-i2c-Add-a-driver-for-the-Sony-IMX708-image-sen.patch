@@ -1,4 +1,4 @@
-From 40fb75759ab6e9094a33f0dac6853f811d4f50fa Mon Sep 17 00:00:00 2001
+From adcfab0ae5874d80714b19a91913957e225e37e2 Mon Sep 17 00:00:00 2001
 From: Nick Hollinghurst <nick.hollinghurst@raspberrypi.com>
 Date: Thu, 22 Dec 2022 13:59:33 +0000
 Subject: [PATCH] media/i2c: Add a driver for the Sony IMX708 image sensor
@@ -103,10 +103,10 @@ media: i2c: imx708: Squash fixes
  create mode 100644 drivers/media/i2c/imx708.c
 
 diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 56f276b920ab..50df35f6aa3e 100644
+index c6d3ee472d81..2a7b3f0a2bf2 100644
 --- a/drivers/media/i2c/Kconfig
 +++ b/drivers/media/i2c/Kconfig
-@@ -232,6 +232,19 @@ config VIDEO_IMX415
+@@ -233,6 +233,19 @@ config VIDEO_IMX415
  	  To compile this driver as a module, choose M here: the
  	  module will be called imx415.
  
@@ -2261,5 +2261,5 @@ index 000000000000..b5ad9cf46df7
 +MODULE_DESCRIPTION("Sony IMX708 sensor driver");
 +MODULE_LICENSE("GPL v2");
 -- 
-2.45.1
+2.45.2
 
