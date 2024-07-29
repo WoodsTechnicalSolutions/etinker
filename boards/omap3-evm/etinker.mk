@@ -29,6 +29,7 @@
 #
 
 export ET_BOARD_TYPE := omap2plus
+export ET_KERNEL_VARIANT ?= -base
 
 include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/etinker.mk
 
