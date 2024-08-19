@@ -91,9 +91,9 @@ for n in `ls ${ET_DIR}/boards`; do
 
 	# baseline boards for supported toolchains
 	case $n in
-	aarch64-cortexa53-linux-gnu | arm-cortexa5-linux-gnueabihf | arm-cortexa8-linux-gnueabihf | \
-	arm-cortexa9-linux-gnueabihf | arm-none-eabi | arm-none-eabihf | arm-cortexr5-eabihf | \
-	aarch64-cortexa72-linux-gnu)
+	aarch64-cortexa53-linux-gnu | aarch64-cortexa72-linux-gnu | \
+	arm-cortexa5-linux-gnueabihf | arm-cortexa8-linux-gnueabihf | arm-cortexa9-linux-gnueabihf | \
+	arm-cortexr5-eabihf | arm-none-eabi | arm-none-eabihf)
 		if ! do_make $n "$@"; then
 			printf "etinker $0 failed!\n"
 			exit 1
