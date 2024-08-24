@@ -60,6 +60,7 @@ if [ -f /usr/bin/apt ]; then
 		libglib2.0-dev \
 		libgmp-dev \
 		libgpiod-dev \
+		libgnutls28-dev \
 		libgtk2.0-dev \
 		libhidapi-dev \
 		libiberty-dev \
