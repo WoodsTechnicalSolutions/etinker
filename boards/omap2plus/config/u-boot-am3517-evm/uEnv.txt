@@ -4,6 +4,7 @@ mmcroot=/dev/mmcblk0p2
 mmcrootfstype=ext4 rootwait
 bootfile=fitImage
 fitaddr=0x8b000000
+optargs='pd_ignore_unused regulator_ignore_unused clk_ignore_unused'
 uenvcmd=echo && echo [ etinker: am3517-evm (fitImage) ] && echo && \
 setenv bootargs console=${console} ${optargs} root=${mmcroot} rw rootfstype=${mmcrootfstype} && \
 fatload mmc ${mmcdev}:1 ${fitaddr} ${bootfile} && \
