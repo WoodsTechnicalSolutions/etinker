@@ -43,7 +43,7 @@ endef
 define cryptodev-linux-targets
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] cryptodev-linux *****\n\n"
 	$(call cryptodev-linux-build,build)
-	$(call cryptodev-linux-build,modules_install)
+	$(call cryptodev-linux-build,install)
 endef
 
 define cryptodev-linux-build
