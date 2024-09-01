@@ -36,6 +36,7 @@ define software-check
 						for f in $(shell ls $(ET_PATCH_DIR)/$(notdir $1)/*.patch $(ET_NOERR)); do \
 							patch -p1 -i $$f; \
 						done && \
+						git add . && \
 						git commit -a -m "etinker: patches applied @ $$et_ref") || exit 2; \
 				fi; \
 				;; \
@@ -57,6 +58,7 @@ define software-check
 						for f in $(shell ls $(ET_PATCH_DIR)/$(notdir $2)/*.patch $(ET_NOERR)); do \
 							patch -p1 -i $$f; \
 						done && \
+						git add . && \
 						git commit -a -m "etinker: patches applied @ $$et_ref") || exit 2; \
 				fi; \
 				;; \
