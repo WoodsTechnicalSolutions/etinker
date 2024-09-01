@@ -115,18 +115,22 @@ define kernel-depends
 	@mkdir -p $(ET_KERNEL_BUILD_BOOT_DIR)
 	@mkdir -p $(shell dirname $(ET_KERNEL_DEFCONFIG))
 	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.dts* $(ET_NOERR)`" ]; then \
-		rsync -r $(ET_BOARD_DIR)/dts/*.dts* \
+		cp -v $(ET_BOARD_DIR)/dts/*.dts* \
 			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/boot/dts/$(ET_KERNEL_VENDOR) $(ET_NULL); \
 	fi
 	@if [ -d $(ET_BOARD_DIR)/dts/linux ] && [ -n "`ls $(ET_BOARD_DIR)/dts/linux/*.dts* $(ET_NOERR)`" ]; then \
-		rsync -r $(ET_BOARD_DIR)/dts/linux/*.dts* \
+		cp -v $(ET_BOARD_DIR)/dts/linux/*.dts* \
+			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/boot/dts/$(ET_KERNEL_VENDOR) $(ET_NULL); \
+	fi
+	@if [ -n "`ls $(ET_BOARD_DIR)/dts/linux/$(ET_KERNEL_VENDOR)*.dts* $(ET_NOERR)`" ]; then \
+		cp -v $(ET_BOARD_DIR)/dts/linux/$(ET_KERNEL_VENDOR)*.dts* \
 			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/boot/dts/$(ET_KERNEL_VENDOR) $(ET_NULL); \
 	fi
 	@if [ -f $(ET_KERNEL_DEFCONFIG) ]; then \
-		rsync $(ET_KERNEL_DEFCONFIG) $(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/configs/ $(ET_NULL); \
+		cp -v $(ET_KERNEL_DEFCONFIG) $(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/configs/ $(ET_NULL); \
 	fi
 	@if [ -n "$(ET_KERNEL_DEFCONFIG_N)" ]; then \
-		rsync $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config/linux/$(ET_KERNEL_DEFCONFIG_N) \
+		cp -v $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config/linux/$(ET_KERNEL_DEFCONFIG_N) \
 			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/configs/; \
 	fi
 	$(call kernel-depends-$(ET_BOARD))
@@ -299,6 +303,7 @@ define kernel-info
 	@printf "ET_KERNEL_VERSION: $(ET_KERNEL_VERSION)\n"
 	@printf "ET_KERNEL_LOCALVERSION: $(ET_KERNEL_LOCALVERSION)\n"
 	@printf "ET_KERNEL_ARCH: $(ET_KERNEL_ARCH)\n"
+	@printf "ET_KERNEL_VENDOR: $(ET_KERNEL_VENDOR)\n"
 	@printf "ET_KERNEL_DT: $(ET_KERNEL_DT)\n"
 	@if [ -n "$(shell echo $(ET_KERNEL_DT_ETINKER))" ]; then \
 		printf "ET_KERNEL_DT_ETINKER: $(ET_KERNEL_DT_ETINKER)\n"; \
