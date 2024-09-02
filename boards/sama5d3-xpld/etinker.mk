@@ -41,5 +41,6 @@ ET_BOARD_HOSTNAME ?= $(ET_BOARD)
 ET_BOARD_GETTY_PORT ?= ttyS0
 
 ET_BOARD_KERNEL_DT ?= at91-sama5d3_xplained
+ET_BOARD_KERNEL_DT_ETINKER ?= at91-sama5d3_xplained-etinker
 
 ET_BOARD_BOOTLOADER_DT ?= at91-sama5d3_xplained
