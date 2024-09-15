@@ -45,9 +45,9 @@
 		resetb-gpios = <&pioB 26 GPIO_ACTIVE_LOW>;
 		pwdn-gpios = <&pioB 27 GPIO_ACTIVE_HIGH>;
 		/* use pck1 for the master clock of ov2640 */
-		clocks = <&pmc PMC_TYPE_SYSTEM PMC_AUDIOPLLCK>;
+		clocks = <&pmc PMC_TYPE_SYSTEM 9>;
 		clock-names = "xvclk";
-		assigned-clocks = <&pmc PMC_TYPE_SYSTEM PMC_AUDIOPLLCK>;
+		assigned-clocks = <&pmc PMC_TYPE_SYSTEM 9>;
 		assigned-clock-rates = <25000000>;
 
 		port {
@@ -85,7 +85,7 @@
 
 		pinctrl_sensor_reset: sensor_reset-0 {
 			atmel,pins =
-				<AT91_PIOB 26 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP>; /* PB26 periph GPIO */
+				<AT91_PIOB 26 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>; /* PB26 periph GPIO */
 		};
 
 		pinctrl_sensor_power: sensor_power-0 {
