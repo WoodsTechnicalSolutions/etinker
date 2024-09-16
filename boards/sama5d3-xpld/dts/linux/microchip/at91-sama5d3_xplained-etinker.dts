@@ -9,6 +9,23 @@
 
 #include "at91-sama5d3_xplained.dts"
 
+/ {
+	backlight: backlight {
+		status = "okay";
+		compatible = "gpio-backlight";
+		gpios = <&pioC 17 GPIO_ACTIVE_HIGH>;
+		default-on;
+	};
+
+	display_supply: fixed_3v3@0 {
+		status = "okay";
+		compatible = "regulator-fixed";
+		regulator-name = "fixed-supply";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+	};
+};
+
 &adc0 {
 	status = "disabled";
 };
@@ -38,6 +55,7 @@
 
 	/* see "arch/arm/boot/dts/microchip/sama5d3xmb{_cmp}.dtsi" */
 	ov2640: camera@30 {
+		status = "okay";
 		compatible = "ovti,ov2640";
 		reg = <0x30>;
 		pinctrl-names = "default";
@@ -76,6 +94,45 @@
 	};
 };
 
+&spi1 {
+	status = "okay";
+
+	display: ili9341@0 {
+		status = "okay";
+		compatible = "adafruit,yx240qv29", "ilitek,ili9341";
+		reg = <0>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_display_backlight &pinctrl_display_reset &pinctrl_display_dc>;
+		spi-max-frequency = <10000000>;
+		backlight = <&backlight>;
+		reset-gpios = <&pioB 15 GPIO_ACTIVE_LOW>;
+		dc-gpios = <&pioB 14 GPIO_ACTIVE_HIGH>;
+		rotation = <270>;
+		bgr;
+	};
+
+	display_ts: tsc2046@3 {
+		status = "okay";
+		compatible = "ti,ads7846";
+		reg = <3>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_display_ts>;
+		spi-max-frequency = <1000000>;
+		pendown-gpio = <&pioC 16 GPIO_ACTIVE_LOW>;
+		interrupts = <16 0>;
+		interrupt-parent = <&pioC>;
+		vcc-supply = <&display_supply>;
+		ti,swap-xy;
+		ti,x-min = /bits/ 16 <0>;
+		ti,x-max = /bits/ 16 <8000>;
+		ti,y-min = /bits/ 16 <0>;
+		ti,y-max = /bits/ 16 <4800>;
+		ti,x-plate-ohms = /bits/ 16 <40>;
+		ti,pressure-max = /bits/ 16 <255>;
+		wakeup-source;
+	};
+};
+
 &pinctrl {
 	etinker {
 		pinctrl_pck1_as_isi_mck: pck1_as_isi_mck-0 {
@@ -91,6 +148,26 @@
 		pinctrl_sensor_power: sensor_power-0 {
 			atmel,pins =
 				<AT91_PIOB 27 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>; /* PB27 periph GPIO */
+		};
+
+		pinctrl_display_backlight: display-backlight {
+			atmel,pins =
+				<AT91_PIOC 17 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>; /* PC17 periph GPIO */
+		};
+
+		pinctrl_display_reset: display-reset {
+			atmel,pins =
+				<AT91_PIOB 15 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>; /* PB15 periph GPIO */
+		};
+
+		pinctrl_display_dc: display-dc {
+			atmel,pins =
+				<AT91_PIOB 14 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>; /* PB14 periph GPIO */
+		};
+
+		pinctrl_display_ts: display-ts {
+			atmel,pins =
+				<AT91_PIOC 16 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>; /* PC16 periph GPIO */
 		};
 	};
 };
