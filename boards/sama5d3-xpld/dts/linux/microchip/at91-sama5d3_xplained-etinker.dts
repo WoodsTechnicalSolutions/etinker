@@ -13,11 +13,12 @@
 	backlight: backlight {
 		status = "okay";
 		compatible = "gpio-backlight";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_display_backlight>;
 		gpios = <&pioC 17 GPIO_ACTIVE_HIGH>;
-		default-on;
 	};
 
-	display_supply: fixed_3v3@0 {
+	display_supply: fixed-3v3 {
 		status = "okay";
 		compatible = "regulator-fixed";
 		regulator-name = "fixed-supply";
@@ -96,19 +97,26 @@
 
 &spi1 {
 	status = "okay";
+	pinctrl-names = "cs";
+	pinctrl-1 = <&pinctrl_spi1_cs &pinctrl_spi1_cs3>;
+	cs-gpios = <&pioC 25 0>, <0>, <0>, <&pioC 28 0>;
 
 	display: ili9341@0 {
 		status = "okay";
 		compatible = "adafruit,yx240qv29", "ilitek,ili9341";
 		reg = <0>;
 		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_display_backlight &pinctrl_display_reset &pinctrl_display_dc>;
+		pinctrl-0 = <&pinctrl_display_reset &pinctrl_display_dc>;
 		spi-max-frequency = <10000000>;
 		backlight = <&backlight>;
 		reset-gpios = <&pioB 15 GPIO_ACTIVE_LOW>;
 		dc-gpios = <&pioB 14 GPIO_ACTIVE_HIGH>;
 		rotation = <270>;
 		bgr;
+		vcc-supply = <&display_supply>;
+		vci-supply = <&display_supply>;
+		vddi-supply = <&display_supply>;
+		vddi-led-supply = <&display_supply>;
 	};
 
 	display_ts: tsc2046@3 {
@@ -119,8 +127,7 @@
 		pinctrl-0 = <&pinctrl_display_ts>;
 		spi-max-frequency = <1000000>;
 		pendown-gpio = <&pioC 16 GPIO_ACTIVE_LOW>;
-		interrupts = <16 0>;
-		interrupt-parent = <&pioC>;
+		interrupts-extended = <&pioC 16 IRQ_TYPE_EDGE_BOTH>;
 		vcc-supply = <&display_supply>;
 		ti,swap-xy;
 		ti,x-min = /bits/ 16 <0>;
@@ -134,7 +141,7 @@
 };
 
 &pinctrl {
-	etinker {
+	board {
 		pinctrl_pck1_as_isi_mck: pck1_as_isi_mck-0 {
 			atmel,pins =
 				<AT91_PIOD 31 AT91_PERIPH_B AT91_PINCTRL_NONE>;	/* PD31 periph B PCK1(ISI_MCK), conflicts with AD11 */
@@ -150,22 +157,27 @@
 				<AT91_PIOB 27 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>; /* PB27 periph GPIO */
 		};
 
-		pinctrl_display_backlight: display-backlight {
+		pinctrl_spi1_cs3: spi1_cs3-1 {
+			atmel,pins =
+				<AT91_PIOC 28 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>;
+		};
+
+		pinctrl_display_backlight: display_backlight-0 {
 			atmel,pins =
 				<AT91_PIOC 17 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>; /* PC17 periph GPIO */
 		};
 
-		pinctrl_display_reset: display-reset {
+		pinctrl_display_reset: display_reset-0 {
 			atmel,pins =
 				<AT91_PIOB 15 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>; /* PB15 periph GPIO */
 		};
 
-		pinctrl_display_dc: display-dc {
+		pinctrl_display_dc: display_dc-0 {
 			atmel,pins =
 				<AT91_PIOB 14 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>; /* PB14 periph GPIO */
 		};
 
-		pinctrl_display_ts: display-ts {
+		pinctrl_display_ts: display_ts-0 {
 			atmel,pins =
 				<AT91_PIOC 16 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>; /* PC16 periph GPIO */
 		};
