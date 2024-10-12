@@ -1,7 +1,7 @@
-From adcfab0ae5874d80714b19a91913957e225e37e2 Mon Sep 17 00:00:00 2001
+From 0144ac8201cf825271bfa2991bde9e7a11cb06ec Mon Sep 17 00:00:00 2001
 From: Nick Hollinghurst <nick.hollinghurst@raspberrypi.com>
 Date: Thu, 22 Dec 2022 13:59:33 +0000
-Subject: [PATCH] media/i2c: Add a driver for the Sony IMX708 image sensor
+Subject: [PATCH 3/3] media/i2c: Add a driver for the Sony IMX708 image sensor
 
 The imx708 is a 12MP MIPI sensor with a 16:9 aspect ratio, here using
 two CSI-2 lanes. It is a "quad Bayer" sensor with all 3 modes offering
@@ -103,10 +103,10 @@ media: i2c: imx708: Squash fixes
  create mode 100644 drivers/media/i2c/imx708.c
 
 diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index c6d3ee472d81..2a7b3f0a2bf2 100644
+index 8ba096b8ebca..0d0c4e522c88 100644
 --- a/drivers/media/i2c/Kconfig
 +++ b/drivers/media/i2c/Kconfig
-@@ -233,6 +233,19 @@ config VIDEO_IMX415
+@@ -264,6 +264,19 @@ config VIDEO_IMX415
  	  To compile this driver as a module, choose M here: the
  	  module will be called imx415.
  
@@ -127,10 +127,10 @@ index c6d3ee472d81..2a7b3f0a2bf2 100644
  	tristate
  
 diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index dfbe6448b549..adf380a2052d 100644
+index fbb988bd067a..60375a3f1829 100644
 --- a/drivers/media/i2c/Makefile
 +++ b/drivers/media/i2c/Makefile
-@@ -56,6 +56,7 @@ obj-$(CONFIG_VIDEO_IMX335) += imx335.o
+@@ -59,6 +59,7 @@ obj-$(CONFIG_VIDEO_IMX335) += imx335.o
  obj-$(CONFIG_VIDEO_IMX355) += imx355.o
  obj-$(CONFIG_VIDEO_IMX412) += imx412.o
  obj-$(CONFIG_VIDEO_IMX415) += imx415.o
@@ -2261,5 +2261,5 @@ index 000000000000..b5ad9cf46df7
 +MODULE_DESCRIPTION("Sony IMX708 sensor driver");
 +MODULE_LICENSE("GPL v2");
 -- 
-2.45.2
+2.46.1
 
