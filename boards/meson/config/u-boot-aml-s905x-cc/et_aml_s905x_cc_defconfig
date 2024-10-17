@@ -19,13 +19,13 @@ CONFIG_DEBUG_UART=y
 CONFIG_REMAKE_ELF=y
 CONFIG_FIT=y
 CONFIG_FIT_VERBOSE=y
-CONFIG_LEGACY_IMAGE_FORMAT=y
 # CONFIG_BOOTMETH_VBE_REQUEST is not set
 CONFIG_OF_BOARD_SETUP=y
 CONFIG_BOOTARGS_SUBST=y
 CONFIG_BOOTCOMMAND="if mmc rescan; then if mmc dev 0; then fatload mmc 0 ${scriptaddr} uEnv.txt && env import -t ${scriptaddr} ${filesize} && run uenvcmd; fi; if mmc dev 1; then fatload mmc 1 ${scriptaddr} uEnv.txt && env import -t ${scriptaddr} ${filesize} && run uenvcmd; fi; fi; run distro_bootcmd"
 CONFIG_DEFAULT_FDT_FILE="meson-gxl-s905x-libretech-cc.dtb"
 # CONFIG_DISPLAY_CPUINFO is not set
+# CONFIG_CYCLIC is not set
 CONFIG_MISC_INIT_R=y
 CONFIG_SYS_MAXARGS=32
 # CONFIG_CMD_BDI is not set
@@ -104,3 +104,4 @@ CONFIG_VIDEO_BMP_RLE8=y
 CONFIG_BMP_16BPP=y
 CONFIG_BMP_24BPP=y
 CONFIG_BMP_32BPP=y
+# CONFIG_TOOLS_MKEFICAPSULE is not set
