@@ -22,7 +22,7 @@ export TI_K3_BOOT_FIRMWARE_DIR := $(ET_SOFTWARE_DIR)/ti/ti-linux-firmware
 export TI_K3_BOOT_FIRMWARE_VERSION ?= origin/ti-linux-firmware
 
 export TI_K3_ATF_DIR := $(ET_SOFTWARE_DIR)/ti/arm-trusted-firmware
-export TI_K3_ATF_VERSION ?= 09.02.00.009
+export TI_K3_ATF_VERSION ?= 10.00.07
 
 export TI_K3_OPTEE_OS_DIR := $(ET_SOFTWARE_DIR)/ti/ti-optee-os
 export TI_K3_OPTEE_OS_VERSION ?= $(TI_K3_ATF_VERSION)
