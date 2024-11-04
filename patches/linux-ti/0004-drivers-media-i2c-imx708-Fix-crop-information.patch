@@ -1,4 +1,4 @@
-From aaaf0387eba97be22b48dd65a109e01b21b4aa97 Mon Sep 17 00:00:00 2001
+From 2b5b3aa30ef7db59c9fc6c35e3da908b14686b19 Mon Sep 17 00:00:00 2001
 From: David Plowman <david.plowman@raspberrypi.com>
 Date: Tue, 10 Jan 2023 13:14:27 +0000
 Subject: [PATCH 04/12] drivers: media: i2c: imx708: Fix crop information
@@ -30,5 +30,5 @@ index c53c47d931e8..038f9e2cbcef 100644
  		.vblank_min = 40,
  		.vblank_default = 2755,
 -- 
-2.43.0
+2.47.0
 

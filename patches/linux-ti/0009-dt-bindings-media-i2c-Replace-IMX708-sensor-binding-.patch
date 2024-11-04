@@ -1,4 +1,4 @@
-From 9a87d9cd06ca039f764178cdd849b046d81b2fcc Mon Sep 17 00:00:00 2001
+From 0b07af4253153678d68c0a3522d295d7ac6e2e14 Mon Sep 17 00:00:00 2001
 From: Naushir Patuck <naush@raspberrypi.com>
 Date: Fri, 31 Mar 2023 11:52:25 +0100
 Subject: [PATCH 09/12] dt-bindings: media: i2c: Replace IMX708 sensor binding
@@ -149,10 +149,10 @@ index 000000000000..286aad2e8c69
 +    };
 +...
 diff --git a/MAINTAINERS b/MAINTAINERS
-index a7c4cf8201e0..e747d7d27494 100644
+index ae4c0cec5073..69bbfb206227 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -20170,6 +20170,14 @@ T:	git git://linuxtv.org/media_tree.git
+@@ -20048,6 +20048,14 @@ T:	git git://linuxtv.org/media_tree.git
  F:	Documentation/devicetree/bindings/media/i2c/sony,imx415.yaml
  F:	drivers/media/i2c/imx415.c
  
@@ -168,5 +168,5 @@ index a7c4cf8201e0..e747d7d27494 100644
  M:	Maxim Levitsky <maximlevitsky@gmail.com>
  M:	Alex Dubov <oakad@yahoo.com>
 -- 
-2.43.0
+2.47.0
 

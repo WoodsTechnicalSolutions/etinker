@@ -1,4 +1,4 @@
-From 783734b07b1927e07397d2052bae4b74ca6a121b Mon Sep 17 00:00:00 2001
+From 33558ab4e29da1eab9d5362fe69c9d43825a9982 Mon Sep 17 00:00:00 2001
 From: Naushir Patuck <naush@raspberrypi.com>
 Date: Fri, 31 Mar 2023 10:07:26 +0100
 Subject: [PATCH 07/12] drivers: media: imx708: Remove unused control fields
@@ -50,5 +50,5 @@ index a5d4882a2226..1181c50e338f 100644
  	imx708->hdr_mode = v4l2_ctrl_new_std(ctrl_hdlr, &imx708_ctrl_ops,
  					     V4L2_CID_WIDE_DYNAMIC_RANGE,
 -- 
-2.43.0
+2.47.0
 

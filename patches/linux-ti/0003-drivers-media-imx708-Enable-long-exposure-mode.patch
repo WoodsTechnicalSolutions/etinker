@@ -1,4 +1,4 @@
-From dea208c00001387ff7c504ff0436caa5ea7f0778 Mon Sep 17 00:00:00 2001
+From b3abd1d1cf054d7c5c9821350895d5fa4d923797 Mon Sep 17 00:00:00 2001
 From: Naushir Patuck <naush@raspberrypi.com>
 Date: Thu, 5 Jan 2023 14:44:48 +0000
 Subject: [PATCH 03/12] drivers: media: imx708: Enable long exposure mode
@@ -103,5 +103,5 @@ index fccda392100c..c53c47d931e8 100644
  	case V4L2_CID_NOTIFY_GAINS:
  		ret = imx708_write_reg(imx708, IMX708_REG_COLOUR_BALANCE_BLUE,
 -- 
-2.43.0
+2.47.0
 

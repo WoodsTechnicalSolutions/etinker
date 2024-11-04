@@ -76,8 +76,9 @@ export ET_BOOTLOADER_BUILD_DEFCONFIG := $(ET_BOOTLOADER_BUILD_DIR)/defconfig
 export ET_BOOTLOADER_BUILD_SYSMAP := $(ET_BOOTLOADER_BUILD_DIR)/System.map
 export ET_BOOTLOADER_DIR := $(ET_DIR)/bootloader/$(ET_BOOTLOADER_TYPE)/$(ET_CROSS_TUPLE)
 export ET_BOOTLOADER_DEFCONFIG := $(ET_DIR)/boards/$(ET_BOARD_TYPE)/config/u-boot-$(ET_BOOTLOADER_TYPE)/$(bootloader_defconfig)
+export ET_BOOTLOADER_DT := $(ET_BOARD_BOOTLOADER_DT)
 
-export DEVICE_TREE := $(ET_BOARD_BOOTLOADER_DT)
+export DEVICE_TREE := $(ET_BOOTLOADER_DT)
 # Handle out-of-tree devicetree build (i.e. dtb-y += custom-board.dtb)
 ifneq ($(shell ls $(ET_BOARD_DIR)/dts/u-boot/Makefile $(ET_NOERR)),)
 export DEVICE_TREE_MAKEFILE := -f $(ET_BOARD_DIR)/dts/u-boot/Makefile
@@ -255,6 +256,7 @@ define bootloader-info
 	@printf "ET_BOOTLOADER_BUILD_DIR: $(ET_BOOTLOADER_BUILD_DIR)\n"
 	@printf "ET_BOOTLOADER_DEFCONFIG: $(ET_BOOTLOADER_DEFCONFIG)\n"
 	@printf "ET_BOOTLOADER_DIR: $(ET_BOOTLOADER_DIR)\n"
+	@printf "ET_BOOTLOADER_DT: $(ET_BOOTLOADER_DT)\n"
 	@printf "ET_BOOTLOADER_IMAGE: $(ET_BOOTLOADER_IMAGE)\n"
 	@printf "ET_BOOTLOADER_TARGET_FINAL: $(ET_BOOTLOADER_TARGET_FINAL)\n"
 	$(call bootloader-info-$(ET_BOARD))

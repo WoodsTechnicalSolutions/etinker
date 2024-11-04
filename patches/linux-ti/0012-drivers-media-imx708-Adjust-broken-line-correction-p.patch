@@ -1,4 +1,4 @@
-From eb570e3c9441659dd07bee484087b9ce85c59582 Mon Sep 17 00:00:00 2001
+From 0134de5abe4878fe901d7244c2e38c11193d7d15 Mon Sep 17 00:00:00 2001
 From: Nick Hollinghurst <nick.hollinghurst@raspberrypi.com>
 Date: Wed, 8 Nov 2023 10:57:45 +0000
 Subject: [PATCH 12/12] drivers: media: imx708: Adjust broken line correction
@@ -140,5 +140,5 @@ index 98ab4fcce6a6..29b1d4479c50 100644
  	ret =  __v4l2_ctrl_handler_setup(imx708->sd.ctrl_handler);
  	if (ret)
 -- 
-2.43.0
+2.47.0
 

@@ -1,4 +1,4 @@
-From 6b95f784ea0caf49de603d2adafbd07536dacf24 Mon Sep 17 00:00:00 2001
+From 7fe787610995c366750ffb3c163d0840330e87ef Mon Sep 17 00:00:00 2001
 From: Naushir Patuck <naush@raspberrypi.com>
 Date: Fri, 31 Mar 2023 15:05:33 +0100
 Subject: [PATCH 10/12] drivers: media: imx708: Follow the standard devicetree
@@ -97,5 +97,5 @@ index d256fa9350c9..79ef33f9633e 100644
  	ret = imx708_get_regulators(imx708);
  	if (ret)
 -- 
-2.43.0
+2.47.0
 

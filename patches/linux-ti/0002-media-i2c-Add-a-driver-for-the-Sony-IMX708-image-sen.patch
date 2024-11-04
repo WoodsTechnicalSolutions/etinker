@@ -1,7 +1,7 @@
-From acffa64274a6972de7f2fe5b3adda7e47ce3ed44 Mon Sep 17 00:00:00 2001
+From 40f6327c4f2b03396aada430a4646bfa68b2cde8 Mon Sep 17 00:00:00 2001
 From: Nick Hollinghurst <nick.hollinghurst@raspberrypi.com>
 Date: Thu, 22 Dec 2022 13:59:33 +0000
-Subject: [PATCH 01/11] media/i2c: Add a driver for the Sony IMX708 image
+Subject: [PATCH 02/12] media/i2c: Add a driver for the Sony IMX708 image
  sensor
 
 The imx708 is a 12MP MIPI sensor with a 16:9 aspect ratio, here using
@@ -25,7 +25,7 @@ Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
  create mode 100644 drivers/media/i2c/imx708.c
 
 diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 59ee0ca2c978..0ce697f3046d 100644
+index 53b443be5a59..705c58b1213a 100644
 --- a/drivers/media/i2c/Kconfig
 +++ b/drivers/media/i2c/Kconfig
 @@ -201,6 +201,19 @@ config VIDEO_IMX415
@@ -49,13 +49,13 @@ index 59ee0ca2c978..0ce697f3046d 100644
  	tristate
  
 diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index f5010f80a21f..bb169d986864 100644
+index 80b00d39b48f..0dc1cf6f0edf 100644
 --- a/drivers/media/i2c/Makefile
 +++ b/drivers/media/i2c/Makefile
-@@ -52,6 +52,7 @@
+@@ -53,6 +53,7 @@ obj-$(CONFIG_VIDEO_IMX335) += imx335.o
  obj-$(CONFIG_VIDEO_IMX355) += imx355.o
- obj-$(CONFIG_VIDEO_IMX390) += imx390.o
  obj-$(CONFIG_VIDEO_IMX412) += imx412.o
+ obj-$(CONFIG_VIDEO_IMX415) += imx415.o
 +obj-$(CONFIG_VIDEO_IMX708) += imx708.o
  obj-$(CONFIG_VIDEO_IR_I2C) += ir-kbd-i2c.o
  obj-$(CONFIG_VIDEO_ISL7998X) += isl7998x.o
@@ -2051,5 +2051,5 @@ index 000000000000..fccda392100c
 +MODULE_DESCRIPTION("Sony IMX708 sensor driver");
 +MODULE_LICENSE("GPL v2");
 -- 
-2.43.0
+2.47.0
 

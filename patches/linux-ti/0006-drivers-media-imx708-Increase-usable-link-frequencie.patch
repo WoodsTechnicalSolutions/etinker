@@ -1,4 +1,4 @@
-From 333355563007e1f4e77eba8617a2457a72bbec12 Mon Sep 17 00:00:00 2001
+From 0de4c13bf60d2a1449f3822cafe44baf3e78d7c2 Mon Sep 17 00:00:00 2001
 From: Naushir Patuck <naush@raspberrypi.com>
 Date: Fri, 31 Mar 2023 14:56:09 +0100
 Subject: [PATCH 06/12] drivers: media: imx708: Increase usable link
@@ -225,5 +225,5 @@ index 7b7a70a64314..a5d4882a2226 100644
  
  	/* Get system clock (xclk) */
 -- 
-2.43.0
+2.47.0
 

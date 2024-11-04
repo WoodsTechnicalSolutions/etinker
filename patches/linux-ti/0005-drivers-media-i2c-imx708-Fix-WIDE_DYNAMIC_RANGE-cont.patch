@@ -1,4 +1,4 @@
-From 00c3fbcc26d6f1ff183c3cffe2ffe1708e0f50e1 Mon Sep 17 00:00:00 2001
+From ed2c4a39eaab507ec6558e5fff893973c63626e8 Mon Sep 17 00:00:00 2001
 From: David Plowman <david.plowman@raspberrypi.com>
 Date: Wed, 22 Mar 2023 12:01:57 +0000
 Subject: [PATCH 05/12] drivers: media: i2c: imx708: Fix WIDE_DYNAMIC_RANGE
@@ -95,5 +95,5 @@ index 038f9e2cbcef..7b7a70a64314 100644
  	default:
  		dev_info(&client->dev,
 -- 
-2.43.0
+2.47.0
 
