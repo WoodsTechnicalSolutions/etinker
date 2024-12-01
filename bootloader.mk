@@ -276,13 +276,13 @@ define bootloader-all
 endef
 
 .PHONY: bootloader
-bootloader: $(ET_BOOTLOADER_TARGET_FINAL)
+bootloader: $(ET_BIOS_LIST) $(ET_BOOTLOADER_TARGET_FINAL)
 $(ET_BOOTLOADER_TARGET_FINAL): $(ET_BOOTLOADER_BUILD_CONFIG)
 	$(call bootloader-prepare)
 	$(call bootloader-build)
 	$(call bootloader-finalize)
 
-bootloader-%: $(ET_BOOTLOADER_BUILD_CONFIG)
+bootloader-%: $(ET_BIOS_LIST) $(ET_BOOTLOADER_BUILD_CONFIG)
 	$(call bootloader-build,$(*F))
 
 .PHONY: bootloader-config

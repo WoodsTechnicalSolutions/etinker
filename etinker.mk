@@ -60,6 +60,7 @@ endif
 include $(ET_DIR)/boards/$(ET_BOARD)/etinker.mk
 
 export ET_ARCH := $(ET_BOARD_ARCH)
+export ET_ARCH_EXT := $(ET_BOARD_ARCH_EXT)
 export ET_VENDOR := $(ET_BOARD_VENDOR)
 export ET_OS := $(ET_BOARD_OS)
 export ET_ABI := $(ET_BOARD_ABI)
@@ -83,6 +84,7 @@ export ET_BOARD_DIR ?= $(ET_DIR)/boards/$(ET_BOARD)
 include $(ET_DIR)/software.mk
 include $(ET_DIR)/toolchain.mk
 include $(ET_DIR)/kernel.mk
+include $(ET_DIR)/bios.mk
 include $(ET_DIR)/bootloader.mk
 include $(ET_DIR)/rootfs.mk
 include $(ET_DIR)/library.mk

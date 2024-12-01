@@ -57,7 +57,7 @@ export ET_ROOTFS_BUSYBOX_CONFIG := $(ET_DIR)/boards/$(rootfs_type)/config/$(ET_R
 export ET_ROOTFS_IMAGE := $(ET_ROOTFS_DIR)/images/rootfs.tar
 export ET_ROOTFS_TARGET_FINAL ?= $(ET_ROOTFS_IMAGE)
 
-export ET_ROOTFS_SYSROOT_DIR := $(ET_ROOTFS_BUILD_DIR)/host/$(ET_ARCH)-buildroot-$(ET_OS)-$(ET_ABI)/sysroot
+export ET_ROOTFS_SYSROOT_DIR := $(ET_ROOTFS_BUILD_DIR)/host/$(ET_ARCH)$(ET_ARCH_EXT)-buildroot-$(ET_OS)-$(ET_ABI)/sysroot
 
 export BR_DEFCONFIG := $(ET_ROOTFS_DEFCONFIG)
 
@@ -112,6 +112,15 @@ define rootfs-build
 		fi; \
 		;; \
 	esac
+	@if [ "riscv" = "$(ET_ARCH)" ] && ! [ -d "$(ET_ROOTFS_BUILD_DIR)/host" ]; then \
+		$(MAKE) --no-print-directory \
+			$(ET_CFLAGS_ROOTFS) \
+			CROSS_COMPILE=$(ET_CROSS_COMPILE) \
+			O=$(ET_ROOTFS_BUILD_DIR) \
+			-C $(ET_ROOTFS_SOFTWARE_DIR) \
+			toolchain; \
+		$(ET_SCRIPTS_DIR)/rootfs/$(ET_ARCH)/fix-broken-libs $(ET_ROOTFS_SYSROOT_DIR); \
+	fi
 	$(MAKE) --no-print-directory \
 		$(ET_CFLAGS_ROOTFS) \
 		CROSS_COMPILE=$(ET_CROSS_COMPILE) \

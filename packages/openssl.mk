@@ -30,8 +30,11 @@ export ET_OPENSSL_BIN := $(ET_OVERLAY_DIR)/usr/bin/openssl
 export ET_OPENSSL_TARGET_FINAL ?= $(ET_OPENSSL_BIN)
 
 ET_OPENSSL_ARCH := linux-armv4
-ifeq ($(ET_ARCH),aarch64)
+ifeq ($(ET_ARCH)$(ET_ARCH_EXT),aarch64)
 ET_OPENSSL_ARCH := linux-aarch64 no-afalgeng -DHASH_MAX_LEN=64 -Wa,--noexecstack
+endif
+ifeq ($(ET_ARCH)$(ET_ARCH_EXT),riscv64)
+ET_OPENSSL_ARCH := linux64-riscv64 no-afalgeng -DHASH_MAX_LEN=64 -Wa,--noexecstack
 endif
 
 define openssl-version

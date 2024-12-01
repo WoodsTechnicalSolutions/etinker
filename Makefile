@@ -17,6 +17,7 @@ include etinker.mk
 sandbox:
 	$(call toolchain-all)
 	$(call kernel-all)
+	$(call bios-all)
 	$(call bootloader-all)
 	$(call rootfs-all)
 	$(call library-all)
@@ -27,6 +28,7 @@ sandbox:
 software:
 	$(call toolchain-$@)
 	$(call kernel-$@)
+	$(call bios-$@)
 	$(call bootloader-$@)
 	$(call rootfs-$@)
 	$(call overlay-$@)
@@ -35,6 +37,7 @@ software:
 version:
 	$(call toolchain-$@)
 	$(call kernel-$@)
+	$(call bios-$@)
 	$(call bootloader-$@)
 	$(call rootfs-$@)
 	$(call library-$@)
@@ -44,6 +47,7 @@ version:
 clean:
 	$(call toolchain-$@)
 	$(call kernel-$@)
+	$(call bios-$@)
 	$(call bootloader-$@)
 	$(call rootfs-$@)
 	$(call library-$@)
@@ -53,6 +57,7 @@ clean:
 purge:
 	$(call toolchain-$@)
 	$(call kernel-$@)
+	$(call bios-$@)
 	$(call bootloader-$@)
 	$(call rootfs-$@)
 	$(call library-$@)
@@ -62,6 +67,7 @@ purge:
 update:
 	$(call toolchain-$@)
 	$(call kernel-$@)
+	$(call bios-$@)
 	$(call bootloader-$@)
 	$(call rootfs-$@)
 	$(call library-$@)
@@ -108,6 +114,7 @@ info:
 	fi
 	$(call toolchain-$@)
 	$(call kernel-$@)
+	$(call bios-$@)
 	$(call bootloader-$@)
 	$(call rootfs-$@)
 	$(call library-$@)
