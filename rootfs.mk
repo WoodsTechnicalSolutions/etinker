@@ -73,7 +73,7 @@ define rootfs-software
 endef
 
 define rootfs-depends
-	$(call software-check,luajit,luajit,fetch)
+	$(call software-check,luajit,luajit)
 	$(call software-check,$(ET_OPENSSL_TREE),openssl)
 	$(call software-check,$(ET_ROOTFS_TREE),rootfs)
 	@mkdir -p $(ET_KERNEL_DIR)
