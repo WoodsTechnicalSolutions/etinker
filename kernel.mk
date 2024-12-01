@@ -34,6 +34,8 @@ export ET_KERNEL_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD
 export ET_KERNEL_CROSS_PARAMS := ARCH=$(ET_KERNEL_ARCH) CROSS_COMPILE=$(ET_CROSS_COMPILE)
 
 kernel_defconfig := et_$(subst -,_,$(ET_KERNEL_TYPE))_defconfig
+# kludge to capture trailing '/' for RISCV
+kernel_vendor := $(ET_BOARD_KERNEL_VENDOR)
 
 # [start] kernel version magic (only because I encounter incomplete Git trees)
 kversion := $(shell $(ET_MAKE) kernelversion -C $(ET_KERNEL_SOFTWARE_DIR) $(ET_NOERR) | tr -d \\n)
@@ -344,9 +346,9 @@ kernel: $(ET_KERNEL_TARGET_FINAL)
 $(ET_KERNEL_TARGET_FINAL): $(ET_KERNEL_BUILD_CONFIG)
 	$(call kernel-prepare)
 	$(call kernel-build-$(ET_BOARD))
-	$(call kernel-build,$(ET_KERNEL_VENDOR)$(ET_KERNEL_DT).dtb)
+	$(call kernel-build,$(kernel_vendor)$(ET_KERNEL_DT).dtb)
 ifdef ET_KERNEL_DT_ETINKER
-	$(foreach dts,$(ET_KERNEL_DT_ETINKER),$(call kernel-build,$(ET_KERNEL_VENDOR)$(dts).dtb))
+	$(foreach dts,$(ET_KERNEL_DT_ETINKER),$(call kernel-build,$(kernel_vendor)$(dts).dtb))
 endif
 	$(call kernel-build,modules)
 	$(call kernel-build,modules_install)
