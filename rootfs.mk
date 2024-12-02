@@ -146,7 +146,7 @@ define rootfs-build
 		fi; \
 		echo; \
 		cp -av $(ET_ROOTFS_SOFTWARE_DIR)/configs/$(rootfs_defconfig) $(ET_ROOTFS_DEFCONFIG); \
-		if [ -f $(ET_ROOTFS_BUILD_BUSYBOX_CONFIG) ]; then \
+		if [ -f $(ET_ROOTFS_BUSYBOX_CONFIG) ]; then \
 			$(MAKE) --no-print-directory \
 				$(ET_CFLAGS_ROOTFS) \
 				CROSS_COMPILE=$(ET_CROSS_COMPILE) \
