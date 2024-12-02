@@ -65,7 +65,7 @@ printf "nameserver 8.8.4.4\n" >> ${TARGET}/etc/resolv.conf
 
 # Board Specific Modifications
 case "${ET_BOARD_TYPE}" in
-omap2plus|sama5|zynq|meson|layerscape|k3)
+omap2plus|sama5|zynq|meson|layerscape|k3|starfive)
 	printf "\n***** [${ET_BOARD}][${ET_BOARD_TYPE}] custom modifications *****\n\n"
 	# Board Common
 	mkdir -p ${TARGET}/media/BOOT
@@ -168,6 +168,9 @@ omap2plus|sama5|zynq|meson|layerscape|k3)
 		;;
 	ls1012afrdm*)
 		sed -i s,\/dev\/mmc,\#\/dev\/mmc, ${TARGET}/etc/fstab
+		;;
+	visionfive2*)
+		${ET_SCRIPTS_DIR}/rootfs/${ET_ARCH}/fix-target-libs ${TARGET}
 		;;
 	*)
 		# DEFAULT NO-OP
