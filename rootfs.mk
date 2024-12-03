@@ -119,7 +119,7 @@ define rootfs-build
 			O=$(ET_ROOTFS_BUILD_DIR) \
 			-C $(ET_ROOTFS_SOFTWARE_DIR) \
 			toolchain; \
-		$(ET_SCRIPTS_DIR)/rootfs/$(ET_ARCH)/fix-broken-libs $(ET_ROOTFS_SYSROOT_DIR); \
+		$(ET_SCRIPTS_DIR)/rootfs/$(ET_ARCH)/fix-host-libs $(ET_ROOTFS_SYSROOT_DIR); \
 	fi
 	$(MAKE) --no-print-directory \
 		$(ET_CFLAGS_ROOTFS) \
