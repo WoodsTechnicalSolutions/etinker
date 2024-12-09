@@ -144,11 +144,10 @@ preferred disk layout:
 
 Partition | Type  | Size (MiB) | Label  | Mount Point
 ----------|-------|------------|--------|------------
-MBR/GPT   |       | 68         |        |
-1         | fat16 | 128        | BOOT   | /media/user/BOOT
-2         | ext4  | 2048       | rootfs | /media/user/rootfs
-3         | ext4  | 5120       | backup | /media/user/backup
-4         | ext4  | remaining  | data   | /media/user/data
+RAW       |       | 68         |        |
+1         | fat32 | 550        | BOOT   | /media/BOOT
+2         | ext4  | 4000       | rootfs | /media/rootfs
+3         | ext4  | remaining  | data   | /media/data
 
 Makefile tooling and scripts expect this arrangement.
 
@@ -157,46 +156,46 @@ $ sudo ./scripts/mksdcard am335x-pocketbeagle /dev/sdX
 ```
 
 The **/dev/sdX** depends on the media that you have chosen. It can
-be an MMC block device also. ( i.e. **/dev/mmcblkX**) The resultant
-SD/MMC will have four partitions. [64 GiB SD/MMC used as example]
+be an MMC block device also. ( i.e. **/dev/mmcblkXpY**) The resultant
+SD/MMC will have four partitions. [16 GiB SD/MMC used as example]
 **NOTE:** Use higher quality SD/MMC cards (Class 10, UHS-1 or better)
 
 ```
 $ sudo parted --list
 [...]
-Model: SD SR64G (sd/mmc)
-Disk /dev/mmcblk0: 63.9GB
+Model: Generic MassStorageClass (scsi)
+Disk /dev/sdX: 16.0GB
 Sector size (logical/physical): 512B/512B
 Partition Table: msdos
 Disk Flags:
 
-Number  Start   End     Size    Type     File system  Flags
- 1      71.3MB  206MB   134MB   primary  fat16        boot, lba
- 2      206MB   2353MB  2147MB  primary  ext4
- 3      2353MB  7722MB  5369MB  primary  ext4
- 4      7722MB  63.9GB  56.1GB  primary  ext4
+Number  Start   End     Size    File system  Name     Flags
+ 1      71.3MB  648MB   577MB   fat32        primary  boot, lba
+ 2      648MB   4842MB  4194MB  ext4         primary
+ 3      4842MB  16.0GB  11.1GB  ext4         primary
 [...]
 ```
 
 You should properly unmount and eject the SD/MMC card and re-insert to
-verify partitions were created correctly.
+verify partitions were created correctly. You will need to mount each
+partition in the '/media' directory. The disk partitions can be found
+using the 'ls -l /dev/disk/by-label' command.
 
 ```
 $ df
 Filesystem  1K-blocks  Used Available Use% Mounted on
 [...]
-/dev/sdX1      130798     0    130798   0% /media/<user>/BOOT
-/dev/sdX2     1998672  6144   1871288   1% /media/<user>/rootfs
-/dev/sdX3     5095040 20472   4796040   1% /media/<user>/backup
-/dev/sdX4    53702984 53272  50891980   1% /media/<user>/data
+/dev/sdX1      562080     4    562076   1% /media/BOOT
+/dev/sdX2     3950176    24   3892808   1% /media/rootfs
+/dev/sdX3    10596592    24  10471448   1% /media/data
 [...]
 ```
 
 6. Setup SD/MMC card for booting
 
 The media is expected to be partitioned, formatted, and have
-'/media/<user>/BOOT' and '/media/<user>/rootfs' mounted. The
-following make commands will populate the media:
+'/media/BOOT', '/media/rootfs', and '/media/data' as the mount points.
+The following make commands will populate the media:
 
 ```
 $ ET_BOARD=am335x-pocketbeagle make rootfs-sync-mmc

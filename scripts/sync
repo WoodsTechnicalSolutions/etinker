@@ -76,43 +76,31 @@ printf "[%s][%s] Synching to %s has started.\n" ${ET_BOARD} ${target} ${destinat
 
 case "${destination}" in
 	mmc)
-		if [ -d /media/$USER ]; then
-			# Ubuntu media location
-			media="/media/$USER"
+		if [ -n "$(mount | grep -o "/media/BOOT")" ] && \
+				[ -n "$(mount | grep -o "/media/rootfs")" ]; then
+			media="/media"
 		else
-			if [ -d /run/media/$USER ]; then
-				# Arch Linux media location
-				media="/run/media/$USER"
-			else
-				printf "Unknown SD/MMC media directory location!\n"
-				exit 1
-			fi
+			printf "Unknown SD/MMC media directory location!\n"
+			exit 1
 		fi
-		if ! [ -d ${media}/rootfs ]; then
+		if ! [ -d "${media}/rootfs" ]; then
 			printf "Unmounted media directory! [%s/rootfs]\n" ${media}
 			exit 1
 		fi
 		printf "[%s][%s] populating %s data.\n" ${ET_BOARD} ${target} ${destination}
 		case "${target}" in
 			kernel|bootloader)
-				if ! [ -d ${media}/BOOT ]; then
+				if ! [ -d "${media}/BOOT" ]; then
 					printf "Unmounted media directory! [%s/BOOT]\n" ${media}
 					exit 1
 				fi
 				sudo rsync ${rsync_opts_x} ${target_dir}/boot ${media}/rootfs/
-				if [ -d ${media}/backup ]; then
-					sudo rsync ${rsync_opts_x} ${target_dir}/boot ${media}/backup/
-				fi
 				if [ "${target}" = "kernel" ]; then
 					sudo rsync ${rsync_opts_x} ${target_dir}/usr/lib/modules ${media}/rootfs/usr/lib/
 					case "${ET_BOARD}" in
 					am335x-*)
 						sudo mkdir -p ${media}/rootfs/usr/lib/firmware
 						sudo rsync ${rsync_opts_x} ${ET_DIR}/firmware/am* ${media}/rootfs/usr/lib/firmware/
-						if [ -d ${media}/backup ]; then
-							sudo mkdir -p ${media}/backup/usr/lib/firmware
-							sudo rsync ${rsync_opts_x} ${ET_DIR}/firmware/am* ${media}/backup/usr/lib/firmware/
-						fi
 						;;
 					*)
 						# NOOP
@@ -166,19 +154,11 @@ case "${destination}" in
 				;;
 			library)
 				sudo rsync ${rsync_opts_x} ${target_dir}/* ${media}/rootfs/
-				if [ -d ${media}/backup ]; then
-					sudo rsync ${rsync_opts_x} ${target_dir}/* ${media}/backup/
-				fi
 				;;
 			overlay)
 				sudo rsync --exclude-from=${ET_OVERLAY_DIR}/exclude \
 					${rsync_opts_x} ${target_dir}/* \
 					${media}/rootfs/
-				if [ -d ${media}/backup ]; then
-					sudo rsync --exclude-from=${ET_OVERLAY_DIR}/exclude \
-						${rsync_opts_x} ${target_dir}/* \
-						${media}/backup/
-				fi
 				;;
 			rootfs)
 				if ! [ "${media}/rootfs" = "`find ${media}/rootfs -maxdepth 0 -empty`" ]; then
@@ -195,14 +175,7 @@ case "${destination}" in
 				sudo rsync ${rsync_opts_x} ${ET_BOOTLOADER_DIR}/boot ${media}/rootfs/
 				sudo rsync ${rsync_opts_x} ${ET_KERNEL_DIR}/boot ${media}/rootfs/
 				sudo rsync ${rsync_opts_x} ${ET_KERNEL_DIR}/usr/lib/modules ${media}/rootfs/usr/lib/
-				if [ -d ${media}/backup ]; then
-					sudo rm -rf ${media}/backup/{bin,boot,dev,etc,lib32,libexec,lib,linuxrc,media,mnt,opt,proc,root,run,sbin,src,sys,tmp,usr}
-					sudo tar -xf ${target_dir}/images/rootfs.tar -C ${media}/backup/
-					sudo rsync ${rsync_opts_x} ${ET_BOOTLOADER_DIR}/boot ${media}/backup/
-					sudo rsync ${rsync_opts_x} ${ET_KERNEL_DIR}/boot ${media}/backup/
-					sudo rsync ${rsync_opts_x} ${ET_KERNEL_DIR}/usr/lib/modules ${media}/backup/usr/lib/
-				fi
-				if [ -d ${media}/data ]; then
+				if [ -d "${media}/data" ]; then
 					sudo cp ${target_dir}/images/rootfs.tar ${media}/data/
 				fi
 				;;
@@ -289,7 +262,6 @@ case "${destination}" in
 			printf "/             <ipv4-subnet>/24(rw,async,no_root_squash,no_subtree_check,insecure)\n"
 			printf "/media/BOOT   <ipv4-subnet>/24(rw,async,no_root_squash,no_subtree_check,insecure)\n"
 			printf "/media/rootfs <ipv4-subnet>/24(rw,async,no_root_squash,no_subtree_check,insecure)\n"
-			printf "/media/backup <ipv4-subnet>/24(rw,async,no_root_squash,no_subtree_check,insecure)\n"
 			printf "/media/data   <ipv4-subnet>/24(rw,async,no_root_squash,no_subtree_check,insecure)\n"
 			printf "[snip]-----------------------------------\n\n"
 			printf "4. Restart etinker board\n\n"

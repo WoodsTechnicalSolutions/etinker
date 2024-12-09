@@ -19,29 +19,32 @@ fi
 board=$1
 
 case "${board}" in
-	*ls1043ardb*)
-		printf "***** LXP Layerscape ARM Cortex-A53 *****\n"
-		;;
-	*aml-s905x-cc*)
-		printf "***** Amlogic ARM Cortex-A53 *****\n"
-		;;
-	*pynq-z2*)
-		printf "***** Xilinx Zynq ARM Cortex-A9 *****\n"
-		;;
-	*sama5d3*)
-		printf "***** SAMA5D3 ARM Cortex-A5 *****\n"
-		;;
-	*am335x*|*am3517*|*beagle*|*torpedo*|*omap3*|*overo*)
-		printf "***** OMAP3 ARM Cortex-A8 *****\n"
-		;;
-	*k3*)
-		printf "***** TI K3 Multicore SoC *****\n"
-		;;
-	*)
-		printf "***** INVALID BOARD NAME *****\n"
-		usage
-		exit 1
-		;;
+*visionfive2*)
+	printf "***** StarFive5 RISCV 64-bit *****\n"
+	;;
+*ls1043ardb*)
+	printf "***** LXP Layerscape ARM Cortex-A53 *****\n"
+	;;
+*aml-s905x-cc*)
+	printf "***** Amlogic ARM Cortex-A53 *****\n"
+	;;
+*pynq-z2*)
+	printf "***** Xilinx Zynq ARM Cortex-A9 *****\n"
+	;;
+*sama5d3*)
+	printf "***** SAMA5D3 ARM Cortex-A5 *****\n"
+	;;
+*am335x*|*am3517*|*beagle*|*torpedo*|*omap3*|*overo*)
+	printf "***** OMAP3 ARM Cortex-A8 *****\n"
+	;;
+*k3*)
+	printf "***** TI K3 Multicore SoC *****\n"
+	;;
+*)
+	printf "***** INVALID BOARD NAME *****\n"
+	usage
+	exit 1
+	;;
 esac
 
 if [ "${2}" = "" ]; then
@@ -57,6 +60,7 @@ controller="unknown"
 echo ${disk} | grep -q "/dev/mmcblk"
 if [ "$?" = "0" ]; then
 	controller=MMC
+	partition="p"
 fi
 
 echo ${disk} | grep -q "/dev/sd"
@@ -84,8 +88,8 @@ disk_sz="`blockdev --getsize64 ${disk}`"
 
 printf "[${board}] ${disk} is $((${disk_sz} / 1000000000)) GB\n"
 
-if [[ ${disk_sz} -lt 2000000000 ]]; then
-	printf "***** DISK SIZE LESS THAN 2 GB IS NOT SUPPORTED *****\n"
+if [[ ${disk_sz} -lt 7000000000 ]]; then
+	printf "***** DISK SIZE LESS THAN 7 GB IS NOT SUPPORTED *****\n"
 	exit 1
 fi
 
@@ -105,70 +109,78 @@ echo
 
 printf "[${board}] Preparing ${controller} @ ${disk}\n"
 
-dd if=/dev/zero of=${disk} conv=notrunc bs=1M count=196
+# Clear MBR/GPT data from disk
+dd if=/dev/zero of=${disk} bs=512 count=34
+dd if=/dev/zero of=${disk} bs=512 count=34 seek=$((`blockdev --getsz ${disk}` - 34))
+if [ -n "$(which wipefs)" ]; then
+	wipefs --all ${disk}
+fi
 
 # NOTE: use higher quality SD/MMC cards (Class 10, UHS-1 or better)
 #
 # TYPICAL MEDIA SIZE: 16 GiB+
-# +--------------------+------------+----------+----------+----------+
-# | RAW                | (1) FAT 16 | (2) EXT4 | (3) EXT4 | (4) EXT4 |
-# +--------------------+------------+----------+----------+----------+
-# | MBR/GPT + FIRMWARE | BOOT       | rootfs   | backup   | data     |
-# +--------------------+------------+----------+----------+----------+
-# | 68 MiB             | 128 MiB    | 2048 MiB | 5120 MiB | (fill)   |
-# +--------------------+------------+----------+----------+----------+
+# +----------+------------+----------+----------+
+# | RAW      | (1) FAT 32 | (2) EXT4 | (3) EXT4 |
+# +----------+------------+----------+----------+
+# | FIRMWARE | BOOT       | rootfs   | data     |
+# +----------+------------+----------+----------+
+# | 68 MiB   | 550 MiB    | 4000 MiB | (fill)   |
+# +----------+------------+----------+----------+
 #
 # Filesystem 1K-blocks Used  Available Use% Mounted on
-# /dev/sdX1   130798       0  130798   0%   /media/<user>/BOOT
-# /dev/sdX2  1998672    6144 1871288   1%   /media/<user>/rootfs
-# /dev/sdX3  5095040   20472 4796040   1%   /media/<user>/backup
-# /dev/sdX4  7929288   35700 7471088   1%   /media/<user>/data
+# /dev/sdX1     562080    4     562076   1% /media/BOOT
+# /dev/sdX2    3950176   24    3892808   1% /media/rootfs
+# /dev/sdX3   10596592   24   10471448   1% /media/data
+# 
+# https://en.wikipedia.org/wiki/GUID_Partition_Table#Partition_type_GUIDs
+# http://www.rodsbooks.com/linux-uefi/
+#
+# [ RISC-V ]
+# - U-Boot SPL       : 2E54B353-1271-4842-806F-E436D6AF6985
+# - U-Boot FIT Image : BC13C2FF-59E6-4262-A352-B275FD6F7172
+# - Filesystem Image : EBD0A0A2-B9E5-4433-87C0-68B6B72699C7
+#
+# [ GENERAL Linux ]
+# - Filesystem Image : 0FC63DAF-8483-4772-8E79-3D69D8477DE4
+#
 
-if [[ ${disk_sz} -ge 14000000000 ]]; then
-	printf "[${board}] Partitioning ${disk} [ 68 MiB RAW / 128 MiB (BOOT) / 2 GiB (rootfs) / 5 GiB (backup) / <fill> (data) ]\n"
-else
-	printf "[${board}] Partitioning ${disk} [ 68 MiB RAW / 128 MiB (BOOT) / <fill> (rootfs) ]\n"
-fi
-
-parted -a optimal -s ${disk} mklabel msdos && partprobe -s ${disk}
-parted -a optimal -s ${disk} mkpart primary fat16 68MiB 196MiB && partprobe -s ${disk}
-if [[ ${disk_sz} -ge 14000000000 ]]; then
-	parted -a optimal -s ${disk} mkpart primary ext4 196MiB 2244MiB && partprobe -s ${disk}
-	parted -a optimal -s ${disk} mkpart primary ext4 2244MiB 7364MiB && partprobe -s ${disk}
-	parted -a optimal -s ${disk} mkpart primary ext4 7364MiB 100% && partprobe -s ${disk}
-else
-	parted -a optimal -s ${disk} mkpart primary ext4 196MiB 100% && partprobe -s ${disk}
-fi
-parted -a optimal -s ${disk} set 1 boot on
-
-case "${controller}" in
-	MMC)
-		printf "[${board}] Formatting ${disk}p1 as vfat\n"
-		mkfs.vfat -F 16 ${disk}p1 -n BOOT
-		printf "[${board}] Formatting ${disk}p2 as ext4\n"
-		mkfs.ext4 ${disk}p2 -F -m 1 -L rootfs
-		if [[ ${disk_sz} -ge 14000000000 ]]; then
-			printf "[${board}] Formatting ${disk}p3 as ext4\n"
-			mkfs.ext4 ${disk}p3 -F -m 1 -L backup
-			printf "[${board}] Formatting ${disk}p4 as ext4\n"
-			mkfs.ext4 ${disk}p4 -F -m 1 -L data
-		fi
-		;;
-	ATA)
-		printf "[${board}] Formatting ${disk}1 as vfat\n"
-		mkfs.vfat -F 16 ${disk}1 -n BOOT
-		printf "[${board}] Formatting ${disk}2 as ext4\n"
-		mkfs.ext4 ${disk}2 -F -m 1 -L rootfs
-		if [[ ${disk_sz} -ge 14000000000 ]]; then
-			printf "[${board}] Formatting ${disk}3 as ext4\n"
-			mkfs.ext4 ${disk}3 -F -m 1 -L backup
-			printf "[${board}] Formatting ${disk}4 as ext4\n"
-			mkfs.ext4 ${disk}4 -F -m 1 -L data
-		fi
-		;;
-	*)
-		;;
+case "${board}" in
+*visionfive2*)
+	printf "[${board}] Partitioning ${disk} [ 64 MiB RAW / 2 MiB (spl) / 2 MiB (uboot) / 550 MiB (BOOT) / 4 GiB (rootfs) / <fill> (data) ]\n"
+	boot="3"
+	rootfs="4"
+	data="5"
+	sgdisk --clear \
+		--set-alignment=2 \
+		--new=1:64M:+2M --change-name=1:spl --typecode=1:2E54B353-1271-4842-806F-E436D6AF6985 \
+		--new=2::+2M --change-name=2:uboot --typecode=2:BC13C2FF-59E6-4262-A352-B275FD6F7172 \
+		--new=3::+550M --change-name=3:BOOT --typecode=3:BC13C2FF-59E6-4262-A352-B275FD6F7172 \
+		--new=4::+4000M --change-name=4:rootfs --typecode=4:EBD0A0A2-B9E5-4433-87C0-68B6B72699C7 \
+		--new=5::0 --change-name=5:data --typecode=5:0FC63DAF-8483-4772-8E79-3D69D8477DE4 \
+		${disk}
+	sgdisk -g ${disk}
+	partprobe -s ${disk}
+	parted -a optimal -s ${disk} set 3 boot on
+	;;
+*)
+	printf "[${board}] Partitioning ${disk} [ 68 MiB RAW / 550 MiB (BOOT) / 4 GiB (rootfs) / <fill> (data) ]\n"
+	boot="1"
+	rootfs="2"
+	data="3"
+	parted -a optimal -s ${disk} mklabel msdos && partprobe -s ${disk}
+	parted -a optimal -s ${disk} mkpart primary fat32 68MiB 618MiB && partprobe -s ${disk}
+	parted -a optimal -s ${disk} mkpart primary ext4 618MiB 4618MiB && partprobe -s ${disk}
+	parted -a optimal -s ${disk} mkpart primary ext4 4618MiB 100% && partprobe -s ${disk}
+	parted -a optimal -s ${disk} set 1 boot on
+	;;
 esac
+
+printf "[${board}] Formatting ${disk}${partition}${boot} as vfat\n"
+mkfs.vfat -F 32 ${disk}${partition}${boot} -n BOOT
+printf "[${board}] Formatting ${disk}${partition}${rootfs} as ext4\n"
+mkfs.ext4 ${disk}${partition}${rootfs} -F -m 1 -L rootfs
+printf "[${board}] Formatting ${disk}${partition}${data} as ext4\n"
+mkfs.ext4 ${disk}${partition}${data} -F -m 1 -L data
 
 sync
 
