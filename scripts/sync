@@ -113,22 +113,22 @@ case "${destination}" in
 				if [ "${target}" = "bootloader" ]; then
 					printf "[%s][%s] if required, write raw %s data.\n" ${ET_BOARD} ${target} ${destination}
 
-					blkdev="`df ${media}/BOOT | tail -1 | cut -d ' ' -f 1 | cut -d 1 -f 1 | tr -d \\n`"
+					bootdev="/dev/disk/by-partlabel/BOOT"
 					case "${ET_BOARD_TYPE}" in
 						meson)
-							printf "\n*** write ${ET_BOOTLOADER_DIR}/boot/gxl-boot.bin to ${blkdev} ***\n\n"
-							sudo dd if=${ET_BOOTLOADER_DIR}/boot/gxl-boot.bin of=${blkdev} conv=fsync,notrunc bs=512 seek=1
+							printf "\n*** write ${ET_BOOTLOADER_DIR}/boot/gxl-boot.bin to ${bootdev} ***\n\n"
+							sudo dd if=${ET_BOOTLOADER_DIR}/boot/gxl-boot.bin of=${bootdev} conv=fsync,notrunc bs=512 seek=1
 							;;
 						layerscape)
 							if [ -f ${LSDK_FIRMWARE_BIN} ]; then
 								# load LSDK firmware
-								printf "\n*** write ${LSDK_VERSION} firmware image to ${blkdev} @ 8 block offset ***\n\n"
-								sudo dd if=${LSDK_FIRMWARE_BIN} of=${blkdev} conv=fsync,notrunc bs=512 seek=8
+								printf "\n*** write ${LSDK_VERSION} firmware image to ${bootdev} @ 8 block offset ***\n\n"
+								sudo dd if=${LSDK_FIRMWARE_BIN} of=${bootdev} conv=fsync,notrunc bs=512 seek=8
 								sync
-								printf "\n*** write BL2 image to ${blkdev} @ 8 block offset ***\n\n"
-								sudo dd if=${ET_BOOTLOADER_DIR}/boot/bl2_sd.pbl of=${blkdev} conv=fsync,notrunc bs=512 seek=8
-								printf "\n*** write FIP image to ${blkdev} @ 2048 block offset ***\n\n"
-								sudo dd if=${ET_BOOTLOADER_DIR}/boot/fip.bin of=${blkdev} conv=fsync,notrunc bs=512 seek=2048
+								printf "\n*** write BL2 image to ${bootdev} @ 8 block offset ***\n\n"
+								sudo dd if=${ET_BOOTLOADER_DIR}/boot/bl2_sd.pbl of=${bootdev} conv=fsync,notrunc bs=512 seek=8
+								printf "\n*** write FIP image to ${bootdev} @ 2048 block offset ***\n\n"
+								sudo dd if=${ET_BOOTLOADER_DIR}/boot/fip.bin of=${bootdev} conv=fsync,notrunc bs=512 seek=2048
 							else
 								printf "\nMissing ${LSDK_VERSION} Firmware Image! [ ${LSDK_FIRMWARE_BIN} ]\n\n"
 							fi
@@ -145,6 +145,21 @@ case "${destination}" in
 								cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu3_1_release_strip.xer5f   ${media}/BOOT/lib/firmware/j7-main-r5f1_1-fw
 								cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu1_1_release_strip.xer5f   ${media}/BOOT/lib/firmware/j7-mcu-r5f0_1-fw
 							fi
+							;;
+						starfive)
+							spldev="/dev/disk/by-partlabel/spl"
+							if [ -f ${ET_BOOTLOADER_DIR}/boot/u-boot-spl.bin.normal.out ] && [ -L ${spldev} ]; then
+								printf "\n*** write U-Boot ${ET_BOOTLOADER_VERSION} SPL image to ${spldev} ***\n\n"
+								sudo dd if=${ET_BOOTLOADER_DIR}/boot/u-boot-spl.bin.normal.out of=${spldev} conv=fsync,notrunc
+								sync
+							fi
+							ubootdev="/dev/disk/by-partlabel/uboot"
+							if [ -f ${ET_BOOTLOADER_DIR}/boot/u-boot.itb ] && [ -L ${ubootdev} ]; then
+								printf "\n*** write U-Boot ${ET_BOOTLOADER_VERSION} FIT image to ${ubootdev} ***\n\n"
+								sudo dd if=${ET_BOOTLOADER_DIR}/boot/u-boot.itb of=${ubootdev} conv=fsync,notrunc
+								sync
+							fi
+							echo
 							;;
 						*)
 							# NOOP

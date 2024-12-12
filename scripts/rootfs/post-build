@@ -25,6 +25,11 @@ if [ -d ${ET_DIR}/boards/${ET_BOARD}/rootfs ]; then
 	rsync ${rsync_opts} ${ET_DIR}/boards/${ET_BOARD}/rootfs/* ${TARGET}/ 2>/dev/null
 fi
 if [ -d ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib ]; then
+	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libBrokenLocale.so* ${TARGET}/lib/ 2>/dev/null
+	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libnss_*.so* ${TARGET}/lib/ 2>/dev/null
+	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libstdc++.so* ${TARGET}/lib/ 2>/dev/null
+	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libgcc_s.so* ${TARGET}/lib/ 2>/dev/null
+	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libatomic.so* ${TARGET}/lib/ 2>/dev/null
 	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libssp.so* ${TARGET}/lib/ 2>/dev/null
 	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libSegFault.so ${TARGET}/lib/ 2>/dev/null
 	rsync ${rsync_opts} ${ET_TOOLCHAIN_DIR}/${ET_CROSS_TUPLE}/sysroot/lib/libmemusage.so ${TARGET}/lib/ 2>/dev/null
@@ -127,6 +132,20 @@ omap2plus|sama5|zynq|meson|layerscape|k3|starfive)
 		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "dd if=/media/BOOT/bl2_sd.pbl of=/dev/mmcblk0 conv=fsync,notrunc bs=512 seek=8\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "dd if=/media/BOOT/fip.bin of=/dev/mmcblk0 conv=fsync,notrunc bs=512 seek=2048\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
+		chmod +x ${TARGET}/usr/sbin/firmware-update
+		;;
+	visionfive2*)
+		# Build '/usr/sbin/firmware-update' file for on-target updates of SD
+		printf "#!/bin/bash\n" > ${TARGET}/usr/sbin/firmware-update
+		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "if [ -f /media/BOOT/u-boot-spl.bin.normal.out ] && [ -c /dev/mmcblk0p1 ]; then\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "  dd if=/media/BOOT/u-boot-spl.bin.normal.out of=/dev/mmcblk0p1 conv=fsync,notrunc\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "fi\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "if [ -f /media/BOOT/u-boot.itb ] && [ -c /dev/mmcblk0p2 ]; then\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "  dd if=/media/BOOT/u-boot.itb of=/dev/mmcblk0p2 conv=fsync,notrunc\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "fi\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
 		chmod +x ${TARGET}/usr/sbin/firmware-update
 		;;
