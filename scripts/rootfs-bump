@@ -87,9 +87,11 @@ for n in `ls ${ET_DIR}/boards`; do
 		continue
 	fi
 
-	# boards with a Linux root filesystem (meson, omap2plus, sama5, zynq, k3-j721e-sk)
+	# boards with a Linux root filesystem
+	# (meson, omap2plus, sama5, zynq, k3-j721e-sk, starfive)
 	case $n in
-	am335x-pocketbeagle | aml-s905x-cc | pynq-z2 | sama5d3-xpld | k3-j721e-sk)
+	am335x-pocketbeagle | aml-s905x-cc | pynq-z2 | sama5d3-xpld | \
+	k3-j721e-sk | visionfive2)
 		if [ "pynq-z2" == "`echo $n | grep -o pynq-z2`" ]; then
 			if ! [ -d ${ET_DIR}/boards/zynq/fpga/sdk ]; then
 				continue

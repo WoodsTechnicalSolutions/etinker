@@ -91,6 +91,7 @@ for n in `ls ${ET_DIR}/boards`; do
 
 	# baseline boards for supported toolchains
 	case $n in
+	riscv64-unknown-linux-gnu | \
 	aarch64-cortexa53-linux-gnu | aarch64-cortexa72-linux-gnu | \
 	arm-cortexa5-linux-gnueabihf | arm-cortexa8-linux-gnueabihf | arm-cortexa9-linux-gnueabihf | \
 	arm-cortexr5-eabihf | arm-none-eabi | arm-none-eabihf)

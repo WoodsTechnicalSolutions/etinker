@@ -100,8 +100,8 @@ for n in `ls ${ET_DIR}/boards`; do
 
 	# boards with a supported kernel build
 	case $n in
-	am335x-pocketbeagle | aml-s905x-cc | ls1012afrdm | ls1043ardb | pynq-z2 | \
-	sama5d3-xpld | k3-j721e-sk)
+	am335x-pocketbeagle | aml-s905x-cc | ls1012afrdm | ls1043ardb | \
+	pynq-z2 | sama5d3-xpld | k3-j721e-sk | visionfive2)
 		if [ "pynq-z2" == "$n" ]; then
 			# Xilinx board requires a generated FPGA project
 			if ! [ -d ${ET_DIR}/boards/zynq/fpga/sdk ]; then
