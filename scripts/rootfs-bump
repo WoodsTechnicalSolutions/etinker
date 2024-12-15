@@ -29,10 +29,15 @@ do_make ()
 		ET_BOARD=$1 make rootfs-$2
 		;;
 	update)
-		ET_BOARD=$1 make bootloader-$2 kernel-$2 rootfs-$2 overlay-$2
+		ET_BOARD=$1 make bootloader-$2 kernel-$2 \
+			rootfs-$2 \
+			overlay-$2 library-$2 rootfs-$2
 		;;
 	build)
-		time ET_BOARD=$1 make rootfs-purge bootloader-update kernel-update rootfs overlay-update
+		time ET_BOARD=$1 make library-purge overlay-purge rootfs-purge \
+			bootloader-update kernel-update \
+			rootfs \
+			overlay-update library-update rootfs-update
 		;;
 	*)
 		;;
