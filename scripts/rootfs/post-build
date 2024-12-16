@@ -79,9 +79,9 @@ omap2plus|sama5|zynq|meson|layerscape|k3|starfive)
 	sed -i s,ext2,auto, ${TARGET}/etc/fstab
 	echo "${ET_ROOTFS_GETTY_PORT}" > ${TARGET}/etc/securetty
 	# mmc0 is the SD/MMC card
-	printf "/dev/mmcblk0p1 /media/BOOT auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+	printf "/dev/mmcblk0p1 /media/BOOT   auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 	printf "/dev/mmcblk0p2 /media/rootfs auto defaults 0 0\n" >> ${TARGET}/etc/fstab
-	printf "/dev/mmcblk0p3 /media/data auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+	printf "/dev/mmcblk0p3 /media/data   auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 	# Board Firmware
 	case "${ET_BOARD}" in
 	am335x-*)
@@ -140,11 +140,13 @@ omap2plus|sama5|zynq|meson|layerscape|k3|starfive)
 		mkdir -p ${TARGET}/media/nvme/BOOT
 		mkdir -p ${TARGET}/media/nvme/rootfs
 		mkdir -p ${TARGET}/media/nvme/data
-		printf "#/dev/nvme0n1p3 /media/nvme/BOOT   auto defaults 0 0\n" >> ${TARGET}/etc/fstab
-		printf "#/dev/nvme0n1p4 /media/nvme/rootfs auto defaults 0 0\n" >> ${TARGET}/etc/fstab
-		printf "#/dev/nvme0n1p5 /media/nvme/data   auto defaults 0 0\n" >> ${TARGET}/etc/fstab
+		printf "/dev/nvme0n1p3 /media/nvme/BOOT   auto defaults,noauto 0 0\n" >> ${TARGET}/etc/fstab
+		printf "/dev/nvme0n1p4 /media/nvme/rootfs auto defaults,noauto 0 0\n" >> ${TARGET}/etc/fstab
+		printf "/dev/nvme0n1p5 /media/nvme/data   auto defaults,noauto 0 0\n" >> ${TARGET}/etc/fstab
 		# mmc1 is the SD/MMC card
-		sed -i s,mmcblk0,mmcblk1, ${TARGET}/etc/fstab
+		sed -i s,mmcblk0p1,mmcblk1p3, ${TARGET}/etc/fstab
+		sed -i s,mmcblk0p2,mmcblk1p4, ${TARGET}/etc/fstab
+		sed -i s,mmcblk0p3,mmcblk1p5, ${TARGET}/etc/fstab
 		# Build '/usr/sbin/firmware-update' file for on-target updates of SD
 		printf "#!/bin/bash\n" > ${TARGET}/usr/sbin/firmware-update
 		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
