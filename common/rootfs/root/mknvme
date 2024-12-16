@@ -1,0 +1,80 @@
+#!/bin/bash
+
+if ! [ "`id -u`" = "0" ]; then
+	printf "***** THIS MUST BE RUN AS 'root' USER *****\n"
+	exit 1
+fi
+
+function usage()
+{
+	printf "USAGE: mknvme <block-device>\n"
+}
+
+if [ "${1}" = "" ]; then
+	printf "***** MISSING NVME DEVICE PATH *****\n"
+	usage
+	exit 1
+fi
+
+disk=$1
+board="$(hostname)"
+partition="p"
+controller="unknown"
+
+echo ${disk} | grep -q "/dev/nvme0n1"
+if [ "$?" = "0" ]; then
+	controller=NVME
+fi
+
+if [ "${controller}" = "unknown" ]; then
+	printf "***** DISK ${disk} IS NOT SUPPORTED *****\n"
+	exit 1
+fi
+
+if ! [ -b "${disk}" ]; then
+	printf "***** DISK ${disk} IS NOT A BLOCK DEVICE *****\n"
+	exit 1
+fi
+
+mount | grep -q ${disk}
+if [ "$?" = "0" ]; then
+	printf "***** DISK ${disk} HAS ACTIVE MOUNT POINT *****\n"
+	exit 1
+fi
+
+disk_sz="`blockdev --getsize64 ${disk}`"
+
+printf "[${board}] ${disk} is $((${disk_sz} / 1000000000)) GB\n"
+
+printf "[${board}] ALL DATA ON ${disk} WILL BE LOST. Are you sure? (yes or no) : "
+read proceed
+
+if ! [ "${proceed}" = "yes" ]; then
+	exit 1
+fi
+
+for ((i=3; i > 0; i--)); do
+	printf "\r[${board}] Starting in %2d ... \t\t[Ctrl-C to abort]" $i
+	sleep 1
+done
+
+echo
+
+printf "[${board}] Preparing ${controller} @ ${disk}\n"
+
+# Clear GPT data from disk
+dd if=/dev/zero of=${disk} bs=512 count=34
+dd if=/dev/zero of=${disk} bs=512 count=34 seek=$((`blockdev --getsz ${disk}` - 34))
+
+sgdisk --clear \
+	--new=1:1M:0  --change-name=1:nvme --typecode=1:0FC63DAF-8483-4772-8E79-3D69D8477DE4 \
+	${disk}
+sgdisk -g ${disk}
+partprobe -s ${disk}
+
+printf "[${board}] Formatting ${disk}${partition}1 as ext4\n"
+mkfs.ext4 ${disk}${partition}1 -F -m 1 -L nvme
+
+sync
+
+printf "[${board}] Done.\n"
