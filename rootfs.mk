@@ -196,6 +196,7 @@ define rootfs-clean
 	$(RM) $(ET_ROOTFS_BUILD_DIR)/build/busybox-*/.stamp_built
 	$(RM) $(ET_ROOTFS_BUILD_DIR)/build/busybox-*/.stamp*installed
 	$(RM) $(ET_ROOTFS_BUILD_CONFIG)
+	$(RM) -r $(ET_ROOTFS_BUILD_DIR)/images
 	$(RM) -r $(ET_ROOTFS_DIR)/images
 endef
 

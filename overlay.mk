@@ -21,10 +21,6 @@ include $(ET_DIR)/packages/luajit-riscv.mk
 
 define overlay-depends
 	@mkdir -p $(ET_OVERLAY_DIR)
-	@printf "exclude\n"            > $(ET_OVERLAY_DIR)/exclude
-	@printf "usr/include\n"       >> $(ET_OVERLAY_DIR)/exclude
-	@printf "usr/lib/pkgconfig\n" >> $(ET_OVERLAY_DIR)/exclude
-	@printf "usr/lib/*.a\n"       >> $(ET_OVERLAY_DIR)/exclude
 endef
 
 define overlay-software

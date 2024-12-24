@@ -46,10 +46,14 @@ fi
 if [ -d ${ET_BOOTLOADER_DIR}/boot ]; then
 	rsync ${rsync_opts} ${ET_BOOTLOADER_DIR}/* ${TARGET}/ 2>/dev/null
 fi
-if [ -d ${ET_OVERLAY_DIR} ] && [ -f ${ET_OVERLAY_DIR}/exclude ]; then
-	rsync ${rsync_opts} --exclude-from=${ET_OVERLAY_DIR}/exclude \
-		${ET_OVERLAY_DIR}/ \
-		${TARGET}/ 2>/dev/null
+if [ -d ${ET_OVERLAY_DIR} ]; then
+	cp -a ${ET_OVERLAY_DIR} /tmp/overlay-${ET_BOARD}
+	rm -rf /tmp/overlay-${ET_BOARD}/usr/include
+	rm -rf /tmp/overlay-${ET_BOARD}/usr/lib/pkconfig
+	rm -f /tmp/overlay-${ET_BOARD}/usr/lib/*.a
+	rm -f /tmp/overlay-${ET_BOARD}/usr/lib/*.la
+	rsync ${rsync_opts} /tmp/overlay-${ET_BOARD}/* ${TARGET}/ 2>/dev/null
+	rm -rf /tmp/overlay-${ET_BOARD}
 fi
 printf "\n%s\n\n" "`cat ${TARGET}/etc/issue`" > ${TARGET}/etc/issue
 if [ -f ${TARGET}/etc/inittab ]; then
