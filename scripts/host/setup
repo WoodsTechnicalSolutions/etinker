@@ -165,4 +165,6 @@ if [ -f /usr/bin/apt ]; then
 	pip3 install pyelftools
 	pip3 install yamllint
 	pip3 install uboot
+	pip3 install cryptography
+	pip3 install crypto
 fi
