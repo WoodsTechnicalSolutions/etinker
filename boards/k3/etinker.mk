@@ -30,6 +30,8 @@ ifneq ($(ET_BOARD_TYPE),k3)
 $(error [ ET_BOARD_TYPE is NOT 'k3' ] ***)
 endif
 
+export ET_BOARD_BIOS_REQUIRED := yes
+
 ET_BOARD_DT_PREFIX := ti/
 
 ET_BOARD_KERNEL_ARCH := arm64

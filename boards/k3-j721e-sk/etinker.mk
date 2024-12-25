@@ -38,6 +38,9 @@ export ET_BOARD_TYPE := k3
 
 ET_BOARD_TOOLCHAIN_TYPE ?= $(TI_ARM64_CROSS_TUPLE)
 
+# BIOS components
+ET_BOARD_BIOS_LIST := k3-$(TI_K3_SOC)-r5-sk
+
 include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/etinker.mk
 
 ET_BOARD_TOOLCHAIN_TREE ?= crosstool-ng
