@@ -32,7 +32,7 @@ include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/etinker.mk
 ET_BOARD_TOOLCHAIN_TREE ?= crosstool-ng
 ET_BOARD_BOOTLOADER_TREE ?= u-boot$(ET_BOOTLOADER_VARIANT)
 
-ET_BOARD_BOOTLOADER_DT ?= k3-$(TI_K3_SOC)-r5-common-proc-board
+ET_BOARD_BOOTLOADER_DT ?= k3-$(TI_K3_SOC)-r5-sk
 
 ifeq ("$(ET_BOOTLOADER_VARIANT)","-ti")
 # fixup bootloader version
