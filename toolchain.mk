@@ -117,7 +117,7 @@ define toolchain-build
 		fi; \
 		if [ "riscv" = "$(ET_ARCH)" ]; then \
 			(cd $(ET_TOOLCHAIN_SYSROOT_DIR)/lib && \
-				for f in $(shell ls $(ET_TOOLCHAIN_SYSROOT_DIR)/usr/lib64/lp64d/); do \
+				for f in $(shell ls $(ET_TOOLCHAIN_SYSROOT_DIR)/usr/lib64/lp64d/ $(ET_NOERR)); do \
 					ln -sf ../usr/lib64/lp64d/$$f; \
 				done); \
 		fi; \
