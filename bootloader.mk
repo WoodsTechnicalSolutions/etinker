@@ -227,6 +227,9 @@ define bootloader-config
 endef
 
 define bootloader-clean
+	@for p in $(ET_BIOS_LIST); do \
+		$(ET_MAKE) -C $(ET_DIR) $$p-clean; \
+	done
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-clean *****\n\n"
 	$(RM) $(ET_BOOTLOADER_BUILD_CONFIG)
 	$(RM) $(ET_BOOTLOADER_BUILD_DEFCONFIG)
@@ -237,12 +240,18 @@ define bootloader-clean
 endef
 
 define bootloader-purge
+	@for p in $(ET_BIOS_LIST); do \
+		$(ET_MAKE) -C $(ET_DIR) $$p-purge; \
+	done
 	$(call bootloader-clean)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-purge *****\n\n"
 	$(RM) -r $(ET_BOOTLOADER_BUILD_DIR)
 endef
 
 define bootloader-info
+	@for p in $(ET_BIOS_LIST); do \
+		$(ET_MAKE) -C $(ET_DIR) $$p-info; \
+	done
 	@printf "========================================================================\n"
 	@printf "ET_BOOTLOADER_TREE: $(ET_BOOTLOADER_TREE)\n"
 	@printf "ET_BOOTLOADER_VERSION: $(ET_BOOTLOADER_VERSION)\n"
