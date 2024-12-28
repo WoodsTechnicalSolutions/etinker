@@ -14,8 +14,8 @@
 #
 
 ET_HOST_OS_ID ?= Ubuntu
-ET_HOST_OS_CODENAME ?= jammy
-ET_HOST_OS_RELEASE ?= 22.04
+ET_HOST_OS_CODENAME ?= noble
+ET_HOST_OS_RELEASE ?= 24.04
 ET_HOST_OS_MESSAGE := [ 'etinker' requires $(ET_HOST_OS_ID) $(ET_HOST_OS_CODENAME) $(ET_HOST_OS_RELEASE) ] ***
 ifneq ($(shell lsb_release -i|cut -f 2|tr -d \\n),$(ET_HOST_OS_ID))
 $(error $(ET_HOST_OS_MESSAGE))

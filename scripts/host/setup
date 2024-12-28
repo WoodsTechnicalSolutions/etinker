@@ -1,9 +1,6 @@
 #!/bin/bash
 
 if [ -f /usr/bin/apt ]; then
-	if [ "`uname -m`" = "x86_64" ]; then
-		sudo dpkg --add-architecture i386
-	fi
 	sudo apt update
 	sudo apt install -y \
 		asciidoc \
@@ -39,14 +36,13 @@ if [ -f /usr/bin/apt ]; then
 		g++-multilib \
 		gcc-multilib \
 		gettext \
-		git-core \
+		git \
 		git-email \
 		gitg \
 		gitk \
 		gnupg \
 		gperf \
 		help2man \
-		htop \
 		indent \
 		inkscape \
 		intltool \
@@ -55,7 +51,7 @@ if [ -f /usr/bin/apt ]; then
 		libasound2-dev \
 		libelf-dev \
 		libexpat1-dev \
-		libfreetype6-dev \
+		libfreetype-dev \
 		libglade2-dev \
 		libglib2.0-dev \
 		libgmp-dev \
@@ -66,15 +62,21 @@ if [ -f /usr/bin/apt ]; then
 		libiberty-dev \
 		libinput-dev \
 		libjpeg-dev \
-		liblua5.1-dev \
+		liblua5.1-0-dev \
 		liblua5.2-dev \
 		liblua5.3-dev \
+		liblua5.4-dev \
 		libluajit-5.1-dev \
 		libmpc-dev \
 		libncurses-dev \
 		libnuma-dev \
 		libreadline-dev \
-		libsdl1.2-dev \
+		libsdl2-dev \
+		libsdl2-gfx-dev \
+		libsdl2-image-dev \
+		libsdl2-mixer-dev \
+		libsdl2-net-dev \
+		libsdl2-ttf-dev \
 		libselinux1 \
 		libssl-dev \
 		libtool \
@@ -83,19 +85,20 @@ if [ -f /usr/bin/apt ]; then
 		libtraceevent-dev \
 		libtracefs-dev \
 		libusb-1.0-0-dev \
-		libusb-dev \
 		libx11-dev \
 		libxext-dev \
+		libxml2-dev \
 		libxml2-utils \
 		libzstd-dev \
+		lrzsz \
 		lua5.1 \
 		lua5.2 \
 		lua5.3 \
+		lua5.4 \
 		luajit \
-		lrzsz \
 		lzma \
 		lzop \
-		man \
+		man-db \
 		manpages-dev \
 		manpages-posix-dev \
 		mc \
@@ -114,11 +117,11 @@ if [ -f /usr/bin/apt ]; then
 		pax \
 		pkg-config \
 		python-is-python3 \
-		python2 \
-		python2-dev \
+		python3-cryptography \
 		python3-pip \
-		python3-dev \
-		qemu \
+		python3-pyelftools \
+		python3-jsonschema python3-jsonschema-specifications \
+		python3-all-dev libpython3-all-dev \
 		rlwrap \
 		rpm \
 		rsync \
@@ -149,22 +152,12 @@ if [ -f /usr/bin/apt ]; then
 		xmlto \
 		xvfb \
 		xz-utils \
+		yamllint \
 		zip \
 		zlib1g-dev
 	if [ "`systemd-detect-virt`" = "none" ]; then
 		sudo apt install -y \
 			nfs-kernel-server
 	fi
-	if [ "`uname -m`" = "x86_64" ]; then
-		sudo apt install -y \
-			libc6-dev-i386 \
-			zlib1g-dev:i386
-	fi
 	sudo apt autoremove
-	pip3 install jsonschema
-	pip3 install pyelftools
-	pip3 install yamllint
-	pip3 install uboot
-	pip3 install cryptography
-	pip3 install crypto
 fi
