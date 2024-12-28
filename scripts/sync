@@ -37,25 +37,25 @@ fi
 target=${1}
 
 case "${target}" in
-	bootloader)
-		target_dir="${ET_BOOTLOADER_DIR}"
-		;;
-	kernel)
-		target_dir="${ET_KERNEL_DIR}"
-		;;
-	library)
-		target_dir="${ET_LIBRARY_DIR}"
-		;;
-	overlay)
-		target_dir="${ET_OVERLAY_DIR}"
-		;;
-	rootfs)
-		target_dir="${ET_ROOTFS_DIR}"
-		;;
-	*)
-		printf "Unsupported build target! [%s]\n" ${target}
-		exit 1
-		;;
+bootloader)
+	target_dir="${ET_BOOTLOADER_DIR}"
+	;;
+kernel)
+	target_dir="${ET_KERNEL_DIR}"
+	;;
+library)
+	target_dir="${ET_LIBRARY_DIR}"
+	;;
+overlay)
+	target_dir="${ET_OVERLAY_DIR}"
+	;;
+rootfs)
+	target_dir="${ET_ROOTFS_DIR}"
+	;;
+*)
+	printf "Unsupported build target! [%s]\n" ${target}
+	exit 1
+	;;
 esac
 
 if ! [ -d ${target_dir} ]; then
@@ -74,206 +74,206 @@ net_addr="`ip addr show ${net_if} | grep 'inet ' | cut -d '/' -f 1 | cut -d ' ' 
 printf "[%s][%s] Synching to %s has started.\n" ${ET_BOARD} ${target} ${destination}
 
 case "${destination}" in
-	mmc)
-		if [ -n "$(mount | grep -o "/media/BOOT")" ] && \
-				[ -n "$(mount | grep -o "/media/rootfs")" ]; then
-			media="/media"
-		else
-			printf "Unknown SD/MMC media directory location!\n"
+mmc)
+	if [ -n "$(mount | grep -o "/media/BOOT")" ] && \
+			[ -n "$(mount | grep -o "/media/rootfs")" ]; then
+		media="/media"
+	else
+		printf "Unknown SD/MMC media directory location!\n"
+		exit 1
+	fi
+	if ! [ -d "${media}/rootfs" ]; then
+		printf "Unmounted media directory! [%s/rootfs]\n" ${media}
+		exit 1
+	fi
+	printf "[%s][%s] populating %s data.\n" ${ET_BOARD} ${target} ${destination}
+	case "${target}" in
+	kernel|bootloader)
+		if ! [ -d "${media}/BOOT" ]; then
+			printf "Unmounted media directory! [%s/BOOT]\n" ${media}
 			exit 1
 		fi
-		if ! [ -d "${media}/rootfs" ]; then
-			printf "Unmounted media directory! [%s/rootfs]\n" ${media}
-			exit 1
-		fi
-		printf "[%s][%s] populating %s data.\n" ${ET_BOARD} ${target} ${destination}
-		case "${target}" in
-			kernel|bootloader)
-				if ! [ -d "${media}/BOOT" ]; then
-					printf "Unmounted media directory! [%s/BOOT]\n" ${media}
-					exit 1
-				fi
-				sudo rsync ${rsync_opts_x} ${target_dir}/boot ${media}/rootfs/
-				if [ "${target}" = "kernel" ]; then
-					sudo rsync ${rsync_opts_x} ${target_dir}/usr/lib/modules ${media}/rootfs/usr/lib/
-					case "${ET_BOARD}" in
-					am335x-*)
-						sudo mkdir -p ${media}/rootfs/usr/lib/firmware
-						sudo rsync ${rsync_opts_x} ${ET_DIR}/firmware/am* ${media}/rootfs/usr/lib/firmware/
-						;;
-					*)
-						# NOOP
-						;;
-					esac
-				fi
-				rm -f ${media}/BOOT/firmware.img
-				sudo rsync ${rsync_opts} ${target_dir}/boot/* ${media}/BOOT/
-
-				if [ "${target}" = "bootloader" ]; then
-					printf "[%s][%s] if required, write raw %s data.\n" ${ET_BOARD} ${target} ${destination}
-
-					bootdev="/dev/disk/by-partlabel/BOOT"
-					case "${ET_BOARD_TYPE}" in
-						meson)
-							printf "\n*** write ${ET_BOOTLOADER_DIR}/boot/gxl-boot.bin to ${bootdev} ***\n\n"
-							sudo dd if=${ET_BOOTLOADER_DIR}/boot/gxl-boot.bin of=${bootdev} conv=fsync,notrunc bs=512 seek=1
-							;;
-						layerscape)
-							if [ -f ${LSDK_FIRMWARE_BIN} ]; then
-								# load LSDK firmware
-								printf "\n*** write ${LSDK_VERSION} firmware image to ${bootdev} @ 8 block offset ***\n\n"
-								sudo dd if=${LSDK_FIRMWARE_BIN} of=${bootdev} conv=fsync,notrunc bs=512 seek=8
-								sync
-								printf "\n*** write BL2 image to ${bootdev} @ 8 block offset ***\n\n"
-								sudo dd if=${ET_BOOTLOADER_DIR}/boot/bl2_sd.pbl of=${bootdev} conv=fsync,notrunc bs=512 seek=8
-								printf "\n*** write FIP image to ${bootdev} @ 2048 block offset ***\n\n"
-								sudo dd if=${ET_BOOTLOADER_DIR}/boot/fip.bin of=${bootdev} conv=fsync,notrunc bs=512 seek=2048
-							else
-								printf "\nMissing ${LSDK_VERSION} Firmware Image! [ ${LSDK_FIRMWARE_BIN} ]\n\n"
-							fi
-							;;
-						k3)
-							mkdir -p ${media}/BOOT/lib/firmware
-							if [ "${ET_BOARD}" = "k3-j721e-sk" ]; then
-								cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c66xdsp_1_release_strip.xe66 ${media}/BOOT/lib/firmware/j7-c66_0-fw
-								cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c66xdsp_2_release_strip.xe66 ${media}/BOOT/lib/firmware/j7-c66_1-fw
-								cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c7x_1_release_strip.xe71     ${media}/BOOT/lib/firmware/j7-c71_0-fw
-								cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-eth/${TI_K3_SOC}/app_remoteswitchcfg_server_strip.xer5f     ${media}/BOOT/lib/firmware/j7-main-r5f0_0-fw
-								cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu2_1_release_strip.xer5f   ${media}/BOOT/lib/firmware/j7-main-r5f0_1-fw
-								cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu3_0_release_strip.xer5f   ${media}/BOOT/lib/firmware/j7-main-r5f1_0-fw
-								cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu3_1_release_strip.xer5f   ${media}/BOOT/lib/firmware/j7-main-r5f1_1-fw
-								cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu1_1_release_strip.xer5f   ${media}/BOOT/lib/firmware/j7-mcu-r5f0_1-fw
-							fi
-							;;
-						starfive)
-							spldev="/dev/disk/by-partlabel/spl"
-							if [ -f ${ET_BOOTLOADER_DIR}/boot/u-boot-spl.bin.normal.out ] && [ -L ${spldev} ]; then
-								printf "\n*** write U-Boot ${ET_BOOTLOADER_VERSION} SPL image to ${spldev} ***\n\n"
-								sudo dd if=${ET_BOOTLOADER_DIR}/boot/u-boot-spl.bin.normal.out of=${spldev} conv=fsync,notrunc
-								sync
-							fi
-							ubootdev="/dev/disk/by-partlabel/uboot"
-							if [ -f ${ET_BOOTLOADER_DIR}/boot/u-boot.itb ] && [ -L ${ubootdev} ]; then
-								printf "\n*** write U-Boot ${ET_BOOTLOADER_VERSION} FIT image to ${ubootdev} ***\n\n"
-								sudo dd if=${ET_BOOTLOADER_DIR}/boot/u-boot.itb of=${ubootdev} conv=fsync,notrunc
-								sync
-							fi
-							echo
-							;;
-						*)
-							# NOOP
-							;;
-					esac
-				fi
-				;;
-			library)
-				sudo rsync ${rsync_opts_x} ${target_dir}/* ${media}/rootfs/
-				;;
-			overlay)
-				sudo rsync --exclude-from=${ET_OVERLAY_DIR}/exclude \
-					${rsync_opts_x} ${target_dir}/* \
-					${media}/rootfs/
-				;;
-			rootfs)
-				if ! [ "${media}/rootfs" = "`find ${media}/rootfs -maxdepth 0 -empty`" ]; then
-					printf "[%s][%s] non-empty rootfs detected! [ ${media}/rootfs ]\n" ${ET_BOARD} ${target}
-					for ((i=3; i > 0; i--)); do
-						printf "\r[%s][%s] Deleting in %2d ... [Ctrl-C to abort]" ${ET_BOARD} ${target} $i
-						sleep 1
-					done
-					echo
-					sudo rm -rf ${media}/rootfs/*
-				fi
-				printf "[%s][%s] Extracting ${target_dir}/images/rootfs.tar into [ ${media}/rootfs ]\n" ${ET_BOARD} ${target}
-				sudo tar -xf ${target_dir}/images/rootfs.tar -C ${media}/rootfs/
-				sudo rsync ${rsync_opts_x} ${ET_BOOTLOADER_DIR}/boot ${media}/rootfs/
-				sudo rsync ${rsync_opts_x} ${ET_KERNEL_DIR}/boot ${media}/rootfs/
-				sudo rsync ${rsync_opts_x} ${ET_KERNEL_DIR}/usr/lib/modules ${media}/rootfs/usr/lib/
-				if [ -d "${media}/data" ]; then
-					sudo cp ${target_dir}/images/rootfs.tar ${media}/data/
-				fi
+		sudo rsync ${rsync_opts_x} ${target_dir}/boot ${media}/rootfs/
+		if [ "${target}" = "kernel" ]; then
+			sudo rsync ${rsync_opts_x} ${target_dir}/usr/lib/modules ${media}/rootfs/usr/lib/
+			case "${ET_BOARD}" in
+			am335x-*)
+				sudo mkdir -p ${media}/rootfs/usr/lib/firmware
+				sudo rsync ${rsync_opts_x} ${ET_DIR}/firmware/am* ${media}/rootfs/usr/lib/firmware/
 				;;
 			*)
-				printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}
-				exit 1
+				# NOOP
 				;;
-		esac
-		wait_on_sync ${ET_BOARD} ${target} ${destination}
+			esac
+		fi
+		rm -f ${media}/BOOT/firmware.img
+		sudo rsync ${rsync_opts} ${target_dir}/boot/* ${media}/BOOT/
+
+		if [ "${target}" = "bootloader" ]; then
+			printf "[%s][%s] if required, write raw %s data.\n" ${ET_BOARD} ${target} ${destination}
+
+			bootdev="/dev/disk/by-partlabel/BOOT"
+			case "${ET_BOARD_TYPE}" in
+			meson)
+				printf "\n*** write ${ET_BOOTLOADER_DIR}/boot/gxl-boot.bin to ${bootdev} ***\n\n"
+				sudo dd if=${ET_BOOTLOADER_DIR}/boot/gxl-boot.bin of=${bootdev} conv=fsync,notrunc bs=512 seek=1
+				;;
+			layerscape)
+				if [ -f ${LSDK_FIRMWARE_BIN} ]; then
+					# load LSDK firmware
+					printf "\n*** write ${LSDK_VERSION} firmware image to ${bootdev} @ 8 block offset ***\n\n"
+					sudo dd if=${LSDK_FIRMWARE_BIN} of=${bootdev} conv=fsync,notrunc bs=512 seek=8
+					sync
+					printf "\n*** write BL2 image to ${bootdev} @ 8 block offset ***\n\n"
+					sudo dd if=${ET_BOOTLOADER_DIR}/boot/bl2_sd.pbl of=${bootdev} conv=fsync,notrunc bs=512 seek=8
+					printf "\n*** write FIP image to ${bootdev} @ 2048 block offset ***\n\n"
+					sudo dd if=${ET_BOOTLOADER_DIR}/boot/fip.bin of=${bootdev} conv=fsync,notrunc bs=512 seek=2048
+				else
+					printf "\nMissing ${LSDK_VERSION} Firmware Image! [ ${LSDK_FIRMWARE_BIN} ]\n\n"
+				fi
+				;;
+			k3)
+				mkdir -p ${media}/BOOT/lib/firmware
+				if [ "${ET_BOARD}" = "k3-j721e-sk" ]; then
+					cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c66xdsp_1_release_strip.xe66 ${media}/BOOT/lib/firmware/j7-c66_0-fw
+					cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c66xdsp_2_release_strip.xe66 ${media}/BOOT/lib/firmware/j7-c66_1-fw
+					cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c7x_1_release_strip.xe71     ${media}/BOOT/lib/firmware/j7-c71_0-fw
+					cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-eth/${TI_K3_SOC}/app_remoteswitchcfg_server_strip.xer5f     ${media}/BOOT/lib/firmware/j7-main-r5f0_0-fw
+					cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu2_1_release_strip.xer5f   ${media}/BOOT/lib/firmware/j7-main-r5f0_1-fw
+					cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu3_0_release_strip.xer5f   ${media}/BOOT/lib/firmware/j7-main-r5f1_0-fw
+					cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu3_1_release_strip.xer5f   ${media}/BOOT/lib/firmware/j7-main-r5f1_1-fw
+					cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu1_1_release_strip.xer5f   ${media}/BOOT/lib/firmware/j7-mcu-r5f0_1-fw
+				fi
+				;;
+			starfive)
+				spldev="/dev/disk/by-partlabel/spl"
+				if [ -f ${ET_BOOTLOADER_DIR}/boot/u-boot-spl.bin.normal.out ] && [ -L ${spldev} ]; then
+					printf "\n*** write U-Boot ${ET_BOOTLOADER_VERSION} SPL image to ${spldev} ***\n\n"
+					sudo dd if=${ET_BOOTLOADER_DIR}/boot/u-boot-spl.bin.normal.out of=${spldev} conv=fsync,notrunc
+					sync
+				fi
+				ubootdev="/dev/disk/by-partlabel/uboot"
+				if [ -f ${ET_BOOTLOADER_DIR}/boot/u-boot.itb ] && [ -L ${ubootdev} ]; then
+					printf "\n*** write U-Boot ${ET_BOOTLOADER_VERSION} FIT image to ${ubootdev} ***\n\n"
+					sudo dd if=${ET_BOOTLOADER_DIR}/boot/u-boot.itb of=${ubootdev} conv=fsync,notrunc
+					sync
+				fi
+				echo
+				;;
+			*)
+				# NOOP
+				;;
+			esac
+		fi
 		;;
-	nfs)
-		nfs="${ET_NFS_MOUNT}"
-		if [ -z "${nfs}" ] || ! [ -d ${nfs} ]; then
-			printf "NFS Mount '${nfs}' not exist!\n\n"
-			printf "1. Create an NFS entry for etinker board in '/etc/fstab'\n"
-			printf "[snip]-----------------------------------\n"
-			printf "<board-ipv4>:/ ${nfs} nfs rw,hard,intr,user,noauto 0 0\n"
-			printf "[snip]-----------------------------------\n\n"
-			printf "2. Create the NFS mount point directory\n"
-			printf "$ sudo mkdir -p ${nfs}\n\n"
-			printf "3. Create '/etc/exports' on etinker board\n"
-			printf "[snip]-----------------------------------\n"
-			printf "/             <ipv4-subnet>/24(rw,async,no_root_squash,no_subtree_check,insecure)\n"
-			printf "/media/BOOT   <ipv4-subnet>/24(rw,async,no_root_squash,no_subtree_check,insecure)\n"
-			printf "/media/rootfs <ipv4-subnet>/24(rw,async,no_root_squash,no_subtree_check,insecure)\n"
-			printf "/media/data   <ipv4-subnet>/24(rw,async,no_root_squash,no_subtree_check,insecure)\n"
-			printf "[snip]-----------------------------------\n\n"
-			printf "4. Restart etinker board\n\n"
-			printf "5. Try etinker NFS sync again\n"
-			exit 1
+	library)
+		sudo rsync ${rsync_opts_x} ${target_dir}/* ${media}/rootfs/
+		;;
+	overlay)
+		sudo rsync --exclude-from=${ET_OVERLAY_DIR}/exclude \
+			${rsync_opts_x} ${target_dir}/* \
+			${media}/rootfs/
+		;;
+	rootfs)
+		if ! [ "${media}/rootfs" = "`find ${media}/rootfs -maxdepth 0 -empty`" ]; then
+			printf "[%s][%s] non-empty rootfs detected! [ ${media}/rootfs ]\n" ${ET_BOARD} ${target}
+			for ((i=3; i > 0; i--)); do
+				printf "\r[%s][%s] Deleting in %2d ... [Ctrl-C to abort]" ${ET_BOARD} ${target} $i
+				sleep 1
+			done
+			echo
+			sudo rm -rf ${media}/rootfs/*
 		fi
-		mount ${nfs}
-		if [ -z "`mount | grep ${nfs} 2> /dev/null`" ] || ! [ -f ${nfs}/usr/bin/busybox ]; then
-			printf "Unmounted NFS directory! [ %s ]\n" ${nfs}
-			exit 1
+		printf "[%s][%s] Extracting ${target_dir}/images/rootfs.tar into [ ${media}/rootfs ]\n" ${ET_BOARD} ${target}
+		sudo tar -xf ${target_dir}/images/rootfs.tar -C ${media}/rootfs/
+		sudo rsync ${rsync_opts_x} ${ET_BOOTLOADER_DIR}/boot ${media}/rootfs/
+		sudo rsync ${rsync_opts_x} ${ET_KERNEL_DIR}/boot ${media}/rootfs/
+		sudo rsync ${rsync_opts_x} ${ET_KERNEL_DIR}/usr/lib/modules ${media}/rootfs/usr/lib/
+		if [ -d "${media}/data" ]; then
+			sudo cp ${target_dir}/images/rootfs.tar ${media}/data/
 		fi
-		printf "[%s][%s] populating NFS @ [ %s ]\n" ${ET_BOARD} ${target} ${nfs}
-		case "${target}" in
-			kernel|bootloader)
-				sudo rsync ${rsync_opts_x} ${target_dir}/boot ${nfs}/
-				if [ "${target}" = "kernel" ]; then
-					sudo rsync ${rsync_opts_x} ${target_dir}/usr/lib/modules ${nfs}/usr/lib/
-					case "${ET_BOARD}" in
-					am335x-*)
-						sudo mkdir -p ${nfs}/usr/lib/firmware
-						sudo rsync ${rsync_opts_x} ${ET_DIR}/firmware/am* ${nfs}/usr/lib/firmware/
-						;;
-					*)
-						# NOOP
-						;;
-					esac
-				fi
-				rm -f ${nfs}/media/BOOT/firmware.img
-				sudo rsync ${rsync_opts} ${target_dir}/boot/* ${nfs}/media/BOOT/
-				case "${ET_BOARD_TYPE}" in
-					k3)
-						sudo mkdir -p ${nfs}/media/BOOT/lib/firmware
-						if [ "${ET_BOARD}" = "k3-j721e-sk" ]; then
-							sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c66xdsp_1_release_strip.xe66 ${nfs}/media/BOOT/lib/firmware/j7-c66_0-fw
-							sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c66xdsp_2_release_strip.xe66 ${nfs}/media/BOOT/lib/firmware/j7-c66_1-fw
-							sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c7x_1_release_strip.xe71     ${nfs}/media/BOOT/lib/firmware/j7-c71_0-fw
-							sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-eth/${TI_K3_SOC}/app_remoteswitchcfg_server_strip.xer5f     ${nfs}/media/BOOT/lib/firmware/j7-main-r5f0_0-fw
-							sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu2_1_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-main-r5f0_1-fw
-							sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu3_0_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-main-r5f1_0-fw
-							sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu3_1_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-main-r5f1_1-fw
-							sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu1_1_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-mcu-r5f0_1-fw
-						fi
-						;;
-					*)
-						# NOOP
-						;;
-				esac
+		;;
+	*)
+		printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}
+		exit 1
+		;;
+	esac
+	wait_on_sync ${ET_BOARD} ${target} ${destination}
+	;;
+nfs)
+	nfs="${ET_NFS_MOUNT}"
+	if [ -z "${nfs}" ] || ! [ -d ${nfs} ]; then
+		printf "NFS Mount '${nfs}' not exist!\n\n"
+		printf "1. Create an NFS entry for etinker board in '/etc/fstab'\n"
+		printf "[snip]-----------------------------------\n"
+		printf "<board-ipv4>:/ ${nfs} nfs rw,hard,intr,user,noauto 0 0\n"
+		printf "[snip]-----------------------------------\n\n"
+		printf "2. Create the NFS mount point directory\n"
+		printf "$ sudo mkdir -p ${nfs}\n\n"
+		printf "3. Create '/etc/exports' on etinker board\n"
+		printf "[snip]-----------------------------------\n"
+		printf "/             <ipv4-subnet>/24(rw,async,no_root_squash,no_subtree_check,insecure)\n"
+		printf "/media/BOOT   <ipv4-subnet>/24(rw,async,no_root_squash,no_subtree_check,insecure)\n"
+		printf "/media/rootfs <ipv4-subnet>/24(rw,async,no_root_squash,no_subtree_check,insecure)\n"
+		printf "/media/data   <ipv4-subnet>/24(rw,async,no_root_squash,no_subtree_check,insecure)\n"
+		printf "[snip]-----------------------------------\n\n"
+		printf "4. Restart etinker board\n\n"
+		printf "5. Try etinker NFS sync again\n"
+		exit 1
+	fi
+	mount ${nfs}
+	if [ -z "`mount | grep ${nfs} 2> /dev/null`" ] || ! [ -f ${nfs}/usr/bin/busybox ]; then
+		printf "Unmounted NFS directory! [ %s ]\n" ${nfs}
+		exit 1
+	fi
+	printf "[%s][%s] populating NFS @ [ %s ]\n" ${ET_BOARD} ${target} ${nfs}
+	case "${target}" in
+	kernel|bootloader)
+		sudo rsync ${rsync_opts_x} ${target_dir}/boot ${nfs}/
+		if [ "${target}" = "kernel" ]; then
+			sudo rsync ${rsync_opts_x} ${target_dir}/usr/lib/modules ${nfs}/usr/lib/
+			case "${ET_BOARD}" in
+			am335x-*)
+				sudo mkdir -p ${nfs}/usr/lib/firmware
+				sudo rsync ${rsync_opts_x} ${ET_DIR}/firmware/am* ${nfs}/usr/lib/firmware/
 				;;
 			*)
-				printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}
-				exit 1
+				# NOOP
 				;;
+			esac
+		fi
+		rm -f ${nfs}/media/BOOT/firmware.img
+		sudo rsync ${rsync_opts} ${target_dir}/boot/* ${nfs}/media/BOOT/
+		case "${ET_BOARD_TYPE}" in
+		k3)
+			sudo mkdir -p ${nfs}/media/BOOT/lib/firmware
+			if [ "${ET_BOARD}" = "k3-j721e-sk" ]; then
+				sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c66xdsp_1_release_strip.xe66 ${nfs}/media/BOOT/lib/firmware/j7-c66_0-fw
+				sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c66xdsp_2_release_strip.xe66 ${nfs}/media/BOOT/lib/firmware/j7-c66_1-fw
+				sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_c7x_1_release_strip.xe71     ${nfs}/media/BOOT/lib/firmware/j7-c71_0-fw
+				sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-eth/${TI_K3_SOC}/app_remoteswitchcfg_server_strip.xer5f     ${nfs}/media/BOOT/lib/firmware/j7-main-r5f0_0-fw
+				sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu2_1_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-main-r5f0_1-fw
+				sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu3_0_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-main-r5f1_0-fw
+				sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu3_1_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-main-r5f1_1-fw
+				sudo cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu1_1_release_strip.xer5f   ${nfs}/media/BOOT/lib/firmware/j7-mcu-r5f0_1-fw
+			fi
+			;;
+		*)
+			# NOOP
+			;;
 		esac
 		;;
 	*)
-		printf "Sync destination [%s] not implemented!\n" ${destination}
-		usage
+		printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}
 		exit 1
 		;;
+	esac
+	;;
+*)
+	printf "Sync destination [%s] not implemented!\n" ${destination}
+	usage
+	exit 1
+	;;
 esac
 
 printf "[%s][%s] Synching to %s has completed.\n" ${ET_BOARD} ${target} ${destination}
