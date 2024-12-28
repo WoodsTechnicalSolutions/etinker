@@ -8,7 +8,6 @@ usage()
 {
 	printf "USAGE: sync <target> <destination>\n"
 	printf "       sync <bootloader|kernel|library|rootfs|overlay> mmc\n"
-	printf "       sync <bootloader|kernel|library|rootfs|overlay> net:<ipv4/hostname>\n"
 	printf "       sync <bootloader|kernel> nfs ET_NFS_MOUNT=<nfs-mount-path>\n"
 }
 
@@ -200,67 +199,6 @@ case "${destination}" in
 				;;
 		esac
 		wait_on_sync ${ET_BOARD} ${target} ${destination}
-		;;
-	net:*)
-		ipv4="`printf ${destination} | cut -d ':' -f 2`"
-		printf "[%s][%s] Using %s [%s] -> %s\n" ${ET_BOARD} ${target} ${net_if} ${net_addr} ${ipv4}
-		case "${target}" in
-			kernel|bootloader)
-				printf "[%s][%s] Completing transfer to '/' on %s ... " ${ET_BOARD} ${target} ${ipv4}
-				(cd ${target_dir} && \
-					fakeroot tar --exclude='boot/extlinux' -cf - * | \
-					ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
-						root@${ipv4} \
-						'( cd / && tar xf - && sync )')
-				printf "Done\n"
-				if [ "${target}" = "kernel" ] && [ "`echo ${ET_BOARD}|grep -Po am335x`" = "am335x" ]; then
-					printf "[%s][%s] Completing transfer to '/usr/lib/firmware/' on %s ... " ${ET_BOARD} ${target} ${ipv4}
-					(cd ${ET_DIR}/firmware && \
-						fakeroot tar -cf - * | \
-						ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
-							root@${ipv4} \
-							'( cd /usr/lib/firmware/ && tar xf - && sync )')
-					printf "Done\n"
-				fi
-				printf "[%s][%s] Completing transfer to '/media/BOOT/' on %s ... " ${ET_BOARD} ${target} ${ipv4}
-				(cd ${target_dir}/boot && \
-					fakeroot tar --exclude='extlinux' -cf - * | \
-					ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
-						root@${ipv4} \
-						'( cd /media/BOOT/ && tar xf - && sync )')
-				printf "Done\n"
-				;;
-			library)
-				printf "[%s][%s] Completing transfer to '/' on %s ... " ${ET_BOARD} ${target} ${ipv4}
-				(cd ${target_dir} && \
-					fakeroot tar --exclude='*.a' --exclude='usr/include' -cf - * | \
-					ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
-						root@${ipv4} \
-						'( cd / && tar xf - && sync )')
-				printf "Done\n"
-				;;
-			overlay)
-				printf "[%s][%s] Completing transfer to '/' on %s ... " ${ET_BOARD} ${target} ${ipv4}
-				(cd ${target_dir} && \
-					fakeroot tar --exclude-from=${target_dir}/exclude -cf - * | \
-					ssh -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
-						root@${ipv4} \
-						'( cd / && tar xf - && sync )')
-				printf "Done\n"
-				rm -rf /tmp/overlay
-				;;
-			rootfs)
-				printf "[%s][%s] Completing transfer to '/media/data/' on %s ... " ${ET_BOARD} ${target} ${ipv4}
-				scp -pq -o BindAddress=${net_addr} -o LogLevel=quiet -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no \
-					${target_dir}/images/rootfs.tar \
-					root@${ipv4}:/media/data/
-				printf "Done\n"
-				;;
-			*)
-				printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}
-				exit 1
-				;;
-		esac
 		;;
 	nfs)
 		nfs="${ET_NFS_MOUNT}"
