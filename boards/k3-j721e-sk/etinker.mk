@@ -61,7 +61,9 @@ ET_BOARD_BOOTLOADER_DT ?= $(ET_BOARD_DT_PREFIX)k3-$(TI_K3_SOC)-sk
 
 ifdef ET_KERNEL_VARIANT
 # fixup kernel version
+ifeq (no,$(shell [ "-rt" = "$(ET_KERNEL_VARIANT)" ] && echo rt || echo no))
 export USE_KERNEL_TREE_VERSION := $(ET_KERNEL_VARIANT)
+endif
 endif
 
 ifdef ET_BOOTLOADER_VARIANT

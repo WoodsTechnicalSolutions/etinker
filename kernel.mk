@@ -64,6 +64,13 @@ endif
 ifeq (linux-rt,$(shell [ -f $(ET_KERNEL_SOFTWARE_DIR)/localversion-rt ] && echo linux-rt || echo no))
 localversion-rt := $(shell cat $(ET_KERNEL_SOFTWARE_DIR)/localversion-rt)
 localversion := $(shell echo $(ET_KERNEL_LOCALVERSION) | sed s/$(localversion-rt)//)
+ET_KERNEL_VERSION := $(kversion)
+# RC version
+ifeq (rc,$(shell echo -n $(kversion) | grep -qe "-rc" && echo rc || echo no))
+rcversion := -$(shell echo $(ET_KERNEL_VERSION) | cut -d '-' -f 2)
+ET_KERNEL_LOCALVERSION := $(shell echo $(localversion) | sed s/$(rcversion)//)
+endif
+localversion := $(ET_KERNEL_LOCALVERSION)
 endif
 # linux-next
 ifeq (linux-next,$(shell [ -f $(ET_KERNEL_SOFTWARE_DIR)/localversion-next ] && echo linux-next || echo no))
@@ -96,7 +103,7 @@ export ET_KERNEL_DTB := $(ET_KERNEL_DIR)/boot/$(ET_KERNEL_DT).dtb
 # get board specific definitions
 include $(ET_DIR)/boards/$(ET_BOARD)/kernel.mk
 
-export ET_KERNEL_MODULES := $(ET_KERNEL_DIR)/usr/lib/modules/$(ET_KERNEL_VERSION)$(ET_KERNEL_LOCALVERSION)/modules.dep
+export ET_KERNEL_MODULES := $(ET_KERNEL_DIR)/usr/lib/modules/$(ET_KERNEL_VERSION)*/modules.dep
 export ET_KERNEL_TARGET_FINAL ?= $(ET_KERNEL_MODULES)
 
 export CT_LINUX_CUSTOM_LOCATION := ${ET_KERNEL_SOFTWARE_DIR}
