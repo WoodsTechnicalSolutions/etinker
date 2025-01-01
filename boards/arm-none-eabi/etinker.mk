@@ -1,7 +1,7 @@
 #
 # arm-none-eabi toolchain configuration file for 'etinker'
 #
-# Copyright (C) 2021-2024, Derald D. Woods <woods.technical@gmail.com>
+# Copyright (C) 2021-2025, Derald D. Woods <woods.technical@gmail.com>
 #
 # This file is made available under the Creative Commons CC0 1.0
 # Universal Public Domain Dedication.

@@ -1,7 +1,7 @@
 #
 # TI AM3517 EVM, ARM Cortex-A8, board configuration file for 'etinker'
 #
-# Copyright (C) 2018-2024, Derald D. Woods <woods.technical@gmail.com>
+# Copyright (C) 2018-2025, Derald D. Woods <woods.technical@gmail.com>
 #
 # [references]
 # ------------------------------------------------------------------------------

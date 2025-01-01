@@ -1,7 +1,7 @@
 #
 # TI K3 SoC's Arm Cortex-R5 MCU configuration file for 'etinker'
 #
-# Copyright (C) 2023-2024, Derald D. Woods <woods.technical@gmail.com>
+# Copyright (C) 2023-2025, Derald D. Woods <woods.technical@gmail.com>
 #
 # This file is made available under the Creative Commons CC0 1.0
 # Universal Public Domain Dedication.

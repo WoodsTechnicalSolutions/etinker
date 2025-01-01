@@ -1,7 +1,7 @@
 #
 # This is the GNU Makefile for 'etinker'.
 #
-# Copyright (C) 2018-2024, Derald D. Woods <woods.technical@gmail.com>
+# Copyright (C) 2018-2025, Derald D. Woods <woods.technical@gmail.com>
 #
 # This file is part of the Embedded Tinkerer Sandbox, and is made
 # available under the terms of the GNU General Public License version 3.

@@ -1,7 +1,7 @@
 #
 # sama5d3-xpld, ARM Cortex-A5, board configuration file for 'etinker'
 #
-# Copyright (C) 2018-2024, Derald D. Woods <woods.technical@gmail.com>
+# Copyright (C) 2018-2025, Derald D. Woods <woods.technical@gmail.com>
 #
 # [references]
 # ------------------------------------------------------------------------------

@@ -1,7 +1,7 @@
 #
 # SK-TDA4VM, ARM Cortex-A72, board configuration file for 'etinker'
 #
-# Copyright (C) 2023-2024, Derald D. Woods <woods.technical@gmail.com>
+# Copyright (C) 2023-2025, Derald D. Woods <woods.technical@gmail.com>
 #
 # [references]
 # ------------------------------------------------------------------------------
