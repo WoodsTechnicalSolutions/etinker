@@ -170,9 +170,7 @@ mmc)
 		sudo rsync ${rsync_opts_x} ${target_dir}/* ${media}/rootfs/
 		;;
 	overlay)
-		sudo rsync --exclude-from=${ET_OVERLAY_DIR}/exclude \
-			${rsync_opts_x} ${target_dir}/* \
-			${media}/rootfs/
+		sudo rsync ${rsync_opts_x} ${target_dir}/* ${media}/rootfs/
 		;;
 	rootfs)
 		if ! [ "${media}/rootfs" = "`find ${media}/rootfs -maxdepth 0 -empty`" ]; then
