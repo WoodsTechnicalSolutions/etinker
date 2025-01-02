@@ -34,7 +34,7 @@ case "${board}" in
 *sama5d3*)
 	printf "***** SAMA5D3 ARM Cortex-A5 *****\n"
 	;;
-*am335x*|*am3517*|*beagle*|*torpedo*|*omap3*|*overo*)
+*am335x*|*am3517*|*beagle*|*omap3*)
 	printf "***** OMAP3 ARM Cortex-A8 *****\n"
 	;;
 *k3*)
