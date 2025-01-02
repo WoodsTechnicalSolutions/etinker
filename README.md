@@ -21,7 +21,6 @@ about tinkering.
 - ls1012afrdm [NXP Layerscape Arm Cortex-A53]
 - ls1043ardb [NXP Layerscape Arm Cortex-A53]
 - nrf52840-dongle [Nordic Arm Cortex-M4]
-- omap3-beagle-xm [TI Arm Cortex-A8]
 - omap3-beagle [TI Arm Cortex-A8]
 - omap3-evm [TI Arm Cortex-A8]
 - pynq-z2 [Xilinx Zynq-7020 Arm Cortex-A9]
@@ -40,7 +39,7 @@ files for Linux, U-Boot, and Buildroot reside in the virtual boards.
 
 - layerscape [ls1043ardb]
 - meson [aml-s905x-cc]
-- omap2plus [am335x-pocketbeagle, am3517-evm, omap3-beagle, omap3-beagle-xm, omap3-evm]
+- omap2plus [am335x-pocketbeagle, am3517-evm, omap3-beagle, omap3-evm]
 - sama5 [sama5d3-xpld]
 - zynq [pynq-z2]
 - k3 [k3-j721e-sk]
