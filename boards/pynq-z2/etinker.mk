@@ -48,3 +48,7 @@ ifdef ET_KERNEL_VARIANT
 # fixup kernel version
 export USE_KERNEL_TREE_VERSION := $(ET_KERNEL_VARIANT)
 endif
+
+ifdef ET_BOOTLOADER_VARIANT
+	export ET_BOOTLOADER_VARIANT :=
+endif
