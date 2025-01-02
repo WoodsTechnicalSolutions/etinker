@@ -20,7 +20,7 @@ mkdir -p ${TARGET}/usr/lib/firmware
 cp -fv ${ET_DIR}/scripts/mksdcard ${TARGET}/usr/sbin/ 2>/dev/null
 # Remove any lingering development files
 rm -rf ${ET_BOARD}/usr/include
-rm -rf ${ET_BOARD}/usr/lib/pkconfig
+rm -rf ${ET_BOARD}/usr/lib/pkgconfig
 rm -rf ${ET_BOARD}/usr/lib/*.a
 rm -rf ${ET_BOARD}/usr/lib/*.la
 # Add some additional libraries (RISC-V really needs these)

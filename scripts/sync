@@ -196,6 +196,11 @@ mmc)
 		exit 1
 		;;
 	esac
+	sudo rm -f ${media}/rootfs/exclude
+	sudo rm -rf ${media}/rootfs/usr/include
+	sudo rm -rf ${media}/rootfs/usr/lib/pkgconfig
+	sudo rm -rf ${media}/rootfs/usr/lib/*.a
+	sudo rm -rf ${media}/rootfs/usr/lib/*.la
 	wait_on_sync ${ET_BOARD} ${target} ${destination}
 	;;
 nfs)
@@ -260,6 +265,9 @@ nfs)
 			# NOOP
 			;;
 		esac
+		;;
+	rootfs)
+		sudo rsync ${rsync_opts} ${target_dir}/images/rootfs.tar ${nfs}/media/data/
 		;;
 	*)
 		printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}
