@@ -1,7 +1,0 @@
-uenvcmd=echo etinker - LS1012A Freedom Board && echo && \
-env set autoload off && \
-dhcp && \
-tftpboot ${load_addr} ${tftpip}:ls1012afrdm/kernel.itb && \
-setenv bootargs console=ttyS0,115200n8 rw root=/dev/nfs rootfstype=nfs nfsroot=${tftpip}:/srv/nfs/ls1012afrdm,vers=4,tcp ip=${nfsip}:${tftpip}:${nfsgw}:255.255.255.0::eth0:none nfsrootdebug && \
-pfe stop && \
-bootm ${load_addr}

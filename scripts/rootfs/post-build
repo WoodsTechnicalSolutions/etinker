@@ -174,9 +174,6 @@ omap2plus|sama5|zynq|meson|layerscape|k3|starfive)
 		fi
 		echo "ttyGS0" >> ${TARGET}/etc/securetty
 		;;
-	ls1012afrdm*)
-		sed -i s,\/dev\/mmc,\#\/dev\/mmc, ${TARGET}/etc/fstab
-		;;
 	visionfive2*)
 		${ET_SCRIPTS_DIR}/rootfs/${ET_ARCH}/fix-target-libs ${TARGET}
 		;;

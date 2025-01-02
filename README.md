@@ -18,7 +18,6 @@ about tinkering.
 - aml-s905x-cc [Amlogic Arm Cortex-A53]
 - ek-tm4c123gxl [TI TivaC Arm Cortex-M4]
 - ek-tm4c1294xl [TI TivaC Arm Cortex-M4]
-- ls1012afrdm [NXP Layerscape Arm Cortex-A53]
 - ls1043ardb [NXP Layerscape Arm Cortex-A53]
 - nrf52840-dongle [Nordic Arm Cortex-M4]
 - omap3-beagle [TI Arm Cortex-A8]
