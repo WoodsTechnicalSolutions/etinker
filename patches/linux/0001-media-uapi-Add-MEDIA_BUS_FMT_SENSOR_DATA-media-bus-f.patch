@@ -1,8 +1,7 @@
-From f1b9fb9d55e86aec778b769a0b0824ee3147145c Mon Sep 17 00:00:00 2001
+From 23ff671bd90a5ff67832813a804900b885a7bb11 Mon Sep 17 00:00:00 2001
 From: Naushir Patuck <naush@raspberrypi.com>
 Date: Tue, 21 Jan 2020 14:06:47 +0000
-Subject: [PATCH 1/3] media: uapi: Add MEDIA_BUS_FMT_SENSOR_DATA media bus
- format
+Subject: [PATCH] media: uapi: Add MEDIA_BUS_FMT_SENSOR_DATA media bus format
 
 This patch adds MEDIA_BUS_FMT_SENSOR_DATA used by the bcm2835-unicam
 driver to support CSI-2 embedded data streams from camera sensors.
@@ -14,10 +13,10 @@ Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
  2 files changed, 33 insertions(+)
 
 diff --git a/Documentation/userspace-api/media/v4l/subdev-formats.rst b/Documentation/userspace-api/media/v4l/subdev-formats.rst
-index d2a6cd2e1eb2..ca3230b83362 100644
+index 2a94371448dc..2d9d4e1802d4 100644
 --- a/Documentation/userspace-api/media/v4l/subdev-formats.rst
 +++ b/Documentation/userspace-api/media/v4l/subdev-formats.rst
-@@ -8561,3 +8561,33 @@ and finally the bit number in subscript. "x" indicates a padding bit.
+@@ -8713,3 +8713,33 @@ and finally the bit number in subscript. "x" indicates a padding bit.
        - x
        - x
        - x
@@ -52,10 +51,10 @@ index d2a6cd2e1eb2..ca3230b83362 100644
 +        CSI-2/SMIA embedded data format as described in the `CSI-2 specification.
 +	<https://mipi.org/specifications/csi-2>`_
 diff --git a/include/uapi/linux/media-bus-format.h b/include/uapi/linux/media-bus-format.h
-index d4c1d991014b..ac214f7ef341 100644
+index ff62056feed5..b434cb9c2b2c 100644
 --- a/include/uapi/linux/media-bus-format.h
 +++ b/include/uapi/linux/media-bus-format.h
-@@ -183,4 +183,7 @@
+@@ -185,4 +185,7 @@
  #define MEDIA_BUS_FMT_META_20			0x8006
  #define MEDIA_BUS_FMT_META_24			0x8007
  
@@ -64,5 +63,5 @@ index d4c1d991014b..ac214f7ef341 100644
 +
  #endif /* __LINUX_MEDIA_BUS_FORMAT_H */
 -- 
-2.46.1
+2.43.0
 

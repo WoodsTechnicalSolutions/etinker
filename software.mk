@@ -34,7 +34,7 @@ define software-check
 						git branch -D patched -f $(ET_NOERR); \
 						git switch -c patched; \
 						for f in $(shell ls $(ET_PATCH_DIR)/$(notdir $1)/*.patch $(ET_NOERR)); do \
-							patch -p1 -i $$f; \
+							patch --no-backup-if-mismatch -p1 -i $$f; \
 						done && \
 						git add . && \
 						git commit -a -m "etinker: patches applied @ $$et_ref") || exit 2; \
@@ -56,7 +56,7 @@ define software-check
 						git branch -D patched -f $(ET_NOERR); \
 						git switch -c patched; \
 						for f in $(shell ls $(ET_PATCH_DIR)/$(notdir $2)/*.patch $(ET_NOERR)); do \
-							patch -p1 -i $$f; \
+							patch --no-backup-if-mismatch -p1 -i $$f; \
 						done && \
 						git add . && \
 						git commit -a -m "etinker: patches applied @ $$et_ref") || exit 2; \

@@ -1,7 +1,7 @@
-From 0144ac8201cf825271bfa2991bde9e7a11cb06ec Mon Sep 17 00:00:00 2001
+From b94451efa4cf972eef51814054bf8378248cb04c Mon Sep 17 00:00:00 2001
 From: Nick Hollinghurst <nick.hollinghurst@raspberrypi.com>
 Date: Thu, 22 Dec 2022 13:59:33 +0000
-Subject: [PATCH 3/3] media/i2c: Add a driver for the Sony IMX708 image sensor
+Subject: [PATCH] media/i2c: Add a driver for the Sony IMX708 image sensor
 
 The imx708 is a 12MP MIPI sensor with a 16:9 aspect ratio, here using
 two CSI-2 lanes. It is a "quad Bayer" sensor with all 3 modes offering
@@ -103,7 +103,7 @@ media: i2c: imx708: Squash fixes
  create mode 100644 drivers/media/i2c/imx708.c
 
 diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 8ba096b8ebca..0d0c4e522c88 100644
+index 5968a7bba775..d6a6be04a02e 100644
 --- a/drivers/media/i2c/Kconfig
 +++ b/drivers/media/i2c/Kconfig
 @@ -264,6 +264,19 @@ config VIDEO_IMX415
@@ -127,7 +127,7 @@ index 8ba096b8ebca..0d0c4e522c88 100644
  	tristate
  
 diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index fbb988bd067a..60375a3f1829 100644
+index b97ca0d211a1..c8663f4fac6f 100644
 --- a/drivers/media/i2c/Makefile
 +++ b/drivers/media/i2c/Makefile
 @@ -59,6 +59,7 @@ obj-$(CONFIG_VIDEO_IMX335) += imx335.o
@@ -136,11 +136,11 @@ index fbb988bd067a..60375a3f1829 100644
  obj-$(CONFIG_VIDEO_IMX415) += imx415.o
 +obj-$(CONFIG_VIDEO_IMX708) += imx708.o
  obj-$(CONFIG_VIDEO_IR_I2C) += ir-kbd-i2c.o
+ obj-$(CONFIG_VIDEO_IRS1125) += irs1125.o
  obj-$(CONFIG_VIDEO_ISL7998X) += isl7998x.o
- obj-$(CONFIG_VIDEO_KS0127) += ks0127.o
 diff --git a/drivers/media/i2c/imx708.c b/drivers/media/i2c/imx708.c
 new file mode 100644
-index 000000000000..b5ad9cf46df7
+index 000000000000..a56478e31bb1
 --- /dev/null
 +++ b/drivers/media/i2c/imx708.c
 @@ -0,0 +1,2116 @@
@@ -152,7 +152,7 @@ index 000000000000..b5ad9cf46df7
 + * Based on Sony imx477 camera driver
 + * Copyright (C) 2020 Raspberry Pi Ltd
 + */
-+#include <asm/unaligned.h>
++#include <linux/unaligned.h>
 +#include <linux/clk.h>
 +#include <linux/delay.h>
 +#include <linux/gpio/consumer.h>
@@ -2261,5 +2261,5 @@ index 000000000000..b5ad9cf46df7
 +MODULE_DESCRIPTION("Sony IMX708 sensor driver");
 +MODULE_LICENSE("GPL v2");
 -- 
-2.46.1
+2.43.0
 
