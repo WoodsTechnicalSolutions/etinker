@@ -16,7 +16,6 @@ CT_ARCH_FPU="vfpv3-d16"
 CT_ARCH_FLOAT_HW=y
 CT_TARGET_CFLAGS="-mabi=aapcs -mthumb -march=armv7-r+fp -mfpu=vfpv3-d16 -mfloat-abi=hard -ftls-model=local-exec"
 CT_TARGET_LDFLAGS="-mabi=aapcs -mthumb -march=armv7-r+fp -mfpu=vfpv3-d16 -mfloat-abi=hard"
-CT_STATIC_TOOLCHAIN=y
 CT_TOOLCHAIN_PKGVERSION="Arm® Cortex®-R5F EABI Hardware Floating Point"
 CT_TOOLCHAIN_BUGURL="https://www.woodsts.org/contact.html"
 CT_TARGET_VENDOR="cortexr5"
@@ -29,14 +28,18 @@ CT_LIBC_PICOLIBC_ATEXIT_DYNAMIC_ALLOC=y
 CT_LIBC_PICOLIBC_GLOBAL_ATEXIT=y
 CT_LIBC_PICOLIBC_EXTRA_SECTIONS=y
 CT_GCC_V_13=y
-CT_CC_GCC_EXTRA_CONFIG_ARRAY="--enable-plugins --enable-install-libiberty --with-mode=thumb --with-arch=armv7-r+fp --with-fpu=vfpv3-d16 --with-float=hard"
+CT_CC_GCC_EXTRA_CONFIG_ARRAY="--enable-plugins --enable-install-libiberty --with-mode=thumb --with-arch=armv7-r+fp --with-fpu=vfpv3-d16 --with-float=hard --without-headers"
+# CT_CC_GCC_STATIC_LIBSTDCXX is not set
 CT_CC_GCC_SYSTEM_ZLIB=y
 CT_CC_GCC_CONFIG_TLS=y
 # CT_CC_GCC_ENABLE_TARGET_OPTSPACE is not set
+CT_CC_GCC_LIBSTDCXX=m
+CT_CC_GCC_LIBSTDCXX_HOSTED_DISABLE=y
 CT_CC_GCC_LDBL_128=y
 CT_CC_GCC_LNK_HASH_STYLE_GNU=y
 CT_CC_LANG_CXX=y
 CT_DEBUG_GDB=y
+CT_GDB_CROSS_STATIC=y
 CT_GDB_CROSS_SIM=y
 CT_COMP_LIBS_LIBELF=y
 CT_NCURSES_HOST_CONFIG_ARGS="--enable-widec"
