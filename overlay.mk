@@ -45,7 +45,7 @@ define overlay-clean
 	$(call cryptodev-linux-clean)
 	$(call openssl-clean)
 	$(call wireless-regdb-clean)
-	$(call rt-tests-clean)
+#	$(call rt-tests-clean)
 	$(call trace-cmd-clean)
 	$(call luajit-riscv-clean)
 endef
@@ -54,7 +54,7 @@ define overlay-purge
 	$(call cryptodev-linux-purge)
 	$(call openssl-purge)
 	$(call wireless-regdb-purge)
-	$(call rt-tests-purge)
+#	$(call rt-tests-purge)
 	$(call trace-cmd-purge)
 	$(call luajit-riscv-purge)
 endef
@@ -91,7 +91,7 @@ overlay:
 	$(call cryptodev-linux-all)
 	$(call openssl-all)
 	$(call wireless-regdb-all)
-	$(call rt-tests-all)
+#	$(call rt-tests-all)
 	$(call trace-cmd-all)
 	$(call luajit-riscv-all)
 
