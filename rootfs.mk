@@ -112,13 +112,15 @@ define rootfs-build
 		fi; \
 		;; \
 	esac
-	@if [ "riscv" = "$(ET_ARCH)" ] && ! [ -d "$(ET_ROOTFS_BUILD_DIR)/host" ]; then \
-		$(MAKE) --no-print-directory \
-			$(ET_CFLAGS_ROOTFS) \
-			CROSS_COMPILE=$(ET_CROSS_COMPILE) \
-			O=$(ET_ROOTFS_BUILD_DIR) \
-			-C $(ET_ROOTFS_SOFTWARE_DIR) \
-			toolchain; \
+	@if [ "riscv" = "$(ET_ARCH)" ]; then \
+		if ! [ -d "$(ET_ROOTFS_BUILD_DIR)/host" ]; then \
+			$(MAKE) --no-print-directory \
+				$(ET_CFLAGS_ROOTFS) \
+				CROSS_COMPILE=$(ET_CROSS_COMPILE) \
+				O=$(ET_ROOTFS_BUILD_DIR) \
+				-C $(ET_ROOTFS_SOFTWARE_DIR) \
+				toolchain; \
+		fi; \
 		$(ET_SCRIPTS_DIR)/rootfs/$(ET_ARCH)/fix-host-libs $(ET_ROOTFS_SYSROOT_DIR); \
 	fi
 	$(MAKE) --no-print-directory \
