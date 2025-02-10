@@ -126,7 +126,9 @@ define toolchain-build
 				cp -a $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot.cache; \
 			fi; \
 		fi; \
-		if [ -z "$(ET_TOOLCHAIN_DEBUG)" ] && [ -z "$(shell echo $(ET_CROSS_TUPLE) | grep -o arm-none-eabi)" ]; then \
+		if [ -z "$(ET_TOOLCHAIN_DEBUG)" ] && \
+				[ -z "$(shell echo $(ET_CROSS_TUPLE) | grep -o arm-none-eabi)" ] && \
+				[ -z "$(shell echo $(ET_CROSS_TUPLE) | grep -o cortexr5)" ]; then \
 			$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/src; \
 			$(RM) -r $(ET_TOOLCHAIN_BUILD_DIR)/$(ET_CROSS_TUPLE); \
 		fi; \
@@ -171,9 +173,13 @@ define toolchain-generator
 	$(call toolchain-depends)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-generator *****\n\n"
 	@(cd $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE); \
-		./bootstrap; \
-		./configure --prefix=$(ET_TOOLCHAIN_GENERATOR_DIR); \
-		$(MAKE); \
+		if [ -f Makefile ]; then \
+			$(MAKE) distclean; \
+			$(RM) -r *~ configure autom4te.cache verbatim-data.mk; \
+		fi; \
+		./bootstrap && \
+		./configure --prefix=$(ET_TOOLCHAIN_GENERATOR_DIR) && \
+		$(MAKE) && \
 		$(MAKE) install)
 	@if ! [ -f $(ET_TOOLCHAIN_GENERATOR) ]; then \
 		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call toolchain-generator FAILED! *****\n"; \
