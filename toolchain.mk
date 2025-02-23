@@ -273,12 +273,6 @@ define toolchain-mcu-libc
 		if [ -d $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/include ]; then \
 			cp -a $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/include/* include/; \
 		fi; \
-		if ! [ -d base/sys-include ]; then \
-			cp -a sys-include base/; \
-		fi; \
-		rm -rf sys-include; \
-		cp -a base/sys-include .; \
-		cp -a $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)/sys-include/* sys-include/; \
 	)
 endef
 endif
