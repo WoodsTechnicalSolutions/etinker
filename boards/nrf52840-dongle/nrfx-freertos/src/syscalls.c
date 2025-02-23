@@ -7,6 +7,7 @@
  * - https://interrupt.memfault.com/blog/boostrapping-libc-with-newlib
  * - https://embeddedartistry.com/blog/2019/page/9/
  * - https://devzone.nordicsemi.com/f/nordic-q-a/3351/nrf51822-with-gcc---stacksize-and-heapsize
+ * - https://github.com/picolibc/picolibc/blob/main/doc/os.md
  */
 
 #include <stdio.h>
@@ -115,3 +116,45 @@ int _getpid(void)
 {
 	return -1;
 }
+
+#if defined(PICOLIBC_STDIO_GLOBALS)
+
+static int uart_putc(char c, FILE *file __attribute__((unused)))
+{
+	nrfx_uarte_tx(sys_uart, (uint8_t *)&c, 1);
+	return c;
+}
+
+static int uart_getc(FILE *file __attribute__((unused)))
+{
+	uint8_t byte = 0;
+	nrfx_uarte_tx(sys_uart, &byte, 1);
+	return (int)byte;
+}
+
+static int uart_flush(FILE *file __attribute__((unused)))
+{
+	return 0;
+}
+
+static FILE __stdio = FDEV_SETUP_STREAM(uart_putc,
+					uart_getc,
+					uart_flush,
+					_FDEV_SETUP_RW);
+FILE *const stdin = &__stdio;
+__strong_reference(stdin, stdout);
+__strong_reference(stdin, stderr);
+
+#else // NOT PICOLIBC_STDIO_GLOBALS
+
+#ifndef stdin
+FILE *const stdin = NULL;
+#endif
+#ifndef stdout
+FILE *const stdout = NULL;
+#endif
+#ifndef stderr
+FILE *const stderr = NULL;
+#endif
+
+#endif // PICOLIBC_STDIO_GLOBALS
