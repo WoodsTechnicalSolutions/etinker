@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 - 2022, Nordic Semiconductor ASA
+ * Copyright (c) 2017 - 2025, Nordic Semiconductor ASA
  * All rights reserved.
  *
  * SPDX-License-Identifier: BSD-3-Clause
@@ -202,7 +202,8 @@ static inline bool _NRFX_IRQ_IS_PENDING(IRQn_Type irq_number)
 #include <soc/nrfx_atomic.h>
 
 /** @brief Atomic 32-bit unsigned type. */
-#define nrfx_atomic_t nrfx_atomic_u32_t
+//#define nrfx_atomic_t nrfx_atomic_u32_t
+typedef volatile uint32_t nrfx_atomic_t;
 
 /**
  * @brief Macro for storing a value to an atomic object and returning its previous value.
@@ -368,6 +369,39 @@ static inline int zero_count(uint32_t value, bool leading)
  *        otherwise could defer the actual register modification.
  */
 #define NRFX_EVENT_READBACK_ENABLED 1
+
+//------------------------------------------------------------------------------
+
+/**
+ * @brief Macro for writing back cache lines associated with the specified buffer.
+ *
+ * @note Macro should be empty if data cache is disabled or not present.
+ *
+ * @param[in] p_buffer Pointer to the buffer.
+ * @param[in] size     Size of the buffer.
+ */
+#define NRFY_CACHE_WB(p_buffer, size)
+
+/**
+ * @brief Macro for invalidating cache lines associated with the specified buffer.
+ *
+ * @note Macro should be empty if data cache is disabled or not present.
+ *
+ * @param[in] p_buffer Pointer to the buffer.
+ * @param[in] size     Size of the buffer.
+ */
+#define NRFY_CACHE_INV(p_buffer, size)
+
+/**
+ * @brief Macro for writing back and invalidating cache lines associated with
+ *        the specified buffer.
+ *
+ * @note Macro should be empty if data cache is disabled or not present.
+ *
+ * @param[in] p_buffer Pointer to the buffer.
+ * @param[in] size     Size of the buffer.
+ */
+#define NRFY_CACHE_WBINV(p_buffer, size)
 
 //------------------------------------------------------------------------------
 

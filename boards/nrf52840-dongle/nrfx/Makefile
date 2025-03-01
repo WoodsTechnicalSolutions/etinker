@@ -17,6 +17,8 @@ TARGET_BIN = $(TARGET_NAME).bin
 TARGET_MAP = $(TARGET_NAME).map
 
 TARGET_DIR := $(shell realpath -e $(CURDIR))
+TARGET_CONFIG_DIR := $(shell realpath -e $(CURDIR)/../config)
+TARGET_COMMON_DIR := $(shell realpath -e $(CURDIR)/../common)
 
 ET_DIR ?= $(shell realpath -e ../../..)
 
@@ -51,6 +53,7 @@ endif
 
 CFLAGS  = $(OPTIMIZE)
 CFLAGS += $(ET_CFLAGS)
+CFLAGS += -Wno-unused-variable
 CFLAGS += --sysroot=$(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)
 CFLAGS += -isysroot $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/$(ET_CROSS_TUPLE)
 CFLAGS += -std=c11 -Wall -Werror
@@ -70,13 +73,15 @@ CFLAGS += -mcpu=cortex-m4
 CFLAGS += -mfloat-abi=hard
 CFLAGS += -mfpu=fpv4-sp-d16
 CFLAGS += -I src
-CFLAGS += -I config
+CFLAGS += -I $(TARGET_CONFIG_DIR)
 CFLAGS += -I $(NRFX_DIR)
+CFLAGS += -I $(NRFX_DIR)/soc
 CFLAGS += -I $(NRFX_DIR)/hal
 CFLAGS += -I $(NRFX_DIR)/mdk
 CFLAGS += -I $(NRFX_DIR)/drivers
 CFLAGS += -I $(NRFX_DIR)/drivers/include
 CFLAGS += -I $(NRFX_DIR)/helpers
+CFLAGS += -I $(NRFX_DIR)/templates
 CFLAGS += -I $(CMSIS_DIR)/CMSIS/Core/Include
 ifeq ($(ET_MCU_LIBC),picolibc)
 CFLAGS += -I $(ET_TOOLCHAIN_DIR)/$(ET_MCU_LIBC)/include
@@ -94,18 +99,24 @@ LDFLAGS += -mabi=aapcs
 LDFLAGS += -mcpu=cortex-m4
 LDFLAGS += -mfloat-abi=hard
 LDFLAGS += -mfpu=fpv4-sp-d16
-LDFLAGS += -Wl,--static
-LDFLAGS += -Wl,--gc-sections
-LDFLAGS += -Wl,--no-dynamic-linker
-LDFLAGS += -Wl,-L $(NRFX_DIR)/mdk
-LDFLAGS += -Wl,-T $(NRFX_DIR)/mdk/$(ET_BOARD_MCU)_xxaa.ld
-LDFLAGS += -Wl,-Map=$(BUILD_DIR)/$(TARGET_MAP)
 LDFLAGS += -u _printf_float
 LDFLAGS += -u _scanf_float
+#LDFLAGS += -Wl,--print-gc-sections
+LDFLAGS += -Wl,--gc-sections
+LDFLAGS += -L $(NRFX_DIR)/mdk
+LDFLAGS += -T $(NRFX_DIR)/mdk/$(ET_BOARD_MCU)_xxaa.ld
+LDFLAGS += -Wl,-Map,$(BUILD_DIR)/$(TARGET_MAP)
 
-LDLIBS  = $(ET_LDLIBS)
+LDLIBS = \
+	-Wl,--start-group \
+	 	-lc -lm \
+	       	$(ET_LDLIBS) \
+	-Wl,--end-group
 
 SOURCES  = $(shell find src/ -name "*.c" -print $(ET_NOERR))
+SOURCES += $(shell find $(TARGET_COMMON_DIR)/ -name "*.c" -print $(ET_NOERR))
+SOURCES += $(NRFX_DIR)/soc/nrfx_atomic.c
+SOURCES += $(NRFX_DIR)/drivers/src/nrfx_ppi.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_gpiote.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_pwm.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_saadc.c
@@ -115,13 +126,19 @@ SOURCES += $(NRFX_DIR)/drivers/src/nrfx_twim.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_uarte.c
 SOURCES += $(NRFX_DIR)/drivers/src/prs/nrfx_prs.c
 SOURCES += $(NRFX_DIR)/helpers/nrfx_flag32_allocator.c
+SOURCES += $(NRFX_DIR)/helpers/nrfx_gppi_ppi.c
 SOURCES += $(NRFX_DIR)/mdk/system_$(ET_BOARD_MCU).c
 
-OBJECTS = $(addprefix $(BUILD_DIR)/,$(SOURCES:.c=.o))
+source1 = $(subst $(TARGET_COMMON_DIR),common,$(SOURCES))
+source2 = $(subst $(NRFX_DIR),nrfx,$(source1))
+
+OBJECTS = $(addprefix $(BUILD_DIR)/,$(source2:.c=.o))
 
 HEADERS = Makefile
-HEADERS += $(shell find config/ -name "*.h" -print $(ET_NOERR))
 HEADERS += $(shell find src/ -maxdepth 1 -name "*.h" -print $(ET_NOERR))
+HEADERS += $(shell find $(TARGET_CONFIG_DIR)/ -name "*.h" -print $(ET_NOERR))
+HEADERS += $(shell find $(TARGET_COMMON_DIR)/ -name "*.h" -print $(ET_NOERR))
+HEADERS += $(shell find $(NRFX_DIR)/ -name "*.h" -print $(ET_NOERR))
 
 depends:
 	$(call toolchain-mcu-libc)
@@ -130,8 +147,7 @@ $(TARGET_ELF): $(BUILD_DIR)/$(TARGET_ELF)
 
 $(BUILD_DIR)/$(TARGET_ELF): $(NRFX_DIR)/mdk/gcc_startup_$(ET_BOARD_MCU).S
 $(BUILD_DIR)/$(TARGET_ELF): $(OBJECTS)
-	@sed -i s,\ -lnosys,, $(NRFX_DIR)/mdk/$(ET_BOARD_MCU)_xxaa.ld
-	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)
+	$(CC) -o $@ $(LDFLAGS) $^ $(LDLIBS)
 	@$(SIZE) $@
 ifeq ($(TARGET_BUILD),debug)
 	@$(OBJDUMP) -S --disassemble $@ > $(BUILD_DIR)/asm/$(TARGET_ELF).lst 2> $(BUILD_DIR)/asm/$(TARGET_ELF).lst-error
@@ -146,6 +162,20 @@ $(BUILD_DIR)/$(TARGET_BIN): $(BUILD_DIR)/$(TARGET_ELF)
 	$(OBJCOPY) -O binary $< $@
 
 $(BUILD_DIR)/%.o: %.c $(HEADERS) | $(BUILD_DIR)
+	@$(MKDIR) $(dir $@)
+	$(CC) $(CFLAGS) -o $@ -c $<
+ifeq ($(TARGET_BUILD),debug)
+	@$(OBJDUMP) -S --disassemble $@ > $@.lst 2> $@.lst-error
+endif
+
+$(BUILD_DIR)/common/%.o: $(TARGET_COMMON_DIR)/%.c $(HEADERS) | $(BUILD_DIR)
+	@$(MKDIR) $(dir $@)
+	$(CC) $(CFLAGS) -o $@ -c $<
+ifeq ($(TARGET_BUILD),debug)
+	@$(OBJDUMP) -S --disassemble $@ > $@.lst 2> $@.lst-error
+endif
+
+$(BUILD_DIR)/nrfx/%.o: $(NRFX_DIR)/%.c $(HEADERS) | $(BUILD_DIR)
 	@$(MKDIR) $(dir $@)
 	$(CC) $(CFLAGS) -o $@ -c $<
 ifeq ($(TARGET_BUILD),debug)
@@ -187,7 +217,7 @@ nrfx-config:
 	fi
 	@(java -jar \
 		$(ET_SOFTWARE_DIR)/CMSIS_Configuration_Wizard.jar \
-		$(TARGET_DIR)/config/nrfx_config.h &)
+		$(TARGET_CONFIG_DIR)/nrfx_config.h &)
 
 distclean: clean
 	$(RM) -r debug

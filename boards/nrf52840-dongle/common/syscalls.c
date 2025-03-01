@@ -16,7 +16,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-#include "nrfx_uarte.h"
+#include <nrfx_uarte.h>
 
 char syscalls_string[1024] = { '\0' };
 uint8_t syscalls_memory[4096] = { 0 };
@@ -60,7 +60,7 @@ ssize_t _write(int filedes, void *buf, size_t nbyte)
 	ssize_t n = 0;
 
 	for (; nbyte != 0; --nbyte) {
-		nrfx_uarte_tx(sys_uart, (uint8_t *)buf++, 1);
+		nrfx_uarte_tx(sys_uart, (uint8_t *)buf++, 1, 0);
 		++n;
 	}
 
@@ -121,14 +121,14 @@ int _getpid(void)
 
 static int uart_putc(char c, FILE *file __attribute__((unused)))
 {
-	nrfx_uarte_tx(sys_uart, (uint8_t *)&c, 1);
+	nrfx_uarte_tx(sys_uart, (uint8_t *)&c, 1, 0);
 	return c;
 }
 
 static int uart_getc(FILE *file __attribute__((unused)))
 {
 	uint8_t byte = 0;
-	nrfx_uarte_tx(sys_uart, &byte, 1);
+	nrfx_uarte_tx(sys_uart, &byte, 1, 0);
 	return (int)byte;
 }
 

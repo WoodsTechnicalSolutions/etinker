@@ -45,8 +45,8 @@
 extern "C" {
 #endif
 
-#include "nrfx_gpiote.h"
-#include "nrfx_saadc.h"
+#include <nrfx_gpiote.h>
+#include <nrfx_saadc.h>
 
 // fixed I/O pin assignments
 //----------------------------------------------------------------------

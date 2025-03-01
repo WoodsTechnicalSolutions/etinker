@@ -12,30 +12,94 @@ unsigned int __tls_base = (unsigned int)&__tdata_start;
 extern unsigned int __tbss_start;
 unsigned int __arm32_tls_tcb_offset = (unsigned int)&__tbss_start;
 
-#include "nrfx_gpiote.h"
-#include "nrfx_uarte.h"
-#include "nrfx_spim.h"
-#include "nrfx_twim.h"
-#include "nrfx_saadc.h"
+#include <nrfx_uarte.h>
+#include <nrfx_spim.h>
+#include <nrfx_twim.h>
+#include <nrfx_saadc.h>
+#include <nrfx_gpiote.h>
+#include <helpers/nrfx_gppi.h>
 
 #include "boards.h"
 
 extern int syscalls_init(nrfx_uarte_t const *uart,
 					nrfx_uarte_config_t const *config);
 
-static nrfx_gpiote_out_config_t led_config = NRFX_GPIOTE_CONFIG_OUT_SIMPLE(true);
+static void sw_1_handler(nrfx_gpiote_pin_t pin,
+			   nrfx_gpiote_trigger_t trigger,
+			   void *context)
+{
+	printf("%s: \r\n", __func__);
+}
 
-static nrfx_gpiote_in_config_t sw_1_config = {
-	.sense = NRF_GPIOTE_POLARITY_TOGGLE,
-	.pull = NRF_GPIO_PIN_PULLUP,
-	.is_watcher = false,
-	.hi_accuracy = true,
-	.skip_gpio_setup = false,
-};
+static const nrfx_gpiote_t gpiote = NRFX_GPIOTE_INSTANCE(0);
+static uint8_t sw_1_ch;
+static uint8_t led_1_g_ch;
+static uint8_t led_2_r_ch;
+static uint8_t led_2_g_ch;
+static uint8_t led_2_b_ch;
+static uint8_t ppi_ch;
 
 static void gpio_init(void)
 {
 	nrfx_err_t err;
+	// SW1 button
+	static const nrf_gpio_pin_pull_t sw_1_pull_config = NRF_GPIO_PIN_PULLUP;
+	nrfx_gpiote_trigger_config_t sw_1_trigger_config = {
+		.trigger = NRFX_GPIOTE_TRIGGER_HITOLO,
+		.p_in_channel = &sw_1_ch,
+	};
+	static const nrfx_gpiote_handler_config_t sw_1_handler_config = {
+		.handler = sw_1_handler,
+	};
+	nrfx_gpiote_input_pin_config_t sw_1_in_config = {
+		.p_pull_config = &sw_1_pull_config,
+		.p_trigger_config = &sw_1_trigger_config,
+		.p_handler_config = &sw_1_handler_config
+	};
+	// LED 1 Green
+	static const nrfx_gpiote_output_config_t led_1_g_out_config = {
+		.drive = NRF_GPIO_PIN_S0S1,
+		.input_connect = NRF_GPIO_PIN_INPUT_DISCONNECT,
+		.pull = NRF_GPIO_PIN_NOPULL,
+	};
+	const nrfx_gpiote_task_config_t led_1_g_task_config = {
+		.task_ch = led_1_g_ch,
+		.polarity = NRF_GPIOTE_POLARITY_TOGGLE,
+		.init_val = 1,
+	};
+	// LED 2 Red
+	static const nrfx_gpiote_output_config_t led_2_r_out_config = {
+		.drive = NRF_GPIO_PIN_S0S1,
+		.input_connect = NRF_GPIO_PIN_INPUT_DISCONNECT,
+		.pull = NRF_GPIO_PIN_NOPULL,
+	};
+	const nrfx_gpiote_task_config_t led_2_r_task_config = {
+		.task_ch = led_2_r_ch,
+		.polarity = NRF_GPIOTE_POLARITY_TOGGLE,
+		.init_val = 1,
+	};
+	// LED 2 Green
+	static const nrfx_gpiote_output_config_t led_2_b_out_config = {
+		.drive = NRF_GPIO_PIN_S0S1,
+		.input_connect = NRF_GPIO_PIN_INPUT_DISCONNECT,
+		.pull = NRF_GPIO_PIN_NOPULL,
+	};
+	const nrfx_gpiote_task_config_t led_2_b_task_config = {
+		.task_ch = led_2_b_ch,
+		.polarity = NRF_GPIOTE_POLARITY_TOGGLE,
+		.init_val = 1,
+	};
+	// LED 2 Blue
+	static const nrfx_gpiote_output_config_t led_2_g_out_config = {
+		.drive = NRF_GPIO_PIN_S0S1,
+		.input_connect = NRF_GPIO_PIN_INPUT_DISCONNECT,
+		.pull = NRF_GPIO_PIN_NOPULL,
+	};
+	const nrfx_gpiote_task_config_t led_2_g_task_config = {
+		.task_ch = led_2_g_ch,
+		.polarity = NRF_GPIOTE_POLARITY_TOGGLE,
+		.init_val = 1,
+	};
 
 	/**
 	 * pulled from Nordic SDK 16.0.0 'components/boards/boards.c'
@@ -75,26 +139,124 @@ static void gpio_init(void)
 
 gpio_config:
 
-	err = nrfx_gpiote_init(NRFX_GPIOTE_DEFAULT_CONFIG_IRQ_PRIORITY);
-	if (err != NRFX_SUCCESS)
-		while (true);
+	err = nrfx_gpiote_init(&gpiote, 0);
+	if (err != NRFX_SUCCESS) {
+		printf("%s: error (%u)\r\n", __func__, err);
+		return;
+	}
 
-	nrfx_gpiote_in_init(SW_1, &sw_1_config, NULL);
+	// SW 1
+	err = nrfx_gpiote_channel_alloc(&gpiote, &sw_1_ch);
+	if (err != NRFX_SUCCESS) {
+		printf("nrfx_gpiote_channel_alloc: sw_1: error (%u)\r\n", err);
+		return;
+	}
 
-	nrfx_gpiote_out_init(LED_1_G, &led_config);
-	nrfx_gpiote_out_init(LED_2_R, &led_config);
-	nrfx_gpiote_out_init(LED_2_G, &led_config);
-	nrfx_gpiote_out_init(LED_2_B, &led_config);
+	err = nrfx_gpiote_input_configure(&gpiote, SW_1, &sw_1_in_config);
+	if (err != NRFX_SUCCESS) {
+		printf("nrfx_gpiote_input_configure: sw_1: error (%u)\r\n", err);
+		return;
+	}
+
+	nrfx_gpiote_trigger_enable(&gpiote, SW_1, true);
+
+	// LED 1 Green
+	err = nrfx_gpiote_channel_alloc(&gpiote, &led_1_g_ch);
+	if (err != NRFX_SUCCESS) {
+		printf("nrfx_gpiote_channel_alloc: led_1_g: error (%u)\r\n", err);
+		return;
+	}
+
+	err = nrfx_gpiote_output_configure(&gpiote, LED_1_G,
+					   &led_1_g_out_config,
+					   &led_1_g_task_config);
+	if (err != NRFX_SUCCESS) {
+		printf("nrfx_gpiote_output_configure: led_1_g: error (%u)\r\n", err);
+		return;
+	}
+
+	nrfx_gpiote_out_task_enable(&gpiote, LED_1_G);
+
+	// LED 2 Red
+	err = nrfx_gpiote_channel_alloc(&gpiote, &led_2_r_ch);
+	if (err != NRFX_SUCCESS) {
+		printf("nrfx_gpiote_channel_alloc: led_2_r: error (%u)\r\n", err);
+		return;
+	}
+
+	err = nrfx_gpiote_output_configure(&gpiote, LED_2_R,
+					   &led_2_r_out_config,
+					   &led_2_r_task_config);
+	if (err != NRFX_SUCCESS) {
+		printf("nrfx_gpiote_output_configure: led_2_r: error (%u)\r\n", err);
+		return;
+	}
+
+	nrfx_gpiote_out_task_enable(&gpiote, LED_2_R);
+
+	// LED 2 Green
+	err = nrfx_gpiote_channel_alloc(&gpiote, &led_2_g_ch);
+	if (err != NRFX_SUCCESS) {
+		printf("nrfx_gpiote_channel_alloc: led_2_g: error (%u)\r\n", err);
+		return;
+	}
+
+	err = nrfx_gpiote_output_configure(&gpiote, LED_2_G,
+					   &led_2_g_out_config,
+					   &led_2_g_task_config);
+	if (err != NRFX_SUCCESS) {
+		printf("nrfx_gpiote_output_configure: led_2_g: error (%u)\r\n", err);
+		return;
+	}
+
+	nrfx_gpiote_out_task_enable(&gpiote, LED_2_G);
+
+	// LED 2 Blue
+	err = nrfx_gpiote_channel_alloc(&gpiote, &led_2_b_ch);
+	if (err != NRFX_SUCCESS) {
+		printf("nrfx_gpiote_channel_alloc: led_2_b: error (%u)\r\n", err);
+		return;
+	}
+
+	err = nrfx_gpiote_output_configure(&gpiote, LED_2_B,
+					   &led_2_b_out_config,
+					   &led_2_b_task_config);
+	if (err != NRFX_SUCCESS) {
+		printf("nrfx_gpiote_output_configure: led_2_b: error (%u)\r\n", err);
+		return;
+	}
+
+	nrfx_gpiote_out_task_enable(&gpiote, LED_2_B);
+
+	err = nrfx_gppi_channel_alloc(&ppi_ch);
+	if (err != NRFX_SUCCESS) {
+		printf("nrfx_gppi_channel_alloc: error (%u)\r\n", err);
+		return;
+	}
+
+	nrfx_gppi_channel_endpoints_setup(ppi_ch,
+		nrfx_gpiote_in_event_address_get(&gpiote, SW_1),
+		nrfx_gpiote_out_task_address_get(&gpiote, LED_1_G));
+	nrfx_gppi_channels_enable(1UL << (ppi_ch));
 }
 
-static nrfx_uarte_t uarte_0 = NRFX_UARTE_INSTANCE(0);
+static nrfx_uarte_t uarte_0 = {
+	.p_reg = NRF_UARTE0,
+	.drv_inst_idx = 0
+};
 static nrfx_uarte_config_t uarte_0_config = NRFX_UARTE_DEFAULT_CONFIG(UARTE_0_TX_PIN, UARTE_0_RX_PIN);
 
 #if !defined(USE_SPIM_0)
-static nrfx_uarte_t uarte_1 = NRFX_UARTE_INSTANCE(1);
+static nrfx_uarte_t uarte_1 = {
+	.p_reg = NRF_UARTE1,
+	.drv_inst_idx = 1
+};
 static nrfx_uarte_config_t uarte_1_config = NRFX_UARTE_DEFAULT_CONFIG(UARTE_1_TX_PIN, UARTE_1_RX_PIN);
 
-static nrfx_twim_t twim_0 = NRFX_TWIM_INSTANCE(1);
+static nrfx_twim_t twim_0 = {
+	.p_twim = NRF_TWIM1,
+	.drv_inst_idx = 1
+};
 static nrfx_twim_config_t twim_0_config = NRFX_TWIM_DEFAULT_CONFIG(TWIM_0_SCL_PIN, TWIM_0_SDA_PIN);
 #endif // ! USE_SPIM_0
 
@@ -129,7 +291,7 @@ static uint8_t data_tx[2][16] = {
 	}
 };
 
-static nrf_saadc_value_t saadc_value[4] = { 0 };
+static int16_t saadc_value[4] = { 0 };
 static uint32_t saadc_mask = 0xf;
 static nrfx_saadc_channel_t saadc[] = {
 	NRFX_SAADC_DEFAULT_CHANNEL_SE(AIN_0, 0),
@@ -158,12 +320,12 @@ int main(void)
 	err = nrfx_uarte_init(&uarte_1, &uarte_1_config, NULL);
 	if (err != NRFX_SUCCESS) {
 		printf("error nrfx_uarte_init\r\n");
-		nrfx_gpiote_out_clear(LED_2_G);
-		nrfx_gpiote_out_clear(LED_2_B);
-		nrfx_gpiote_out_clear(LED_1_G);
+		nrfx_gpiote_out_clear(&gpiote, LED_2_G);
+		nrfx_gpiote_out_clear(&gpiote, LED_2_B);
+		nrfx_gpiote_out_clear(&gpiote, LED_1_G);
 		while (true) {
 			nrfx_coredep_delay_us(2000000);
-			nrfx_gpiote_out_toggle(LED_2_R);
+			nrfx_gpiote_out_toggle(&gpiote, LED_2_R);
 		}
 	}
 #endif // ! USE_SPIM_0
@@ -180,12 +342,12 @@ int main(void)
 	err = nrfx_spim_init(&spim_0, &spim_0_config, NULL, NULL);
 	if (err != NRFX_SUCCESS) {
 		printf("error nrfx_spim_init\r\n");
-		nrfx_gpiote_out_clear(LED_2_G);
-		nrfx_gpiote_out_clear(LED_2_B);
-		nrfx_gpiote_out_clear(LED_1_G);
+		nrfx_gpiote_out_clear(&gpiote, LED_2_G);
+		nrfx_gpiote_out_clear(&gpiote, LED_2_B);
+		nrfx_gpiote_out_clear(&gpiote, LED_1_G);
 		while (true) {
 			nrfx_coredep_delay_us(1000000);
-			nrfx_gpiote_out_toggle(LED_2_R);
+			nrfx_gpiote_out_toggle(&gpiote, LED_2_R);
 		}
 	}
 #else
@@ -194,19 +356,19 @@ int main(void)
 	err = nrfx_twim_init(&twim_0, &twim_0_config, NULL, NULL);
 	if (err != NRFX_SUCCESS) {
 		printf("error nrfx_twim_init\r\n");
-		nrfx_gpiote_out_clear(LED_2_G);
-		nrfx_gpiote_out_clear(LED_2_B);
-		nrfx_gpiote_out_clear(LED_1_G);
+		nrfx_gpiote_out_clear(&gpiote, LED_2_G);
+		nrfx_gpiote_out_clear(&gpiote, LED_2_B);
+		nrfx_gpiote_out_clear(&gpiote, LED_1_G);
 		while (true) {
 			nrfx_coredep_delay_us(3000000);
-			nrfx_gpiote_out_toggle(LED_2_R);
+			nrfx_gpiote_out_toggle(&gpiote, LED_2_R);
 		}
 	}
 
 	nrfx_twim_enable(&twim_0);
 #endif // USE_SPIM_0
 
-	nrfx_gpiote_out_toggle(LED_1_G);
+	nrfx_gpiote_out_toggle(&gpiote, LED_1_G);
 
 	SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
 
@@ -247,14 +409,14 @@ int main(void)
 			// UARTE 1
 			while (nrfx_uarte_tx_in_progress(&uarte_1))
 				nrfx_coredep_delay_us(10);
-			nrfx_uarte_tx(&uarte_1, &data_tx[tx_id][i], 1);
+			nrfx_uarte_tx(&uarte_1, &data_tx[tx_id][i], 1, 0);
 #endif // USE_SPIM_0
 		}
 		printf("\r\n");
 #if !defined(USE_SPIM_0)
 		while (nrfx_uarte_tx_in_progress(&uarte_1))
 			nrfx_coredep_delay_us(10);
-		nrfx_uarte_tx(&uarte_1, nl, sizeof(nl));
+		nrfx_uarte_tx(&uarte_1, nl, sizeof(nl), 0);
 #endif // ! USE_SPIM_0
 
 		// read SAADC 4 channels [0,5,7,VDD]
@@ -270,21 +432,21 @@ int main(void)
 
 		nrfx_coredep_delay_us(1000000);
 
-		nrfx_gpiote_out_clear(LED_2_G);
-		nrfx_gpiote_out_clear(LED_2_B);
-		nrfx_gpiote_out_set(LED_2_R);
+		nrfx_gpiote_out_clear(&gpiote, LED_2_G);
+		nrfx_gpiote_out_clear(&gpiote, LED_2_B);
+		nrfx_gpiote_out_set(&gpiote, LED_2_R);
 
 		nrfx_coredep_delay_us(1000000);
 
-		nrfx_gpiote_out_clear(LED_2_R);
-		nrfx_gpiote_out_clear(LED_2_B);
-		nrfx_gpiote_out_set(LED_2_G);
+		nrfx_gpiote_out_clear(&gpiote, LED_2_R);
+		nrfx_gpiote_out_clear(&gpiote, LED_2_B);
+		nrfx_gpiote_out_set(&gpiote, LED_2_G);
 
 		nrfx_coredep_delay_us(1000000);
 
-		nrfx_gpiote_out_clear(LED_2_R);
-		nrfx_gpiote_out_clear(LED_2_G);
-		nrfx_gpiote_out_set(LED_2_B);
+		nrfx_gpiote_out_clear(&gpiote, LED_2_R);
+		nrfx_gpiote_out_clear(&gpiote, LED_2_G);
+		nrfx_gpiote_out_set(&gpiote, LED_2_B);
 
 		printf("\r\e[2J");
 	}
