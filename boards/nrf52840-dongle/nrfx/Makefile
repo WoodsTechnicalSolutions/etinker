@@ -116,7 +116,6 @@ LDLIBS = \
 SOURCES  = $(shell find src/ -name "*.c" -print $(ET_NOERR))
 SOURCES += $(shell find $(TARGET_COMMON_DIR)/ -name "*.c" -print $(ET_NOERR))
 SOURCES += $(NRFX_DIR)/soc/nrfx_atomic.c
-SOURCES += $(NRFX_DIR)/drivers/src/nrfx_ppi.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_gpiote.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_pwm.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_saadc.c
@@ -126,7 +125,6 @@ SOURCES += $(NRFX_DIR)/drivers/src/nrfx_twim.c
 SOURCES += $(NRFX_DIR)/drivers/src/nrfx_uarte.c
 SOURCES += $(NRFX_DIR)/drivers/src/prs/nrfx_prs.c
 SOURCES += $(NRFX_DIR)/helpers/nrfx_flag32_allocator.c
-SOURCES += $(NRFX_DIR)/helpers/nrfx_gppi_ppi.c
 SOURCES += $(NRFX_DIR)/mdk/system_$(ET_BOARD_MCU).c
 
 source1 = $(subst $(TARGET_COMMON_DIR),common,$(SOURCES))

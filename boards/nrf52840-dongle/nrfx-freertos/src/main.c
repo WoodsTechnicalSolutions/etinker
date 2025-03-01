@@ -21,7 +21,6 @@ unsigned int __arm32_tls_tcb_offset = (unsigned int)&__tbss_start;
 #include <nrfx_twim.h>
 #include <nrfx_saadc.h>
 #include <nrfx_gpiote.h>
-#include <helpers/nrfx_gppi.h>
 
 #include "boards.h"
 
@@ -32,7 +31,7 @@ static void sw_1_handler(nrfx_gpiote_pin_t pin,
 			   nrfx_gpiote_trigger_t trigger,
 			   void *context)
 {
-	printf("%s: \r\n", __func__);
+	printf("[%s]\r\n", __func__);
 }
 
 static const nrfx_gpiote_t gpiote = NRFX_GPIOTE_INSTANCE(0);
@@ -41,7 +40,6 @@ static uint8_t led_1_g_ch;
 static uint8_t led_2_r_ch;
 static uint8_t led_2_g_ch;
 static uint8_t led_2_b_ch;
-static uint8_t ppi_ch;
 
 static void gpio_init(void)
 {
@@ -173,13 +171,11 @@ gpio_config:
 
 	err = nrfx_gpiote_output_configure(&gpiote, LED_1_G,
 					   &led_1_g_out_config,
-					   &led_1_g_task_config);
+					   NULL);
 	if (err != NRFX_SUCCESS) {
 		printf("nrfx_gpiote_output_configure: led_1_g: error (%u)\r\n", err);
 		return;
 	}
-
-	nrfx_gpiote_out_task_enable(&gpiote, LED_1_G);
 
 	// LED 2 Red
 	err = nrfx_gpiote_channel_alloc(&gpiote, &led_2_r_ch);
@@ -190,13 +186,11 @@ gpio_config:
 
 	err = nrfx_gpiote_output_configure(&gpiote, LED_2_R,
 					   &led_2_r_out_config,
-					   &led_2_r_task_config);
+					   NULL);
 	if (err != NRFX_SUCCESS) {
 		printf("nrfx_gpiote_output_configure: led_2_r: error (%u)\r\n", err);
 		return;
 	}
-
-	nrfx_gpiote_out_task_enable(&gpiote, LED_2_R);
 
 	// LED 2 Green
 	err = nrfx_gpiote_channel_alloc(&gpiote, &led_2_g_ch);
@@ -207,13 +201,11 @@ gpio_config:
 
 	err = nrfx_gpiote_output_configure(&gpiote, LED_2_G,
 					   &led_2_g_out_config,
-					   &led_2_g_task_config);
+					   NULL);
 	if (err != NRFX_SUCCESS) {
 		printf("nrfx_gpiote_output_configure: led_2_g: error (%u)\r\n", err);
 		return;
 	}
-
-	nrfx_gpiote_out_task_enable(&gpiote, LED_2_G);
 
 	// LED 2 Blue
 	err = nrfx_gpiote_channel_alloc(&gpiote, &led_2_b_ch);
@@ -224,24 +216,11 @@ gpio_config:
 
 	err = nrfx_gpiote_output_configure(&gpiote, LED_2_B,
 					   &led_2_b_out_config,
-					   &led_2_b_task_config);
+					   NULL);
 	if (err != NRFX_SUCCESS) {
 		printf("nrfx_gpiote_output_configure: led_2_b: error (%u)\r\n", err);
 		return;
 	}
-
-	nrfx_gpiote_out_task_enable(&gpiote, LED_2_B);
-
-	err = nrfx_gppi_channel_alloc(&ppi_ch);
-	if (err != NRFX_SUCCESS) {
-		printf("nrfx_gppi_channel_alloc: error (%u)\r\n", err);
-		return;
-	}
-
-	nrfx_gppi_channel_endpoints_setup(ppi_ch,
-		nrfx_gpiote_in_event_address_get(&gpiote, SW_1),
-		nrfx_gpiote_out_task_address_get(&gpiote, LED_1_G));
-	nrfx_gppi_channels_enable(1UL << (ppi_ch));
 }
 
 static nrfx_uarte_t uarte_0 = {
@@ -250,23 +229,7 @@ static nrfx_uarte_t uarte_0 = {
 };
 static nrfx_uarte_config_t uarte_0_config = NRFX_UARTE_DEFAULT_CONFIG(UARTE_0_TX_PIN, UARTE_0_RX_PIN);
 
-#if !defined(USE_SPIM_0)
-static nrfx_uarte_t uarte_1 = {
-	.p_reg = NRF_UARTE1,
-	.drv_inst_idx = 1
-};
-static nrfx_uarte_config_t uarte_1_config = NRFX_UARTE_DEFAULT_CONFIG(UARTE_1_TX_PIN, UARTE_1_RX_PIN);
-#endif // ! USE_SPIM_0
-
 #if !defined(TEST_UARTE_NOTIFY)
-#if !defined(USE_SPIM_0)
-static nrfx_twim_t twim_0 = {
-	.p_twim = NRF_TWIM1,
-	.drv_inst_idx = 1
-};
-static nrfx_twim_config_t twim_0_config = NRFX_TWIM_DEFAULT_CONFIG(TWIM_0_SCL_PIN, TWIM_0_SDA_PIN);
-#endif // ! USE_SPIM_0
-
 #if defined(USE_SPIM_0)
 static nrfx_spim_t spim_0 = NRFX_SPIM_INSTANCE(0);
 static nrfx_spim_config_t spim_0_config = {
@@ -284,7 +247,16 @@ static nrfx_spim_config_t spim_0_config = {
 };
 static nrfx_spim_xfer_desc_t spim_0_xfer = { 0 };
 static uint8_t data_rx[] = { 0 };
-#endif // USE_SPIM_0
+
+#else // USE_TWIM_1
+
+static nrfx_twim_t twin_1 = {
+	.p_twim = NRF_TWIM1,
+	.drv_inst_idx = 1
+};
+static nrfx_twim_config_t twin_1_config = NRFX_TWIM_DEFAULT_CONFIG(TWIM_1_SCL_PIN, TWIM_1_SDA_PIN);
+
+#endif
 
 static uint8_t tx_id = 0;
 static uint8_t data_tx[2][16] = {
@@ -308,7 +280,13 @@ static nrfx_saadc_channel_t saadc[] = {
 };
 #endif // ! TEST_UARTE_NOTIFY
 
-#if !defined(USE_SPIM_0)
+#if defined(USE_TWIM_1)
+static nrfx_uarte_t uarte_1 = {
+	.p_reg = NRF_UARTE1,
+	.drv_inst_idx = 1
+};
+static nrfx_uarte_config_t uarte_1_config = NRFX_UARTE_DEFAULT_CONFIG(UARTE_1_TX_PIN, UARTE_1_RX_PIN);
+
 static uint8_t uarte_1_rx[1] = { 0 };
 static TaskHandle_t uarte_1_task;
 
@@ -323,7 +301,7 @@ static void uarte_1_task_function (void *pvParameter)
 			fprintf(stderr, "5 second timeout\r\n");
 #else
 		if (ulTaskNotifyTake(pdTRUE, portMAX_DELAY) != 1) {
-#endif // TEST_UARTE_NOTIFY
+#endif
 			continue;
 		}
 #if defined(TEST_UARTE_NOTIFY)
@@ -331,7 +309,7 @@ static void uarte_1_task_function (void *pvParameter)
 		while (nrfx_uarte_tx_in_progress(&uarte_1))
 			nrfx_coredep_delay_us(10);
 		nrfx_uarte_tx(&uarte_0, &uarte_1_rx[0], 1);
-#endif // TEST_UARTE_NOTIFY
+#endif
 		nrfx_gpiote_out_toggle(&gpiote, LED_1_G);
 	}
 }
@@ -355,7 +333,7 @@ static void uarte_1_callback(nrfx_uarte_event_t const *evt, void *ctx)
 		break;
 	}
 }
-#endif // ! USE_SPIM_0
+#endif
 
 static uint32_t count = 0;
 
@@ -376,38 +354,38 @@ static void main_task_function (void *pvParameter)
 {
 #if !defined(TEST_UARTE_NOTIFY)
 	uint8_t i;
-#if !defined(USE_SPIM_0)
+#if defined(USE_TWIM_1)
 	uint8_t nl[] = { 13, 10 }; // '\r\n'
 	nrfx_err_t err;
-#endif // USE_SPIM_0
-#endif // ! TEST_UARTE_NOTIFY
+#endif
+#endif
 
 	while (true) {
 #if defined(TEST_UARTE_NOTIFY)
 		vTaskDelay(10 / portTICK_PERIOD_MS);
-#else
+#else // ! TEST_UARTE_NOTIFY (enable typical I/O)
 		printf("  MS: %lu\r\n", count);
 		printf(" SW1: %s\r\n", nrfx_gpiote_in_is_set(SW_1) ? "up" : "down");
 
-#if !defined(USE_SPIM_0)
+#if defined(USE_TWIM_1)
 		// probe I2C and read PCF8575 16-bit I/O expander if found
 		for (i = 0; i < 128; i++) {
 			uint8_t data[2] = { 0 };
 			nrfx_twim_xfer_desc_t xfer_desc =
 					NRFX_TWIM_XFER_DESC_RX(i, &data[0], 2);
-			err = nrfx_twim_xfer(&twim_0, &xfer_desc, 0);
+			err = nrfx_twim_xfer(&twin_1, &xfer_desc, 0);
 			if (err != NRFX_SUCCESS)
 				continue;
-			while (nrfx_twim_is_busy(&twim_0));
+			while (nrfx_twim_is_busy(&twin_1));
 			printf(" I2C: device @ 0x%02x [0x%02x%02x]\r\n",
 							i, data[1], data[0]);
 		}
-#endif // ! USE_SPIM_0
+#endif
 
 #if defined(USE_SPIM_0)
-		// send data on SPIM 1, UARTE 1, and UARTE 0 [console]
+		// send data on SPIM 0 and UARTE 0 [console]
 		printf(" SPI: ");
-#endif // USE_SPIM_0
+#endif
 		tx_id = (tx_id == 0) ? 1 : 0;
 		for (i = 0; i < sizeof(data_tx[0]); i++) {
 #if defined(USE_SPIM_0)
@@ -419,19 +397,19 @@ static void main_task_function (void *pvParameter)
 			// UARTE 0
 			printf("%c", data_rx[0]);
 			data_rx[0] = 0;
-#else
+#else // USE_TWIM_1
 			// UARTE 1
 			while (nrfx_uarte_tx_in_progress(&uarte_1))
 				nrfx_coredep_delay_us(10);
 			nrfx_uarte_tx(&uarte_1, &data_tx[tx_id][i], 1, 0);
-#endif // USE_SPIM_0
+#endif
 		}
 		printf("\r\n");
-#if !defined(USE_SPIM_0)
+#if defined(USE_TWIM_1)
 		while (nrfx_uarte_tx_in_progress(&uarte_1))
 			nrfx_coredep_delay_us(10);
 		nrfx_uarte_tx(&uarte_1, nl, sizeof(nl), 0);
-#endif // ! USE_SPIM_0
+#endif
 
 		// read SAADC 4 channels [0,5,7,VDD]
 		nrfx_saadc_simple_mode_set(saadc_mask,
@@ -463,7 +441,7 @@ static void main_task_function (void *pvParameter)
 		nrfx_gpiote_out_set(&gpiote, LED_2_B);
 
 		printf("\r\e[2J");
-#endif // TEST_UARTE_NOTIFY
+#endif
 	}
 }
 
@@ -478,7 +456,7 @@ int main(void)
 
 	gpio_init();
 
-#if !defined(USE_SPIM_0)
+#if defined(USE_TWIM_1)
 	printf("\r\nUARTE 1 Init ...\r\n");
 
 	err = nrfx_uarte_init(&uarte_1, &uarte_1_config, uarte_1_callback);
@@ -492,7 +470,7 @@ int main(void)
 			nrfx_gpiote_out_toggle(&gpiote, LED_2_R);
 		}
 	}
-#endif // ! USE_SPIM_0
+#endif
 
 #if !defined(TEST_UARTE_NOTIFY)
 	printf("\r\nSAADC Init ...\r\n");
@@ -515,10 +493,10 @@ int main(void)
 			nrfx_gpiote_out_toggle(&gpiote, LED_2_R);
 		}
 	}
-#else
+#else // USE_TWIM_1
 	printf("\r\nTWIM 1 Init ...\r\n");
 
-	err = nrfx_twim_init(&twim_0, &twim_0_config, NULL, NULL);
+	err = nrfx_twim_init(&twin_1, &twin_1_config, NULL, NULL);
 	if (err != NRFX_SUCCESS) {
 		printf("error nrfx_twim_init\r\n");
 		nrfx_gpiote_out_clear(&gpiote, LED_2_G);
@@ -530,8 +508,8 @@ int main(void)
 		}
 	}
 
-	nrfx_twim_enable(&twim_0);
-#endif // USE_SPIM_0
+	nrfx_twim_enable(&twin_1);
+#endif
 #endif // ! TEST_UARTE_NOTIFY
 
 	nrfx_gpiote_out_toggle(&gpiote, LED_1_G);
@@ -562,7 +540,7 @@ int main(void)
 	}
 	printf("Done (%lu)\r\n", rc);
 
-#if !defined(USE_SPIM_0)
+#if defined(USE_TWIM_1)
 	printf("\r\nCreating uarte_1_task ... ");
 
 	rc = xTaskCreate(uarte_1_task_function, "uarte_1_task",
@@ -575,7 +553,7 @@ int main(void)
 		while (true);
 	}
 	printf("Done (%lu)\r\n", rc);
-#endif // ! USE_SPIM_0
+#endif
 
 	SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
 

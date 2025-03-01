@@ -71,15 +71,17 @@ extern "C" {
 #define SPIM_0_SCLK_PIN  NRF_GPIO_PIN_MAP(0, 22) // HF
 #define SPIM_0_CS_PIN    NRF_GPIO_PIN_MAP(0, 24) // HF
 
-#else // !USE_SPIM_0
+#else // USE_TWIM_0
+
+#define USE_TWIM_1
 
 #define UARTE_1_RX_PIN  NRF_GPIO_PIN_MAP(0, 17) // HF
 #define UARTE_1_TX_PIN  NRF_GPIO_PIN_MAP(0, 20) // HF
 
-#define TWIM_0_SCL_PIN  NRF_GPIO_PIN_MAP(0, 22) // HF
-#define TWIM_0_SDA_PIN  NRF_GPIO_PIN_MAP(0, 24) // HF
+#define TWIM_1_SCL_PIN  NRF_GPIO_PIN_MAP(0, 22) // HF
+#define TWIM_1_SDA_PIN  NRF_GPIO_PIN_MAP(0, 24) // HF
 
-#endif // USE_SPIM_0
+#endif
 
 #define GPIO_PWM_PIN  NRF_GPIO_PIN_MAP(1, 0) // HF
 
@@ -95,13 +97,15 @@ extern "C" {
 #define GPIO_7_PIN  NRF_GPIO_PIN_MAP(0, 29)
 #define GPIO_8_PIN  NRF_GPIO_PIN_MAP(0, 31)
 
-#else
+#else // USE_ALL_ADC
+
+#define USE_ALL_ADC
 
 #define AIN_0  NRF_SAADC_INPUT_AIN0 // P0.02
 #define AIN_5  NRF_SAADC_INPUT_AIN5 // P0.29
 #define AIN_7  NRF_SAADC_INPUT_AIN7 // P0.31
 
-#endif // USE_ADC
+#endif
 
 #define AIN_VDD  NRF_SAADC_INPUT_VDD  // VDD
 
