@@ -20,14 +20,14 @@ define openocd
 	fi
 	@case $(1) in \
 	gdb) \
-		$(ET_CROSS_TUPLE)-gdb -ex 'target extended-remote | openocd -f $(OPENOCD_CONFIG) -f $(OPENOCD_GDB_CONFIG) -c "telnet_port disabled; tcl_port disabled; gdb_port pipe; log_output $(OPENOCD_GDB_LOG)"' $(2); \
+		$(ET_CROSS_TUPLE)-gdb -ex 'target extended-remote | openocd -f $(OPENOCD_CONFIG) -f $(OPENOCD_GDB_CONFIG) -c "telnet port disabled; tcl port disabled; gdb port pipe; log_output $(OPENOCD_GDB_LOG)"' $(2); \
 		;; \
 	program) \
-		openocd -f $(OPENOCD_CONFIG) -c "telnet_port disabled; tcl_port disabled; gdb_port disabled; log_output $(OPENOCD_PROGRAM_LOG); program $(2) verify reset exit"; \
+		openocd -f $(OPENOCD_CONFIG) -c "telnet port disabled; tcl port disabled; gdb port disabled; log_output $(OPENOCD_PROGRAM_LOG); program $(2) verify reset exit"; \
 		cat $(OPENOCD_PROGRAM_LOG); \
 		;; \
 	reset) \
-		openocd -f $(OPENOCD_CONFIG) -c "telnet_port disabled; tcl_port disabled; gdb_port disabled" -c "init; reset; exit"; \
+		openocd -f $(OPENOCD_CONFIG) -c "telnet port disabled; tcl port disabled; gdb port disabled" -c "init; reset; exit"; \
 		;; \
 	server) \
 		openocd -f $(OPENOCD_CONFIG); \
