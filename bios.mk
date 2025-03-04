@@ -18,6 +18,7 @@ export ET_BIOS_LIST := $(ET_BOARD_BIOS_LIST)
 
 define bios-depends
 	@mkdir -p $(ET_BIOS_DIR)
+	@mkdir -p $(ET_BIOS_BUILD_DIR)
 endef
 
 define bios-software
@@ -39,51 +40,31 @@ endef
 define bios-info
 	@printf "========================================================================\n"
 	@printf "ET_BIOS_LIST: $(ET_BIOS_LIST)\n"
+	@printf "ET_BIOS_TARGET_LIST: $(ET_BIOS_TARGET_LIST)\n"
 	@printf "ET_BIOS_BUILD_DIR: $(ET_BIOS_BUILD_DIR)\n"
 	@printf "ET_BIOS_DIR: $(ET_BIOS_DIR)\n"
 	$(call bios-info-$(ET_BOARD))
 endef
 
 define bios-update
-	$(call bios-depends)
 	$(call bios-update-$(ET_BOARD))
 endef
 
 define bios
 	$(call bios-depends)
-	$(call bios-$(ET_BOARD),$1)
+	$(call bios-$(ET_BOARD))
+endef
+
+define bios-all
+	$(call bios)
 endef
 
 .PHONY: bios bios-all
 bios bios-all:
 	$(call $@)
 
-.PHONY: bios-clean
-bios-clean:
-	$(call $@)
-
-.PHONY: bios-purge
-bios-purge:
-	$(call $@)
-
-.PHONY: bios-version
-bios-version:
-	$(call $@)
-
-.PHONY: bios-software
-bios-software:
-	$(call $@)
-
-.PHONY: bios-info
-bios-info:
-	$(call $@)
-
-.PHONY: bios-update
-bios-update:
-	$(call $@)
-
 bios-%:
-	$(call bios,$(*F))
+	$(call bios-$(*F))
 
 endif
 # ET_BOARD_BIOS_REQUIRED

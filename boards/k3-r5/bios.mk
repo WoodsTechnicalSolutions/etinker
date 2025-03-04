@@ -30,39 +30,15 @@ define bios-update-$(ET_BOARD_TYPE)
 endef
 
 define bios-$(ET_BOARD_TYPE)
+	$(call bios-depends-$(ET_BOARD_TYPE))
 	$(call k3-$(TI_K3_SOC)-r5-sk)
 endef
 
-.PHONY: bios-$(ET_BOARD_TYPE) bios-$(ET_BOARD_TYPE)-all
-bios-$(ET_BOARD_TYPE) bios-$(ET_BOARD_TYPE)-all:
-	$(call $@)
+.PHONY: bios-$(ET_BOARD_TYPE)
+bios-$(ET_BOARD_TYPE): $(ET_BIOS_TARGET_LIST)
 
-.PHONY: bios-clean-$(ET_BOARD_TYPE)
-bios-clean-$(ET_BOARD_TYPE):
-	$(call $@)
-
-.PHONY: bios-purge-$(ET_BOARD_TYPE)
-bios-purge-$(ET_BOARD_TYPE):
-	$(call $@)
-
-.PHONY: bios-version-$(ET_BOARD_TYPE)
-bios-version-$(ET_BOARD_TYPE):
-	$(call $@)
-
-.PHONY: bios-software-$(ET_BOARD_TYPE)
-bios-software-$(ET_BOARD_TYPE):
-	$(call $@)
-
-.PHONY: bios-info-$(ET_BOARD_TYPE)
-bios-info-$(ET_BOARD_TYPE):
-	$(call $@)
-
-.PHONY: bios-update-$(ET_BOARD_TYPE)
-bios-update-$(ET_BOARD_TYPE):
-	$(call $@)
-
-bios-$(ET_BOARD_TYPE)-%:
-	$(call bios-$(ET_BOARD_TYPE),$(*F))
+bios-%-$(ET_BOARD_TYPE):
+	$(call bios-$(*F)-$(ET_BOARD_TYPE))
 
 endif
 # ET_BOARD_BIOS_REQUIRED

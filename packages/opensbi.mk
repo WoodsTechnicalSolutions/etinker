@@ -9,6 +9,8 @@
 
 ifdef ET_BOARD_BIOS_REQUIRED
 
+ifeq (opensbi,$(shell echo $(ET_BOARD_BIOS_LIST) | grep -oe opensbi))
+
 export ET_OPENSBI_TREE := opensbi
 export ET_OPENSBI_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_OPENSBI_TREE)
 export ET_OPENSBI_VERSION := $(shell cd $(ET_OPENSBI_SOFTWARE_DIR) $(ET_NOERR) && git describe --long --dirty $(ET_NOERR))
@@ -17,6 +19,9 @@ export ET_OPENSBI_BUILD_DIR := $(ET_BIOS_BUILD_DIR)/$(ET_OPENSBI_TREE)
 export ET_OPENSBI_BUILD_CONFIG := $(ET_OPENSBI_BUILD_DIR)/.configured
 export ET_OPENSBI_TARGET_FINAL ?= $(ET_OPENSBI_BUILD_DIR)/platform/generic/firmware/fw_dynamic.bin
 
+# required for bios.mk
+export ET_BIOS_TARGET_LIST += $(ET_OPENSBI_TARGET_FINAL)
+
 export ET_CFLAGS_BOOTLOADER += OPENSBI=$(ET_OPENSBI_TARGET_FINAL)
 
 define opensbi-version
@@ -24,59 +29,26 @@ define opensbi-version
 endef
 
 define opensbi-software
-	$(call software-check,$(ET_OPENSBI_TREE),opensbi,fetch)
+	@$(call software-check,$(ET_OPENSBI_TREE),opensbi,fetch)
 endef
 
 define opensbi-depends
-	$(call software-check,$(ET_OPENSBI_TREE),opensbi)
 	@mkdir -p $(ET_OPENSBI_BUILD_DIR)
 endef
 
-define opensbi
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call $0 *****\n\n"
-	$(call opensbi-build)
-endef
-
-define opensbi-build
-	$(call opensbi-depends)
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call $0 'make $1' *****\n\n"
-	@$(MAKE) -C $(ET_OPENSBI_SOFTWARE_DIR) \
-		O=$(ET_OPENSBI_BUILD_DIR) \
-		CROSS_COMPILE=$(ET_CROSS_COMPILE) \
-		FW_TEXT_START=0x40000000 \
-		FW_OPTIONS=0 \
-		FW_DYNAMIC=y \
-		PLATFORM=generic \
-		PLATFORM_RISCV_XLEN=64 \
-		$1
-	@if [ -z "$1" ]; then \
-		if ! [ -f $(ET_OPENSBI_TARGET_FINAL) ]; then \
-			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call $0 'make $1' FAILED! *****\n"; \
-			exit 2; \
-		fi; \
-	fi
-	@if [ "clean" = "$1" ]; then \
-		$(RM) -v $(ET_OPENSBI_TARGET_FINAL); \
-		$(RM) -v $(ET_OPENSBI_BUILD_CONFIG); \
-	fi
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call $0 'make $1' done. *****\n\n"
-endef
-
 define opensbi-config
-	$(call opensbi-depends)
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call $0 *****\n\n"
+	$(call software-check,$(ET_OPENSBI_TREE),opensbi)
 	@touch $(ET_OPENSBI_BUILD_CONFIG)
 endef
 
 define opensbi-clean
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call $0 *****\n\n"
+	$(if $(shell [ "$(ET_CLEAN)" = "yes" ] && echo -n yes),$(call opensbi,clean))
 	$(RM) $(ET_OPENSBI_TARGET_FINAL)
 	$(RM) $(ET_OPENSBI_BUILD_CONFIG)
 endef
 
 define opensbi-purge
 	$(call opensbi-clean)
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call $0 *****\n\n"
 	$(RM) -r $(ET_OPENSBI_BUILD_DIR)
 endef
 
@@ -91,12 +63,30 @@ define opensbi-info
 endef
 
 define opensbi-update
-	@$(ET_MAKE) -C $(ET_DIR) opensbi-clean
-	@$(ET_MAKE) -C $(ET_DIR) opensbi
+	$(call opensbi-clean)
+	$(call opensbi)
 endef
 
-define opensbi-all
-	@$(ET_MAKE) -C $(ET_DIR) opensbi
+define opensbi
+	$(call opensbi-depends)
+	@$(ET_MAKE) -C $(ET_OPENSBI_SOFTWARE_DIR) \
+		O=$(ET_OPENSBI_BUILD_DIR) \
+		CROSS_COMPILE=$(ET_CROSS_COMPILE) \
+		FW_TEXT_START=0x40000000 \
+		FW_OPTIONS=0 \
+		FW_DYNAMIC=y \
+		PLATFORM=generic \
+		PLATFORM_RISCV_XLEN=64 \
+		$1
+	@if [ -z "$1" ]; then \
+		if ! [ -f $(ET_OPENSBI_TARGET_FINAL) ]; then \
+			exit 2; \
+		fi; \
+	fi
+	@if [ "clean" = "$1" ]; then \
+		$(RM) -v $(ET_OPENSBI_TARGET_FINAL); \
+		$(RM) -v $(ET_OPENSBI_BUILD_CONFIG); \
+	fi
 endef
 
 .PHONY: opensbi
@@ -104,42 +94,21 @@ opensbi: $(ET_OPENSBI_TARGET_FINAL)
 $(ET_OPENSBI_TARGET_FINAL): $(ET_OPENSBI_BUILD_CONFIG)
 	$(call opensbi)
 
-opensbi-%: $(ET_OPENSBI_BUILD_CONFIG)
-	$(call opensbi-build,$(*F))
-
 .PHONY: opensbi-config
 opensbi-config: $(ET_OPENSBI_BUILD_CONFIG)
 $(ET_OPENSBI_BUILD_CONFIG):
-ifeq ($(shell test -f $(ET_OPENSBI_BUILD_CONFIG) && printf "DONE" || printf "CONFIGURE"),CONFIGURE)
-	$(call opensbi-config)
+ifeq (CONFIGURE,$(shell test -f $(ET_OPENSBI_BUILD_CONFIG) && printf "DONE" || printf "CONFIGURE"))
+	$(call $@)
 endif
 
-.PHONY: opensbi-clean
-opensbi-clean:
-ifeq ($(ET_CLEAN),yes)
-	$(call opensbi-build,clean)
+opensbi-%: $(ET_OPENSBI_BUILD_CONFIG)
+	$(call opensbi-$(*F))
+
+opensbi-build-%: $(ET_OPENSBI_BUILD_CONFIG)
+	$(call opensbi,$(*F))
+
 endif
-	$(call $@)
-
-.PHONY: opensbi-purge
-opensbi-purge:
-	$(call $@)
-
-.PHONY: opensbi-version
-opensbi-version:
-	$(call $@)
-
-.PHONY: opensbi-software
-opensbi-software:
-	$(call $@)
-
-.PHONY: opensbi-info
-opensbi-info:
-	$(call $@)
-
-.PHONY: opensbi-update
-opensbi-update:
-	$(call $@)
+# opensbi in list
 
 endif
 # ET_BOARD_BIOS_REQUIRED

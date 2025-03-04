@@ -30,40 +30,16 @@ define bios-update-$(ET_BOARD)
 endef
 
 define bios-$(ET_BOARD)
-	$(call bios-$(ET_BOARD_TYPE))
 	$(call bios-depends-$(ET_BOARD))
+	$(call bios-$(ET_BOARD_TYPE))
 endef
 
-.PHONY: bios-$(ET_BOARD) bios-$(ET_BOARD)-all
-bios-$(ET_BOARD) bios-$(ET_BOARD)-all:
+.PHONY: bios-$(ET_BOARD)
+bios-$(ET_BOARD):
 	$(call $@)
 
-.PHONY: bios-clean-$(ET_BOARD)
-bios-clean-$(ET_BOARD):
-	$(call $@)
-
-.PHONY: bios-purge-$(ET_BOARD)
-bios-purge-$(ET_BOARD):
-	$(call $@)
-
-.PHONY: bios-version-$(ET_BOARD)
-bios-version-$(ET_BOARD):
-	$(call $@)
-
-.PHONY: bios-software-$(ET_BOARD)
-bios-software-$(ET_BOARD):
-	$(call $@)
-
-.PHONY: bios-info-$(ET_BOARD)
-bios-info-$(ET_BOARD):
-	$(call $@)
-
-.PHONY: bios-update-$(ET_BOARD)
-bios-update-$(ET_BOARD):
-	$(call $@)
-
-bios-$(ET_BOARD)-%:
-	$(call bios-$(ET_BOARD),$(*F))
+bios-%-$(ET_BOARD):
+	$(call bios-$(*F)-$(ET_BOARD))
 
 endif
 # ET_BOARD_BIOS_REQUIRED

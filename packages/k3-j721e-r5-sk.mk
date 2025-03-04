@@ -9,8 +9,13 @@
 
 ifdef ET_BOARD_BIOS_REQUIRED
 
+ifeq (k3-j721e-r5-sk,$(shell echo $(ET_BOARD_BIOS_LIST) | grep -oe k3-j721e-r5-sk))
+
 PACKAGE_NAME := k3-j721e-r5-sk
 PACKAGE_BOARD := ET_BOARD=$(PACKAGE_NAME)
+
+# required for bios.mk
+export ET_BIOS_TARGET_LIST += $(ET_BOOTLOADER_TARGET_FINAL)
 
 define $(PACKAGE_NAME)-version
 	@env -i bash -lc "$(PACKAGE_BOARD) $(ET_MAKE) -C $(ET_DIR) bootloader-version"
@@ -20,12 +25,8 @@ define $(PACKAGE_NAME)-software
 	@env -i bash -lc "$(PACKAGE_BOARD) $(ET_MAKE) -C $(ET_DIR) bootloader-software"
 endef
 
-define $(PACKAGE_NAME)
-	@env -i bash -lc "$(PACKAGE_BOARD) $(ET_MAKE) -C $(ET_DIR) bootloader"
-endef
-
-define $(PACKAGE_NAME)-build
-	@env -i bash -lc "$(PACKAGE_BOARD) $(ET_MAKE) -C $(ET_DIR) bootloader"
+define $(PACKAGE_NAME)-depends
+	@env -i bash -lc "$(PACKAGE_BOARD) $(ET_MAKE) -C $(ET_DIR) bootloader-depends"
 endef
 
 define $(PACKAGE_NAME)-config
@@ -48,7 +49,7 @@ define $(PACKAGE_NAME)-update
 	@env -i bash -lc "$(PACKAGE_BOARD) $(ET_MAKE) -C $(ET_DIR) bootloader-update"
 endef
 
-define $(PACKAGE_NAME)-all
+define $(PACKAGE_NAME)
 	@env -i bash -lc "$(PACKAGE_BOARD) $(ET_MAKE) -C $(ET_DIR) bootloader"
 endef
 
@@ -56,33 +57,11 @@ endef
 $(PACKAGE_NAME):
 	$(call $(PACKAGE_NAME))
 
-.PHONY: $(PACKAGE_NAME)-config
-$(PACKAGE_NAME)-config:
-	$(call $@)
+$(PACKAGE_NAME)-%:
+	$(call $(PACKAGE_NAME)-$(*F))
 
-.PHONY: $(PACKAGE_NAME)-clean
-$(PACKAGE_NAME)-clean:
-	$(call $@)
-
-.PHONY: $(PACKAGE_NAME)-purge
-$(PACKAGE_NAME)-purge:
-	$(call $@)
-
-.PHONY: $(PACKAGE_NAME)-version
-$(PACKAGE_NAME)-version:
-	$(call $@)
-
-.PHONY: $(PACKAGE_NAME)-software
-$(PACKAGE_NAME)-software:
-	$(call $@)
-
-.PHONY: $(PACKAGE_NAME)-info
-$(PACKAGE_NAME)-info:
-	$(call $@)
-
-.PHONY: $(PACKAGE_NAME)-update
-$(PACKAGE_NAME)-update:
-	$(call $@)
+endif
+# opensbi in list
 
 endif
 # ET_BOARD_BIOS_REQUIRED
