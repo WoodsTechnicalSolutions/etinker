@@ -45,7 +45,7 @@ define overlay-clean
 	$(call cryptodev-linux-clean)
 	$(call openssl-clean)
 	$(call wireless-regdb-clean)
-#	$(call rt-tests-clean)
+	$(call rt-tests-clean)
 	$(call trace-cmd-clean)
 	$(call luajit-riscv-clean)
 endef
@@ -54,7 +54,7 @@ define overlay-purge
 	$(call cryptodev-linux-purge)
 	$(call openssl-purge)
 	$(call wireless-regdb-purge)
-#	$(call rt-tests-purge)
+	$(call rt-tests-purge)
 	$(call trace-cmd-purge)
 	$(call luajit-riscv-purge)
 endef
@@ -71,14 +71,28 @@ define overlay-info
 	$(call luajit-riscv-info)
 endef
 
+define overlay-update
+	$(call cryptodev-linux-update)
+	$(call openssl-update)
+	$(call wireless-regdb-update)
+	$(call rt-tests-update)
+	$(call trace-cmd-update)
+	$(call luajit-riscv-update)
+endef
+
+define overlay
+	$(call overlay-depends)
+	$(call cryptodev-linux-all)
+	$(call openssl-all)
+	$(call wireless-regdb-all)
+	$(call rt-tests-all)
+	$(call trace-cmd-all)
+	$(call luajit-riscv-all)
+endef
+
 define overlay-sync
 	$(call overlay-depends)
 	@$(ET_DIR)/scripts/sync overlay $1
-endef
-
-define overlay-update
-	@$(ET_MAKE) -C $(ET_DIR) overlay-clean
-	@$(ET_MAKE) -C $(ET_DIR) overlay
 endef
 
 define overlay-all
@@ -87,44 +101,13 @@ endef
 
 .PHONY: overlay
 overlay:
-	$(call overlay-depends)
-	$(call cryptodev-linux-all)
-	$(call openssl-all)
-	$(call wireless-regdb-all)
-#	$(call rt-tests-all)
-	$(call trace-cmd-all)
-	$(call luajit-riscv-all)
+	$(call overlay)
 
-.PHONY: overlay-clean
-overlay-clean:
-	$(call $@)
-
-.PHONY: overlay-purge
-overlay-purge:
-	$(call $@)
-
-.PHONY: overlay-version
-overlay-version:
-	$(call $@)
-
-.PHONY: overlay-software
-overlay-software:
-	$(call $@)
-
-.PHONY: overlay-info
-overlay-info:
-	$(call $@)
+overlay-%:
+	$(call overlay-$(*F))
 
 overlay-sync-%:
 	$(call overlay-sync,$(*F))
-
-.PHONY: overlay-update
-overlay-update:
-	$(call $@)
-
-.PHONY: overlay-all
-overlay-all:
-	$(call $@)
 
 endif
 # ET_BOARD_ROOTFS_TREE

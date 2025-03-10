@@ -24,6 +24,8 @@ export ET_RT_TESTS_BUILD_BIN := $(ET_RT_TESTS_BUILD_DIR)/bld/oslat
 export ET_RT_TESTS_BIN := $(ET_OVERLAY_DIR)/usr/bin/oslat
 export ET_RT_TESTS_TARGET_FINAL ?= $(ET_RT_TESTS_BIN)
 
+cpupower_build_dir := $(ET_OVERLAY_BUILD_DIR)/cpupower
+
 export ET_RT_TESTS_PROGRAMS := cyclictest \
 	hackbench \
 	pip_stress \
@@ -53,6 +55,15 @@ define rt-tests-depends
 	@mkdir -p $(ET_OVERLAY_DIR)
 	@mkdir -p $(ET_OVERLAY_DIR)/usr/bin
 	@mkdir -p $(ET_OVERLAY_DIR)/usr/lib
+	@if ! [ -d $(cpupower_build_dir) ]; then \
+		mkdir -p $(cpupower_build_dir); \
+		(cd $(ET_KERNEL_SOFTWARE_DIR)/tools/power/cpupower/ && \
+			$(MAKE) all CROSS_COMPILE=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) && \
+			$(MAKE) install-lib CROSS_COMPILE=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) DESTDIR=$(ET_ROOTFS_BUILD_DIR)/staging && \
+			$(MAKE) install-lib CROSS_COMPILE=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) DESTDIR=$(ET_ROOTFS_BUILD_DIR)/target && \
+			$(MAKE) install-tools CROSS_COMPILE=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) DESTDIR=$(ET_ROOTFS_BUILD_DIR)/target && \
+			$(RM) -f $(ET_ROOTFS_BUILD_DIR)/target/usr/include/{cpufreq,cpuidle,powercap}.h); \
+	fi
 endef
 
 define rt-tests-targets
@@ -90,6 +101,7 @@ define rt-tests-build
 			CROSS_COMPILE=$(ET_CROSS_COMPILE) \
 			CFLAGS="-Wall -Wno-nonnull -I$(ET_ROOTFS_BUILD_DIR)/staging/usr/include" \
 			LDFLAGS="-L$(ET_ROOTFS_BUILD_DIR)/staging/usr/lib" \
+			$2 \
 			$1; \
 	fi
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] rt-tests-build 'make $1' done. *****\n\n"
@@ -117,6 +129,9 @@ define rt-tests-purge
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rt-tests-purge *****\n\n"
 	$(call rt-tests-clean)
 	$(RM) -r $(ET_RT_TESTS_BUILD_DIR)
+	$(RM) -r $(cpupower_build_dir)
+	$(RM) -f $(ET_ROOTFS_BUILD_DIR)/staging/usr/lib/libcpupower.*
+	$(RM) -f $(ET_ROOTFS_BUILD_DIR)/target/usr/lib/libcpupower.*
 endef
 
 define rt-tests-info
