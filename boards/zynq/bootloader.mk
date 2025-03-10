@@ -8,6 +8,13 @@ endif
 export ET_BOOTLOADER_BUILD_SPL := $(ET_BOOTLOADER_BUILD_DIR)/spl/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
 export ET_BOOTLOADER_SPL := $(ET_BOOTLOADER_DIR)/boot/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
 
+export XILINX_VERSION := 2024.2
+export XILINX_VITIS_DIR := /tools/Xilinx/Vitis/$(XILINX_VERSION)
+
+ifeq ($(shell [ -f $(XILINX_VITIS_DIR)/bin/bootgen ] && echo found || echo missing),missing)
+$(error MISSING Xilinx Vitis 'bootgen' ***)
+endif
+
 define bootloader-depends-$(ET_BOARD_TYPE)
 	@if [ -d $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/sdk ]; then \
 		rsync -r $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/dts $(ET_BOARD_DIR)/; \
@@ -29,9 +36,13 @@ define bootloader-finalize-$(ET_BOARD_TYPE)
 	fi
 	@cp -av $(ET_BOOTLOADER_BUILD_SPL) $(ET_BOOTLOADER_DIR)/boot/
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Generating Xilinx 'fpga.bin' *****\n\n"
-	@(cd $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga && \
-		$(ET_SCRIPTS_DIR)/fpga-bit-to-bin.py -f "`ls sdk/*.bit | tr -d \\\n`" \
-		$(ET_BOOTLOADER_DIR)/boot/fpga.bin)
+	@(cd $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/sdk/ && \
+		printf "all:\n{ $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/sdk/`ls *.bit | tr -d \\\n` }\n" > fpga.bif; \
+		$(XILINX_VITIS_DIR)/bin/bootgen \
+			-image fpga.bif \
+			-arch zynq \
+			-o $(ET_BOOTLOADER_DIR)/boot/fpga.bin \
+			-w on)
 	@if ! [ -f $(ET_BOOTLOADER_DIR)/boot/fpga.bin ]; then \
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Xilinx 'fpga.bin' build FAILED! *****\n\n"; \
 		exit 2; \
