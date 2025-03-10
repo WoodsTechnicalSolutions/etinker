@@ -112,7 +112,7 @@ mmc)
 		if [ "${target}" = "bootloader" ]; then
 			printf "[%s][%s] if required, write raw %s data.\n" ${ET_BOARD} ${target} ${destination}
 
-			bootdev="/dev/disk/by-partlabel/BOOT"
+			bootdev="/dev/disk/by-label/BOOT"
 			case "${ET_BOARD_TYPE}" in
 			meson)
 				printf "\n*** write ${ET_BOOTLOADER_DIR}/boot/gxl-boot.bin to ${bootdev} ***\n\n"
