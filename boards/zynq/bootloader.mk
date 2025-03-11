@@ -35,14 +35,8 @@ define bootloader-finalize-$(ET_BOARD_TYPE)
 		exit 2; \
 	fi
 	@cp -av $(ET_BOOTLOADER_BUILD_SPL) $(ET_BOOTLOADER_DIR)/boot/
-	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Generating Xilinx 'fpga.bin' *****\n\n"
-	@(cd $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/sdk/ && \
-		printf "all:\n{ $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/sdk/`ls *.bit | tr -d \\\n` }\n" > fpga.bif; \
-		$(XILINX_VITIS_DIR)/bin/bootgen \
-			-image fpga.bif \
-			-arch zynq \
-			-o $(ET_BOOTLOADER_DIR)/boot/fpga.bin \
-			-w on)
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Fetching Xilinx 'fpga.bin' *****\n\n"
+	@cp -av $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/sdk/*.bin $(ET_BOOTLOADER_DIR)/boot/fpga.bin
 	@if ! [ -f $(ET_BOOTLOADER_DIR)/boot/fpga.bin ]; then \
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Xilinx 'fpga.bin' build FAILED! *****\n\n"; \
 		exit 2; \
