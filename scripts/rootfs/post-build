@@ -132,11 +132,11 @@ omap2plus|sama5|zynq|meson|layerscape|k3|starfive)
 		# Build '/usr/sbin/firmware-update' file for on-target updates of SD
 		printf "#!/bin/bash\n" > ${TARGET}/usr/sbin/firmware-update
 		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
-		printf "if [ -f /media/BOOT/u-boot-spl.bin.normal.out ] && [ -c /dev/mmcblk1p1 ]; then\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "if [ -f /media/BOOT/u-boot-spl.bin.normal.out ] && [ -b /dev/mmcblk1p1 ]; then\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "\tdd if=/media/BOOT/u-boot-spl.bin.normal.out of=/dev/mmcblk1p1 conv=fsync,notrunc\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "fi\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
-		printf "if [ -f /media/BOOT/u-boot.itb ] && [ -c /dev/mmcblk1p2 ]; then\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "if [ -f /media/BOOT/u-boot.itb ] && [ -b /dev/mmcblk1p2 ]; then\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "\tdd if=/media/BOOT/u-boot.itb of=/dev/mmcblk1p2 conv=fsync,notrunc\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "fi\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
