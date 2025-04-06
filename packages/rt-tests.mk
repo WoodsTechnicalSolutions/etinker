@@ -55,13 +55,13 @@ define rt-tests-depends
 	@mkdir -p $(ET_OVERLAY_DIR)
 	@mkdir -p $(ET_OVERLAY_DIR)/usr/bin
 	@mkdir -p $(ET_OVERLAY_DIR)/usr/lib
-	@if ! [ -d $(cpupower_build_dir) ]; then \
+	@if ! [ -f $(cpupower_build_dir)/cpupower ]; then \
 		mkdir -p $(cpupower_build_dir); \
 		(cd $(ET_KERNEL_SOFTWARE_DIR)/tools/power/cpupower/ && \
-			$(MAKE) all CROSS_COMPILE=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) && \
-			$(MAKE) install-lib CROSS_COMPILE=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) DESTDIR=$(ET_ROOTFS_BUILD_DIR)/staging && \
-			$(MAKE) install-lib CROSS_COMPILE=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) DESTDIR=$(ET_ROOTFS_BUILD_DIR)/target && \
-			$(MAKE) install-tools CROSS_COMPILE=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) DESTDIR=$(ET_ROOTFS_BUILD_DIR)/target && \
+			$(MAKE) all CROSS=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) LDFLAGS="-L $(ET_ROOTFS_SYSROOT_DIR)/usr/lib -lz" && \
+			$(MAKE) install-lib CROSS=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) DESTDIR=$(ET_ROOTFS_BUILD_DIR)/staging && \
+			$(MAKE) install-lib CROSS=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) DESTDIR=$(ET_ROOTFS_BUILD_DIR)/target && \
+			$(MAKE) install-tools CROSS=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) DESTDIR=$(ET_ROOTFS_BUILD_DIR)/target && \
 			$(RM) -f $(ET_ROOTFS_BUILD_DIR)/target/usr/include/{cpufreq,cpuidle,powercap}.h); \
 	fi
 endef
@@ -95,7 +95,7 @@ endef
 define rt-tests-build
 	$(call rt-tests-depends)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rt-tests-build 'make $1' *****\n\n"
-	if [ -d $(ET_RT_TESTS_BUILD_DIR) ]; then \
+	@if [ -d $(ET_RT_TESTS_BUILD_DIR) ]; then \
 		$(ET_MAKE) -C $(ET_RT_TESTS_BUILD_DIR) \
 			prefix=$(ET_OVERLAY_DIR)/usr \
 			CROSS_COMPILE=$(ET_CROSS_COMPILE) \
@@ -127,9 +127,9 @@ endef
 
 define rt-tests-purge
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rt-tests-purge *****\n\n"
+	$(RM) -r $(cpupower_build_dir)
 	$(call rt-tests-clean)
 	$(RM) -r $(ET_RT_TESTS_BUILD_DIR)
-	$(RM) -r $(cpupower_build_dir)
 	$(RM) -f $(ET_ROOTFS_BUILD_DIR)/staging/usr/lib/libcpupower.*
 	$(RM) -f $(ET_ROOTFS_BUILD_DIR)/target/usr/lib/libcpupower.*
 endef
