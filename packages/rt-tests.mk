@@ -55,15 +55,6 @@ define rt-tests-depends
 	@mkdir -p $(ET_OVERLAY_DIR)
 	@mkdir -p $(ET_OVERLAY_DIR)/usr/bin
 	@mkdir -p $(ET_OVERLAY_DIR)/usr/lib
-	@if ! [ -f $(cpupower_build_dir)/cpupower ]; then \
-		mkdir -p $(cpupower_build_dir); \
-		(cd $(ET_KERNEL_SOFTWARE_DIR)/tools/power/cpupower/ && \
-			$(MAKE) all CROSS=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) LDFLAGS="-L $(ET_ROOTFS_SYSROOT_DIR)/usr/lib -lz" && \
-			$(MAKE) install-lib CROSS=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) DESTDIR=$(ET_ROOTFS_BUILD_DIR)/staging && \
-			$(MAKE) install-lib CROSS=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) DESTDIR=$(ET_ROOTFS_BUILD_DIR)/target && \
-			$(MAKE) install-tools CROSS=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) DESTDIR=$(ET_ROOTFS_BUILD_DIR)/target && \
-			$(RM) -f $(ET_ROOTFS_BUILD_DIR)/target/usr/include/{cpufreq,cpuidle,powercap}.h); \
-	fi
 endef
 
 define rt-tests-targets
@@ -94,6 +85,15 @@ endef
 
 define rt-tests-build
 	$(call rt-tests-depends)
+	@if ! [ -f $(cpupower_build_dir)/cpupower ] && ! [ "clean" = "$1" ]; then \
+		mkdir -p $(cpupower_build_dir); \
+		(cd $(ET_KERNEL_SOFTWARE_DIR)/tools/power/cpupower/ && \
+			$(MAKE) all CROSS=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) LDFLAGS="-L $(ET_ROOTFS_SYSROOT_DIR)/usr/lib -lz" && \
+			$(MAKE) install-lib CROSS=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) DESTDIR=$(ET_ROOTFS_BUILD_DIR)/staging && \
+			$(MAKE) install-lib CROSS=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) DESTDIR=$(ET_ROOTFS_BUILD_DIR)/target && \
+			$(MAKE) install-tools CROSS=$(ET_CROSS_COMPILE) O=$(cpupower_build_dir) DESTDIR=$(ET_ROOTFS_BUILD_DIR)/target && \
+			$(RM) -f $(ET_ROOTFS_BUILD_DIR)/target/usr/include/{cpufreq,cpuidle,powercap}.h); \
+	fi
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call rt-tests-build 'make $1' *****\n\n"
 	@if [ -d $(ET_RT_TESTS_BUILD_DIR) ]; then \
 		$(ET_MAKE) -C $(ET_RT_TESTS_BUILD_DIR) \
