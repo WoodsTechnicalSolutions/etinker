@@ -50,4 +50,4 @@ ET_BOARD_GETTY_PORT ?= ttyS0
 
 ET_BOARD_KERNEL_DT ?= jh7110-starfive-visionfive-2-v1.3b
 
-ET_BOARD_BOOTLOADER_DT ?= jh7110-starfive-visionfive-2
+ET_BOARD_BOOTLOADER_DT ?= $(ET_BOARD_DT_PREFIX)jh7110-starfive-visionfive-2-v1.3b
