@@ -19,7 +19,7 @@ export ET_BOARD_ROOTFS_TYPE := $(ET_BOARD_TYPE)
 endif
 
 # embedded rootfs, for application processors, is Buildroot
-export ET_ROOTFS_TYPE := $(ET_BOARD_ROOTFS_TYPE)
+export ET_ROOTFS_TYPE := $(ET_BOARD_ROOTFS_TYPE)$(ET_ROOTFS_VARIANT)
 export ET_ROOTFS_TREE := $(ET_BOARD_ROOTFS_TREE)
 export ET_ROOTFS_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_ROOTFS_TREE)
 export ET_ROOTFS_HOSTNAME := $(ET_BOARD_HOSTNAME)
@@ -28,10 +28,6 @@ export ET_ROOTFS_ISSUE := $(shell printf "etinker: $(ET_BOARD)")
 export ET_ROOTFS_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) rootfs-ref)
 
 rootfs_defconfig := et_$(subst -,_,$(ET_ROOTFS_TYPE))_defconfig
-rootfs_type := $(ET_ROOTFS_TYPE)
-ifneq ($(ET_ROOTFS_VARIANT),)
-rootfs_type := $(subst $(ET_ROOTFS_VARIANT),,$(ET_ROOTFS_TYPE))
-endif
 
 # [start] rootfs version magic
 ifneq ($(shell ls $(ET_ROOTFS_SOFTWARE_DIR) $(ET_NOERR)),)
@@ -52,8 +48,8 @@ export ET_ROOTFS_BUILD_BUSYBOX_CONFIG := $(ET_ROOTFS_BUILD_DIR)/build/busybox-$(
 export ET_ROOTFS_BUILD_IMAGE := $(ET_ROOTFS_BUILD_DIR)/images/rootfs.tar
 export ET_ROOTFS_TARBALLS_DIR := $(ET_TARBALLS_DIR)/rootfs
 export ET_ROOTFS_DIR := $(ET_DIR)/rootfs/$(ET_BOARD)$(ET_ROOTFS_VARIANT)/$(ET_CROSS_TUPLE)
-export ET_ROOTFS_DEFCONFIG := $(ET_DIR)/boards/$(rootfs_type)/config/$(ET_ROOTFS_TREE)/$(rootfs_defconfig)
-export ET_ROOTFS_BUSYBOX_CONFIG := $(ET_DIR)/boards/$(rootfs_type)/config/$(ET_ROOTFS_TREE)/busybox.config
+export ET_ROOTFS_DEFCONFIG := $(ET_DIR)/boards/$(ET_BOARD_ROOTFS_TYPE)/config/$(ET_ROOTFS_TREE)/$(rootfs_defconfig)
+export ET_ROOTFS_BUSYBOX_CONFIG := $(ET_DIR)/boards/$(ET_BOARD_ROOTFS_TYPE)/config/$(ET_ROOTFS_TREE)/busybox.config
 export ET_ROOTFS_IMAGE := $(ET_ROOTFS_DIR)/images/rootfs.tar
 export ET_ROOTFS_TARGET_FINAL ?= $(ET_ROOTFS_IMAGE)
 
