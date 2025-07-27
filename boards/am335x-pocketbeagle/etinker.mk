@@ -53,4 +53,4 @@ ET_BOARD_GETTY_PORT ?= ttyS0
 ET_BOARD_KERNEL_DT ?= am335x-pocketbeagle
 ET_BOARD_KERNEL_DT_ETINKER ?= am335x-pocketbeagle-etinker
 
-ET_BOARD_BOOTLOADER_DT ?= am335x-pocketbeagle
+ET_BOARD_BOOTLOADER_DT ?= am335x-pocketbeagle-etinker

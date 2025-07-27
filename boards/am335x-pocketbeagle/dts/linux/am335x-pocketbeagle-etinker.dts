@@ -8,6 +8,7 @@
 
 #include "am33xx.dtsi"
 #include "am335x-osd335x-common.dtsi"
+#include <dt-bindings/leds/common.h>
 
 / {
 	model = "TI AM335x PocketBeagle";
@@ -15,6 +16,7 @@
 
 	chosen {
 		stdout-path = &uart0;
+		tick-timer = &timer2;
 	};
 
 	leds {
@@ -25,6 +27,8 @@
 
 		led-usr0 {
 			label = "beaglebone:green:usr0";
+			color = <LED_COLOR_ID_BLUE>;
+			function = LED_FUNCTION_HEARTBEAT;
 			gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>;
 			linux,default-trigger = "heartbeat";
 			default-state = "off";
@@ -32,6 +36,8 @@
 
 		led-usr1 {
 			label = "beaglebone:green:usr1";
+			color = <LED_COLOR_ID_BLUE>;
+			function = LED_FUNCTION_DISK_ACTIVITY;
 			gpios = <&gpio1 22 GPIO_ACTIVE_HIGH>;
 			linux,default-trigger = "mmc0";
 			default-state = "off";
@@ -39,6 +45,8 @@
 
 		led-usr2 {
 			label = "beaglebone:green:usr2";
+			color = <LED_COLOR_ID_BLUE>;
+			function = LED_FUNCTION_CPU;
 			gpios = <&gpio1 23 GPIO_ACTIVE_HIGH>;
 			linux,default-trigger = "cpu0";
 			default-state = "off";
@@ -46,6 +54,8 @@
 
 		led-usr3 {
 			label = "beaglebone:green:usr3";
+			color = <LED_COLOR_ID_BLUE>;
+			function = LED_FUNCTION_INDICATOR;
 			gpios = <&gpio1 24 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};

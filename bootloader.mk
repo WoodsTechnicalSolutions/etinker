@@ -106,14 +106,14 @@ define bootloader-depends
 	@mkdir -p $(ET_BOOTLOADER_BUILD_DIR)
 	@mkdir -p $(shell dirname $(ET_BOOTLOADER_DEFCONFIG))
 	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.dts* $(ET_NOERR)`" ]; then \
-		rsync -rP $(ET_BOARD_DIR)/dts/*.dts* \
+		cp -v $(ET_BOARD_DIR)/dts/*.dts* \
 			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_BOOTLOADER_ARCH)/dts/; \
 	fi
 	@if [ -d $(ET_BOARD_DIR)/dts/u-boot ] && [ -n "`ls $(ET_BOARD_DIR)/dts/u-boot/*.dts* $(ET_NOERR)`" ]; then \
-		rsync -rP $(ET_BOARD_DIR)/dts/u-boot/*.dts* \
+		cp -v $(ET_BOARD_DIR)/dts/u-boot/*.dts* \
 			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_BOOTLOADER_ARCH)/dts/; \
 		if [ -d $(ET_BOOTLOADER_SOFTWARE_DIR)/dts/upstream/src/$(ET_BOOTLOADER_ARCH)/$(ET_BOARD_DT_PREFIX) ]; then \
-			rsync -rP $(ET_BOARD_DIR)/dts/u-boot/*.dts* \
+			cp -v $(ET_BOARD_DIR)/dts/u-boot/*.dts* \
 				$(ET_BOOTLOADER_SOFTWARE_DIR)/dts/upstream/src/$(ET_ARCH)/$(ET_BOARD_DT_PREFIX); \
 		fi; \
 	fi
