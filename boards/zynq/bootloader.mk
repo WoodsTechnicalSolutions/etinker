@@ -8,8 +8,8 @@ endif
 export ET_BOOTLOADER_BUILD_SPL := $(ET_BOOTLOADER_BUILD_DIR)/spl/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
 export ET_BOOTLOADER_SPL := $(ET_BOOTLOADER_DIR)/boot/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
 
-export XILINX_VERSION := 2024.2
-export XILINX_VITIS_DIR := /tools/Xilinx/Vitis/$(XILINX_VERSION)
+export XILINX_VERSION := 2025.1
+export XILINX_VITIS_DIR := /tools/Xilinx/$(XILINX_VERSION)/Vitis
 
 ifeq ($(shell [ -f $(XILINX_VITIS_DIR)/bin/bootgen ] && echo found || echo missing),missing)
 $(error MISSING Xilinx Vitis 'bootgen' ***)
