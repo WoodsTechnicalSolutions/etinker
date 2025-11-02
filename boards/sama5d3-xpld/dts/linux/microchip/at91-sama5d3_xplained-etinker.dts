@@ -10,12 +10,14 @@
 #include "at91-sama5d3_xplained.dts"
 
 / {
-	backlight: backlight {
+	display_backlight: ili9341_led {
 		status = "okay";
 		compatible = "gpio-backlight";
+		gpios = <&pioC 17 GPIO_ACTIVE_HIGH>;
+/*
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_display_backlight>;
-		gpios = <&pioC 17 GPIO_ACTIVE_HIGH>;
+*/
 	};
 
 	display_supply: fixed-3v3 {
@@ -105,30 +107,31 @@
 		status = "okay";
 		compatible = "adafruit,yx240qv29", "ilitek,ili9341";
 		reg = <0>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_display_reset &pinctrl_display_dc>;
-		spi-max-frequency = <10000000>;
-		backlight = <&backlight>;
-		reset-gpios = <&pioB 15 GPIO_ACTIVE_LOW>;
-		dc-gpios = <&pioB 14 GPIO_ACTIVE_HIGH>;
-		rotation = <270>;
 		bgr;
+		fps = <10>;
+		width = <320>;
+		height = <240>;
+		rotation = <270>;
+		buswidth = <8>;
+		dc-gpios = <&pioB 14 GPIO_ACTIVE_HIGH>;
+		reset-gpios = <&pioB 15 GPIO_ACTIVE_HIGH>;
+		backlight = <&display_backlight>;
 		vcc-supply = <&display_supply>;
 		vci-supply = <&display_supply>;
 		vddi-supply = <&display_supply>;
 		vddi-led-supply = <&display_supply>;
+		spi-max-frequency = <10000000>;
+		debug = <3>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_display_reset &pinctrl_display_dc>;
 	};
 
 	display_ts: tsc2046@3 {
 		status = "okay";
 		compatible = "ti,ads7846";
 		reg = <3>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&pinctrl_display_ts>;
-		spi-max-frequency = <1000000>;
 		pendown-gpio = <&pioC 16 GPIO_ACTIVE_LOW>;
 		interrupts-extended = <&pioC 16 IRQ_TYPE_EDGE_BOTH>;
-		vcc-supply = <&display_supply>;
 		ti,swap-xy;
 		ti,x-min = /bits/ 16 <0>;
 		ti,x-max = /bits/ 16 <8000>;
@@ -137,11 +140,16 @@
 		ti,x-plate-ohms = /bits/ 16 <40>;
 		ti,pressure-max = /bits/ 16 <255>;
 		wakeup-source;
+		vcc-supply = <&display_supply>;
+		spi-max-frequency = <1000000>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_display_ts>;
 	};
 };
 
 &pinctrl {
 	board {
+		status = "okay";
 		pinctrl_pck1_as_isi_mck: pck1_as_isi_mck-0 {
 			atmel,pins =
 				<AT91_PIOD 31 AT91_PERIPH_B AT91_PINCTRL_NONE>;	/* PD31 periph B PCK1(ISI_MCK), conflicts with AD11 */
