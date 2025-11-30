@@ -118,6 +118,7 @@ define rootfs-build
 				toolchain; \
 		fi; \
 		$(ET_SCRIPTS_DIR)/rootfs/$(ET_ARCH)/fix-host-libs $(ET_ROOTFS_SYSROOT_DIR); \
+		$(ET_SCRIPTS_DIR)/rootfs/$(ET_ARCH)/fix-target-libs $(ET_ROOTFS_BUILD_DIR)/target; \
 	fi
 	$(MAKE) --no-print-directory \
 		$(ET_CFLAGS_ROOTFS) \

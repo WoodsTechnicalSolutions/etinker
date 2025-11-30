@@ -115,12 +115,6 @@ define toolchain-build
 			printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_TOOLCHAIN_TREE) build FAILED! *****\n"; \
 			exit 2; \
 		fi; \
-		if [ "riscv" = "$(ET_ARCH)" ]; then \
-			(cd $(ET_TOOLCHAIN_SYSROOT_DIR)/lib && \
-				for f in $(shell ls $(ET_TOOLCHAIN_SYSROOT_DIR)/usr/lib64/lp64d/ $(ET_NOERR)); do \
-					ln -sf ../usr/lib64/lp64d/$$f; \
-				done); \
-		fi; \
 		if ! [ -d $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot.cache ]; then \
 			if [ -d $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot ]; then \
 				cp -a $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot $(ET_TOOLCHAIN_DIR)/$(ET_CROSS_TUPLE)/sysroot.cache; \

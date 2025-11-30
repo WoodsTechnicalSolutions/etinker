@@ -24,12 +24,12 @@ CT_TOOLCHAIN_BUGURL="https://www.woodsts.org/contact.html"
 CT_TARGET_ALIAS="riscv64-linux"
 CT_TOOLCHAIN_ENABLE_NLS=y
 CT_KERNEL_LINUX=y
-CT_LINUX_V_5_10=y
+CT_LINUX_V_6_12=y
 CT_KERNEL_LINUX_VERBOSITY_1=y
 CT_BINUTILS_PLUGINS=y
 CT_BINUTILS_FOR_TARGET=y
 CT_GLIBC_USE_LIBIDN_ADDON=y
-CT_GCC_V_13=y
+CT_GCC_V_14=y
 CT_CC_GCC_EXTRA_CONFIG_ARRAY="--with-abi=lp64d --enable-gnu-indirect-function --enable-checking=release --enable-clocale=gnu --enable-install-libiberty --enable-plugin --with-isl"
 # CT_CC_GCC_STATIC_LIBSTDCXX is not set
 CT_CC_GCC_SYSTEM_ZLIB=y
