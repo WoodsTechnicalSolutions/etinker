@@ -7,10 +7,13 @@ fi
 
 sysroot="${1}"
 broken_list="anl BrokenLocale c_malloc_debug m nss_compat nss_db nss_hesiod resolv thread_db"
-cd ${sysroot}/usr/lib/
-for name in ${broken_list}; do
-	if [ -d "$(readlink -f lib${name}.so)" ]; then
-		rm -v lib${name}.so
-		ln -sfv lib${name}.so.[0-9] lib${name}.so
-	fi
-done
+
+if [ -d "${sysroot}/usr/lib" ]; then
+	cd ${sysroot}/usr/lib/
+	for name in ${broken_list}; do
+		if [ -d "$(readlink -f lib${name}.so)" ]; then
+			rm -v lib${name}.so
+			ln -sfv lib${name}.so.[0-9] lib${name}.so
+		fi
+	done
+fi

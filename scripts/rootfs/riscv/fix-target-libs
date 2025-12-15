@@ -8,12 +8,12 @@ fi
 target="${1}"
 broken_list="anl c dl m nsl nss_dns nss_files pthread resolv rt thread_db"
 
-cd ${target}/usr/lib/
-
-for name in ${broken_list}; do
-	if ! [ -L "lib${name}.so" ]; then
-		ln -sfv lib${name}.so.[0-9] lib${name}.so
-	fi
-done
-
-echo
+if [ -d "${target}/usr/lib" ]; then
+	cd ${target}/usr/lib/
+	for name in ${broken_list}; do
+		if ! [ -L "lib${name}.so" ]; then
+			ln -sfv lib${name}.so.[0-9] lib${name}.so
+		fi
+	done
+	echo
+fi
