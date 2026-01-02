@@ -1,7 +1,7 @@
 #
 # arm-cortexr5-eabihf toolchain configuration file for 'etinker'
 #
-# Copyright (C) 2023-2025, Derald D. Woods <woods.technical@gmail.com>
+# Copyright (C) 2023-2026, Derald D. Woods <woods.technical@gmail.com>
 #
 # [references]
 # ------------------------------------------------------------------------------

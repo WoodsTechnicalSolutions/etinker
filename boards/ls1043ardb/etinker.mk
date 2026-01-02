@@ -1,7 +1,7 @@
 #
 # LS1043ARDB, ARM Cortex-A53, board configuration file for 'etinker'
 #
-# Copyright (C) 2020-2025, Derald D. Woods <woods.technical@gmail.com>
+# Copyright (C) 2020-2026, Derald D. Woods <woods.technical@gmail.com>
 #
 # [references]
 # ------------------------------------------------------------------------------

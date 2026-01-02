@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2017 - 2019, Nordic Semiconductor ASA
- * Copyright (c) 2020 - 2025, Derald D. Woods <woods.technical@gmail.com>
+ * Copyright (c) 2020 - 2026, Derald D. Woods <woods.technical@gmail.com>
  *
  * All rights reserved.
  *

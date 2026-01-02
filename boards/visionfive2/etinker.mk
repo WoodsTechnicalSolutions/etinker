@@ -1,7 +1,7 @@
 #
 # StarFive VisionFive2, RISC-V 64 bit, board configuration file for 'etinker'
 #
-# Copyright (C) 2024-2025, Derald D. Woods <woods.technical@gmail.com>
+# Copyright (C) 2024-2026, Derald D. Woods <woods.technical@gmail.com>
 #
 # [references]
 # ------------------------------------------------------------------------------

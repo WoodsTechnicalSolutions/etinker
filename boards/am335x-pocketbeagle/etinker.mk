@@ -1,7 +1,7 @@
 #
 # AM335X PocketBeagle, ARM Cortex-A8, board configuration file for 'etinker'
 #
-# Copyright (C) 2018-2025, Derald D. Woods <woods.technical@gmail.com>
+# Copyright (C) 2018-2026, Derald D. Woods <woods.technical@gmail.com>
 #
 # [ Linux kernel commit (047905376a16dd7235fced6ecf4020046f9665e9) ]
 # ----------------------------------------------------------------------
