@@ -1,7 +1,7 @@
-From b94451efa4cf972eef51814054bf8378248cb04c Mon Sep 17 00:00:00 2001
+From 64a051ab6efa06614fe485942e36cf77ab575072 Mon Sep 17 00:00:00 2001
 From: Nick Hollinghurst <nick.hollinghurst@raspberrypi.com>
-Date: Thu, 22 Dec 2022 13:59:33 +0000
-Subject: [PATCH] media/i2c: Add a driver for the Sony IMX708 image sensor
+Date: Wed, 25 Feb 2026 20:47:42 -0500
+Subject: [PATCH 4/4] media/i2c: Add a driver for the Sony IMX708 image sensor
 
 The imx708 is a 12MP MIPI sensor with a 16:9 aspect ratio, here using
 two CSI-2 lanes. It is a "quad Bayer" sensor with all 3 modes offering
@@ -95,18 +95,50 @@ range of scenes.
 Signed-off-by: Nick Hollinghurst <nick.hollinghurst@raspberrypi.com>
 
 media: i2c: imx708: Squash fixes
+
+media: i2c: imx708: Fix lockdep issues.
+
+The driver had a lockdep_assert_held in imx708_get_format_code,
+but the calls from enum_mbus_code and enum_frame_size didn't take
+the mutex.
+
+Likewise imx708_set_framing_limits calling __v4l2_ctrl_modify_range
+had a lockdep, but when going through the probe function the mutex
+hadn't been taken.
+
+Fix both cases.
+
+Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+
+media: i2c: Tweak default PDAF gain table in imx708 driver
+
+After analyzing more Raspberry Pi V3 cameras, adjust the
+default PDAF shield-pixel gain tables (they can still be
+overridden by camera OTP where programmed).
+
+Signed-off-by: Nick Hollinghurst <nick.hollinghurst@raspberrypi.com>
+
+drivers: i2c: imx708: Use pm_runtime_use_autosuspend()
+
+Switch the power management in the imx708 device driver to use auto-
+suspend with a 5s timeout.
+
+This improves mode switching time that avoids additional regulator
+switch-on delays and common register I2C writes.
+
+Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
 ---
  drivers/media/i2c/Kconfig  |   13 +
  drivers/media/i2c/Makefile |    1 +
- drivers/media/i2c/imx708.c | 2116 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 2130 insertions(+)
+ drivers/media/i2c/imx708.c | 2134 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 2148 insertions(+)
  create mode 100644 drivers/media/i2c/imx708.c
 
 diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 5968a7bba775..d6a6be04a02e 100644
+index 4b4db8c4f496..3ab99bcf1f65 100644
 --- a/drivers/media/i2c/Kconfig
 +++ b/drivers/media/i2c/Kconfig
-@@ -264,6 +264,19 @@ config VIDEO_IMX415
+@@ -287,6 +287,19 @@ config VIDEO_IMX415
  	  To compile this driver as a module, choose M here: the
  	  module will be called imx415.
  
@@ -127,23 +159,23 @@ index 5968a7bba775..d6a6be04a02e 100644
  	tristate
  
 diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index b97ca0d211a1..c8663f4fac6f 100644
+index c5f17602454f..4244167c581f 100644
 --- a/drivers/media/i2c/Makefile
 +++ b/drivers/media/i2c/Makefile
-@@ -59,6 +59,7 @@ obj-$(CONFIG_VIDEO_IMX335) += imx335.o
+@@ -61,6 +61,7 @@ obj-$(CONFIG_VIDEO_IMX335) += imx335.o
  obj-$(CONFIG_VIDEO_IMX355) += imx355.o
  obj-$(CONFIG_VIDEO_IMX412) += imx412.o
  obj-$(CONFIG_VIDEO_IMX415) += imx415.o
 +obj-$(CONFIG_VIDEO_IMX708) += imx708.o
  obj-$(CONFIG_VIDEO_IR_I2C) += ir-kbd-i2c.o
- obj-$(CONFIG_VIDEO_IRS1125) += irs1125.o
  obj-$(CONFIG_VIDEO_ISL7998X) += isl7998x.o
+ obj-$(CONFIG_VIDEO_KS0127) += ks0127.o
 diff --git a/drivers/media/i2c/imx708.c b/drivers/media/i2c/imx708.c
 new file mode 100644
-index 000000000000..a56478e31bb1
+index 000000000000..6ab38e6a30e5
 --- /dev/null
 +++ b/drivers/media/i2c/imx708.c
-@@ -0,0 +1,2116 @@
+@@ -0,0 +1,2134 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * A V4L2 driver for Sony IMX708 cameras.
@@ -338,8 +370,8 @@ index 000000000000..a56478e31bb1
 +
 +/* Default PDAF pixel correction gains */
 +static const u8 pdaf_gains[2][9] = {
-+	{ 0x4c, 0x4c, 0x4c, 0x46, 0x3e, 0x38, 0x35, 0x35, 0x35 },
-+	{ 0x35, 0x35, 0x35, 0x38, 0x3e, 0x46, 0x4c, 0x4c, 0x4c }
++	{ 0x4c, 0x4c, 0x4c, 0x46, 0x3e, 0x39, 0x36, 0x36, 0x36 },
++	{ 0x36, 0x36, 0x36, 0x39, 0x3e, 0x46, 0x4c, 0x4c, 0x4c }
 +};
 +
 +/* Link frequency setup */
@@ -1382,7 +1414,8 @@ index 000000000000..a56478e31bb1
 +		break;
 +	}
 +
-+	pm_runtime_put(&client->dev);
++	pm_runtime_mark_last_busy(&client->dev);
++	pm_runtime_put_autosuspend(&client->dev);
 +
 +	return ret;
 +}
@@ -1404,7 +1437,9 @@ index 000000000000..a56478e31bb1
 +		if (code->index >= (ARRAY_SIZE(codes) / 4))
 +			return -EINVAL;
 +
++		mutex_lock(&imx708->mutex);
 +		code->code = imx708_get_format_code(imx708);
++		mutex_unlock(&imx708->mutex);
 +	} else {
 +		if (code->index > 0)
 +			return -EINVAL;
@@ -1420,6 +1455,7 @@ index 000000000000..a56478e31bb1
 +				  struct v4l2_subdev_frame_size_enum *fse)
 +{
 +	struct imx708 *imx708 = to_imx708(sd);
++	u32 code;
 +
 +	if (fse->pad >= NUM_PADS)
 +		return -EINVAL;
@@ -1434,7 +1470,11 @@ index 000000000000..a56478e31bb1
 +		if (fse->index >= num_modes)
 +			return -EINVAL;
 +
-+		if (fse->code != imx708_get_format_code(imx708))
++		mutex_lock(&imx708->mutex);
++		code = imx708_get_format_code(imx708);
++		mutex_unlock(&imx708->mutex);
++
++		if (fse->code != code)
 +			return -EINVAL;
 +
 +		fse->min_width = mode_list[fse->index].width;
@@ -1731,22 +1771,23 @@ index 000000000000..a56478e31bb1
 +	}
 +
 +	if (enable) {
-+		ret = pm_runtime_get_sync(&client->dev);
-+		if (ret < 0) {
-+			pm_runtime_put_noidle(&client->dev);
++		ret = pm_runtime_resume_and_get(&client->dev);
++		if (ret < 0)
 +			goto err_unlock;
-+		}
 +
 +		/*
 +		 * Apply default & customized values
 +		 * and then start streaming.
 +		 */
 +		ret = imx708_start_streaming(imx708);
-+		if (ret)
-+			goto err_rpm_put;
++		if (ret) {
++			pm_runtime_put_sync(&client->dev);
++			goto err_unlock;
++		}
 +	} else {
 +		imx708_stop_streaming(imx708);
-+		pm_runtime_put(&client->dev);
++		pm_runtime_mark_last_busy(&client->dev);
++		pm_runtime_put_autosuspend(&client->dev);
 +	}
 +
 +	imx708->streaming = enable;
@@ -1760,8 +1801,6 @@ index 000000000000..a56478e31bb1
 +
 +	return ret;
 +
-+err_rpm_put:
-+	pm_runtime_put(&client->dev);
 +err_unlock:
 +	mutex_unlock(&imx708->mutex);
 +
@@ -2046,7 +2085,9 @@ index 000000000000..a56478e31bb1
 +	imx708->sd.ctrl_handler = ctrl_hdlr;
 +
 +	/* Setup exposure and frame/line length limits. */
++	mutex_lock(&imx708->mutex);
 +	imx708_set_framing_limits(imx708);
++	mutex_unlock(&imx708->mutex);
 +
 +	return 0;
 +
@@ -2169,10 +2210,16 @@ index 000000000000..a56478e31bb1
 +	/* Initialize default format */
 +	imx708_set_default_format(imx708);
 +
-+	/* Enable runtime PM and turn off the device */
++	/*
++	 * Enable runtime PM with autosuspend. As the device has been powered
++	 * manually, mark it as active, and increase the usage count without
++	 * resuming the device.
++	 */
 +	pm_runtime_set_active(dev);
++	pm_runtime_get_noresume(dev);
 +	pm_runtime_enable(dev);
-+	pm_runtime_idle(dev);
++	pm_runtime_set_autosuspend_delay(dev, 5000);
++	pm_runtime_use_autosuspend(dev);
 +
 +	/* This needs the pm runtime to be registered. */
 +	ret = imx708_init_controls(imx708);
@@ -2201,6 +2248,9 @@ index 000000000000..a56478e31bb1
 +		goto error_media_entity;
 +	}
 +
++	pm_runtime_mark_last_busy(dev);
++	pm_runtime_put_autosuspend(dev);
++
 +	return 0;
 +
 +error_media_entity:
@@ -2210,8 +2260,8 @@ index 000000000000..a56478e31bb1
 +	imx708_free_controls(imx708);
 +
 +error_pm_runtime:
-+	pm_runtime_disable(&client->dev);
-+	pm_runtime_set_suspended(&client->dev);
++	pm_runtime_disable(dev);
++	pm_runtime_put_noidle(dev);
 +
 +error_power_off:
 +	imx708_power_off(&client->dev);
@@ -2261,5 +2311,5 @@ index 000000000000..a56478e31bb1
 +MODULE_DESCRIPTION("Sony IMX708 sensor driver");
 +MODULE_LICENSE("GPL v2");
 -- 
-2.43.0
+2.53.0
 

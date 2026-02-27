@@ -1,7 +1,7 @@
-From 6bb9ef9815c3805b7e1158f124336b490e705c81 Mon Sep 17 00:00:00 2001
+From fc56f19022317b6f1335c809e70d0127c5eefc0a Mon Sep 17 00:00:00 2001
 From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Thu, 22 Dec 2022 14:08:35 +0000
-Subject: [PATCH] dtbindings: media: i2c: Add IMX708 CMOS sensor binding
+Date: Wed, 25 Feb 2026 20:44:07 -0500
+Subject: [PATCH 2/4] dtbindings: media: i2c: Add IMX708 CMOS sensor binding
 
 Add YAML devicetree binding for IMX708 CMOS image sensor.
 Let's also add a MAINTAINERS entry for the binding and driver.
@@ -139,10 +139,10 @@ index 000000000000..4b8645f6880c
 +
 +...
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 9f30faa48d2f..8602289f7340 100644
+index e08767323763..e8590d9623f7 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -21879,6 +21879,14 @@ T:	git git://linuxtv.org/media.git
+@@ -24423,6 +24423,14 @@ T:	git git://linuxtv.org/media.git
  F:	Documentation/devicetree/bindings/media/i2c/sony,imx415.yaml
  F:	drivers/media/i2c/imx415.c
  
@@ -158,5 +158,5 @@ index 9f30faa48d2f..8602289f7340 100644
  M:	Maxim Levitsky <maximlevitsky@gmail.com>
  M:	Alex Dubov <oakad@yahoo.com>
 -- 
-2.43.0
+2.53.0
 

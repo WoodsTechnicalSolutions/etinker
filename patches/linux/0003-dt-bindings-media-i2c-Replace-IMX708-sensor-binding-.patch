@@ -1,7 +1,7 @@
-From ec181cfda992c43058d843b18f5a3b723da86b97 Mon Sep 17 00:00:00 2001
+From 617dac3e0b3c74f09d9afb68a78619e332fe3e04 Mon Sep 17 00:00:00 2001
 From: Naushir Patuck <naush@raspberrypi.com>
 Date: Fri, 31 Mar 2023 11:52:25 +0100
-Subject: [PATCH] dt-bindings: media: i2c: Replace IMX708 sensor binding
+Subject: [PATCH 3/4] dt-bindings: media: i2c: Replace IMX708 sensor binding
  documentation file
 
 Replace the existing imx708.yaml file with sony,imx708.yaml that follows
@@ -276,10 +276,10 @@ index 000000000000..286aad2e8c69
 +    };
 +...
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 8602289f7340..e4a864126561 100644
+index e8590d9623f7..d96ea564237c 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -21933,7 +21933,7 @@ M:	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
+@@ -24428,7 +24428,7 @@ M:	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
  L:	linux-media@vger.kernel.org
  S:	Maintained
  T:	git git://linuxtv.org/media_tree.git
@@ -289,5 +289,5 @@ index 8602289f7340..e4a864126561 100644
  
  SONY MEMORYSTICK SUBSYSTEM
 -- 
-2.43.0
+2.53.0
 
