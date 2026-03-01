@@ -106,7 +106,7 @@ mmc)
 				;;
 			esac
 		fi
-		rm -f ${media}/BOOT/firmware.img
+		sudo rm -f ${media}/BOOT/firmware.img
 		sudo rsync ${rsync_opts} ${target_dir}/boot/* ${media}/BOOT/
 
 		if [ "${target}" = "bootloader" ]; then
@@ -245,7 +245,7 @@ nfs)
 				;;
 			esac
 		fi
-		rm -f ${nfs}/media/BOOT/firmware.img
+		sudo rm -f ${nfs}/media/BOOT/firmware.img
 		sudo rsync ${rsync_opts} ${target_dir}/boot/* ${nfs}/media/BOOT/
 		case "${ET_BOARD_TYPE}" in
 		k3)
