@@ -2,6 +2,7 @@ include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/bootloader.mk
 
 export LSDK_RCW_DIR := $(ET_SOFTWARE_DIR)/qoriq/rcw
 export LSDK_RCW_BIN ?= $(LSDK_RCW_DIR)/$(LSDK_MACHINE)/RR_FQPP_1455/rcw_1600_sdboot.bin
+export LF_ATF_VERSION := lf-6.12.49-2.2.0
 export LSDK_ATF_DIR := $(ET_SOFTWARE_DIR)/qoriq/atf
 export LSDK_ATF_BL2_BIN ?= $(ET_SOFTWARE_DIR)/qoriq/atf/build/$(LSDK_MACHINE)/release/bl2_$(LSDK_BOOTTYPE).pbl
 export LSDK_ATF_FIP_BIN ?= $(LSDK_ATF_DIR)/build/$(LSDK_MACHINE)/release/fip.bin
@@ -49,18 +50,14 @@ define bootloader-finalize-$(ET_BOARD)
 	(cd $(LSDK_ATF_DIR) && echo && \
 		git restore . && git clean -df && \
 		git fetch --all && git fetch --tags && \
-		git checkout $(LSDK_VERSION) && echo && \
-		sed -i s,--fatal-warnings\ -O1,--fatal-warnings\ -O1\ --no-warn-rwx-segments\ --no-warn-execstack, Makefile && \
-		git branch -D patched -f $(ET_NOERR); \
-		git switch -c patched; \
-		git commit -a -m "etinker: Fix compiler flags" && echo && \
+		git checkout $(LF_ATF_VERSION) && echo && \
 		make PLAT=$(LSDK_MACHINE) clean && \
 		make ARCH=aarch64 CROSS_COMPILE=$(ET_CROSS_TUPLE)- \
 			PLAT=$(LSDK_MACHINE) bl2 \
 			BOOT_MODE=$(LSDK_BOOTTYPE) \
 			pbl RCW=$(LSDK_RCW_BIN))
 	@if ! [ -f $(LSDK_ATF_BL2_BIN) ]; then \
-		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Building $(LSDK_VERSION) $(LSDK_ATF_BL2_BIN) FAILED! *****\n\n"; \
+		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Building $(LF_ATF_VERSION) $(LSDK_ATF_BL2_BIN) FAILED! *****\n\n"; \
 		exit 2; \
 	fi
 	@echo
@@ -70,7 +67,7 @@ define bootloader-finalize-$(ET_BOARD)
 			BOOT_MODE=$(LSDK_BOOTTYPE) \
 			BL33=$(ET_BOOTLOADER_BUILD_IMAGE))
 	@if ! [ -f $(LSDK_ATF_FIP_BIN) ]; then \
-		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Building $(LSDK_VERSION) $(LSDK_ATF_FIP_BIN) FAILED! *****\n\n"; \
+		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Building $(LF_ATF_VERSION) $(LSDK_ATF_FIP_BIN) FAILED! *****\n\n"; \
 		exit 2; \
 	fi
 	@echo
