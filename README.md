@@ -19,9 +19,9 @@ about tinkering.
 - ek-tm4c123gxl [TI TivaC Arm Cortex-M4]
 - ek-tm4c1294xl [TI TivaC Arm Cortex-M4]
 - ls1043ardb [NXP Layerscape Arm Cortex-A53]
-- nrf52840-dongle [Nordic Arm Cortex-M4]
-- omap3-beagle [TI Arm Cortex-A8]
-- omap3-evm [TI Arm Cortex-A8]
+- nrf52840-dongle [Nordic Arm Cortex-M4] - (nrfx only)
+- omap3-beagle [TI Arm Cortex-A8] - (no longer in U-Boot)
+- omap3-evm [TI Arm Cortex-A8] - (no longer maintained by Derald Woods)
 - pynq-z2 [Xilinx Zynq-7020 Arm Cortex-A9]
 - sama5d3-xpld [Arm Cortex-A5]arm-cortex
 - k3-j721e-sk [TI TDA4VM Arm Cortex-R5 / Cortex-A72]
@@ -213,3 +213,168 @@ Each make command, shown above, results in a 'sync' of the fileystem.
 So it may take a minute or two to complete, depending on file sizes.
 
 Your SD/MMC card is now ready to boot your board. Enjoy.
+
+### Board-Specific Customizations
+
+A directory can be populated with additional files for the generated
+rootfs. The Buidroot infrastructure will overlay the `custom/<boardname>`
+directory into the target rootfs. This directory is ignored by Git.
+
+#### Example am335x-pocketbeagle Overlay
+
+These additional configurations, and scripts, provide a more complete
+environment for the target device. For the case of the am335x-pocketbeagle,
+this means proper setup of USB Gadget networking.
+
+1. etinker Configuration (etinker.conf)
+2. DHCP Server (dnsmasq.conf)
+3. NFS Server (exports)
+4. USB Gadget Firewall/IP Routing (S90gadget-firewall)
+5. Network Configuration (interfaces)
+
+The etinker concept does not use the traditional model of having the
+target device connect to an NFS server on the development host. Instead,
+etinker devices use NFS to serve their rootfs to the development host.
+This simplied development workflows for U-Boot, Linux kernel, and BIOS.
+It also means that etinker is not compatible with many BSP frameworks.
+This is by design. (section 1 of this readme) We are tinkering!
+
+**NOTE 1:**
+After populating the custom overlay, you will need to update your rootfs
+build.
+```
+$ ET_BOARD=am335x-pocketbeagle make update
+```
+or
+```
+$ ET_BOARD=am335x-pocketbeagle make sandbox
+```
+
+**NOTE 2:**
+If you need multiples, of the same device, connected to a single PC,
+one could simply increment the IPv4 subnet. A template based script
+could accomplish this task.
+
+**Directory Tree**
+```
+custom/am335x-pocketbeagle/
+└── etc
+    ├── dnsmasq.conf
+    ├── etinker.conf
+    ├── exports
+    ├── init.d
+    │   └── S90gadget-firewall
+    └── network
+        └── interfaces
+```
+
+**/etc/etinker.conf**
+```
+{
+	"usbcdc": {
+		"serialnumber": "27d00ad30461",
+		"manufacturer": "Human Centered Organization",
+		"product": "CDC ACM and NCM",
+		"acm": "0 1",
+		"ncm": [
+			{
+				"host_addr": "27:d0:0a:d3:04:61",
+				"dev_addr": "f9:d5:15:4f:72:61"
+			}
+		]
+	}
+}
+```
+
+**/etc/dnsmaq.conf**
+```
+# https://www.linux.com/topic/networking/advanced-dnsmasq-tips-and-tricks/
+# https://www.linux.com/training-tutorials/dnsmasq-easy-lan-name-services/
+#
+## Gadget USB CDC-NCM IPv4
+listen-address=192.168.0.1
+bind-interfaces
+## DHCP
+dhcp-authoritative
+dhcp-range=192.168.0.2,192.168.0.2,2m
+## DHCP default gateway
+dhcp-option=3,192.168.0.1
+## DHCP DNS server
+dhcp-option=6,192.168.0.1
+## DNS
+port=0
+server=<ipv4-of-your-router>
+server=/opendns.com/208.67.222.222
+server=/google.com/8.8.8.8
+server=/google.com/8.8.4.4
+expand-hosts
+domain=hco.ncm
+local=/hco.ncm/
+domain-needed
+bogus-priv
+no-resolv
+```
+
+**/etc/exports**
+```
+/ 192.168.0.0/24(rw,async,no_root_squash,no_subtree_check,insecure)
+/media/BOOT 192.168.0.0/24(rw,async,no_root_squash,no_subtree_check,insecure)
+/media/rootfs 192.168.0.0/24(rw,async,no_root_squash,no_subtree_check,insecure)
+/media/data 192.168.0.0/24(rw,async,no_root_squash,no_subtree_check,insecure)
+```
+
+**/etc/network/interfaces**
+```
+auto lo
+iface lo inet loopback
+
+auto usb0
+iface usb0 inet static
+        wait delay 5
+        address 192.168.0.1
+        gateway 192.168.0.2
+        broadcast 192.168.0.255
+        netmask 255.255.255.0
+```
+
+**/etc/init.d/S90gadget-firewall**
+```
+#!/bin/sh
+
+if ! [ -L "/sys/class/net/usb0" ]; then
+	exit 0
+fi
+
+if ! [ -f "/usr/sbin/ip-route-device.sh" ]; then
+	exit 0
+fi
+
+subnet="$(ip a s usb0|grep -e "inet\ "|cut -d ' ' -f 6|cut -d '/' -f 1|cut -d '.' -f 1-3)"
+
+case "$1" in
+start)
+	/usr/sbin/ip-route-device.sh $subnet
+	/etc/init.d/S48sntp restart
+	;;
+stop)
+	;;
+restart)
+	/usr/sbin/ip-route-device.sh $subnet
+	/etc/init.d/S48sntp restart
+	;;
+*)
+	exit 1
+	;;
+esac
+
+exit 0
+```
+
+To enable the target device to reach the Internet, you must run the
+`ip-route-host.sh` script on the development host.
+(assuming native Linux PC)
+
+**Host:**
+```
+$ sudo scripts/host/ip-route-host.sh 192.168.0
+```
