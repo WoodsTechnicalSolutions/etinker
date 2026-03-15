@@ -62,15 +62,14 @@ ET_KERNEL_VERSION := $(ET_KERNEL_VERSION).0
 endif
 # linux-rt
 ifeq (linux-rt,$(shell [ -f $(ET_KERNEL_SOFTWARE_DIR)/localversion-rt ] && echo linux-rt || echo no))
-localversion-rt := $(shell cat $(ET_KERNEL_SOFTWARE_DIR)/localversion-rt)
-localversion := $(shell echo $(ET_KERNEL_LOCALVERSION) | sed s/$(localversion-rt)//)
+localversion-rt := $(shell cat $(ET_KERNEL_SOFTWARE_DIR)/localversion-rt | tr -d '\n')
+localversion := $(shell echo $(ET_KERNEL_LOCALVERSION) | sed s,$(localversion-rt),,)
 ET_KERNEL_VERSION := $(kversion)
 # RC version
 ifeq (rc,$(shell echo -n $(kversion) | grep -qe "-rc" && echo rc || echo no))
 rcversion := -$(shell echo $(ET_KERNEL_VERSION) | cut -d '-' -f 2)
 ET_KERNEL_LOCALVERSION := $(shell echo $(localversion) | sed s/$(rcversion)//)
 endif
-localversion := $(ET_KERNEL_LOCALVERSION)
 endif
 # linux-next
 ifeq (linux-next,$(shell [ -f $(ET_KERNEL_SOFTWARE_DIR)/localversion-next ] && echo linux-next || echo no))
