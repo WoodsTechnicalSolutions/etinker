@@ -351,16 +351,30 @@ fi
 
 subnet="$(ip a s usb0|grep -e "inet\ "|cut -d ' ' -f 6|cut -d '/' -f 1|cut -d '.' -f 1-3)"
 
+start () {
+	echo "=================================================="
+	/usr/sbin/ip-route-device.sh $subnet
+	/etc/init.d/S48sntp restart
+	echo "=================================================="
+}
+
+stop () {
+	echo -n
+}
+
 case "$1" in
 start)
-	/usr/sbin/ip-route-device.sh $subnet
-	/etc/init.d/S48sntp restart
+	echo "Starting usb0 firewall"
+	start
 	;;
 stop)
+	echo "Stoping usb0 firewall"
+	stop
 	;;
 restart)
-	/usr/sbin/ip-route-device.sh $subnet
-	/etc/init.d/S48sntp restart
+	echo "Restarting usb0 firewall"
+	stop
+	start
 	;;
 *)
 	exit 1
