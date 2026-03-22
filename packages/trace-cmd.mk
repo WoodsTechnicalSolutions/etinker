@@ -145,9 +145,8 @@ define trace-cmd-config
 	libtracefs) \
 		if ! [ -d $(ET_TRACE_FS_BUILD_DIR) ] || ! [ -f $(ET_TRACE_FS_BUILD_CONFIG) ]; then \
 			rsync -a --cvs-exclude $(ET_TRACE_FS_SOFTWARE_DIR) $(shell dirname $(ET_TRACE_FS_BUILD_DIR))/; \
-			sed -i s/\'1.8\'/\'1.8.0\'/ $(ET_TRACE_FS_BUILD_DIR)/meson.build; \
-			sed -i "/tracefs-marker/a \ \ \ \'tracefs-mmap\.c\'," $(ET_TRACE_FS_BUILD_DIR)/src/meson.build; \
 			echo; \
+			PATH="$(ET_ROOTFS_BUILD_DIR)/host/bin:$(ET_ROOTFS_BUILD_DIR)/host/sbin:$(PATH)" \
 			PATH="$(ET_ROOTFS_BUILD_DIR)/host/bin:$(ET_ROOTFS_BUILD_DIR)/host/sbin:$(PATH)" \
 			CC_FOR_BUILD="$(ET_ROOTFS_BUILD_DIR)/host/bin/ccache /usr/lib/ccache/gcc" \
 			CXX_FOR_BUILD="$(ET_ROOTFS_BUILD_DIR)/host/bin/ccache /usr/lib/ccache/g++" \
@@ -172,10 +171,8 @@ define trace-cmd-config
 	trace-cmd) \
 		if ! [ -d $(ET_TRACE_CMD_BUILD_DIR) ] || ! [ -f $(ET_TRACE_CMD_BUILD_CONFIG) ]; then \
 			rsync -a --cvs-exclude $(ET_TRACE_CMD_SOFTWARE_DIR) $(shell dirname $(ET_TRACE_CMD_BUILD_DIR))/; \
-			sed -i "s/subdir.*Documentation.*$$//" $(ET_TRACE_CMD_BUILD_DIR)/meson.build; \
-			head -n -5 $(ET_TRACE_CMD_BUILD_DIR)/meson.build > $(ET_TRACE_CMD_BUILD_DIR)/meson.build.tmp; \
-			mv $(ET_TRACE_CMD_BUILD_DIR)/meson.build.tmp $(ET_TRACE_CMD_BUILD_DIR)/meson.build; \
 			echo; \
+			PATH="$(ET_ROOTFS_BUILD_DIR)/host/bin:$(ET_ROOTFS_BUILD_DIR)/host/sbin:$(PATH)" \
 			PATH="$(ET_ROOTFS_BUILD_DIR)/host/bin:$(ET_ROOTFS_BUILD_DIR)/host/sbin:$(PATH)" \
 			CC_FOR_BUILD="$(ET_ROOTFS_BUILD_DIR)/host/bin/ccache /usr/lib/ccache/gcc" \
 			CXX_FOR_BUILD="$(ET_ROOTFS_BUILD_DIR)/host/bin/ccache /usr/lib/ccache/g++" \

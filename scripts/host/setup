@@ -160,4 +160,6 @@ if [ -f /usr/bin/apt ]; then
 			nfs-kernel-server
 	fi
 	sudo apt autoremove
+	# Python3 packages
+	pip3 install asciidoc --break-system-packages
 fi
