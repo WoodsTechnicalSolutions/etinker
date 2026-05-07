@@ -1,0 +1,10 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "ti,j721e-sk", "ti,j721e";
+};
+
+&main_sdhci1 {
+	sdhci-caps-mask = <0x00000006 0x00000000>; /* Limiting to SDR50 speed mode */
+};

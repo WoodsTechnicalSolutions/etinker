@@ -19,13 +19,13 @@ export ET_BOOTLOADER_BUILD_SPL := $(ET_BOOTLOADER_BUILD_DIR)/$(ET_BOARD_BOOTLOAD
 export ET_BOOTLOADER_SPL := $(ET_BOOTLOADER_DIR)/boot/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
 
 export TI_K3_BOOT_FIRMWARE_DIR := $(ET_SOFTWARE_DIR)/ti/ti-linux-firmware
-export TI_K3_BOOT_FIRMWARE_VERSION ?= origin/ti-linux-firmware
+export TI_K3_BOOT_FIRMWARE_VERSION ?= 12.00.00.08
 
 export TI_K3_ATF_DIR := $(ET_SOFTWARE_DIR)/ti/arm-trusted-firmware
-export TI_K3_ATF_VERSION ?= 10.00.07
+export TI_K3_ATF_VERSION ?= v2.14.0
 
-export TI_K3_OPTEE_OS_DIR := $(ET_SOFTWARE_DIR)/ti/ti-optee-os
-export TI_K3_OPTEE_OS_VERSION ?= $(TI_K3_ATF_VERSION)
+export TI_K3_OPTEE_OS_DIR := $(ET_SOFTWARE_DIR)/ti/optee_os
+export TI_K3_OPTEE_OS_VERSION ?= 4.9.0
 export TI_K3_OPTEE_OS_PLATFORM ?= k3-$(TI_K3_SOC)
 
 export TI_ARM_CROSS_TUPLE ?= arm-none-eabihf
@@ -73,7 +73,7 @@ define bootloader-prepare-common
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Building $(TI_K3_OPTEE_OS_VERSION) of 'ti-optee-os' *****\n\n"
 	@if ! [ -d $(TI_K3_OPTEE_OS_DIR) ]; then \
 		(cd $(ET_SOFTWARE_DIR)/ti && \
-			git clone https://git.ti.com/git/optee/ti-optee-os.git); \
+			git clone https://github.com/OP-TEE/optee_os.git); \
 		if ! [ -d $(TI_K3_OPTEE_OS_DIR) ]; then \
 			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Getting $(TI_K3_OPTEE_OS_VERSION) of 'ti-optee-os' FAILED! *****\n\n"; \
 			exit 2; \
@@ -92,7 +92,7 @@ define bootloader-prepare-common
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Building $(TI_K3_ATF_VERSION) of 'arm-trusted-firmware' *****\n\n"
 	@if ! [ -d $(TI_K3_ATF_DIR) ]; then \
 		(cd $(ET_SOFTWARE_DIR)/ti && \
-			git clone https://git.ti.com/git/atf/arm-trusted-firmware.git); \
+			git clone https://github.com/ARM-software/arm-trusted-firmware.git); \
 		if ! [ -d $(TI_K3_ATF_DIR) ]; then \
 			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Getting $(TI_K3_ATF_VERSION) of 'arm-trusted-firmware' FAILED! *****\n\n"; \
 			exit 2; \

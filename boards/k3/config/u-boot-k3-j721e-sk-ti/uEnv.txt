@@ -10,3 +10,4 @@
 bootpart=1:1
 bootdir=""
 args_mmc=setenv bootargs console=${console} ${optargs} root=/dev/mmcblk1p2 rw rootfstype=${mmcrootfstype}
+name_overlays="ti/k3-j721e-sk-etinker.dtbo"
