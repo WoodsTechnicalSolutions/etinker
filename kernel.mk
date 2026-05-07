@@ -27,6 +27,9 @@ export ET_KERNEL_DT := $(ET_BOARD_KERNEL_DT)
 ifdef ET_BOARD_KERNEL_DT_ETINKER
 export ET_KERNEL_DT_ETINKER := $(ET_BOARD_KERNEL_DT_ETINKER)
 endif
+ifdef ET_BOARD_KERNEL_DT_OVERLAYS
+export ET_KERNEL_DT_OVERLAYS := $(ET_BOARD_KERNEL_DT_OVERLAYS)
+endif
 export ET_KERNEL_LOADADDR := $(ET_BOARD_KERNEL_LOADADDR)
 export ET_KERNEL_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_KERNEL_TREE)
 export ET_KERNEL_HEADERS_DIR ?= $(ET_TOOLCHAIN_SYSROOT_DIR)/usr/include
@@ -122,14 +125,6 @@ define kernel-depends
 	@mkdir -p $(ET_KERNEL_DIR)/usr/lib/modules
 	@mkdir -p $(ET_KERNEL_BUILD_BOOT_DIR)
 	@mkdir -p $(shell dirname $(ET_KERNEL_DEFCONFIG))
-	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.dts* $(ET_NOERR)`" ]; then \
-		cp -v $(ET_BOARD_DIR)/dts/*.dts* \
-			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/boot/dts/$(ET_KERNEL_VENDOR) $(ET_NULL); \
-	fi
-	@if [ -d $(ET_BOARD_DIR)/dts/linux ] && [ -n "`ls $(ET_BOARD_DIR)/dts/linux/*.dts* $(ET_NOERR)`" ]; then \
-		cp -v $(ET_BOARD_DIR)/dts/linux/*.dts* \
-			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/boot/dts/$(ET_KERNEL_VENDOR) $(ET_NULL); \
-	fi
 	@if [ -n "`ls $(ET_BOARD_DIR)/dts/linux/$(ET_KERNEL_VENDOR)*.dts* $(ET_NOERR)`" ]; then \
 		cp -v $(ET_BOARD_DIR)/dts/linux/$(ET_KERNEL_VENDOR)*.dts* \
 			$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/boot/dts/$(ET_KERNEL_VENDOR) $(ET_NULL); \
@@ -231,7 +226,7 @@ define kernel-build
 			exit 2; \
 		fi; \
 		;; \
-	*.dtb) \
+	*.dtb*) \
 		if [ -f $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$1 ]; then \
 			$(RM) $(ET_KERNEL_DIR)/boot/$1; \
 			cp -av $(ET_KERNEL_BUILD_BOOT_DIR)/dts/$1 $(ET_KERNEL_DIR)/boot/; \
@@ -316,6 +311,9 @@ define kernel-info
 	@if [ -n "$(shell echo $(ET_KERNEL_DT_ETINKER))" ]; then \
 		printf "ET_KERNEL_DT_ETINKER: $(ET_KERNEL_DT_ETINKER)\n"; \
 	fi
+	@if [ -n "$(shell echo $(ET_KERNEL_DT_OVERLAYS))" ]; then \
+		printf "ET_KERNEL_DT_OVERLAYS: $(ET_KERNEL_DT_OVERLAYS)\n"; \
+	fi
 	@printf "ET_KERNEL_SOFTWARE_DIR: $(ET_KERNEL_SOFTWARE_DIR)\n"
 	@printf "ET_KERNEL_BUILD_DIR: $(ET_KERNEL_BUILD_DIR)\n"
 	@printf "ET_KERNEL_BUILD_CONFIG: $(ET_KERNEL_BUILD_CONFIG)\n"
@@ -355,6 +353,9 @@ $(ET_KERNEL_TARGET_FINAL): $(ET_KERNEL_BUILD_CONFIG)
 	$(call kernel-build,$(kernel_vendor)$(ET_KERNEL_DT).dtb)
 ifdef ET_KERNEL_DT_ETINKER
 	$(foreach dts,$(ET_KERNEL_DT_ETINKER),$(call kernel-build,$(kernel_vendor)$(dts).dtb))
+endif
+ifdef ET_KERNEL_DT_OVERLAYS
+	$(foreach dtso,$(ET_KERNEL_DT_OVERLAYS),$(call kernel-build,$(kernel_vendor)$(dtso).dtbo))
 endif
 	$(call kernel-build,modules)
 	$(call kernel-build,modules_install)
