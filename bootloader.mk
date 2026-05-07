@@ -102,23 +102,27 @@ endef
 
 define bootloader-depends
 	$(call software-check,$(ET_BOOTLOADER_TREE),bootloader$(ET_BOOTLOADER_VARIANT))
+	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-depends *****\n\n"
 	@mkdir -p $(ET_BOOTLOADER_DIR)/boot
 	@mkdir -p $(ET_BOOTLOADER_BUILD_DIR)
 	@mkdir -p $(shell dirname $(ET_BOOTLOADER_DEFCONFIG))
 	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.dts* $(ET_NOERR)`" ]; then \
+		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-depends found DTS files *****\n\n"; \
 		cp -v $(ET_BOARD_DIR)/dts/*.dts* \
 			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_BOOTLOADER_ARCH)/dts/; \
 	fi
 	@if [ -d $(ET_BOARD_DIR)/dts/u-boot ] && [ -n "`ls $(ET_BOARD_DIR)/dts/u-boot/*.dts* $(ET_NOERR)`" ]; then \
+		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-depends found U-Boot DTS files *****\n\n"; \
 		cp -v $(ET_BOARD_DIR)/dts/u-boot/*.dts* \
 			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_BOOTLOADER_ARCH)/dts/; \
-		if [ -d $(ET_BOOTLOADER_SOFTWARE_DIR)/dts/upstream/src/$(ET_BOOTLOADER_ARCH)/$(ET_BOARD_DT_PREFIX) ]; then \
-			cp -v $(ET_BOARD_DIR)/dts/u-boot/*.dts* \
-				$(ET_BOOTLOADER_SOFTWARE_DIR)/dts/upstream/src/$(ET_ARCH)/$(ET_BOARD_DT_PREFIX); \
-		fi; \
+	fi
+	@if grep OF_UPSTREAM $(ET_BOOTLOADER_DEFCONFIG); then \
+		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-depends using U-Boot OF_UPSTREAM *****\n\n"; \
+		cp -fv $(ET_BOARD_DIR)/dts/linux/$(ET_BOARD_DT_PREFIX)*.dts* \
+			$(ET_BOOTLOADER_SOFTWARE_DIR)/dts/upstream/src/$(ET_KERNEL_ARCH)/$(ET_BOARD_DT_PREFIX); \
 	fi
 	@if [ -f $(ET_BOOTLOADER_DEFCONFIG) ]; then \
-		rsync $(ET_BOOTLOADER_DEFCONFIG) $(ET_BOOTLOADER_SOFTWARE_DIR)/configs/ $(ET_NULL); \
+		rsync -v $(ET_BOOTLOADER_DEFCONFIG) $(ET_BOOTLOADER_SOFTWARE_DIR)/configs/ $(ET_NULL); \
 	fi
 	$(call bootloader-depends-$(ET_BOARD))
 endef
@@ -287,7 +291,6 @@ endef
 .PHONY: bootloader
 bootloader: $(ET_BIOS_LIST) $(ET_BOOTLOADER_TARGET_FINAL)
 $(ET_BOOTLOADER_TARGET_FINAL): $(ET_BOOTLOADER_BUILD_CONFIG)
-	$(call bootloader-prepare)
 	$(call bootloader-build)
 	$(call bootloader-finalize)
 
@@ -297,6 +300,7 @@ bootloader-%: $(ET_BIOS_LIST) $(ET_BOOTLOADER_BUILD_CONFIG)
 .PHONY: bootloader-config
 bootloader-config: $(ET_BOOTLOADER_BUILD_CONFIG)
 $(ET_BOOTLOADER_BUILD_CONFIG): $(ET_TOOLCHAIN_TARGET_FINAL)
+	$(call bootloader-prepare)
 	$(call bootloader-config)
 
 .PHONY: bootloader-clean
