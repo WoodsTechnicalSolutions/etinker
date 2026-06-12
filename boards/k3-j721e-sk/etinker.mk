@@ -12,6 +12,7 @@
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/ti/k3-j721e-main.dtsi
 # https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/ti/k3-j721e.dtsi
+# https://docs.u-boot.org/en/latest/board/ti/j721e_evm.html
 # ------------------------------------------------------------------------------
 #
 # This file is made available under the Creative Commons CC0 1.0

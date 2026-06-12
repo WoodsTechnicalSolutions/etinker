@@ -1,3 +1,6 @@
+# References:
+# - https://docs.u-boot.org/en/latest/board/ti/j721e_evm.html
+
 ifndef TI_K3_SOC
 $(info *** [ 'k3' requires TI_K3_SOC definition ] ***)
 $(error ABORTING ***)
