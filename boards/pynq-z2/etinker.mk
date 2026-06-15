@@ -52,3 +52,20 @@ endif
 ifdef ET_BOOTLOADER_VARIANT
 	export ET_BOOTLOADER_VARIANT :=
 endif
+
+define et-board-depends
+	@if [ -d $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga ]; then \
+		if [ -n "`ls $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/dts/linux/$(ET_KERNEL_VENDOR)*.dts* $(ET_NOERR)`" ]; then \
+			cp -v $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/dts/*.dts* \
+				$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/boot/dts/$(ET_KERNEL_VENDOR) $(ET_NOERR); \
+			cp -v $(ET_BOARD_DIR)/dts/linux/$(ET_KERNEL_VENDOR)*.dts* \
+				$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/boot/dts/$(ET_KERNEL_VENDOR) $(ET_NOERR); \
+		fi
+		if [ -n "`ls $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/dts/linux/$(ET_KERNEL_VENDOR)*.dts* $(ET_NOERR)`" ]; then \
+			cp -v $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/dts/*.dts* \
+				$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/boot/dts/$(ET_KERNEL_VENDOR) $(ET_NOERR); \
+			cp -v $(ET_BOARD_DIR)/dts/linux/$(ET_KERNEL_VENDOR)*.dts* \
+				$(ET_KERNEL_SOFTWARE_DIR)/arch/$(ET_KERNEL_ARCH)/boot/dts/$(ET_KERNEL_VENDOR) $(ET_NOERR); \
+		fi
+	fi
+endef

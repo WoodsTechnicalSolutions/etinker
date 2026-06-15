@@ -10,7 +10,7 @@ export ET_KERNEL_ZIMAGE := $(ET_KERNEL_DIR)/boot/zImage
 
 define kernel-depends-$(ET_BOARD_TYPE)
 	@if [ -d $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/sdk ]; then \
-		rsync -r $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/dts $(ET_BOARD_DIR)/ $(ET_NULL); \
+		rsync -rv $(ET_DIR)/boards/$(ET_BOARD_TYPE)/fpga/dts $(ET_BOARD_DIR)/ $(ET_NULL); \
 	else \
 		printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] FPGA BUILD IS MISSING! *****\n"; \
 		exit 2; \
