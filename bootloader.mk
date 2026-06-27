@@ -337,5 +337,9 @@ bootloader-update:
 bootloader-all:
 	$(call $@)
 
+.PHONY: bootloader-depends
+bootloader-depends:
+	$(call $@)
+
 endif
 # ET_BOARD_BOOTLOADER_TREE
