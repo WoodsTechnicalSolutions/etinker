@@ -1,165 +1,232 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-if [ -f /usr/bin/apt ]; then
+if which apt &> /dev/null; then
 	sudo apt update
+	if ! [ "$?" = "0" ];then
+		printf "APT Update Error!\n"
+		exit 1
+	fi
+	sudo apt full-upgrade -y
+	if ! [ "$?" = "0" ];then
+		printf "APT Full Upgrade Error!\n"
+		exit 1
+	fi
+
+	# crosstool-ng
+	# - https://github.com/crosstool-ng/crosstool-ng/blob/master/testing/docker/ubuntu22.04/Dockerfile
 	sudo apt install -y \
-		asciidoc \
 		autoconf \
-		autopoint \
-		bash-completion \
-		bc \
+		automake \
 		bison \
+		bzip2 \
+		flex \
+		g++ \
+		gawk \
+		gcc \
+		git \
+		gperf \
+		help2man \
+		libncurses5-dev \
+		libstdc++6 \
+		libtool-bin \
+		libtool \
+		rsync \
+		make \
+		meson \
+		ninja-build \
+		patch \
+		python3-dev \
+		texinfo \
+		unzip \
+		wget \
+		xz-utils
+	if ! [ "$?" = "0" ]; then
+		printf "APT Install Error! [ crosstool-ng ]\n"
+		exit 1
+	fi
+
+	# buildroot
+	# - https://buildroot.org/downloads/manual/manual.html#requirement
+	sudo apt install -y \
+		bash \
+		bc \
+		binutils \
 		build-essential \
-		ccache \
-		chrpath \
-		cifs-utils \
 		cmake \
-		cscope \
+		cpio \
 		curl \
 		cvs \
 		dblatex \
-		debootstrap \
-		device-tree-compiler \
-		dia \
-		dialog \
-		diffstat \
-		docbook-utils \
-		docbook2x \
-		dos2unix \
-		dosfstools \
-		exuberant-ctags \
-		fakeroot \
-		flex \
-		flip \
-		gawk \
-		gcc-doc \
+		default-jdk-headless \
+		diffutils \
+		file \
+		findutils \
 		g++-multilib \
 		gcc-multilib \
-		gettext \
-		git \
-		git-email \
-		gitg \
-		gitk \
-		gnupg \
-		gperf \
-		help2man \
-		indent \
-		inkscape \
-		intltool \
-		iproute2 \
-		less \
-		libasound2-dev \
-		libelf-dev \
-		libexpat1-dev \
-		libfreetype-dev \
+		graphviz \
+		gzip \
+		lib32stdc++6 \
+		lib32z1 \
+		libc6-i386 \
+		libgmp-dev \
 		libglade2-dev \
 		libglib2.0-dev \
-		libgmp-dev \
-		libgpiod-dev \
-		libgnutls28-dev \
 		libgtk2.0-dev \
-		libhidapi-dev \
-		libiberty-dev \
-		libinput-dev \
-		libjpeg-dev \
-		liblua5.1-0-dev \
-		liblua5.2-dev \
-		liblua5.3-dev \
-		liblua5.4-dev \
-		libluajit-5.1-dev \
+		libgtk-3-dev \
 		libmpc-dev \
-		libncurses-dev \
-		libnuma-dev \
-		libreadline-dev \
-		libsdl2-dev \
-		libsdl2-gfx-dev \
-		libsdl2-image-dev \
-		libsdl2-mixer-dev \
-		libsdl2-net-dev \
-		libsdl2-ttf-dev \
-		libselinux1 \
 		libssl-dev \
-		libtool \
-		libtool-bin \
-		libtracecmd-dev \
-		libtraceevent-dev \
-		libtracefs-dev \
-		libusb-1.0-0-dev \
-		libx11-dev \
-		libxext-dev \
-		libxml2-dev \
-		libxml2-utils \
-		libzstd-dev \
-		lrzsz \
-		lua5.1 \
-		lua5.2 \
-		lua5.3 \
-		lua5.4 \
-		luajit \
-		lzma \
-		lzop \
-		man-db \
-		manpages-dev \
-		manpages-posix-dev \
-		mc \
 		mercurial \
-		meson \
-		moreutils \
-		mtd-utils \
-		mtools \
-		netpbm \
-		net-tools \
-		ninja-build \
-		openssh-client \
-		openssh-server \
-		pahole \
-		patchelf \
-		pax \
-		pkg-config \
-		python-is-python3 \
-		python3-cryptography \
+		perl \
+		python3-aiohttp \
+		python3-argparse-addons \
+		python3-matplotlib \
 		python3-pip \
-		python3-pyelftools \
-		python3-jsonschema python3-jsonschema-specifications \
-		python3-all-dev libpython3-all-dev \
-		rlwrap \
-		rpm \
 		rsync \
-		schroot \
-		screen \
-		socat \
-		sshfs \
-		stow \
+		sed \
 		subversion \
-		sudo \
-		swig \
-		tcl \
-		texinfo \
-		tig \
-		tmux \
-		tofrodos \
-		tree \
-		trace-cmd \
+		tar \
 		u-boot-tools \
-		uucp \
-		uuid-dev \
-		unzip \
-		vim \
 		w3m \
-		wget \
-		whiptail \
-		whois \
-		xmlto \
-		xvfb \
-		xz-utils \
-		yamllint \
-		zip \
-		zlib1g-dev
-	if [ "`systemd-detect-virt`" = "none" ]; then
-		sudo apt install -y \
-			nfs-kernel-server
+		which
+	if ! [ "$?" = "0" ]; then
+		printf "APT Install Error! [ buildroot ]\n"
+		exit 1
 	fi
-	sudo apt autoremove
-	# Python3 packages
-	pip3 install asciidoc --break-system-packages
+
+	if [ -n "$1" ] && [ "$1" = "dev" ]; then
+		# etinker
+		sudo apt install -y \
+			ccache \
+			chrpath \
+			cifs-utils \
+			debootstrap \
+			default-jdk \
+			device-tree-compiler \
+			dialog \
+			diffstat \
+			docbook-utils \
+			docbook2x \
+			dos2unix \
+			dosfstools \
+			exuberant-ctags \
+			fakeroot \
+			flip \
+			gcc-doc \
+			gettext \
+			git-email \
+			gitg \
+			gitk \
+			gnupg \
+			indent \
+			inkscape \
+			intltool \
+			iproute2 \
+			less \
+			libasound2-dev \
+			libelf-dev \
+			libexpat1-dev \
+			libfreetype-dev \
+			libgpiod-dev \
+			libgnutls28-dev \
+			libhidapi-dev \
+			libiberty-dev \
+			libinput-dev \
+			libjpeg-dev \
+			liblua5.1-0-dev \
+			liblua5.2-dev \
+			liblua5.3-dev \
+			liblua5.4-dev \
+			libluajit-5.1-dev \
+			libncurses-dev \
+			libnuma-dev \
+			libreadline-dev \
+			libsdl2-dev \
+			libsdl2-gfx-dev \
+			libsdl2-image-dev \
+			libsdl2-mixer-dev \
+			libsdl2-net-dev \
+			libsdl2-ttf-dev \
+			libselinux1 \
+			libtracecmd-dev \
+			libtraceevent-dev \
+			libtracefs-dev \
+			libusb-1.0-0-dev \
+			libx11-dev \
+			libxext-dev \
+			libxml2-dev \
+			libxml2-utils \
+			libzstd-dev \
+			lrzsz \
+			lua5.1 \
+			lua5.2 \
+			lua5.3 \
+			lua5.4 \
+			luajit \
+			lzma \
+			lzop \
+			man-db \
+			manpages-dev \
+			manpages-posix-dev \
+			mc \
+			moreutils \
+			mtd-utils \
+			mtools \
+			netpbm \
+			net-tools \
+			openssh-client \
+			openssh-server \
+			pahole \
+			patchelf \
+			pax \
+			pkg-config \
+			python-is-python3 \
+			python3-cryptography \
+			python3-pyelftools \
+			python3-jsonschema python3-jsonschema-specifications \
+			python3-all-dev libpython3-all-dev \
+			rlwrap \
+			rpm \
+			schroot \
+			screen \
+			snap \
+			snapd \
+			socat \
+			sshfs \
+			stow \
+			sudo \
+			swig \
+			tcl \
+			texinfo \
+			tig \
+			tmux \
+			tofrodos \
+			tree \
+			trace-cmd \
+			uucp \
+			uuid-dev \
+			vim \
+			whiptail \
+			whois \
+			xmlto \
+			xvfb \
+			yamllint \
+			zip \
+			zlib1g-dev
+		if ! [ "$?" = "0" ]; then
+			printf "APT Install Error! [ dev ]\n"
+			exit 1
+		fi
+	fi
 fi
+
+# Clean local package cache
+sudo apt clean
+
+# Cleanup dangling packages
+sudo apt autoremove
+
+# Python3 packages
+pip3 install asciidoc --break-system-packages
+
+# We like 'bash'
+(cd /bin && sudo ln -sf bash sh)
