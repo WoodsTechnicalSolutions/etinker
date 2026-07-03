@@ -183,6 +183,7 @@ define trace-cmd-config
 				--default-library=shared \
 				--buildtype=debug \
 				--cross-file=$(ET_ROOTFS_BUILD_DIR)/host/etc/meson/cross-compilation.conf \
+				-Ddoc=false \
 				-Db_pie=false \
 				-Dstrip=false \
 				-Dpython=false \
