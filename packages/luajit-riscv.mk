@@ -13,6 +13,9 @@ ifeq (riscv,$(shell echo $(ET_ARCH) | grep -o riscv))
 
 export ET_LUAJIT_RISCV_TREE := luajit-riscv
 export ET_LUAJIT_RISCV_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_LUAJIT_RISCV_TREE)
+ifeq (missing,$(shell test -d $(ET_LUAJIT_RISCV_SOFTWARE_DIR) && test -f $(ET_LUAJIT_RISCV_SOFTWARE_DIR)/Makefile && printf found || printf missing))
+$(error [ 'etinker' missing luajit-riscv source directory '$(ET_LUAJIT_RISCV_SOFTWARE_DIR)' ] ***)
+endif
 export ET_LUAJIT_RISCV_VERSION := $(shell cd $(ET_LUAJIT_RISCV_SOFTWARE_DIR) $(ET_NOERR) && git describe --long --dirty $(ET_NOERR))
 export ET_LUAJIT_RISCV_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) luajit-riscv-ref)
 export ET_LUAJIT_RISCV_BUILD_DIR := $(ET_LUAJIT_RISCV_SOFTWARE_DIR)

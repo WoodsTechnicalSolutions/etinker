@@ -17,6 +17,9 @@ ifdef ET_BOARD_ROOTFS_TREE
 
 export ET_OPENSSL_TREE := openssl
 export ET_OPENSSL_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_OPENSSL_TREE)
+ifeq (missing,$(shell test -d $(ET_OPENSSL_SOFTWARE_DIR) && test -f $(ET_OPENSSL_SOFTWARE_DIR)/Configure && printf found || printf missing))
+$(error [ 'etinker' missing openssl source directory '$(ET_OPENSSL_SOFTWARE_DIR)' ] ***)
+endif
 export ET_OPENSSL_VERSION := $(shell cd $(ET_OPENSSL_SOFTWARE_DIR) $(ET_NOERR) && git describe --long --dirty $(ET_NOERR))
 export ET_OPENSSL_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) openssl-ref)
 export ET_OPENSSL_BUILD_DIR := $(ET_OVERLAY_BUILD_DIR)/$(ET_OPENSSL_TREE)

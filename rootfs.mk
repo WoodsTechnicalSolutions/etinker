@@ -22,6 +22,9 @@ endif
 export ET_ROOTFS_TYPE := $(ET_BOARD_ROOTFS_TYPE)$(ET_ROOTFS_VARIANT)
 export ET_ROOTFS_TREE := $(ET_BOARD_ROOTFS_TREE)
 export ET_ROOTFS_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_ROOTFS_TREE)
+ifeq (missing,$(shell test -d $(ET_ROOTFS_SOFTWARE_DIR) && test -f $(ET_ROOTFS_SOFTWARE_DIR)/Makefile && printf found || printf missing))
+$(error [ 'etinker' missing rootfs source directory '$(ET_ROOTFS_SOFTWARE_DIR)' ] ***)
+endif
 export ET_ROOTFS_HOSTNAME := $(ET_BOARD_HOSTNAME)
 export ET_ROOTFS_GETTY_PORT := $(ET_BOARD_GETTY_PORT)
 export ET_ROOTFS_ISSUE := $(shell printf "etinker: $(ET_BOARD)")

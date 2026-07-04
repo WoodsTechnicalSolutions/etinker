@@ -16,6 +16,9 @@ ifdef ET_BOARD_ROOTFS_TREE
 
 export ET_WIRELESS_REGDB_TREE := wireless-regdb
 export ET_WIRELESS_REGDB_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_WIRELESS_REGDB_TREE)
+ifeq (missing,$(shell test -d $(ET_WIRELESS_REGDB_SOFTWARE_DIR) && test -f $(ET_WIRELESS_REGDB_SOFTWARE_DIR)/Makefile && printf found || printf missing))
+$(error [ 'etinker' missing wireless-regdb source directory '$(ET_WIRELESS_REGDB_SOFTWARE_DIR)' ] ***)
+endif
 export ET_WIRELESS_REGDB_VERSION := $(shell cd $(ET_WIRELESS_REGDB_SOFTWARE_DIR) $(ET_NOERR) && git describe --long --dirty $(ET_NOERR))
 export ET_WIRELESS_REGDB_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) wireless-regdb-ref)
 export ET_WIRELESS_REGDB_BUILD_X509_PEM := $(ET_WIRELESS_REGDB_SOFTWARE_DIR)/wens.x509.pem

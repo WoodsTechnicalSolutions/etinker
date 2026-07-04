@@ -19,6 +19,9 @@ ifdef ET_BOARD_ROOTFS_TREE
 
 export ET_TRACE_CMD_TREE := trace-cmd
 export ET_TRACE_CMD_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_TRACE_CMD_TREE)
+ifeq (missing,$(shell test -d $(ET_TRACE_CMD_SOFTWARE_DIR) && test -f $(ET_TRACE_CMD_SOFTWARE_DIR)/Makefile && printf found || printf missing))
+$(error [ 'etinker' missing trace-cmd source directory '$(ET_TRACE_CMD_SOFTWARE_DIR)' ] ***)
+endif
 export ET_TRACE_CMD_VERSION := $(shell cd $(ET_TRACE_CMD_SOFTWARE_DIR) $(ET_NOERR) && git describe --dirty $(ET_NOERR) | cut -d '-' -f 3)
 export ET_TRACE_CMD_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) trace-cmd-ref)
 export ET_TRACE_CMD_BUILD_DIR := $(ET_OVERLAY_BUILD_DIR)/$(ET_TRACE_CMD_TREE)
@@ -29,6 +32,9 @@ export ET_TRACE_CMD_TARGET_FINAL ?= $(ET_TRACE_CMD_BIN)
 
 export ET_TRACE_EVENT_TREE := libtraceevent
 export ET_TRACE_EVENT_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_TRACE_EVENT_TREE)
+ifeq (missing,$(shell test -d $(ET_TRACE_EVENT_SOFTWARE_DIR) && test -f $(ET_TRACE_EVENT_SOFTWARE_DIR)/Makefile && printf found || printf missing))
+$(error [ 'etinker' missing libtraceevent source directory '$(ET_TRACE_EVENT_SOFTWARE_DIR)' ] ***)
+endif
 export ET_TRACE_EVENT_VERSION := $(shell cd $(ET_TRACE_EVENT_SOFTWARE_DIR) $(ET_NOERR) && git describe --dirty $(ET_NOERR) | cut -d '-' -f 2)
 export ET_TRACE_EVENT_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) libtraceevent-ref)
 export ET_TRACE_EVENT_BUILD_DIR := $(ET_OVERLAY_BUILD_DIR)/$(ET_TRACE_EVENT_TREE)
@@ -39,6 +45,9 @@ export ET_TRACE_EVENT_TARGET_FINAL ?= $(ET_TRACE_EVENT_LIB)
 
 export ET_TRACE_FS_TREE := libtracefs
 export ET_TRACE_FS_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_TRACE_FS_TREE)
+ifeq (missing,$(shell test -d $(ET_TRACE_FS_SOFTWARE_DIR) && test -f $(ET_TRACE_FS_SOFTWARE_DIR)/Makefile && printf found || printf missing))
+$(error [ 'etinker' missing libtracefs source directory '$(ET_TRACE_FS_SOFTWARE_DIR)' ] ***)
+endif
 export ET_TRACE_FS_VERSION := $(shell cd $(ET_TRACE_FS_SOFTWARE_DIR) $(ET_NOERR) && git describe --dirty $(ET_NOERR) | cut -d '-' -f 2)
 export ET_TRACE_FS_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) libtracefs-ref)
 export ET_TRACE_FS_BUILD_DIR := $(ET_OVERLAY_BUILD_DIR)/$(ET_TRACE_FS_TREE)

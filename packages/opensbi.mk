@@ -13,6 +13,9 @@ ifeq (opensbi,$(shell echo $(ET_BOARD_BIOS_LIST) | grep -oe opensbi))
 
 export ET_OPENSBI_TREE := opensbi
 export ET_OPENSBI_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_OPENSBI_TREE)
+ifeq (missing,$(shell test -d $(ET_OPENSBI_SOFTWARE_DIR) && test -f $(ET_OPENSBI_SOFTWARE_DIR)/Makefile && printf found || printf missing))
+$(error [ 'etinker' missing opensbi source directory '$(ET_OPENSBI_SOFTWARE_DIR)' ] ***)
+endif
 export ET_OPENSBI_VERSION := $(shell cd $(ET_OPENSBI_SOFTWARE_DIR) $(ET_NOERR) && git describe --long --dirty $(ET_NOERR))
 export ET_OPENSBI_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) opensbi-ref)
 export ET_OPENSBI_BUILD_DIR := $(ET_BIOS_BUILD_DIR)/$(ET_OPENSBI_TREE)

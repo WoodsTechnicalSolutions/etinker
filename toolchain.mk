@@ -25,6 +25,9 @@ export ET_TOOLCHAIN_DIR := /usr
 else
 export ET_TOOLCHAIN_TREE := $(ET_BOARD_TOOLCHAIN_TREE)
 export ET_TOOLCHAIN_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE)
+ifeq (missing,$(shell test -d $(ET_TOOLCHAIN_SOFTWARE_DIR) && test -f $(ET_TOOLCHAIN_SOFTWARE_DIR)/Makefile.am && printf found || printf missing))
+$(error [ 'etinker' missing toolchain source directory '$(ET_TOOLCHAIN_SOFTWARE_DIR)' ] ***)
+endif
 toolchain_version = $(shell cd $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE)/ $(ET_NOERR) && git describe --tags $(ET_NOERR))
 export ET_TOOLCHAIN_VERSION := $(shell printf "%s" $(toolchain_version) | sed s,crosstool-ng-,,)
 export ET_TOOLCHAIN_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) toolchain-ref)

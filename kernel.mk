@@ -32,6 +32,9 @@ export ET_KERNEL_DT_OVERLAYS := $(ET_BOARD_KERNEL_DT_OVERLAYS)
 endif
 export ET_KERNEL_LOADADDR := $(ET_BOARD_KERNEL_LOADADDR)
 export ET_KERNEL_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_KERNEL_TREE)
+ifeq (missing,$(shell test -d $(ET_KERNEL_SOFTWARE_DIR) && test -f $(ET_KERNEL_SOFTWARE_DIR)/Makefile && printf found || printf missing))
+$(error [ 'etinker' missing kernel source directory '$(ET_KERNEL_SOFTWARE_DIR)' ] ***)
+endif
 export ET_KERNEL_HEADERS_DIR ?= $(ET_TOOLCHAIN_SYSROOT_DIR)/usr/include
 export ET_KERNEL_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) kernel$(ET_KERNEL_VARIANT)-ref)
 export ET_KERNEL_CROSS_PARAMS := ARCH=$(ET_KERNEL_ARCH) CROSS_COMPILE=$(ET_CROSS_COMPILE)

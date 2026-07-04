@@ -19,6 +19,9 @@ module_build_dir := $(ET_DIR)/overlay/build/$(ET_KERNEL_TYPE)/$(ET_CROSS_TUPLE)
 
 export ET_CRYPTODEV_LINUX_TREE := cryptodev-linux
 export ET_CRYPTODEV_LINUX_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_CRYPTODEV_LINUX_TREE)
+ifeq (missing,$(shell test -d $(ET_CRYPTODEV_LINUX_SOFTWARE_DIR) && test -f $(ET_CRYPTODEV_LINUX_SOFTWARE_DIR)/Makefile && printf found || printf missing))
+$(error [ 'etinker' missing cryptodev-linux source directory '$(ET_CRYPTODEV_LINUX_SOFTWARE_DIR)' ] ***)
+endif
 export ET_CRYPTODEV_LINUX_VERSION := $(shell cd $(ET_CRYPTODEV_LINUX_SOFTWARE_DIR) $(ET_NOERR) && git describe --long --dirty $(ET_NOERR))
 export ET_CRYPTODEV_LINUX_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) cryptodev-linux-ref)
 export ET_CRYPTODEV_LINUX_BUILD_DIR := $(module_build_dir)/$(ET_CRYPTODEV_LINUX_TREE)

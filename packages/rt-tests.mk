@@ -16,6 +16,9 @@ ifdef ET_BOARD_ROOTFS_TREE
 
 export ET_RT_TESTS_TREE := rt-tests
 export ET_RT_TESTS_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_RT_TESTS_TREE)
+ifeq (missing,$(shell test -d $(ET_RT_TESTS_SOFTWARE_DIR) && test -f $(ET_RT_TESTS_SOFTWARE_DIR)/Makefile && printf found || printf missing))
+$(error [ 'etinker' missing rt-tests source directory '$(ET_RT_TESTS_SOFTWARE_DIR)' ] ***)
+endif
 export ET_RT_TESTS_VERSION := $(shell cd $(ET_RT_TESTS_SOFTWARE_DIR) $(ET_NOERR) && git describe --long --dirty $(ET_NOERR))
 export ET_RT_TESTS_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) rt-tests-ref)
 export ET_RT_TESTS_BUILD_DIR := $(ET_OVERLAY_BUILD_DIR)/$(ET_RT_TESTS_TREE)

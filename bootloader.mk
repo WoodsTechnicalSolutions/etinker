@@ -22,6 +22,9 @@ endif
 export ET_BOOTLOADER_TYPE := $(ET_BOARD_BOOTLOADER_TYPE)
 export ET_BOOTLOADER_TREE := $(ET_BOARD_BOOTLOADER_TREE)
 export ET_BOOTLOADER_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_BOOTLOADER_TREE)
+ifeq (missing,$(shell test -d $(ET_BOOTLOADER_SOFTWARE_DIR) && test -f $(ET_BOOTLOADER_SOFTWARE_DIR)/Makefile && printf found || printf missing))
+$(error [ 'etinker' missing bootloader source directory '$(ET_BOOTLOADER_SOFTWARE_DIR)' ] ***)
+endif
 export ET_BOOTLOADER_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) bootloader$(ET_BOOTLOADER_VARIANT)-ref)
 
 bootloader_defconfig := et_$(subst -,_,$(ET_BOOTLOADER_TYPE))_defconfig
