@@ -109,17 +109,12 @@ define bootloader-depends
 	@mkdir -p $(ET_BOOTLOADER_DIR)/boot
 	@mkdir -p $(ET_BOOTLOADER_BUILD_DIR)
 	@mkdir -p $(shell dirname $(ET_BOOTLOADER_DEFCONFIG))
-	@if [ -d $(ET_BOARD_DIR)/dts ] && [ -n "`ls $(ET_BOARD_DIR)/dts/*.dts* $(ET_NOERR)`" ]; then \
-		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-depends found DTS files *****\n\n"; \
-		cp -v $(ET_BOARD_DIR)/dts/*.dts* \
-			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_BOOTLOADER_ARCH)/dts/; \
-	fi
-	@if [ -d $(ET_BOARD_DIR)/dts/u-boot ] && [ -n "`ls $(ET_BOARD_DIR)/dts/u-boot/*.dts* $(ET_NOERR)`" ]; then \
+	@if [ -d $(ET_BOARD_DIR)/dts/u-boot ] && [ -n "`ls $(ET_BOARD_DIR)/dts/u-boot/$(ET_BOARD_DT_PREFIX)*.dts* $(ET_NOERR)`" ]; then \
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-depends found U-Boot DTS files *****\n\n"; \
-		cp -v $(ET_BOARD_DIR)/dts/u-boot/*.dts* \
+		cp -v $(ET_BOARD_DIR)/dts/u-boot/$(ET_BOARD_DT_PREFIX)*.dts* \
 			$(ET_BOOTLOADER_SOFTWARE_DIR)/arch/$(ET_BOOTLOADER_ARCH)/dts/; \
 	fi
-	@if grep OF_UPSTREAM $(ET_BOOTLOADER_DEFCONFIG) && [ -n "`ls $(ET_BOARD_DIR)/dts/linux/$(ET_BOARD_DT_PREFIX)*.dts* $(ET_NOERR)`" ]; then \
+	@if grep --quiet OF_UPSTREAM $(ET_BOOTLOADER_DEFCONFIG) && [ -n "`ls $(ET_BOARD_DIR)/dts/linux/$(ET_BOARD_DT_PREFIX)*.dts* $(ET_NOERR)`" ]; then \
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-depends using U-Boot OF_UPSTREAM *****\n\n"; \
 		cp -fv $(ET_BOARD_DIR)/dts/linux/$(ET_BOARD_DT_PREFIX)*.dts* \
 			$(ET_BOOTLOADER_SOFTWARE_DIR)/dts/upstream/src/$(ET_KERNEL_ARCH)/$(ET_BOARD_DT_PREFIX); \
