@@ -22,10 +22,10 @@ export ET_BOOTLOADER_BUILD_SPL := $(ET_BOOTLOADER_BUILD_DIR)/$(ET_BOARD_BOOTLOAD
 export ET_BOOTLOADER_SPL := $(ET_BOOTLOADER_DIR)/boot/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
 
 export TI_K3_BOOT_FIRMWARE_DIR := $(ET_SOFTWARE_DIR)/ti/ti-linux-firmware
-export TI_K3_BOOT_FIRMWARE_VERSION ?= 12.00.00.08
+export TI_K3_BOOT_FIRMWARE_VERSION ?= 12.01.00.05
 
 export TI_K3_ATF_DIR := $(ET_SOFTWARE_DIR)/ti/arm-trusted-firmware
-export TI_K3_ATF_VERSION ?= v2.14.0
+export TI_K3_ATF_VERSION ?= lts-v2.14.5
 
 export TI_K3_OPTEE_OS_DIR := $(ET_SOFTWARE_DIR)/ti/optee_os
 export TI_K3_OPTEE_OS_VERSION ?= 4.9.0
@@ -91,7 +91,7 @@ define bootloader-prepare-common
 			CROSS_COMPILE64=$(TI_ARM64_CROSS_TUPLE)- \
 			PLATFORM=$(TI_K3_OPTEE_OS_PLATFORM) \
 			CFG_ARM64_core=y \
-			clean all)
+			$(shell echo $(ET_CLEAN) | grep yes && print clean) all)
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Building $(TI_K3_ATF_VERSION) of 'arm-trusted-firmware' *****\n\n"
 	@if ! [ -d $(TI_K3_ATF_DIR) ]; then \
 		(cd $(ET_SOFTWARE_DIR)/ti && \
@@ -110,7 +110,7 @@ define bootloader-prepare-common
 			PLAT=k3 \
 			TARGET_BOARD=generic \
 			SPD=opteed \
-			clean all)
+			$(shell echo $(ET_CLEAN) | grep yes && print clean) all)
 endef
 
 define bootloader-finalize-common
