@@ -7,6 +7,14 @@
 # available under the terms of the GNU General Public License version 3.
 #
 
+ET_HOST_ARCH ?= $(shell uname -m|tr -d \\n)
+ET_HOST_OS ?= $(shell uname -o|tr -d \\n)
+ET_HOST_OS_ID ?= $(shell lsb_release -i|cut -f 2|tr -d \\n)
+ET_HOST_OS_DESC ?= $(shell lsb_release -d|cut -f 2|tr -d \\n)
+ET_HOST_OS_CODENAME ?= $(shell lsb_release -c|cut -f 2|tr -d \\n)
+ET_HOST_OS_RELEASE ?= $(shell lsb_release -r|cut -f 2|tr -d \\n)
+ET_HOST_OS_MESSAGE := $(ET_HOST_OS_ID) $(ET_HOST_ARCH) $(ET_HOST_OS_RELEASE) $(ET_HOST_OS_CODENAME)
+
 .PHONY: all
 all:
 	$(error USAGE: 'ET_BOARD=<board> make sandbox' ***)
@@ -97,7 +105,10 @@ info:
 	fi
 	@printf "ET_ABI: $(ET_ABI)\n"
 	@printf "ET_CROSS_TUPLE: $(ET_CROSS_TUPLE)\n"
+	@printf "ET_HOST_ARCH: $(ET_HOST_ARCH)\n"
+	@printf "ET_HOST_OS: $(ET_HOST_OS)\n"
 	@printf "ET_HOST_OS_ID: $(ET_HOST_OS_ID)\n"
+	@printf "ET_HOST_OS_DESC: $(ET_HOST_OS_DESC)\n"
 	@printf "ET_HOST_OS_CODENAME: $(ET_HOST_OS_CODENAME)\n"
 	@printf "ET_HOST_OS_RELEASE: $(ET_HOST_OS_RELEASE)\n"
 	@printf "ET_CLEAN: $(ET_CLEAN)\n"
@@ -122,3 +133,13 @@ info:
 	@printf "========================================================================\n"
 	@printf "PATH: $(PATH)\n"
 	@printf "========================================================================\n"
+
+show-%:
+	@case "$(*F)" in \
+	host) \
+		printf "$(ET_HOST_OS_MESSAGE)\n"; \
+		;; \
+	*) \
+		exit 1; \
+		;; \
+	esac
