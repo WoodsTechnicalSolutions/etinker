@@ -89,7 +89,8 @@ if which apt &> /dev/null; then
 		tar \
 		u-boot-tools \
 		w3m \
-		which
+		which \
+		x11-utils
 	if ! [ "$?" = "0" ]; then
 		printf "APT Install Error! [ buildroot ]\n"
 		exit 1
@@ -311,7 +312,8 @@ if which pacman &> /dev/null && [ -n "${is_arch}" ] || [ -n "${is_artix}" ]; the
 		tar \
 		uboot-tools \
 		w3m \
-		which
+		which \
+		xorg-xlsclients
 	if ! [ "$?" = "0" ]; then
 		printf "pacman Install Error! [ buildroot ]\n"
 		exit 1
