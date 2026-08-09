@@ -30,12 +30,12 @@ if which apt &> /dev/null; then
 		libstdc++6 \
 		libtool-bin \
 		libtool \
-		rsync \
 		make \
 		meson \
 		ninja-build \
 		patch \
 		python3-dev \
+		rsync \
 		texinfo \
 		unzip \
 		wget \
@@ -74,7 +74,9 @@ if which apt &> /dev/null; then
 		libgtk2.0-dev \
 		libgtk-3-dev \
 		libmpc-dev \
+		libsecret-1-dev \
 		libssl-dev \
+		libxss-dev \
 		mercurial \
 		perl \
 		python3-aiohttp \
@@ -217,16 +219,208 @@ if which apt &> /dev/null; then
 			exit 1
 		fi
 	fi
+
+	# Clean local package cache
+	sudo apt clean
+
+	# Cleanup dangling packages
+	sudo apt autoremove
 fi
 
-# Clean local package cache
-sudo apt clean
+is_arch="$(grep -q Arch /etc/os-release && printf ok)"
+is_artix="$(grep -q Artix /etc/os-release && printf ok)"
+if which pacman &> /dev/null && [ -n "${is_arch}" ] || [ -n "${is_artix}" ]; then
+	sudo pacman -Syu --quiet --color auto --noprogressbar --needed --noconfirm
+	if ! [ "$?" = "0" ]; then
+		printf "Upgrade Error!\n"
+		exit 1
+	fi
+	if which yay &> /dev/null; then
+		yay --answerdiff None --answerclean None --noremovemake --noconfirm -Syu
+	fi
 
-# Cleanup dangling packages
-sudo apt autoremove
+	# crosstool-ng
+	# - https://github.com/crosstool-ng/crosstool-ng/blob/master/testing/docker/ubuntu22.04/Dockerfile
+	sudo pacman -S --quiet --color auto --noprogressbar --needed --noconfirm \
+		autoconf \
+		automake \
+		bison \
+		bzip2 \
+		flex \
+		gawk \
+		gcc \
+		git \
+		gperf \
+		help2man \
+		ncurses \
+		libstdc++ \
+		libtool \
+		make \
+		meson \
+		ninja \
+		patch \
+		python \
+		rsync \
+		texinfo \
+		unzip \
+		wget \
+		xz
+	if ! [ "$?" = "0" ]; then
+		printf "pacman Install Error! [ crosstool-ng ]\n"
+		exit 1
+	fi
+
+	# buildroot
+	# - https://buildroot.org/downloads/manual/manual.html#requirement
+	sudo pacman -S --quiet --color auto --noprogressbar --needed --noconfirm \
+		alsa-lib \
+		bash \
+		bc \
+		binutils \
+		cmake \
+		cpio \
+		curl \
+		cvs \
+		dblatex \
+		diffutils \
+		file \
+		findutils \
+		graphviz \
+		gptfdisk \
+		gzip \
+		jdk25-openjdk \
+		gmp \
+		glade \
+		glib2-devel \
+		gtk2 \
+		gtk3 \
+		gtk4 \
+		libsecret \
+		libxss \
+		mpc \
+		openssl \
+		mercurial \
+		multilib-devel \
+		perl \
+		python-aiohttp \
+		python-argparse-manpage \
+		python-matplotlib \
+		python-pip \
+		sed \
+		subversion \
+		tar \
+		uboot-tools \
+		w3m \
+		which
+	if ! [ "$?" = "0" ]; then
+		printf "pacman Install Error! [ buildroot ]\n"
+		exit 1
+	fi
+
+	if [ -n "$1" ] && [ "$1" = "dev" ]; then
+		# etinker
+		sudo pacman -S --quiet --color auto --noprogressbar --needed --noconfirm \
+			ccache \
+			chrpath \
+			cifs-utils \
+			ctags \
+			debootstrap \
+			dialog \
+			diffstat \
+			docbook-utils \
+			docbook2x \
+			dos2unix \
+			dosfstools \
+			dtc \
+			expat \
+			fakeroot \
+			flip-link \
+			freetype2 \
+			gettext \
+			gitg \
+			gnupg \
+			gnutls \
+			gvim \
+			hidapi \
+			indent \
+			inkscape \
+			intltool \
+			iproute2 \
+			less \
+			libelf \
+			libgpiod \
+			libinput \
+			libjpeg-turbo \
+			libusb \
+			libx11 \
+			libxext \
+			libxml2 \
+			lrzsz \
+			lua51 \
+			lua52 \
+			lua53 \
+			lua54 \
+			luajit \
+			lzop \
+			man-db \
+			man-pages \
+			man-pages-utils \
+			mc \
+			moreutils \
+			mtd-utils \
+			mtools \
+			netpbm \
+			net-tools \
+			numa \
+			numactl \
+			openssh \
+			pahole \
+			patchelf \
+			pax \
+			pkgconf \
+			python-cryptography \
+			python-pyelftools \
+			python-jsonschema python-jsonschema-specifications \
+			readline \
+			rlwrap \
+			rpm-tools \
+			schroot \
+			screen \
+			sdl2_gfx \
+			sdl2_image \
+			sdl2_mixer \
+			sdl2_net \
+			sdl2_ttf \
+			socat \
+			sshfs \
+			stow \
+			sudo \
+			swig \
+			tcl \
+			texinfo \
+			tig \
+			tk \
+			tmux \
+			tree \
+			trace-cmd \
+			uucp \
+			whois \
+			xmlto \
+			xorg-server-xvfb \
+			yamllint \
+			zip \
+			zlib-ng \
+			zlib \
+			zstd
+		if ! [ "$?" = "0" ]; then
+			printf "pacman Install Error! [ dev ]\n"
+			exit 1
+		fi
+	fi
+fi
 
 # Python3 packages
 pip3 install asciidoc --break-system-packages
 
 # We like 'bash'
-(cd /bin && sudo ln -sf bash sh)
+$(ls -l /bin/sh | grep -q bash) || (cd /bin && sudo ln -sf bash sh && ls -l sh)
