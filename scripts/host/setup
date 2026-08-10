@@ -305,8 +305,15 @@ if which pacman &> /dev/null && [ -n "${is_arch}" ] || [ -n "${is_artix}" ]; the
 		perl \
 		python-aiohttp \
 		python-argparse-manpage \
+		python-build \
+		python-deprecated \
+		python-deprecation \
+		python-installer \
 		python-matplotlib \
 		python-pip \
+		python-setuptools \
+		python-uv \
+		python-virtualenv \
 		sed \
 		subversion \
 		tar \
