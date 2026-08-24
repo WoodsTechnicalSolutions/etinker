@@ -126,6 +126,7 @@ if which apt &> /dev/null; then
 			iproute2 \
 			less \
 			libasound2-dev \
+			libc-dev-bin \
 			libelf-dev \
 			libexpat1-dev \
 			libfreetype-dev \
@@ -314,6 +315,7 @@ if which pacman &> /dev/null && [ -n "${is_arch}" ] || [ -n "${is_artix}" ]; the
 		python-setuptools \
 		python-uv \
 		python-virtualenv \
+		rpcsvc-proto \
 		sed \
 		subversion \
 		tar \
