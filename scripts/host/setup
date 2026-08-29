@@ -70,7 +70,6 @@ if which apt &> /dev/null; then
 		libc6-i386 \
 		libgmp-dev \
 		libglib2.0-dev \
-		libgtk2.0-dev \
 		libgtk-3-dev \
 		libmpc-dev \
 		libsecret-1-dev \
@@ -292,7 +291,6 @@ if which pacman &> /dev/null && [ -n "${is_arch}" ] || [ -n "${is_artix}" ]; the
 		jdk25-openjdk \
 		gmp \
 		glib2-devel \
-		gtk2 \
 		gtk3 \
 		gtk4 \
 		libsecret \
