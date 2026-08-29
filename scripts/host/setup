@@ -69,7 +69,6 @@ if which apt &> /dev/null; then
 		lib32z1 \
 		libc6-i386 \
 		libgmp-dev \
-		libglade2-dev \
 		libglib2.0-dev \
 		libgtk2.0-dev \
 		libgtk-3-dev \
@@ -292,7 +291,6 @@ if which pacman &> /dev/null && [ -n "${is_arch}" ] || [ -n "${is_artix}" ]; the
 		gzip \
 		jdk25-openjdk \
 		gmp \
-		glade \
 		glib2-devel \
 		gtk2 \
 		gtk3 \
