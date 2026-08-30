@@ -457,6 +457,13 @@ if which pacman &> /dev/null && [ -n "${is_arch}" ] || [ -n "${is_artix}" ]; the
 			exit 1
 		fi
 	fi
+
+	# ccache fixup
+	if ! [ -L "/usr/lib/ccache/cc" ] && [ -L "/usr/lib/ccache/bin/cc" ]; then
+		for f in `ls "/usr/lib/ccache/bin/"`; do
+			(cd "/usr/lib/ccache" && sudo ln -sf bin/$f)
+		done
+	fi
 fi
 
 # Python3 packages
