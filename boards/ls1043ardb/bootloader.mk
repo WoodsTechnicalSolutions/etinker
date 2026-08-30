@@ -51,6 +51,9 @@ define bootloader-finalize-$(ET_BOARD)
 		git restore . && git clean -df && \
 		git fetch --all && git fetch --tags && \
 		git checkout $(LF_ATF_VERSION) && echo && \
+		(for p in $(shell ls $(ET_BOARD_DIR)/patches/atf/*.patch); do \
+			patch --no-backup-if-mismatch -p1 -i $$p $(ET_NOERR); \
+		done) && \
 		make PLAT=$(LSDK_MACHINE) clean && \
 		make ARCH=aarch64 CROSS_COMPILE=$(ET_CROSS_TUPLE)- \
 			PLAT=$(LSDK_MACHINE) bl2 \
