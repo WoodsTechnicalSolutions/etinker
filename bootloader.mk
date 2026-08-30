@@ -116,8 +116,10 @@ define bootloader-depends
 	fi
 	@if grep --quiet OF_UPSTREAM $(ET_BOOTLOADER_DEFCONFIG) && [ -n "`ls $(ET_BOARD_DIR)/dts/linux/$(ET_BOARD_DT_PREFIX)*.dts* $(ET_NOERR)`" ]; then \
 		printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] call bootloader-depends using U-Boot OF_UPSTREAM *****\n\n"; \
-		cp -fv $(ET_BOARD_DIR)/dts/linux/$(ET_BOARD_DT_PREFIX)*.dts* \
-			$(ET_BOOTLOADER_SOFTWARE_DIR)/dts/upstream/src/$(ET_KERNEL_ARCH)/$(ET_BOARD_DT_PREFIX); \
+		if [ -d "$(ET_BOOTLOADER_SOFTWARE_DIR)/dts/upstream/src/$(ET_KERNEL_ARCH)/$(ET_BOARD_DT_PREFIX)" ]; then \
+			cp -fv $(ET_BOARD_DIR)/dts/linux/$(ET_BOARD_DT_PREFIX)*.dts* \
+				$(ET_BOOTLOADER_SOFTWARE_DIR)/dts/upstream/src/$(ET_KERNEL_ARCH)/$(ET_BOARD_DT_PREFIX); \
+		fi; \
 	fi
 	@if [ -f $(ET_BOOTLOADER_DEFCONFIG) ]; then \
 		rsync -v $(ET_BOOTLOADER_DEFCONFIG) $(ET_BOOTLOADER_SOFTWARE_DIR)/configs/ $(ET_NULL); \
