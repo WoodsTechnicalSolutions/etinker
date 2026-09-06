@@ -22,10 +22,10 @@ export ET_BOOTLOADER_BUILD_SPL := $(ET_BOOTLOADER_BUILD_DIR)/$(ET_BOARD_BOOTLOAD
 export ET_BOOTLOADER_SPL := $(ET_BOOTLOADER_DIR)/boot/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
 
 export TI_K3_BOOT_FIRMWARE_DIR := $(ET_SOFTWARE_DIR)/ti/ti-linux-firmware
-export TI_K3_BOOT_FIRMWARE_VERSION ?= 12.01.00.05
+export TI_K3_BOOT_FIRMWARE_VERSION ?= 12.01.00.06
 
 export TI_K3_ATF_DIR := $(ET_SOFTWARE_DIR)/ti/arm-trusted-firmware
-export TI_K3_ATF_VERSION ?= lts-v2.14.5
+export TI_K3_ATF_VERSION ?= 12.01.00.05
 
 export TI_K3_OPTEE_OS_DIR := $(ET_SOFTWARE_DIR)/ti/optee_os
 export TI_K3_OPTEE_OS_VERSION ?= 4.9.0
@@ -95,7 +95,7 @@ define bootloader-prepare-common
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Building $(TI_K3_ATF_VERSION) of 'arm-trusted-firmware' *****\n\n"
 	@if ! [ -d $(TI_K3_ATF_DIR) ]; then \
 		(cd $(ET_SOFTWARE_DIR)/ti && \
-			git clone https://github.com/ARM-software/arm-trusted-firmware.git); \
+			git clone https://github.com/TexasInstruments/arm-trusted-firmware.git); \
 		if ! [ -d $(TI_K3_ATF_DIR) ]; then \
 			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Getting $(TI_K3_ATF_VERSION) of 'arm-trusted-firmware' FAILED! *****\n\n"; \
 			exit 2; \

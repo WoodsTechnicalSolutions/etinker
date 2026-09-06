@@ -2,6 +2,7 @@ include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/bootloader.mk
 
 define bootloader-depends-$(ET_BOARD)
 	$(call bootloader-depends-$(ET_BOARD_TYPE))
+	@rsync -av $(ET_BOARD_DIR)/overlay/u-boot/*  $(ET_BOOTLOADER_SOFTWARE_DIR)/
 endef
 
 define bootloader-prepare-$(ET_BOARD)
@@ -10,7 +11,7 @@ endef
 
 define bootloader-finalize-$(ET_BOARD)
 	$(call bootloader-finalize-$(ET_BOARD_TYPE))
-	@(cd $(ET_DIR)/bootloader/k3-$(TI_K3_SOC)-r5-sk/$(TI_R5_CROSS_TUPLE)/boot && \
+	@(cd $(ET_DIR)/bootloader/k3-$(TI_K3_SOC)-r5-sk$(ET_BOOTLOADER_VARIANT)/$(TI_R5_CROSS_TUPLE)/boot && \
 		cp -v tiboot3.bin sysfw.itb $(ET_BOOTLOADER_DIR)/boot/)
 endef
 
