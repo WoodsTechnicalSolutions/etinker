@@ -1,0 +1,12 @@
+diff --git a/src/cyclictest/cyclictest.c b/src/cyclictest/cyclictest.c
+index 9919437..7b97bc7 100644
+--- a/src/cyclictest/cyclictest.c
++++ b/src/cyclictest/cyclictest.c
+@@ -14,6 +14,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <stdint.h>
++#include <stdbool.h>
+ #include <stdarg.h>
+ #include <unistd.h>
+ #include <fcntl.h>
