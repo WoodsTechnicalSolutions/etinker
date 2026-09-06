@@ -3,6 +3,7 @@ ifdef ET_BOARD_BIOS_REQUIRED
 include $(ET_DIR)/packages/k3-$(TI_K3_SOC)-r5-sk.mk
 
 define bios-depends-$(ET_BOARD_TYPE)
+	$(call k3-$(TI_K3_SOC)-r5-sk-depends)
 endef
 
 define bios-software-$(ET_BOARD_TYPE)
