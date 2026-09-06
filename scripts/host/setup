@@ -336,6 +336,7 @@ if which pacman &> /dev/null && [ -n "${is_arch}" ] || [ -n "${is_artix}" ]; the
 
 	# generally required
 	sudo pacman -S --quiet --color auto --noprogressbar --needed --noconfirm \
+		cpupower \
 		debuginfod \
 		python-argparse-manpage \
 		python-build \

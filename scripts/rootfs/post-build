@@ -140,6 +140,20 @@ omap2plus|sama5|zynq|meson|layerscape|k3|starfive)
 		printf "\tdd if=/media/BOOT/u-boot.itb of=/dev/mmcblk1p2 conv=fsync,notrunc\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "fi\n" >> ${TARGET}/usr/sbin/firmware-update
 		printf "sync\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "if ! [ -f /proc/mtd ]; then\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "\texit 0\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "fi\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "if which flashcp && flashcp --version | grep -q mtd-utils; then\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "\tif cat /proc/mtd | grep mtd0 | grep -q spl; then\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "\t\tflashcp --verbose /media/BOOT/u-boot-spl.bin.normal.out /dev/mtd0\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "\tfi\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "\tif cat /proc/mtd | grep mtd1 | grep -q uboot-env; then\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "\t\tflashcp --verbose --erase-all /dev/zero /dev/mtd1\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "\tfi\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "\tif cat /proc/mtd | grep mtd2 | grep -q uboot; then\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "\t\tflashcp --verbose /media/BOOT/u-boot.itb /dev/mtd2\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "\tfi\n" >> ${TARGET}/usr/sbin/firmware-update
+		printf "fi\n" >> ${TARGET}/usr/sbin/firmware-update
 		chmod +x ${TARGET}/usr/sbin/firmware-update
 		;;
 	*)

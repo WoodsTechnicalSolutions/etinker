@@ -3,6 +3,7 @@ ifdef ET_BOARD_BIOS_REQUIRED
 include $(ET_DIR)/packages/opensbi.mk
 
 define bios-depends-$(ET_BOARD_TYPE)
+	$(call opensbi-depends)
 endef
 
 define bios-software-$(ET_BOARD_TYPE)
