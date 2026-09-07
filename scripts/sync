@@ -112,11 +112,16 @@ mmc)
 		if [ "${target}" = "bootloader" ]; then
 			printf "[%s][%s] if required, write raw %s data.\n" ${ET_BOARD} ${target} ${destination}
 
-			bootdev="/dev/disk/by-label/BOOT"
+			bootdev="/dev/$(lsblk -as $(readlink -e /dev/disk/by-label/BOOT)|tail -1|cut -d '─' -f 2|cut -d ' ' -f 1)"
+			if ! [ -b "${bootdev}" ]; then
+				printf "Invalid block device [ %s ]\n" "${bootdev}"
+				exit 1
+			fi
 			case "${ET_BOARD_TYPE}" in
 			meson)
 				printf "\n*** write ${ET_BOOTLOADER_DIR}/boot/gxl-boot.bin to ${bootdev} ***\n\n"
 				sudo dd if=${ET_BOOTLOADER_DIR}/boot/gxl-boot.bin of=${bootdev} conv=fsync,notrunc bs=512 seek=1
+				echo
 				;;
 			layerscape)
 				if [ -f ${LSDK_FIRMWARE_BIN} ]; then
@@ -128,6 +133,7 @@ mmc)
 					sudo dd if=${ET_BOOTLOADER_DIR}/boot/bl2_sd.pbl of=${bootdev} conv=fsync,notrunc bs=512 seek=8
 					printf "\n*** write FIP image to ${bootdev} @ 2048 block offset ***\n\n"
 					sudo dd if=${ET_BOOTLOADER_DIR}/boot/fip.bin of=${bootdev} conv=fsync,notrunc bs=512 seek=2048
+					echo
 				else
 					printf "\nMissing ${LSDK_VERSION} Firmware Image! [ ${LSDK_FIRMWARE_BIN} ]\n\n"
 				fi
@@ -144,6 +150,7 @@ mmc)
 					cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu3_1_release_strip.xer5f   ${media}/BOOT/lib/firmware/j7-main-r5f1_1-fw
 					cp -v ${TI_K3_BOOT_FIRMWARE_DIR}/ti-ipc/${TI_K3_SOC}/ipc_echo_test_mcu1_1_release_strip.xer5f   ${media}/BOOT/lib/firmware/j7-mcu-r5f0_1-fw
 				fi
+				echo
 				;;
 			starfive)
 				spldev="/dev/disk/by-partlabel/spl"
