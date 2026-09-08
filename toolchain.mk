@@ -98,6 +98,7 @@ define toolchain-build
 		if ! [ -f $(ET_TOOLCHAIN_BUILD_CONFIG) ]; then \
 			(cd $(ET_TOOLCHAIN_BUILD_DIR) && \
 				CT_ARCH=$(ET_ARCH) \
+				CT_JOBS=$(ET_CPUS) \
 				$(ET_TOOLCHAIN_GENERATOR) \
 				$(ET_CROSS_TUPLE)); \
 			if ! [ -f $(ET_TOOLCHAIN_BUILD_CONFIG) ]; then \
@@ -109,6 +110,7 @@ define toolchain-build
 	esac
 	(cd $(ET_TOOLCHAIN_BUILD_DIR) && \
 		CT_ARCH=$(ET_ARCH) \
+		CT_JOBS=$(ET_CPUS) \
 		$(ET_TOOLCHAIN_GENERATOR) \
 		--no-print-directory \
 		$1)
@@ -142,6 +144,7 @@ define toolchain-build
 		if ! [ "$1" = "savedefconfig" ]; then \
 			(cd $(ET_TOOLCHAIN_BUILD_DIR) && \
 				CT_ARCH=$(ET_ARCH) \
+				CT_JOBS=$(ET_CPUS) \
 				$(ET_TOOLCHAIN_GENERATOR) \
 				--no-print-directory \
 				savedefconfig); \
