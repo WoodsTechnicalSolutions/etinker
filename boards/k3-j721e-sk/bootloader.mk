@@ -2,7 +2,9 @@ include $(ET_DIR)/boards/$(ET_BOARD_TYPE)/bootloader.mk
 
 define bootloader-depends-$(ET_BOARD)
 	$(call bootloader-depends-$(ET_BOARD_TYPE))
-	@rsync -av $(ET_BOARD_DIR)/overlay/u-boot/*  $(ET_BOOTLOADER_SOFTWARE_DIR)/
+	@if [ -d "$(ET_BOARD_DIR)/overlay/u-boot" ]; then \
+		rsync -av $(ET_BOARD_DIR)/overlay/u-boot/*  $(ET_BOOTLOADER_SOFTWARE_DIR)/; \
+	fi
 endef
 
 define bootloader-prepare-$(ET_BOARD)
