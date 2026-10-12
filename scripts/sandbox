@@ -88,7 +88,7 @@ for n in `ls boards`; do
 
 	# baseline boards running Linux
 	case $n in
-	am335x-pocketbeagle | aml-s905x-cc | ls1043ardb | omap3-evm | \
+	am335x-pocketbeagle | aml-s905x-cc | ls1043ardb | \
 	pynq-z2 | sama5d3-xpld | k3-j721e-sk | visionfive2)
 		# skip certain targets Linux
 		case "$@" in

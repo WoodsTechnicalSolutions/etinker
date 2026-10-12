@@ -14,14 +14,11 @@ about tinkering.
 ## Development Boards
 
 - am335x-pocketbeagle [Octavo/TI Arm Cortex-A8]
-- am3517-evm [TI Arm Cortex-A8]
 - aml-s905x-cc [Amlogic Arm Cortex-A53]
 - ek-tm4c123gxl [TI TivaC Arm Cortex-M4]
 - ek-tm4c1294xl [TI TivaC Arm Cortex-M4]
 - ls1043ardb [NXP Layerscape Arm Cortex-A53]
 - nrf52840-dongle [Nordic Arm Cortex-M4] - (nrfx only)
-- omap3-beagle [TI Arm Cortex-A8] - (no longer in U-Boot)
-- omap3-evm [TI Arm Cortex-A8] - (no longer maintained by Derald Woods)
 - pynq-z2 [Xilinx Zynq-7020 Arm Cortex-A9]
 - sama5d3-xpld [Arm Cortex-A5]arm-cortex
 - k3-j721e-sk [TI TDA4VM Arm Cortex-R5 / Cortex-A72]
@@ -38,7 +35,7 @@ files for Linux, U-Boot, and Buildroot reside in the virtual boards.
 
 - layerscape [ls1043ardb]
 - meson [aml-s905x-cc]
-- omap2plus [am335x-pocketbeagle, am3517-evm, omap3-beagle, omap3-evm]
+- omap2plus [am335x-pocketbeagle]
 - sama5 [sama5d3-xpld]
 - zynq [pynq-z2]
 - k3 [k3-j721e-sk]
