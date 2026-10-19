@@ -281,6 +281,9 @@ nfs)
 		exit 1
 		;;
 	esac
+	sync
+	umount -l ${nfs}
+	sync
 	;;
 *)
 	printf "Sync destination [%s] not implemented!\n" ${destination}
