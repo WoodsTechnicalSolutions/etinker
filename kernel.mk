@@ -303,7 +303,7 @@ define kernel-config
 		O=$(ET_KERNEL_BUILD_DIR) \
 		-C $(ET_KERNEL_SOFTWARE_DIR) \
 		$(kernel_defconfig) $(ET_KERNEL_DEFCONFIG_N) $(ET_KERNEL_DEFCONFIG_Y)
-	if grep -q "MMC_BLOCK=m" $(ET_KERNEL_BUILD_CONFIG); then \
+	@if grep -q "MMC_BLOCK=m" $(ET_KERNEL_BUILD_CONFIG); then \
 		sed -i s,MMC_BLOCK=m,MMC_BLOCK=y, $(ET_KERNEL_BUILD_CONFIG); \
 	fi
 endef
