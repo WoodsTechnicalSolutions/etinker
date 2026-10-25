@@ -21,6 +21,7 @@
 export TI_K3_SOC := j721e
 export TI_K3_SOC_TYPE := gp
 export TI_K3_FW_TYPE := ti-fs
+export TI_K3_TFA_BOARD := generic
 export TI_ARM64_CROSS_TUPLE := aarch64-cortexa72-linux-gnu
 
 export ET_BOARD_TYPE := k3-r5

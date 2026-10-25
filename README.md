@@ -22,6 +22,7 @@ about tinkering.
 - pynq-z2 [Xilinx Zynq-7020 Arm Cortex-A9]
 - sama5d3-xpld [Arm Cortex-A5]arm-cortex
 - k3-j721e-sk [TI TDA4VM Arm Cortex-R5 / Cortex-A72]
+- k3-am62x-sk [TI SK-AM62B-P1 Arm Cortex-R5 / Cortex-A53]
 - visionfive2 [StarFive VisionFive 2 RISC-V 64-bit]
 
 ### Special Boards
@@ -38,7 +39,7 @@ files for Linux, U-Boot, and Buildroot reside in the virtual boards.
 - omap2plus [am335x-pocketbeagle]
 - sama5 [sama5d3-xpld]
 - zynq [pynq-z2]
-- k3 [k3-j721e-sk]
+- k3 [k3-j721e-sk, k3-am62x-sk]
 - starfive [visionfive2]
 
 #### Toolchain Boards
@@ -48,7 +49,7 @@ higher level board. The configuration files for crosstool-ng reside
 with the toolchain boards. This concept is useful for testing new
 and/or variant toolchains.
 
-- aarch64-cortexa53-linux-gnu [layerscape, meson]
+- aarch64-cortexa53-linux-gnu [k3, layerscape, meson]
 - aarch64-cortexa72-linux-gnu [k3]
 - arm-none-eabi
 - arm-none-eabihf [ek-tm4c123gxl, ek-tm4c1294xl, nrf52840-dongle, k3]

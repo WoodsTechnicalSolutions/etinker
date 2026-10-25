@@ -46,3 +46,4 @@ ET_BOARD_TOOLCHAIN_TYPE ?= aarch64-cortexa53-linux-gnu
 include $(ET_DIR)/boards/$(ET_BOARD_TOOLCHAIN_TYPE)/etinker.mk
 
 ET_KERNEL_DEFCONFIG_N := ti_arm64_prune.config
+ET_KERNEL_DEFCONFIG_Y := ti_arm64_add.config

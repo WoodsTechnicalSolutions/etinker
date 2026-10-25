@@ -1,5 +1,6 @@
 # References:
-# - https://docs.u-boot.org/en/latest/board/ti/j721e_evm.html
+# - https://docs.u-boot-project.org/en/latest/board/ti/j721e_evm.html
+# - https://docs.u-boot-project.org/en/latest/board/ti/am62x_sk.html
 
 ifndef TI_K3_SOC
 $(info *** [ 'k3' requires TI_K3_SOC definition ] ***)
@@ -22,7 +23,7 @@ export ET_BOOTLOADER_BUILD_SPL := $(ET_BOOTLOADER_BUILD_DIR)/$(ET_BOARD_BOOTLOAD
 export ET_BOOTLOADER_SPL := $(ET_BOOTLOADER_DIR)/boot/$(ET_BOARD_BOOTLOADER_SPL_BINARY)
 
 export TI_K3_BOOT_FIRMWARE_DIR := $(ET_SOFTWARE_DIR)/ti/ti-linux-firmware
-export TI_K3_BOOT_FIRMWARE_VERSION ?= 12.01.00.06
+export TI_K3_BOOT_FIRMWARE_VERSION ?= 12.02.00.03
 
 export TI_K3_ATF_DIR := $(ET_SOFTWARE_DIR)/ti/arm-trusted-firmware
 export TI_K3_ATF_VERSION ?= 12.01.00.05
@@ -36,7 +37,7 @@ export TI_R5_CROSS_TUPLE ?= arm-cortexr5-eabihf
 export TI_ARM64_CROSS_COMPILE ?= $(TI_ARM64_CROSS_TUPLE)-
 
 export ET_CFLAGS_BOOTLOADER := BINMAN_INDIRS=$(TI_K3_BOOT_FIRMWARE_DIR) \
-				BL31=$(TI_K3_ATF_DIR)/build/k3/generic/release/bl31.bin \
+				BL31=$(TI_K3_ATF_DIR)/build/k3/$(TI_K3_TFA_BOARD)/release/bl31.bin \
 				TEE=$(TI_K3_OPTEE_OS_DIR)/out/arm-plat-k3/core/tee-pager_v2.bin
 
 export PATH := $(ET_DIR)/toolchain/$(TI_ARM64_CROSS_TUPLE)/bin:$(ET_DIR)/toolchain/$(TI_ARM_CROSS_TUPLE)/bin:$(PATH)
@@ -108,7 +109,7 @@ define bootloader-prepare-common
 		$(MAKE) --no-print-directory \
 			CROSS_COMPILE=$(TI_ARM64_CROSS_TUPLE)- \
 			PLAT=k3 \
-			TARGET_BOARD=generic \
+			TARGET_BOARD=$(TI_K3_TFA_BOARD) \
 			SPD=opteed \
 			$(shell echo $(ET_CLEAN) | grep yes && print clean) all)
 endef
@@ -125,4 +126,17 @@ define bootloader-info-common
 	@printf "========================================================================\n"
 	@printf "ET_BOOTLOADER_SPL: $(ET_BOOTLOADER_SPL)\n"
 	@printf "ET_BOOTLOADER_BUILD_SPL: $(ET_BOOTLOADER_BUILD_SPL)\n"
+	@printf "========================================================================\n"
+	@printf "TI_K3_TFA_BOARD: $(TI_K3_TFA_BOARD)\n"
+	@printf "TI_K3_BOOT_FIRMWARE_DIR: $(TI_K3_BOOT_FIRMWARE_DIR)\n"
+	@printf "TI_K3_BOOT_FIRMWARE_VERSION: $(TI_K3_BOOT_FIRMWARE_VERSION)\n"
+	@printf "TI_K3_ATF_DIR: $(TI_K3_ATF_DIR)\n"
+	@printf "TI_K3_ATF_VERSION: $(TI_K3_ATF_VERSION)\n"
+	@printf "TI_K3_OPTEE_OS_DIR: $(TI_K3_OPTEE_OS_DIR)\n"
+	@printf "TI_K3_OPTEE_OS_VERSION: $(TI_K3_OPTEE_OS_VERSION)\n"
+	@printf "TI_K3_OPTEE_OS_PLATFORM: $(TI_K3_OPTEE_OS_PLATFORM)\n"
+	@printf "TI_ARM_CROSS_TUPLE: $(TI_ARM_CROSS_TUPLE)\n"
+	@printf "TI_R5_CROSS_TUPLE: $(TI_R5_CROSS_TUPLE)\n"
+	@printf "TI_ARM64_CROSS_COMPILE: $(TI_ARM64_CROSS_COMPILE)\n"
+	@printf "ET_CFLAGS_BOOTLOADER: $(ET_CFLAGS_BOOTLOADER)\n"
 endef

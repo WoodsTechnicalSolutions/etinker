@@ -24,12 +24,19 @@ define kernel-finalize-$(ET_BOARD_TYPE)
 	fi
 	@if [ -d $(TI_K3_BOOT_FIRMWARE_DIR) ]; then \
 		mkdir -p $(ET_KERNEL_DIR)/usr/lib/firmware/ti-eth; \
-		cp -a $(TI_K3_BOOT_FIRMWARE_DIR)/ti-eth/$(TI_K3_SOC) $(ET_KERNEL_DIR)/usr/lib/firmware/ti-eth/; \
+		if [ -d $(TI_K3_BOOT_FIRMWARE_DIR)/ti-eth/$(TI_K3_SOC) ]; then \
+			cp -a $(TI_K3_BOOT_FIRMWARE_DIR)/ti-eth/$(TI_K3_SOC) $(ET_KERNEL_DIR)/usr/lib/firmware/ti-eth/; \
+		fi; \
 		(cd $(ET_KERNEL_DIR)/usr/lib/firmware && \
 			rm -f j7-*fw && \
 			ln -sf ti-eth/$(TI_K3_SOC)/app_remoteswitchcfg_server_strip.xer5f j7-main-r5f0_0-fw); \
 		mkdir -p $(ET_KERNEL_DIR)/usr/lib/firmware/ti-ipc; \
-		cp -a $(TI_K3_BOOT_FIRMWARE_DIR)/ti-ipc/$(TI_K3_SOC) $(ET_KERNEL_DIR)/usr/lib/firmware/ti-ipc/; \
+		if [ -d $(TI_K3_BOOT_FIRMWARE_DIR)/ti-ipc/$(TI_K3_SOC) ]; then \
+			cp -a $(TI_K3_BOOT_FIRMWARE_DIR)/ti-ipc/$(TI_K3_SOC) $(ET_KERNEL_DIR)/usr/lib/firmware/ti-ipc/; \
+		fi; \
+		if [ "$(TI_K3_SOC)" = "am62x" ]; then \
+			cp -a $(TI_K3_BOOT_FIRMWARE_DIR)/ti-ipc/$(TI_K3_SOC)x $(ET_KERNEL_DIR)/usr/lib/firmware/ti-ipc/; \
+		fi ; \
 		(cd $(ET_KERNEL_DIR)/usr/lib/firmware && \
 			ln -sf ti-ipc/$(TI_K3_SOC)/ipc_echo_test_c66xdsp_1_release_strip.xe66 j7-c66_0-fw && \
 			ln -sf ti-ipc/$(TI_K3_SOC)/ipc_echo_test_c66xdsp_2_release_strip.xe66 j7-c66_1-fw && \
