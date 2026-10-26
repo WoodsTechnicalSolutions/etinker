@@ -64,7 +64,7 @@ define bootloader-prepare-common
 	@printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Getting $(TI_K3_BOOT_FIRMWARE_VERSION) of 'ti-linux-firmware' *****\n\n"
 	@if ! [ -d $(TI_K3_BOOT_FIRMWARE_DIR) ]; then \
 		(cd $(ET_SOFTWARE_DIR)/ti && \
-			git clone https://git.ti.com/git/processor-firmware/ti-linux-firmware.git); \
+			git clone https://github.com/TexasInstruments/ti-linux-firmware.git); \
 		if ! [ -d $(TI_K3_BOOT_FIRMWARE_DIR) ]; then \
 			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] Getting $(TI_K3_BOOT_FIRMWARE_VERSION) of 'ti-linux-firmware' FAILED! *****\n\n"; \
 			exit 2; \
