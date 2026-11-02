@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if ! [ "`id -u`" = "0" ]; then
 	printf "***** THIS MUST BE RUN AS 'root' USER *****\n"
@@ -53,7 +53,7 @@ if ! [ "${proceed}" = "yes" ]; then
 	exit 1
 fi
 
-for ((i=3; i > 0; i--)); do
+for i in 3 2 1; do
 	printf "\r[${board}] Starting in %2d ... \t\t[Ctrl-C to abort]" $i
 	sleep 1
 done

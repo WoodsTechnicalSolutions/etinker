@@ -9,7 +9,7 @@
 
 ifdef ET_BOARD_ROOTFS_TREE
 
-export ET_OVERLAY_BUILD_DIR := $(ET_DIR)/overlay/build/$(ET_ROOTFS_TYPE)/$(ET_CROSS_TUPLE)
+export ET_OVERLAY_BUILD_DIR := $(ET_DIR)/overlay/build/$(ET_ROOTFS_TYPE)$(ET_ROOTFS_VARIANT)/$(ET_CROSS_TUPLE)
 export ET_OVERLAY_DIR := $(ET_DIR)/overlay/$(ET_BOARD)$(ET_ROOTFS_VARIANT)/$(ET_CROSS_TUPLE)
 
 include $(ET_DIR)/packages/cryptodev-linux.mk

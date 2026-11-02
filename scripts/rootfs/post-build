@@ -39,14 +39,15 @@ fi
 # Some /etc updates
 printf "\n%s\n\n" "`cat ${TARGET}/etc/issue`" > ${TARGET}/etc/issue
 if [ -f ${TARGET}/etc/inittab ]; then
-	printf "\n::sysinit:/bin/mount -t tracefs nodev /sys/kernel/tracing\n" >> ${TARGET}/etc/inittab
-	printf "\n::sysinit:/bin/mount -t debugfs none /sys/kernel/debug\n" >> ${TARGET}/etc/inittab
-	printf "\n::sysinit:/bin/mount -t configfs none /sys/kernel/config\n" >> ${TARGET}/etc/inittab
-	printf "\n::sysinit:/bin/mkdir -p /var/lib/nfs/v4recovery\n" >> ${TARGET}/etc/inittab
+	printf "\n# etinker [${ET_BOARD}][${ET_BOARD_TYPE}]\n" >> ${TARGET}/etc/inittab
+	printf "::sysinit:/bin/mount -t tracefs nodev /sys/kernel/tracing\n" >> ${TARGET}/etc/inittab
+	printf "::sysinit:/bin/mount -t debugfs none /sys/kernel/debug\n" >> ${TARGET}/etc/inittab
+	printf "::sysinit:/bin/mount -t configfs none /sys/kernel/config\n" >> ${TARGET}/etc/inittab
+	printf "::sysinit:/bin/mkdir -p /var/lib/nfs/v4recovery\n" >> ${TARGET}/etc/inittab
 	sed -i s,::sysinit:/etc/init.d/rcS,#::sysinit:/etc/init.d/rcS, ${TARGET}/etc/inittab
 	sed -i s,${ET_ROOTFS_GETTY_PORT}::respawn:,#${ET_ROOTFS_GETTY_PORT}::respawn:, ${TARGET}/etc/inittab
-	printf "\n::sysinit:/etc/init.d/rcS\n" >> ${TARGET}/etc/inittab
-	printf "\n${ET_ROOTFS_GETTY_PORT}::respawn:/sbin/getty -L ${ET_ROOTFS_GETTY_PORT} 115200 screen-256color\n" >> ${TARGET}/etc/inittab
+	printf "::sysinit:/etc/init.d/rcS\n" >> ${TARGET}/etc/inittab
+	printf "${ET_ROOTFS_GETTY_PORT}::respawn:/sbin/getty -L ${ET_ROOTFS_GETTY_PORT} 115200 screen-256color\n" >> ${TARGET}/etc/inittab
 fi
 sed -i s,ET_ROOTFS_GETTY_PORT,${ET_ROOTFS_GETTY_PORT}, ${TARGET}/etc/profile.d/tty.sh
 # Google DNS
@@ -64,6 +65,7 @@ omap2plus|sama5|zynq|meson|layerscape|k3|starfive)
 	mkdir -p ${TARGET}/media/data
 	sed -i s,ext2,auto, ${TARGET}/etc/fstab
 	echo "${ET_ROOTFS_GETTY_PORT}" > ${TARGET}/etc/securetty
+	echo "console" >> ${TARGET}/etc/securetty
 	# mmc0 is the SD/MMC card
 	printf "/dev/mmcblk0p1 /media/BOOT   auto defaults 0 0\n" >> ${TARGET}/etc/fstab
 	printf "/dev/mmcblk0p2 /media/rootfs auto defaults 0 0\n" >> ${TARGET}/etc/fstab
@@ -73,9 +75,16 @@ omap2plus|sama5|zynq|meson|layerscape|k3|starfive)
 	am335x-*)
 		rsync ${rsync_opts} ${ET_DIR}/firmware/am335x* ${TARGET}/usr/lib/firmware/
 		;;
+	k3-am62x-sk*)
+		# mmc1 is the SD/MMC card
+		sed -i s,mmcblk0,mmcblk1, ${TARGET}/etc/fstab
+		;;
 	k3-j721e-sk*)
 		# mmc1 is the SD/MMC card
 		sed -i s,mmcblk0,mmcblk1, ${TARGET}/etc/fstab
+		# nvme0n1 is a NVMe memory attached to the M.2 connector
+		mkdir -p ${TARGET}/media/nvme
+		printf "/dev/nvme0n1p1 /media/nvme auto defaults,noauto 0 0\n" >> ${TARGET}/etc/fstab
 		;;
 	aml-s905x-cc*)
 		# My boards use both the 32 GiB eMMC and SD/MMC card

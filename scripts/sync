@@ -197,6 +197,9 @@ mmc)
 		if [ -d "${media}/data" ]; then
 			sudo cp ${target_dir}/images/rootfs.tar ${media}/data/
 		fi
+		if [ -f "${target_dir}/images/rootfs.cpio.xz" ]; then
+			sudo cp ${target_dir}/images/rootfs.cpio.xz ${media}/BOOT/
+		fi
 		;;
 	*)
 		printf "Target '%s' is unsupported for '%s'!\n" ${target} ${destination}

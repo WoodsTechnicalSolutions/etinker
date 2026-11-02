@@ -79,7 +79,7 @@ define rootfs-depends
 	@mkdir -p $(ET_BOOTLOADER_DIR)
 	@mkdir -p $(ET_OVERLAY_DIR)
 	@mkdir -p $(ET_LIBRARY_DIR)
-	@mkdir -p $(ET_ROOTFS_DIR)
+	@mkdir -p $(ET_ROOTFS_DIR)/images
 	@mkdir -p $(ET_ROOTFS_BUILD_DIR)
 	@mkdir -p $(ET_ROOTFS_TARBALLS_DIR)
 	@mkdir -p $(shell dirname $(ET_ROOTFS_DEFCONFIG))
@@ -133,7 +133,7 @@ define rootfs-build
 		$1
 	@case "$1" in \
 	*clean) \
-		$(RM) -r $(ET_ROOTFS_DIR)/images; \
+		$(RM) -r $(ET_ROOTFS_DIR)/images/*; \
 		;; \
 	*config) \
 		if ! [ -f $(ET_ROOTFS_BUILD_CONFIG) ]; then \
@@ -167,8 +167,10 @@ define rootfs-build
 			printf "\n***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_ROOTFS_BUILD_IMAGE) build FAILED! *****\n\n"; \
 			exit 2; \
 		fi; \
-		$(RM) -r $(ET_ROOTFS_DIR)/images; \
-		cp -av $(ET_ROOTFS_BUILD_DIR)/images $(ET_ROOTFS_DIR)/; \
+		cp -av $(ET_ROOTFS_BUILD_DIR)/images/rootfs.tar $(ET_ROOTFS_DIR)/images/; \
+		if [ -f $(ET_ROOTFS_BUILD_DIR)/images/rootfs.cpio.xz ]; then \
+			cp -av $(ET_ROOTFS_BUILD_DIR)/images/rootfs.cpio.xz $(ET_ROOTFS_DIR)/images/; \
+		fi; \
 		if [ "$(ET_TFTP)" = "yes" ] && [ -d $(ET_TFTP_DIR) ]; then \
 			if ! [ -d $(ET_TFTP_DIR)/$(ET_BOARD) ]; then \
 				sudo mkdir -p $(ET_TFTP_DIR)/$(ET_BOARD); \
@@ -200,8 +202,8 @@ define rootfs-clean
 	$(RM) $(ET_ROOTFS_BUILD_DIR)/build/busybox-*/.stamp_built
 	$(RM) $(ET_ROOTFS_BUILD_DIR)/build/busybox-*/.stamp*installed
 	$(RM) $(ET_ROOTFS_BUILD_CONFIG)
-	$(RM) -r $(ET_ROOTFS_BUILD_DIR)/images
-	$(RM) -r $(ET_ROOTFS_DIR)/images
+	$(RM) -r $(ET_ROOTFS_BUILD_DIR)/images/*
+	$(RM) -r $(ET_ROOTFS_DIR)/images/*
 endef
 
 define rootfs-purge

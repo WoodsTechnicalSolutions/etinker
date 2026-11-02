@@ -1,3 +1,5 @@
+[ -f "/usr/bin/bash" ] || exit 0
+
 shopt -s histappend
 shopt -s cdspell
 shopt -s checkwinsize
