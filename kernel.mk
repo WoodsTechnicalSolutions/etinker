@@ -184,15 +184,9 @@ define kernel-build
 				printf "***** [$(ET_BOARD)][$(ET_BOARD_TYPE)] $(ET_KERNEL_TREE) .config MISSING! *****\n"; \
 				exit 2; \
 			fi; \
-			if grep -q "MMC_BLOCK=m" $(ET_KERNEL_BUILD_CONFIG); then \
-				sed -i s,MMC_BLOCK=m,MMC_BLOCK=y, $(ET_KERNEL_BUILD_CONFIG); \
-			fi; \
 		fi; \
 		;; \
 	esac
-	@if grep -q "MMC_BLOCK=m" $(ET_KERNEL_BUILD_CONFIG); then \
-		sed -i s,MMC_BLOCK=m,MMC_BLOCK=y, $(ET_KERNEL_BUILD_CONFIG); \
-	fi
 	$(ET_MAKE) -j $(ET_CPUS) \
 		$(ET_CFLAGS_KERNEL) \
 		$(ET_KERNEL_CROSS_PARAMS) \
@@ -280,12 +274,6 @@ define kernel-build
 		if [ -f $(ET_KERNEL_BUILD_DEFCONFIG) ]; then \
 			rsync $(ET_KERNEL_BUILD_DEFCONFIG) $(ET_KERNEL_DEFCONFIG); \
 			$(RM) $(ET_KERNEL_BUILD_DEFCONFIG); \
-			if grep -q "MMC_BLOCK=m" $(ET_KERNEL_DEFCONFIG); then \
-				sed -i s,MMC_BLOCK=m,MMC_BLOCK=y, $(ET_KERNEL_DEFCONFIG); \
-			fi; \
-		fi; \
-		if grep -q "MMC_BLOCK=m" $(ET_KERNEL_BUILD_CONFIG); then \
-			sed -i s,MMC_BLOCK=m,MMC_BLOCK=y, $(ET_KERNEL_BUILD_CONFIG); \
 		fi; \
 		;; \
 	*) \
@@ -303,9 +291,6 @@ define kernel-config
 		O=$(ET_KERNEL_BUILD_DIR) \
 		-C $(ET_KERNEL_SOFTWARE_DIR) \
 		$(kernel_defconfig) $(ET_KERNEL_DEFCONFIG_N) $(ET_KERNEL_DEFCONFIG_Y)
-	@if grep -q "MMC_BLOCK=m" $(ET_KERNEL_BUILD_CONFIG); then \
-		sed -i s,MMC_BLOCK=m,MMC_BLOCK=y, $(ET_KERNEL_BUILD_CONFIG); \
-	fi
 endef
 
 define kernel-clean
