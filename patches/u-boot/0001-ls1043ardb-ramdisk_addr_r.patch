@@ -1,0 +1,12 @@
+diff --git a/include/configs/ls1043ardb.h b/include/configs/ls1043ardb.h
+index 90caf8a1371..505ef35ddba 100644
+--- a/include/configs/ls1043ardb.h
++++ b/include/configs/ls1043ardb.h
+@@ -208,6 +208,7 @@
+ 	"board=ls1043ardb\0"            \
+ 	"fdtfile=fsl-ls1043a-rdb-sdk.dtb\0"    \
+ 	"image=Image\0"					\
++	"ramdisk_addr_r=0x90080000\0" \
+ 	"console_dbg=earlycon=uart8250,mmio,0x21c0500\0"
+ #endif
+ 
