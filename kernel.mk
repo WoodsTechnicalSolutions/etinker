@@ -60,7 +60,7 @@ else # no git describe info found
 ET_KERNEL_VERSION := $(kversion)
 endif
 # first in release series (i.e. v6.9)
-ifeq ($(shell printf $(ET_KERNEL_VERSION) | cut -d '.' -f 3),)
+ifeq ($(shell echo $(ET_KERNEL_VERSION) | cut -d '.' -f 3),)
 ET_KERNEL_VERSION := $(ET_KERNEL_VERSION).0
 endif
 # linux-rt

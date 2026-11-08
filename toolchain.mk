@@ -26,7 +26,7 @@ else
 export ET_TOOLCHAIN_TREE := $(ET_BOARD_TOOLCHAIN_TREE)
 export ET_TOOLCHAIN_SOFTWARE_DIR := $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE)
 toolchain_version = $(shell cd $(ET_SOFTWARE_DIR)/$(ET_TOOLCHAIN_TREE)/ $(ET_NOERR) && git describe --tags $(ET_NOERR))
-export ET_TOOLCHAIN_VERSION := $(shell printf "%s" $(toolchain_version) | sed s,crosstool-ng-,,)
+export ET_TOOLCHAIN_VERSION := $(shell echo $(toolchain_version) | sed s,crosstool-ng-,,)
 export ET_TOOLCHAIN_CACHED_VERSION := $(shell $(ET_SCRIPTS_DIR)/software $(ET_BOARD) toolchain-ref)
 export ET_TOOLCHAIN_DIR := $(ET_DIR)/toolchain/$(ET_CROSS_TUPLE)
 export ET_TOOLCHAIN_BUILD_DIR := $(ET_DIR)/toolchain/build/$(ET_CROSS_TUPLE)

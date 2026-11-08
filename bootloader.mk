@@ -40,8 +40,8 @@ ET_BOOTLOADER_VERSION := $(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) $(ET_NOERR) &&
 ET_BOOTLOADER_LOCALVERSION := -$(shell cd $(ET_BOOTLOADER_SOFTWARE_DIR) $(ET_NOERR) && git describe --dirty $(ET_NOERR) | cut -d '-' -f 2-5)
 # RC version (i.e. v2018.09-rc1)
 ifeq ($(shell echo $(ET_BOOTLOADER_LOCALVERSION) | sed s,[0-9].*,,),-rc)
-rcversion := $(shell printf "%s" $(ET_BOOTLOADER_LOCALVERSION) | cut -d '-' -f 2)
-rclocalversion := -$(shell printf "%s" $(ET_BOOTLOADER_LOCALVERSION) | cut -d '-' -f 3-5)
+rcversion := $(shell echo $(ET_BOOTLOADER_LOCALVERSION) | cut -d '-' -f 2)
+rclocalversion := -$(shell echo $(ET_BOOTLOADER_LOCALVERSION) | cut -d '-' -f 3-5)
 ifeq ($(ET_BOOTLOADER_LOCALVERSION),-$(rcversion)$(rclocalversion))
 ET_BOOTLOADER_LOCALVERSION := $(rclocalversion)
 endif
