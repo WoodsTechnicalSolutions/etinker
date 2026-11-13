@@ -47,7 +47,7 @@ ET_BOARD_GETTY_PORT ?= ttyPS0
 
 ET_BOARD_KERNEL_DT ?= zynq-pynq-z2
 
-ET_BOARD_BOOTLOADER_DT ?= $(ET_BOARD_DT_PREFIX)zynq-pynq-z2
+ET_BOARD_BOOTLOADER_DT ?= zynq-pynq-z2
 
 ifdef ET_KERNEL_VARIANT
 # fixup kernel version
